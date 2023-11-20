@@ -1,3 +1,4 @@
+using Adoptrix.Infrastructure;
 using FastEndpoints;
 
 namespace Adoptrix.Api;
@@ -9,6 +10,7 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddFastEndpoints();
+        builder.Services.AddDbContext<AdoptrixDbContext>();
 
         var app = builder.Build();
 
