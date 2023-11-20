@@ -4,7 +4,7 @@ public class Animal : Entity
 {
     public const int NameMaxLength = 50;
 
-    public required string Name { get; init; }
-    public required Species Species { get; init; }
-    public DateOnly DateOfBirth { get; init; }
+    public required string Name { get; set; }
+    public required Species Species { get; set; }
+    public DateOnly DateOfBirth { get; set; }
 }

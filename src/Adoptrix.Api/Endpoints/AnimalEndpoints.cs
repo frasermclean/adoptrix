@@ -12,6 +12,7 @@ public static class AnimalEndpoints
         builder.MapGet("/animals", SearchAnimalsAsync);
         builder.MapGet("/animals/{animalId}", GetAnimalAsync);
         builder.MapPost("/animals", AddAnimalAsync);
+        builder.MapPut("/animals", UpdateAnimalAsync);
         builder.MapDelete("/animals/{animalId}", DeleteAnimalAsync);
 
         return builder;
@@ -35,15 +36,36 @@ public static class AnimalEndpoints
     private static async Task<Results<Created<Animal>, BadRequest>> AddAnimalAsync(AddAnimalRequest request,
         IAnimalsRepository repository, CancellationToken cancellationToken = default)
     {
-        var animal = await repository.AddAsync(new Animal
+        var result = await repository.AddAsync(new Animal
         {
             Name = request.Name,
             Species = request.Species,
             DateOfBirth = request.DateOfBirth
         }, cancellationToken);
 
-        var uri = new Uri($"/api/animals/{animal.Id}", UriKind.Relative);
-        return TypedResults.Created(uri, animal);
+        if (result.IsFailed)
+        {
+            return TypedResults.BadRequest();
+        }
+
+        var animal = result.Value;
+        return TypedResults.Created($"api/animals/{animal.Id}", animal);
+    }
+
+    private static async Task<Results<Ok<Animal>, NotFound>> UpdateAnimalAsync(UpdateAnimalRequest request,
+        IAnimalsRepository repository, CancellationToken cancellationToken = default)
+    {
+        var result = await repository.UpdateAsync(new Animal
+        {
+            Id = request.Id,
+            Name = request.Name,
+            Species = request.Species,
+            DateOfBirth = request.DateOfBirth
+        }, cancellationToken);
+
+        return result.IsSuccess
+            ? TypedResults.Ok(result.Value)
+            : TypedResults.NotFound();
     }
 
     private static async Task<Results<NoContent, NotFound>> DeleteAnimalAsync(Guid animalId,

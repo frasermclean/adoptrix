@@ -25,13 +25,30 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
             : animal;
     }
 
-    public async Task<Animal> AddAsync(Animal animal, CancellationToken cancellationToken = default)
+    public async Task<Result<Animal>> AddAsync(Animal animal, CancellationToken cancellationToken = default)
     {
         var entry = await dbContext.Animals.AddAsync(animal, cancellationToken);
-
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return entry.Entity;
+    }
+
+    public async Task<Result<Animal>> UpdateAsync(Animal animal, CancellationToken cancellationToken = default)
+    {
+        var existingAnimal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == animal.Id, cancellationToken);
+
+        if (existingAnimal is null)
+        {
+            return CreateNotFoundError(animal.Id);
+        }
+
+        // update properties
+        existingAnimal.Name = animal.Name;
+        existingAnimal.Species = animal.Species;
+        existingAnimal.DateOfBirth = animal.DateOfBirth;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return existingAnimal;
     }
 
     public async Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default)
