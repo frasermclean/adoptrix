@@ -1,4 +1,6 @@
+using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Infrastructure;
+using Adoptrix.Infrastructure.Services.Repositories;
 using FastEndpoints;
 
 namespace Adoptrix.Api;
@@ -11,6 +13,7 @@ public static class Program
 
         builder.Services.AddFastEndpoints();
         builder.Services.AddDbContext<AdoptrixDbContext>();
+        builder.Services.AddScoped<IAnimalsRepository, AnimalsRepository>();
 
         var app = builder.Build();
 

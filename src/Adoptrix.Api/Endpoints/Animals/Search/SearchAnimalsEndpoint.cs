@@ -1,13 +1,11 @@
-﻿using Adoptrix.Infrastructure;
+﻿using Adoptrix.Application.Services.Repositories;
 using FastEndpoints;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals.Search;
 
-public class SearchAnimalsEndpoint(AdoptrixDbContext dbContext)
+public class SearchAnimalsEndpoint(IAnimalsRepository animalsRepository)
     : Endpoint<SearchAnimalsRequest, SearchAnimalsResponse>
 {
-    private readonly AdoptrixDbContext dbContext = dbContext;
     public override void Configure()
     {
         Get("/animals");
@@ -17,10 +15,7 @@ public class SearchAnimalsEndpoint(AdoptrixDbContext dbContext)
     public override async Task<SearchAnimalsResponse> ExecuteAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken)
     {
-        var animals = await dbContext.Animals.ToListAsync(cancellationToken);
-        return new SearchAnimalsResponse
-        {
-            Animals = animals
-        };
+        var animals = await animalsRepository.SearchAsync(request.Name, request.Species, cancellationToken);
+        return new SearchAnimalsResponse { Animals = animals };
     }
 }
