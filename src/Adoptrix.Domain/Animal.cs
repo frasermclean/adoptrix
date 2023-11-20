@@ -6,5 +6,5 @@ public class Animal : Entity
 
     public required string Name { get; set; }
     public required Species Species { get; set; }
-    public DateOnly DateOfBirth { get; set; }
+    public required DateOnly DateOfBirth { get; set; }
 }

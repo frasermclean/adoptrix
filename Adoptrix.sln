@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Infrastructure", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Application", "src\Adoptrix.Application\Adoptrix.Application.csproj", "{E9A92DCD-34B6-4B41-A2DB-5AD9AF3E564C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4958F816-17AA-4833-819B-5D666C416361}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Domain.Tests", "tests\Adoptrix.Domain.Tests\Adoptrix.Domain.Tests.csproj", "{CF65350A-8D80-4AF2-B369-8C71A5BFB620}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,12 @@ Global
 		{E9A92DCD-34B6-4B41-A2DB-5AD9AF3E564C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9A92DCD-34B6-4B41-A2DB-5AD9AF3E564C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9A92DCD-34B6-4B41-A2DB-5AD9AF3E564C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF65350A-8D80-4AF2-B369-8C71A5BFB620}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF65350A-8D80-4AF2-B369-8C71A5BFB620}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF65350A-8D80-4AF2-B369-8C71A5BFB620}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF65350A-8D80-4AF2-B369-8C71A5BFB620}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CF65350A-8D80-4AF2-B369-8C71A5BFB620} = {4958F816-17AA-4833-819B-5D666C416361}
 	EndGlobalSection
 EndGlobal
