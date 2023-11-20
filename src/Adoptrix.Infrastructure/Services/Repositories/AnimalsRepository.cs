@@ -20,9 +20,9 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
     {
         var animal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == animalId, cancellationToken);
 
-        return animal is not null
-            ? animal
-            : NotFoundError.Instance;
+        return animal is null
+            ? CreateNotFoundError(animalId)
+            : animal;
     }
 
     public async Task<Animal> AddAsync(Animal animal, CancellationToken cancellationToken = default)
@@ -33,4 +33,21 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
 
         return entry.Entity;
     }
+
+    public async Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default)
+    {
+        var animal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == animalId, cancellationToken);
+        if (animal is null)
+        {
+            return CreateNotFoundError(animalId);
+        }
+
+        dbContext.Animals.Remove(animal);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Result.Ok();
+    }
+
+    private static NotFoundError CreateNotFoundError(Guid animalId)
+        => new($"Could not find animal with ID {animalId}");
 }

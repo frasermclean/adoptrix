@@ -12,6 +12,7 @@ public static class AnimalEndpoints
         builder.MapGet("/animals", SearchAnimalsAsync);
         builder.MapGet("/animals/{animalId}", GetAnimalAsync);
         builder.MapPost("/animals", AddAnimalAsync);
+        builder.MapDelete("/animals/{animalId}", DeleteAnimalAsync);
 
         return builder;
     }
@@ -20,6 +21,15 @@ public static class AnimalEndpoints
         string? name = null, Species? species = null, CancellationToken cancellationToken = default)
     {
         return await repository.SearchAsync(name, species, cancellationToken);
+    }
+
+    private static async Task<Results<Ok<Animal>, NotFound>> GetAnimalAsync(Guid animalId,
+        IAnimalsRepository repository, CancellationToken cancellationToken = default)
+    {
+        var result = await repository.GetAsync(animalId, cancellationToken);
+        return result.IsSuccess
+            ? TypedResults.Ok(result.Value)
+            : TypedResults.NotFound();
     }
 
     private static async Task<Results<Created<Animal>, BadRequest>> AddAnimalAsync(AddAnimalRequest request,
@@ -36,12 +46,13 @@ public static class AnimalEndpoints
         return TypedResults.Created(uri, animal);
     }
 
-    private static async Task<Results<Ok<Animal>, NotFound>> GetAnimalAsync(Guid animalId,
+    private static async Task<Results<NoContent, NotFound>> DeleteAnimalAsync(Guid animalId,
         IAnimalsRepository repository, CancellationToken cancellationToken = default)
     {
-        var result = await repository.GetAsync(animalId, cancellationToken);
+        var result = await repository.DeleteAsync(animalId, cancellationToken);
+
         return result.IsSuccess
-            ? TypedResults.Ok(result.Value)
+            ? TypedResults.NoContent()
             : TypedResults.NotFound();
     }
 }
