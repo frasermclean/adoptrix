@@ -1,3 +1,5 @@
+using FastEndpoints;
+
 namespace Adoptrix.Api;
 
 public static class Program
@@ -5,6 +7,8 @@ public static class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddFastEndpoints();
 
         var app = builder.Build();
 
@@ -14,8 +18,7 @@ public static class Program
             app.UseDeveloperExceptionPage();
         }
 
-        app.MapGet("/", () => "Hello World!");
-
+        app.UseFastEndpoints(config => { config.Endpoints.RoutePrefix = "api"; });
         app.Run();
     }
 }

@@ -8,8 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FastEndpoints" Version="5.19.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0"/>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Adoptrix.Domain\Adoptrix.Domain.csproj" />
   </ItemGroup>
 
 </Project>
