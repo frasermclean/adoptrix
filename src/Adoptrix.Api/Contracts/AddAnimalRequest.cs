@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Domain;
 
-namespace Adoptrix.Api.Endpoints.Animals.Add;
+namespace Adoptrix.Api.Contracts;
 
 public class AddAnimalRequest
 {

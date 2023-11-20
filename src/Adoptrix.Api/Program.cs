@@ -1,7 +1,9 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Adoptrix.Api.Endpoints;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Infrastructure;
 using Adoptrix.Infrastructure.Services.Repositories;
-using FastEndpoints;
 
 namespace Adoptrix.Api;
 
@@ -11,9 +13,15 @@ public static class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddFastEndpoints();
-        builder.Services.AddDbContext<AdoptrixDbContext>();
-        builder.Services.AddScoped<IAnimalsRepository, AnimalsRepository>();
+        //builder.Services.AddFastEndpoints();
+        // add application services
+        builder.Services
+            .AddDbContext<AdoptrixDbContext>()
+            .ConfigureHttpJsonOptions(options =>
+            {
+                options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            })
+            .AddScoped<IAnimalsRepository, AnimalsRepository>();
 
         var app = builder.Build();
 
@@ -23,7 +31,10 @@ public static class Program
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseFastEndpoints(config => { config.Endpoints.RoutePrefix = "api"; });
+        app.MapGroup("/api")
+            .MapAnimalEndpoints();
+
+        //app.UseFastEndpoints(config => { config.Endpoints.RoutePrefix = "api"; });
         app.Run();
     }
 }
