@@ -13,6 +13,8 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
         CancellationToken cancellationToken = default)
     {
         return await dbContext.Animals
+            .Where(animal => (name == null || animal.Name.Contains(name)) &&
+                             (species == null || animal.Species == species))
             .ToListAsync(cancellationToken);
     }
 
