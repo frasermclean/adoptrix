@@ -9,6 +9,6 @@ Adoptrix is a platform for animal adoption centres to manage their animals and a
 - ASP.Net Core
 - Entity Framework Core
 - Azure SQL Server
-- Azure Files Storage
+- Azure Blob Storage
 - Azure Functions
   
