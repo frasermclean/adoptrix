@@ -1,8 +1,10 @@
-﻿using FastEndpoints;
+﻿using Adoptrix.Application.Services;
+using FastEndpoints;
 
 namespace Adoptrix.Api.Endpoints.Animals.AddAnimalImages;
 
-public class AddAnimalImagesEndpoint : Endpoint<AddAnimalImagesRequest>
+public class AddAnimalImagesEndpoint(IAnimalImageUploader imageUploader)
+    : Endpoint<AddAnimalImagesRequest>
 {
     public override void Configure()
     {
@@ -12,17 +14,17 @@ public class AddAnimalImagesEndpoint : Endpoint<AddAnimalImagesRequest>
 
     public override async Task HandleAsync(AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
-        const string uploadsDirectoryName = "Uploads";
-        Directory.CreateDirectory(uploadsDirectoryName);
+        var blobNames = new List<string>();
 
         await foreach (var section in FormFileSectionsAsync(cancellationToken))
         {
             if (section is null) continue;
 
-            await using var fileStream = File.Create(Path.Combine(uploadsDirectoryName, section.FileName));
-            await section.Section.Body.CopyToAsync(fileStream, 1024 * 64, cancellationToken);
+            var blobName = await imageUploader.UploadImageAsync(request.Id, section.FileName, section.Section.Body,
+                cancellationToken);
+            blobNames.Add(blobName);
         }
 
-        await SendOkAsync("All done!", cancellationToken);
+        await SendOkAsync(blobNames, cancellationToken);
     }
 }
