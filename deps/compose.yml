@@ -1,6 +1,7 @@
 name: adoptrix-deps
 
 services:
+  # SQL Server 2022 Developer Edition
   sql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
@@ -11,6 +12,18 @@ services:
     volumes:
       - sql-server-data:/var/opt/mssql
 
+  # Azure Storage Emulator
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    ports:
+      - 10000:10000
+      - 10001:10001
+      - 10002:10002
+    volumes:
+      - azurite-data:/data
+
 volumes:
   sql-server-data:
+    driver: local
+  azurite-data:
     driver: local
