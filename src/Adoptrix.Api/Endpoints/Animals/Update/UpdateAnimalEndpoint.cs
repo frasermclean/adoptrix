@@ -16,6 +16,7 @@ public class UpdateAnimalEndpoint(IAnimalsRepository repository)
         {
             Id = request.Id,
             Name = request.Name,
+            Description = request.Description,
             Species = request.Species,
             DateOfBirth = request.DateOfBirth
         }, cancellationToken);

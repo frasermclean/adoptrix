@@ -15,6 +15,7 @@ public class AddAnimalEndpoint(IAnimalsRepository repository)
         var result = await repository.AddAsync(new Animal
         {
             Name = request.Name,
+            Description = request.Description,
             Species = request.Species,
             DateOfBirth = request.DateOfBirth
         }, cancellationToken);

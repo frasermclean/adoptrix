@@ -46,6 +46,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
 
         // update properties
         existingAnimal.Name = animal.Name;
+        existingAnimal.Description = animal.Description;
         existingAnimal.Species = animal.Species;
         existingAnimal.DateOfBirth = animal.DateOfBirth;
 
