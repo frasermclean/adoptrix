@@ -1,6 +1,6 @@
 ﻿namespace Adoptrix.Domain;
 
-public class Animal : Entity
+public class Animal : AggregateRoot
 {
     public const int NameMaxLength = 50;
 
