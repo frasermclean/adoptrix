@@ -3,6 +3,7 @@
 public class Animal : AggregateRoot
 {
     public const int NameMaxLength = 50;
+    public const int DescriptionMaxLength = 2000;
 
     public required string Name { get; set; }
     public string? Description { get; set; }
