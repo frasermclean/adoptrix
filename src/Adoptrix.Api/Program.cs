@@ -1,8 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Infrastructure;
-using Adoptrix.Infrastructure.Services.Repositories;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.Json;
 
@@ -22,8 +20,7 @@ public static class Program
                 options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             })
             .AddFastEndpoints()
-            .AddDbContext<AdoptrixDbContext>()
-            .AddScoped<IAnimalsRepository, AnimalsRepository>();
+            .AddInfrastructureServices();
 
         var app = builder.Build();
 
