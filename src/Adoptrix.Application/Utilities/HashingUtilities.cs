@@ -15,6 +15,6 @@ public static class HashingUtilities
         var joinedValues = string.Join("", values);
         var hash = MD5.HashData(Encoding.UTF8.GetBytes(joinedValues));
 
-        return Convert.ToBase64String(hash);
+        return Convert.ToHexString(hash).ToLower();
     }
 }
