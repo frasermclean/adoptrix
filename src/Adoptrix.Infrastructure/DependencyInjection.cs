@@ -15,7 +15,7 @@ public static class DependencyInjection
         services
             .AddDbContext<AdoptrixDbContext>()
             .AddScoped<IAnimalsRepository, AnimalsRepository>()
-            .AddScoped<IAnimalImageUploader, AnimalImageUploader>()
+            .AddScoped<IAnimalImageManager, AnimalImageManager>()
             .AddKeyedScoped<BlobContainerClient>("animal-images", (provider, _) =>
             {
                 var serviceClient = provider.GetRequiredService<BlobServiceClient>();

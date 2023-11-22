@@ -31,12 +31,12 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             .HasColumnType("varchar")
             .HasMaxLength(ImageInformation.FileNameMaxLength);
 
-        builder.Property(imageInformation => imageInformation.ContentType)
-            .HasColumnType("varchar")
-            .HasMaxLength(ImageInformation.ContentTypeMaxLength);
-
         builder.Property(imageInformation => imageInformation.UploadedAt)
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
+
+        builder.Property(imageInformation => imageInformation.OriginalFileName)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(512);
     }
 }

@@ -20,10 +20,10 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
 
     public async Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default)
     {
-        var animal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == animalId, cancellationToken);
+        var animal = await dbContext.Animals.FindAsync(new object?[] { animalId }, cancellationToken);
 
         return animal is null
-            ? CreateNotFoundError(animalId)
+            ? new NotFoundError($"Could not find animal with ID {animalId}")
             : animal;
     }
 
@@ -37,37 +37,30 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
 
     public async Task<Result<Animal>> UpdateAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        var existingAnimal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == animal.Id, cancellationToken);
-
-        if (existingAnimal is null)
+        var result = await GetAsync(animal.Id, cancellationToken);
+        if (result.IsFailed)
         {
-            return CreateNotFoundError(animal.Id);
+            return result;
         }
 
         // update properties
-        existingAnimal.Name = animal.Name;
-        existingAnimal.Description = animal.Description;
-        existingAnimal.Species = animal.Species;
-        existingAnimal.DateOfBirth = animal.DateOfBirth;
+        result.Value.UpdateFrom(animal);
 
         await dbContext.SaveChangesAsync(cancellationToken);
-        return existingAnimal;
+        return result;
     }
 
     public async Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default)
     {
-        var animal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == animalId, cancellationToken);
-        if (animal is null)
+        var result = await GetAsync(animalId, cancellationToken);
+        if (result.IsFailed)
         {
-            return CreateNotFoundError(animalId);
+            return result.ToResult();
         }
 
-        dbContext.Animals.Remove(animal);
+        dbContext.Animals.Remove(result.Value);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return Result.Ok();
     }
-
-    private static NotFoundError CreateNotFoundError(Guid animalId)
-        => new($"Could not find animal with ID {animalId}");
 }
