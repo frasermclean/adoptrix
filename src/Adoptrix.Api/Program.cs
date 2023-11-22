@@ -1,6 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Adoptrix.Api.Processors;
 using Adoptrix.Application.Services;
+using Adoptrix.Domain.Services;
 using Adoptrix.Infrastructure.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.Json;
@@ -21,23 +23,24 @@ public static class Program
                 options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             })
             .AddFastEndpoints()
+            .AddDomainServices()
             .AddApplicationServices()
-            .AddInfrastructureServices();
+            .AddInfrastructureServices()
+            .AddSingleton<EventDispatcherPostProcessor>();
 
         var app = builder.Build();
 
-        // local development
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseHttpsRedirection();
-            app.UseDeveloperExceptionPage();
-        }
-
+        // add middleware
         app.UseFastEndpoints(config =>
         {
-            config.Endpoints.Configurator = definition => definition.AllowAnonymous();
             config.Endpoints.RoutePrefix = "api";
+            config.Endpoints.Configurator = definition =>
+            {
+                definition.AllowAnonymous(); // TODO: Implement authentication and authorization
+                definition.PostProcessors(Order.After, app.Services.GetRequiredService<EventDispatcherPostProcessor>());
+            };
         });
+
         app.Run();
     }
 }
