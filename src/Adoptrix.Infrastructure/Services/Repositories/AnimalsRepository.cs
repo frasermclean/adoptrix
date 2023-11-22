@@ -50,17 +50,9 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
         return result;
     }
 
-    public async Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        var result = await GetAsync(animalId, cancellationToken);
-        if (result.IsFailed)
-        {
-            return result.ToResult();
-        }
-
-        dbContext.Animals.Remove(result.Value);
+        dbContext.Animals.Remove(animal);
         await dbContext.SaveChangesAsync(cancellationToken);
-
-        return Result.Ok();
     }
 }
