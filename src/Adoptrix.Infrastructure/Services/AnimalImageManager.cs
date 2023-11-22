@@ -2,6 +2,7 @@
 using Adoptrix.Application.Utilities;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -35,6 +36,15 @@ public class AnimalImageManager(ILogger<AnimalImageManager> logger,
             blobName, contentType);
 
         return Convert.ToBase64String(response.Value.ContentHash);
+    }
+
+    public async Task<Result> DeleteImageAsync(string blobName, CancellationToken cancellationToken = default)
+    {
+        var blobClient = containerClient.GetBlobClient(blobName);
+        var response = await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots,
+            cancellationToken: cancellationToken);
+
+        return Result.OkIf(response.Value, "Specified blob was not found");
     }
 
     private static string CalculateFileExtension(string contentType)
