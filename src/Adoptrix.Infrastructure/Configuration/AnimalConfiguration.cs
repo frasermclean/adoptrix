@@ -18,5 +18,25 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             .HasColumnType("char")
             .HasMaxLength(SpeciesCodeConverter.CodeLength)
             .HasConversion<SpeciesCodeConverter>();
+
+        var animalImagesBuilder = builder.OwnsMany(animal => animal.Images)
+            .ToTable("AnimalImages");
+
+        ConfigureAnimalImagesTable(animalImagesBuilder);
+    }
+
+    private static void ConfigureAnimalImagesTable(OwnedNavigationBuilder<Animal, ImageInformation> builder)
+    {
+        builder.Property(imageInformation => imageInformation.FileName)
+            .HasColumnType("varchar")
+            .HasMaxLength(ImageInformation.FileNameMaxLength);
+
+        builder.Property(imageInformation => imageInformation.ContentType)
+            .HasColumnType("varchar")
+            .HasMaxLength(ImageInformation.ContentTypeMaxLength);
+
+        builder.Property(imageInformation => imageInformation.UploadedAt)
+            .HasPrecision(2)
+            .HasDefaultValueSql("getutcdate()");
     }
 }

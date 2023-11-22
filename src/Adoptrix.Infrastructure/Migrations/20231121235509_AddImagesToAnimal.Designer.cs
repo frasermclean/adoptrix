@@ -4,6 +4,7 @@ using Adoptrix.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adoptrix.Infrastructure.Migrations
 {
     [DbContext(typeof(AdoptrixDbContext))]
-    partial class AdoptrixDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231121235509_AddImagesToAnimal")]
+    partial class AddImagesToAnimal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,7 +82,7 @@ namespace Adoptrix.Infrastructure.Migrations
                             b1.Property<DateTime>("UploadedAt")
                                 .ValueGeneratedOnAdd()
                                 .HasPrecision(3)
-                                .HasColumnType("datetime2(2)")
+                                .HasColumnType("datetime2(3)")
                                 .HasDefaultValueSql("getutcdate()");
 
                             b1.Property<Guid>("UploadedBy")

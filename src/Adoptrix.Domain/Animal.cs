@@ -9,4 +9,5 @@ public class Animal : AggregateRoot
     public string? Description { get; set; }
     public required Species Species { get; set; }
     public required DateOnly DateOfBirth { get; set; }
+    public List<ImageInformation> Images { get; set; } = new();
 }
