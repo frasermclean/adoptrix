@@ -1,14 +1,13 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Infrastructure.Services;
 using Adoptrix.Infrastructure.Services.Repositories;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Adoptrix.Infrastructure;
+namespace Adoptrix.Infrastructure.Services;
 
-public static class DependencyInjection
+public static class ServiceRegistration
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Adoptrix.Infrastructure;
+using Adoptrix.Application.Services;
+using Adoptrix.Infrastructure.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.Json;
 
@@ -20,6 +21,7 @@ public static class Program
                 options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             })
             .AddFastEndpoints()
+            .AddApplicationServices()
             .AddInfrastructureServices();
 
         var app = builder.Build();

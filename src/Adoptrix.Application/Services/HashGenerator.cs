@@ -1,16 +1,21 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Adoptrix.Application.Utilities;
+namespace Adoptrix.Application.Services;
 
-public static class HashingUtilities
+public interface IHashGenerator
 {
     /// <summary>
     /// Computes a hash from the given values.
     /// </summary>
     /// <param name="values">The string values to derive the hash from.</param>
-    /// <returns>The computed hash string in Base64 format.</returns>
-    public static string ComputeHash(params string[] values)
+    /// <returns>The computed hash string in lowercase hexadecimal format.</returns>
+    string ComputeHash(params string[] values);
+}
+
+public class HashGenerator : IHashGenerator
+{
+    public string ComputeHash(params string[] values)
     {
         var joinedValues = string.Join("", values);
         var hash = MD5.HashData(Encoding.UTF8.GetBytes(joinedValues));

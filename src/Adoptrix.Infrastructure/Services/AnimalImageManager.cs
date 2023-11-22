@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Application.Services;
-using Adoptrix.Application.Utilities;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using FluentResults;
@@ -8,13 +7,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Infrastructure.Services;
 
-public class AnimalImageManager(ILogger<AnimalImageManager> logger,
+public class AnimalImageManager(ILogger<AnimalImageManager> logger, IHashGenerator hashGenerator,
         [FromKeyedServices("animal-images")] BlobContainerClient containerClient)
     : IAnimalImageManager
 {
     public string GenerateFileName(string contentType, string originalFileName)
     {
-        var fileName = HashingUtilities.ComputeHash(contentType, originalFileName);
+        var fileName = hashGenerator.ComputeHash(contentType, originalFileName);
         var fileExtension = CalculateFileExtension(contentType);
 
         return $"{fileName}.{fileExtension}";
