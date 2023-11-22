@@ -4,6 +4,7 @@ using Adoptrix.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adoptrix.Infrastructure.Migrations
 {
     [DbContext(typeof(AdoptrixDbContext))]
-    partial class AdoptrixDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231121235509_AddImagesToAnimal")]
+    partial class AddImagesToAnimal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,26 +66,26 @@ namespace Adoptrix.Infrastructure.Migrations
 
                             SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
+                            b1.Property<string>("ContentType")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("varchar");
+
                             b1.Property<string>("Description")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("FileName")
                                 .IsRequired()
-                                .HasMaxLength(40)
+                                .HasMaxLength(100)
                                 .HasColumnType("varchar");
-
-                            b1.Property<string>("OriginalFileName")
-                                .IsRequired()
-                                .HasMaxLength(512)
-                                .HasColumnType("nvarchar");
 
                             b1.Property<DateTime>("UploadedAt")
                                 .ValueGeneratedOnAdd()
-                                .HasPrecision(2)
-                                .HasColumnType("datetime2(2)")
+                                .HasPrecision(3)
+                                .HasColumnType("datetime2(3)")
                                 .HasDefaultValueSql("getutcdate()");
 
-                            b1.Property<Guid?>("UploadedBy")
+                            b1.Property<Guid>("UploadedBy")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.HasKey("AnimalId", "Id");
