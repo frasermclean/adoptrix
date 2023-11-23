@@ -13,10 +13,10 @@ public class AnimalImageManager(ILogger<AnimalImageManager> logger, IHashGenerat
 {
     public string GenerateFileName(string contentType, string originalFileName)
     {
-        var fileName = hashGenerator.ComputeHash(contentType, originalFileName);
-        var fileExtension = CalculateFileExtension(contentType);
+        var baseName = hashGenerator.ComputeHash(contentType, originalFileName);
+        var fileExtension = GetFileExtension(contentType);
 
-        return $"{fileName}.{fileExtension}";
+        return $"{baseName}.{fileExtension}";
     }
 
     public async Task<string> UploadImageAsync(string blobName, Stream imageStream, string contentType,
@@ -37,8 +37,9 @@ public class AnimalImageManager(ILogger<AnimalImageManager> logger, IHashGenerat
         return Convert.ToBase64String(response.Value.ContentHash);
     }
 
-    public async Task<Result> DeleteImageAsync(string blobName, CancellationToken cancellationToken = default)
+    public async Task<Result> DeleteImageAsync(Guid animalId, string fileName, CancellationToken cancellationToken)
     {
+        var blobName = GetBlobName(animalId, fileName);
         var blobClient = containerClient.GetBlobClient(blobName);
         var response = await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots,
             cancellationToken: cancellationToken);
@@ -46,7 +47,10 @@ public class AnimalImageManager(ILogger<AnimalImageManager> logger, IHashGenerat
         return Result.OkIf(response.Value, "Specified blob was not found");
     }
 
-    private static string CalculateFileExtension(string contentType)
+    private static string GetBlobName(Guid animalId, string fileName)
+        => $"{animalId}/{fileName}";
+
+    private static string GetFileExtension(string contentType)
         => contentType switch
         {
             "image/jpeg" => "jpg",

@@ -1,9 +1,7 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Domain;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
-
 
 namespace Adoptrix.Api.Endpoints.Animals.AddAnimalImages;
 

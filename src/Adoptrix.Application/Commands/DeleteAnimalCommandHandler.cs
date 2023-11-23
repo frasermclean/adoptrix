@@ -1,13 +1,15 @@
-﻿using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Domain.Events;
+﻿using Adoptrix.Application.Events;
+using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Services;
 using FastEndpoints;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
-namespace Adoptrix.Application.Commands.Animals;
+namespace Adoptrix.Application.Commands;
 
-public class DeleteAnimalHandler(ILogger<DeleteAnimalHandler> logger, IAnimalsRepository repository,
+public class DeleteAnimalCommandHandler(
+        ILogger<DeleteAnimalCommandHandler> logger,
+        IAnimalsRepository repository,
         IEventQueueService eventQueueService)
     : ICommandHandler<DeleteAnimalCommand, Result>
 {

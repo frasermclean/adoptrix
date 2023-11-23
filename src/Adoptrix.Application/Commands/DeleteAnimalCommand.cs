@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using FluentResults;
 
-namespace Adoptrix.Application.Commands.Animals;
+namespace Adoptrix.Application.Commands;
 
 public class DeleteAnimalCommand : ICommand<Result>
 {
