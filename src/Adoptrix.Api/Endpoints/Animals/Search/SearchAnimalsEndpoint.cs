@@ -1,16 +1,15 @@
-﻿using Adoptrix.Application.Services.Repositories;
+﻿using Adoptrix.Application.Commands;
 using Adoptrix.Domain;
 using FastEndpoints;
 
 namespace Adoptrix.Api.Endpoints.Animals.Search;
 
 [HttpGet("animals")]
-public class SearchAnimalsEndpoint(IAnimalsRepository repository)
-    : Endpoint<SearchAnimalsRequest, IEnumerable<Animal>>
+public class SearchAnimalsEndpoint : Endpoint<SearchAnimalsCommand, IEnumerable<Animal>>
 {
-    public override async Task<IEnumerable<Animal>> ExecuteAsync(SearchAnimalsRequest request,
+    public override async Task<IEnumerable<Animal>> ExecuteAsync(SearchAnimalsCommand command,
         CancellationToken cancellationToken)
     {
-        return await repository.SearchAsync(request.Name, request.Species, cancellationToken);
+        return await command.ExecuteAsync(cancellationToken);
     }
 }
