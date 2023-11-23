@@ -57,11 +57,9 @@ namespace Adoptrix.Infrastructure.Migrations
                             b1.Property<Guid>("AnimalId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<int>("Id")
+                            b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Description")
                                 .HasColumnType("nvarchar(max)");

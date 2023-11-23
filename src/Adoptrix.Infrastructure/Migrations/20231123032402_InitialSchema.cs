@@ -6,22 +6,36 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Adoptrix.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddImagesToAnimal : Migration
+    public partial class InitialSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Animals",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SpeciesCode = table.Column<string>(type: "char(2)", maxLength: 2, nullable: false),
+                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Animals", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AnimalImages",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AnimalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FileName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    FileName = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ContentType = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    UploadedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OriginalFileName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
+                    UploadedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UploadedAt = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
                 },
                 constraints: table =>
@@ -41,6 +55,9 @@ namespace Adoptrix.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AnimalImages");
+
+            migrationBuilder.DropTable(
+                name: "Animals");
         }
     }
 }
