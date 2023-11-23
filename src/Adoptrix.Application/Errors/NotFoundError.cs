@@ -8,6 +8,4 @@ public class NotFoundError : Error
         : base(message)
     {
     }
-
-    public static readonly NotFoundError Instance = new();
 }
