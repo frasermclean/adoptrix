@@ -16,7 +16,6 @@ export class ToolbarComponent {
   @Output() menuClicked = new EventEmitter<void>();
 
   onMenuClick(): void {
-    console.log('menu click');
     this.menuClicked.emit();
   }
 }
