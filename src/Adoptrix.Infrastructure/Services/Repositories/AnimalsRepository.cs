@@ -1,6 +1,6 @@
-﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services.Repositories;
+﻿using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
+using Adoptrix.Domain.Errors;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +23,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
         var animal = await dbContext.Animals.FindAsync(new object?[] { animalId }, cancellationToken);
 
         return animal is null
-            ? new NotFoundError($"Could not find animal with ID {animalId}")
+            ? new AnimalNotFoundError(animalId)
             : animal;
     }
 
