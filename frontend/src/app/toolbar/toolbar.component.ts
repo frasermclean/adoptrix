@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,4 +13,10 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class ToolbarComponent {
   @Input() title = 'Adoptrix';
+  @Output() menuClicked = new EventEmitter<void>();
+
+  onMenuClick(): void {
+    console.log('menu click');
+    this.menuClicked.emit();
+  }
 }
