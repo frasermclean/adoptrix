@@ -2,7 +2,7 @@
 using Adoptrix.Domain;
 using FastEndpoints;
 
-namespace Adoptrix.Api.Endpoints.Animals.Search;
+namespace Adoptrix.Api.Endpoints.Animals;
 
 [HttpGet("animals")]
 public class SearchAnimalsEndpoint : Endpoint<SearchAnimalsCommand, IEnumerable<Animal>>

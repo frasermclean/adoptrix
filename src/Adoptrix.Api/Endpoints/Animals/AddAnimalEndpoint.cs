@@ -3,7 +3,7 @@ using Adoptrix.Domain;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Adoptrix.Api.Endpoints.Animals.Add;
+namespace Adoptrix.Api.Endpoints.Animals;
 
 [HttpPost("animals")]
 public class AddAnimalEndpoint : Endpoint<AddAnimalCommand, Results<Created<Animal>, UnprocessableEntity>>

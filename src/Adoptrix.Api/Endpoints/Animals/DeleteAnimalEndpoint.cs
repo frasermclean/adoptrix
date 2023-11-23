@@ -3,7 +3,7 @@ using Adoptrix.Application.Services.Repositories;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Adoptrix.Api.Endpoints.Animals.Delete;
+namespace Adoptrix.Api.Endpoints.Animals;
 
 [HttpDelete("/animals/{id}")]
 public class DeleteAnimalEndpoint(IAnimalsRepository repository)

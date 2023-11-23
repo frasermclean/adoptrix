@@ -1,8 +1,10 @@
 ﻿using Adoptrix.Domain;
+using FastEndpoints;
+using FluentResults;
 
-namespace Adoptrix.Api.Endpoints.Animals.Update;
+namespace Adoptrix.Application.Commands;
 
-public class UpdateAnimalRequest
+public class UpdateAnimalCommand : ICommand<Result<Animal>>
 {
     public Guid Id { get; init; }
     public required string Name { get; init; }

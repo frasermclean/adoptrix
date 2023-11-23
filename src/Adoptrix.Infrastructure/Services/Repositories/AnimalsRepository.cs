@@ -37,17 +37,8 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
 
     public async Task<Result<Animal>> UpdateAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        var result = await GetAsync(animal.Id, cancellationToken);
-        if (result.IsFailed)
-        {
-            return result;
-        }
-
-        // update properties
-        result.Value.UpdateFrom(animal);
-
         await dbContext.SaveChangesAsync(cancellationToken);
-        return result;
+        return animal;
     }
 
     public async Task DeleteAsync(Animal animal, CancellationToken cancellationToken = default)
