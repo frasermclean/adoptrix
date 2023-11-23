@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services.Repositories;
+﻿using Adoptrix.Application.Commands;
 using Adoptrix.Domain;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -6,21 +6,15 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace Adoptrix.Api.Endpoints.Animals.Add;
 
 [HttpPost("animals")]
-public class AddAnimalEndpoint(IAnimalsRepository repository)
-    : Endpoint<AddAnimalRequest, Created<Animal>>
+public class AddAnimalEndpoint : Endpoint<AddAnimalCommand, Results<Created<Animal>, UnprocessableEntity>>
 {
-    public override async Task<Created<Animal>> ExecuteAsync(AddAnimalRequest request,
+    public override async Task<Results<Created<Animal>, UnprocessableEntity>> ExecuteAsync(AddAnimalCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await repository.AddAsync(new Animal
-        {
-            Name = request.Name,
-            Description = request.Description,
-            Species = request.Species,
-            DateOfBirth = request.DateOfBirth
-        }, cancellationToken);
+        var result = await command.ExecuteAsync(cancellationToken);
 
-        var animal = result.Value;
-        return TypedResults.Created($"api/animals/{animal.Id}", animal);
+        return result.IsSuccess
+            ? TypedResults.Created($"api/animals/{result.Value.Id}", result.Value)
+            : TypedResults.UnprocessableEntity();
     }
 }

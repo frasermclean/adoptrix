@@ -1,8 +1,10 @@
 ﻿using Adoptrix.Domain;
+using FastEndpoints;
+using FluentResults;
 
-namespace Adoptrix.Api.Endpoints.Animals.Add;
+namespace Adoptrix.Application.Commands;
 
-public class AddAnimalRequest
+public class AddAnimalCommand : ICommand<Result<Animal>>
 {
     public required string Name { get; init; }
     public string? Description { get; init; }
