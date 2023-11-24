@@ -1,0 +1,21 @@
+<div id="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ animal.name }}</mat-card-title>
+      <mat-card-subtitle>{{ animal.species | titlecase }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <img
+      mat-card-image
+      src="{{ animal.imageUrl ? animal.imageUrl : 'images/dog.png' }}"
+      alt="{{ animal.imageUrl ? 'Main image of {{ animal.name }}' : 'Placeholder image' }}"
+    />
+    <mat-card-content>
+      <p>{{ animal.description }}</p>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button [routerLink]="animal.id">VIEW</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
