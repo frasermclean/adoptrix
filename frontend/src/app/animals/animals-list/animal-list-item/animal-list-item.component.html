@@ -13,10 +13,11 @@
     />
     <mat-card-content>
       <p class="description">{{ animal.description }}</p>
+      <mat-divider></mat-divider>
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-button [routerLink]="animal.id">VIEW</button>
+      <a mat-button [routerLink]="animal.id">VIEW DETAILS</a>
     </mat-card-actions>
   </mat-card>
 </div>
