@@ -2,6 +2,11 @@
   height: 100%;
 }
 
-#app-content {
-  padding: 16px;
+#app-outer-container {
+  width: 100%;
+  #main-content {
+    max-width: 1280px;
+    margin: auto;
+    padding: 16px;
+  }
 }

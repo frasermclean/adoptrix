@@ -7,8 +7,11 @@
   <!-- main application content -->
   <mat-sidenav-content>
     <app-toolbar (menuClicked)="sidenav.open()"></app-toolbar>
-    <div id="app-content">
-      <router-outlet></router-outlet>
+    <div id="app-outer-container">
+      <div id="main-content">
+        <router-outlet></router-outlet>
+      </div>
     </div>
+
   </mat-sidenav-content>
 </mat-sidenav-container>
