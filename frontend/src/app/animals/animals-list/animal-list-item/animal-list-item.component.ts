@@ -17,6 +17,6 @@ export class AnimalListItemComponent {
   @Input({ required: true }) animal!: AnimalSearchResult;
 
   getImageUrl(animal: AnimalSearchResult) {
-    return animal.imageUrl ? animal.imageUrl : `images/${animal.species}.png`;
+    return animal.mainImage?.uri || `images/${animal.species}.png`;
   }
 }

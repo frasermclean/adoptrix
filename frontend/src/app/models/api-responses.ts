@@ -9,8 +9,13 @@ export interface AnimalSearchResult {
   id: string;
   name: string;
   description?: string;
-  imageUrl?: string;
   species: Species;
+  mainImage?: AnimalImageResult;
+}
+
+export interface AnimalImageResult {
+  uri: string;
+  description?: string;
 }
 
 export enum Species {
