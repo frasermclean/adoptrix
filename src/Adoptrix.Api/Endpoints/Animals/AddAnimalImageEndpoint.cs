@@ -1,13 +1,15 @@
 ﻿using Adoptrix.Api.Requests;
+using Adoptrix.Api.Validators;
 using Adoptrix.Application.Commands;
 using Adoptrix.Domain;
+using Adoptrix.Domain.Errors;
 using FastEndpoints;
 using FluentResults;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-public class AddAnimalImagesEndpoint
+public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValidator)
     : Endpoint<AddAnimalImagesRequest, Results<Ok<Animal>, NotFound, BadRequest<IEnumerable<string>>>>
 {
     public override void Configure()
@@ -30,21 +32,26 @@ public class AddAnimalImagesEndpoint
         {
             if (section is null) continue;
 
-            var command = new AddAnimalImageCommand
+            // validate content type
+            var validationResult =
+                await contentTypeValidator.ValidateAsync(section.Section.ContentType, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                results.Add(new InvalidContentTypeError(section.Section.ContentType));
+                continue;
+            }
+
+            // execute command
+            var commandResult = await new AddAnimalImageCommand
             {
                 Animal = getResult.Value,
                 FileStream = section.Section.Body,
-                ContentType = section.Section.ContentType,
+                ContentType = section.Section.ContentType!,
                 Description = section.Name,
                 OriginalFileName = section.FileName
-            };
-            var result = await command.ExecuteAsync(cancellationToken);
-            if (result.IsFailed)
-            {
-                AddError(result.Errors.First().Message);
-            }
+            }.ExecuteAsync(cancellationToken);
 
-            results.Add(result);
+            results.Add(commandResult);
         }
 
         return results.TrueForAll(result => result.IsSuccess)

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Processors;
+using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Services;
 using Adoptrix.Infrastructure.Services;
@@ -25,6 +26,7 @@ public static class ServiceRegistration
 
         builder.Services
             .AddFastEndpoints()
+            .AddValidators()
             .AddDomainServices()
             .AddApplicationServices()
             .AddInfrastructureServices()
@@ -49,6 +51,14 @@ public static class ServiceRegistration
             policyBuilder.AllowAnyHeader();
             policyBuilder.AllowAnyMethod();
         }));
+
+        return services;
+    }
+
+    private static IServiceCollection AddValidators(this IServiceCollection services)
+    {
+        services.AddSingleton<ImageContentTypeValidator>();
+        services.AddSingleton<DateOfBirthValidator>();
 
         return services;
     }

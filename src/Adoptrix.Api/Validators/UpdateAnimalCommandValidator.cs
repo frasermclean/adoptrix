@@ -7,7 +7,7 @@ namespace Adoptrix.Api.Validators;
 
 public class UpdateAnimalCommandValidator : Validator<UpdateAnimalCommand>
 {
-    public UpdateAnimalCommandValidator()
+    public UpdateAnimalCommandValidator(DateOfBirthValidator dateOfBirthValidator)
     {
         RuleFor(request => request.Name)
             .NotEmpty()
@@ -17,6 +17,6 @@ public class UpdateAnimalCommandValidator : Validator<UpdateAnimalCommand>
             .MaximumLength(Animal.DescriptionMaxLength);
 
         RuleFor(request => request.DateOfBirth)
-            .SetValidator(new DateOfBirthValidator());
+            .SetValidator(dateOfBirthValidator);
     }
 }
