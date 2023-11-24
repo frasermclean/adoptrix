@@ -2,18 +2,10 @@
 
 namespace Adoptrix.Application.Models;
 
-public class AnimalSearchResult
+public class AnimalSearchResult(Animal animal)
 {
-    public required Guid Id { get; init; }
-    public required string Name { get; init; }
-    public required string? Description { get; init; }
-    public required Species Species { get; init; }
-
-    public static AnimalSearchResult FromAnimal(Animal animal) => new()
-    {
-        Id = animal.Id,
-        Name = animal.Name,
-        Description = animal.Description,
-        Species = animal.Species
-    };
+    public Guid Id => animal.Id;
+    public string Name => animal.Name;
+    public string? Description => animal.Description;
+    public Species Species => animal.Species;
 }

@@ -16,7 +16,8 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
         return await dbContext.Animals
             .Where(animal => (name == null || animal.Name.Contains(name)) &&
                              (species == null || animal.Species == species))
-            .Select(animal => AnimalSearchResult.FromAnimal(animal))
+            .OrderBy(animal => animal.Name)
+            .Select(animal => new AnimalSearchResult(animal))
             .ToListAsync(cancellationToken);
     }
 
