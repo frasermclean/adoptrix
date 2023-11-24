@@ -8,4 +8,5 @@ public class AnimalSearchResult(Animal animal)
     public string Name => animal.Name;
     public string? Description => animal.Description;
     public Species Species => animal.Species;
+    public AnimalImageResult? MainImage { get; init; }
 }

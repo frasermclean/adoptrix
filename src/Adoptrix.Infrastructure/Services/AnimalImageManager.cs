@@ -8,15 +8,23 @@ using Microsoft.Extensions.Logging;
 namespace Adoptrix.Infrastructure.Services;
 
 public class AnimalImageManager(ILogger<AnimalImageManager> logger, IHashGenerator hashGenerator,
-        [FromKeyedServices("animal-images")] BlobContainerClient containerClient)
+        [FromKeyedServices(AnimalImageManager.ContainerName)] BlobContainerClient containerClient)
     : IAnimalImageManager
 {
+    public const string ContainerName = "animal-images";
+
     public string GenerateFileName(Guid animalId, string contentType, string originalFileName)
     {
         var baseName = hashGenerator.ComputeHash(animalId.ToString(), contentType, originalFileName);
         var fileExtension = GetFileExtension(contentType);
 
         return $"{baseName}.{fileExtension}";
+    }
+
+    public Uri GetImageUri(Guid animalId, string fileName)
+    {
+        var imageUri = new Uri(containerClient.Uri, $"{ContainerName}/{animalId}/{fileName}");
+        return imageUri;
     }
 
     public async Task<string> UploadImageAsync(string blobName, Stream imageStream, string contentType,

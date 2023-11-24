@@ -15,10 +15,10 @@ public static class ServiceRegistration
             .AddDbContext<AdoptrixDbContext>()
             .AddScoped<IAnimalsRepository, AnimalsRepository>()
             .AddScoped<IAnimalImageManager, AnimalImageManager>()
-            .AddKeyedScoped<BlobContainerClient>("animal-images", (provider, _) =>
+            .AddKeyedScoped<BlobContainerClient>(AnimalImageManager.ContainerName, (provider, _) =>
             {
                 var serviceClient = provider.GetRequiredService<BlobServiceClient>();
-                return serviceClient.GetBlobContainerClient("animal-images");
+                return serviceClient.GetBlobContainerClient(AnimalImageManager.ContainerName);
             })
             .AddAzureClients(builder =>
             {

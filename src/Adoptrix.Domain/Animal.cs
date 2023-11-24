@@ -14,7 +14,7 @@ public class Animal : AggregateRoot
     public string? Description { get; set; }
     public required Species Species { get; set; }
     public required DateOnly DateOfBirth { get; set; }
-    public IReadOnlyCollection<ImageInformation> Images => images;
+    public IReadOnlyList<ImageInformation> Images => images;
 
     /// <summary>
     /// Updates the properties of this animal with values from the given animal.
