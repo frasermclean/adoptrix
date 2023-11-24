@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
-using Adoptrix.Domain.Errors;
 using FastEndpoints;
 using FluentResults;
 using Microsoft.Extensions.Logging;

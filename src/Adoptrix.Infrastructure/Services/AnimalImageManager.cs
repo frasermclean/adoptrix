@@ -11,9 +11,9 @@ public class AnimalImageManager(ILogger<AnimalImageManager> logger, IHashGenerat
         [FromKeyedServices("animal-images")] BlobContainerClient containerClient)
     : IAnimalImageManager
 {
-    public string GenerateFileName(string contentType, string originalFileName)
+    public string GenerateFileName(Guid animalId, string contentType, string originalFileName)
     {
-        var baseName = hashGenerator.ComputeHash(contentType, originalFileName);
+        var baseName = hashGenerator.ComputeHash(animalId.ToString(), contentType, originalFileName);
         var fileExtension = GetFileExtension(contentType);
 
         return $"{baseName}.{fileExtension}";

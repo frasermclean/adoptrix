@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Commands;
 using Adoptrix.Application.Models;
-using Adoptrix.Domain;
 using FastEndpoints;
 
 namespace Adoptrix.Api.Endpoints.Animals;

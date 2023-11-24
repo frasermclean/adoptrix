@@ -1,0 +1,14 @@
+﻿using Adoptrix.Domain;
+using FastEndpoints;
+using FluentResults;
+
+namespace Adoptrix.Application.Commands;
+
+public class AddAnimalImageCommand : ICommand<Result>
+{
+    public required Animal Animal { get; init; }
+    public required Stream FileStream { get; init; }
+    public required string? Description { get; init; }
+    public required string ContentType { get; init; }
+    public required string OriginalFileName { get; init; }
+}

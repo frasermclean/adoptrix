@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Models;
 using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Domain;
 using FastEndpoints;
 
 namespace Adoptrix.Application.Commands;

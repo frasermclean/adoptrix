@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Api.Endpoints.Animals.AddAnimalImages;
+﻿namespace Adoptrix.Api.Requests;
 
 public class AddAnimalImagesRequest
 {
