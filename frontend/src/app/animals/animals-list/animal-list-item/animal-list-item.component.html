@@ -7,11 +7,11 @@
 
     <img
       mat-card-image
-      src="{{ animal.imageUrl ? animal.imageUrl : 'images/dog.png' }}"
+      [src]="getImageUrl(animal)"
       alt="{{ animal.imageUrl ? 'Main image of {{ animal.name }}' : 'Placeholder image' }}"
     />
     <mat-card-content>
-      <p>{{ animal.description }}</p>
+      <p class="description">{{ animal.description }}</p>
     </mat-card-content>
 
     <mat-card-actions>

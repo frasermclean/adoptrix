@@ -12,3 +12,6 @@ Adoptrix is a platform for animal adoption centres to manage their animals and a
 - Azure Blob Storage
 - Azure Functions
   
+  ## Attribution
+  This project uses the following resources:
+  - [Pet icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/pet)

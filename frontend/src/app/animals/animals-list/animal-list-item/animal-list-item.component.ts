@@ -15,4 +15,8 @@ import { AnimalSearchResult } from '../../../models/api-responses';
 })
 export class AnimalListItemComponent {
   @Input({ required: true }) animal!: AnimalSearchResult;
+
+  getImageUrl(animal: AnimalSearchResult) {
+    return animal.imageUrl ? animal.imageUrl : `images/${animal.species}.png`;
+  }
 }
