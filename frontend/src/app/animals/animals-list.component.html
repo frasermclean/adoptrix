@@ -1,0 +1,7 @@
+<h1>Here is a list of animals</h1>
+
+<div id="results-container">
+  @for (animal of animals$ | async; track $index) {
+  <app-animal-list-item [animal]="animal"></app-animal-list-item>
+  }
+</div>
