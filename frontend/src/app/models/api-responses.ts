@@ -11,6 +11,7 @@ export interface AnimalSearchResult {
   description?: string;
   species: Species;
   mainImage?: AnimalImageResult;
+  imageCount: number;
 }
 
 export interface AnimalImageResult {

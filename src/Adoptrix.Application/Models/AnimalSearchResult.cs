@@ -9,4 +9,5 @@ public class AnimalSearchResult(Animal animal)
     public string? Description => animal.Description;
     public Species Species => animal.Species;
     public AnimalImageResult? MainImage { get; init; }
+    public int ImageCount => animal.Images.Count;
 }
