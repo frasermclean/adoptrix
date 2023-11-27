@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AnimalsService } from '../../services/animals.service';
+import { AnimalsService } from '@services/animals.service';
 import { AnimalListItemComponent } from './animal-list-item/animal-list-item.component';
 
 @Component({

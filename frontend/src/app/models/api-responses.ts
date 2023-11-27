@@ -1,8 +1,9 @@
-export interface Animal {
+export interface AnimalResult {
   id: string;
   name: string;
   description?: string;
   species: Species;
+  dateOfBirth: string;
 }
 
 export interface AnimalSearchResult {
@@ -14,7 +15,7 @@ export interface AnimalSearchResult {
   imageCount: number;
 }
 
-export interface AnimalImageResult {
+interface AnimalImageResult {
   uri: string;
   description?: string;
 }

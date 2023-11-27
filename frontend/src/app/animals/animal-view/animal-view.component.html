@@ -1,6 +1,10 @@
 @if (animal$ | async; as animal) {
 <h1>{{ animal.name }}</h1>
 <p>{{ animal.description }}</p>
+<ul>
+  <li>Date of birth: {{ animal.dateOfBirth | date:'dd MMMM YYYY' }}</li>
+  <li>Age: {{ animal.dateOfBirth | age }}</li>
+</ul>
 }
 
 <button mat-raised-button color="primary" routerLink="..">
