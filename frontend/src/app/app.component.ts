@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
-import { ToolbarComponent } from './toolbar/toolbar.component';
-import { MenuComponent } from './menu/menu.component';
+import { ToolbarComponent } from './core/toolbar/toolbar.component';
+import { MenuComponent } from './core/menu/menu.component';
 
 @Component({
   selector: 'app-root',
