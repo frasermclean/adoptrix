@@ -46,11 +46,10 @@ public static class ServiceRegistration
 
         // add cors policy for local development
         services.AddCors(options => options.AddDefaultPolicy(policyBuilder =>
-        {
-            policyBuilder.AllowAnyOrigin();
-            policyBuilder.AllowAnyHeader();
-            policyBuilder.AllowAnyMethod();
-        }));
+            policyBuilder.WithOrigins("http://localhost:4200")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+        ));
 
         return services;
     }
