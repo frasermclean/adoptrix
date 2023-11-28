@@ -28,7 +28,7 @@ public static class ServiceRegistration
             .AddFastEndpoints()
             .AddValidators()
             .AddDomainServices()
-            .AddApplicationServices()
+            .AddApplicationServices(builder.Configuration)
             .AddInfrastructureServices()
             .AddDevelopmentServices(builder.Environment)
             .AddSingleton<EventDispatcherPostProcessor>();
