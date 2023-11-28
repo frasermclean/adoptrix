@@ -1,6 +1,7 @@
-﻿using Adoptrix.Api.Requests;
+﻿using Adoptrix.Api.Contracts;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Commands;
+using Adoptrix.Application.Services;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
 using FastEndpoints;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValidator)
+public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValidator, ISqidConverter sqidConverter)
     : Endpoint<AddAnimalImagesRequest, Results<Ok<Animal>, NotFound, BadRequest<IEnumerable<string>>>>
 {
     public override void Configure()
@@ -21,7 +22,8 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
     public override async Task<Results<Ok<Animal>, NotFound, BadRequest<IEnumerable<string>>>> ExecuteAsync(
         AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
-        var getResult = await new GetAnimalCommand { Id = request.Id }.ExecuteAsync(cancellationToken);
+        var animalId = sqidConverter.CovertToInt(request.Id);
+        var getResult = await new GetAnimalCommand { Id = animalId }.ExecuteAsync(cancellationToken);
         if (getResult.IsFailed)
         {
             return TypedResults.NotFound();

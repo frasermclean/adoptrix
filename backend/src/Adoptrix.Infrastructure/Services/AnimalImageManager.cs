@@ -7,13 +7,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Infrastructure.Services;
 
-public class AnimalImageManager(ILogger<AnimalImageManager> logger, IHashGenerator hashGenerator,
-        [FromKeyedServices(AnimalImageManager.ContainerName)] BlobContainerClient containerClient)
+public class AnimalImageManager(
+        ILogger<AnimalImageManager> logger,
+        IHashGenerator hashGenerator,
+        ISqidConverter sqidConverter,
+        [FromKeyedServices(AnimalImageManager.ContainerName)]
+        BlobContainerClient containerClient)
     : IAnimalImageManager
 {
     public const string ContainerName = "animal-images";
 
-    public string GenerateFileName(Guid animalId, string contentType, string originalFileName)
+    public string GenerateFileName(int animalId, string contentType, string originalFileName)
     {
         var baseName = hashGenerator.ComputeHash(animalId.ToString(), contentType, originalFileName);
         var fileExtension = GetFileExtension(contentType);
@@ -21,10 +25,10 @@ public class AnimalImageManager(ILogger<AnimalImageManager> logger, IHashGenerat
         return $"{baseName}.{fileExtension}";
     }
 
-    public Uri GetImageUri(Guid animalId, string fileName)
+    public Uri GetImageUri(int animalId, string fileName)
     {
-        var imageUri = new Uri(containerClient.Uri, $"{ContainerName}/{animalId}/{fileName}");
-        return imageUri;
+        var blobName = GetBlobName(animalId, fileName);
+        return new Uri(containerClient.Uri, $"{ContainerName}/{blobName}");
     }
 
     public async Task<string> UploadImageAsync(string blobName, Stream imageStream, string contentType,
@@ -45,7 +49,7 @@ public class AnimalImageManager(ILogger<AnimalImageManager> logger, IHashGenerat
         return Convert.ToBase64String(response.Value.ContentHash);
     }
 
-    public async Task<Result> DeleteImageAsync(Guid animalId, string fileName, CancellationToken cancellationToken)
+    public async Task<Result> DeleteImageAsync(int animalId, string fileName, CancellationToken cancellationToken)
     {
         var blobName = GetBlobName(animalId, fileName);
         var blobClient = containerClient.GetBlobClient(blobName);
@@ -55,8 +59,11 @@ public class AnimalImageManager(ILogger<AnimalImageManager> logger, IHashGenerat
         return Result.OkIf(response.Value, "Specified blob was not found");
     }
 
-    private static string GetBlobName(Guid animalId, string fileName)
-        => $"{animalId}/{fileName}";
+    private string GetBlobName(int animalId, string fileName)
+    {
+        var sqid = sqidConverter.ConvertToSqid(animalId);
+        return $"{sqid}/{fileName}";
+    }
 
     private static string GetFileExtension(string contentType)
         => contentType switch

@@ -16,7 +16,10 @@ public class SqidConverter(IOptions<SqidsOptions> options)
 
     public int CovertToInt(string sqid)
     {
-        return encoder.Decode(sqid)[0];
+        var numbers = encoder.Decode(sqid);
+        return numbers.Count == 1
+            ? numbers[0]
+            : throw new ArgumentException("Invalid value to decode", nameof(sqid));
     }
 
     public string ConvertToSqid(int id)

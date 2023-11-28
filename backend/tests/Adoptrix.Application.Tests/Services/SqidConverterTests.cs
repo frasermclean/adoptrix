@@ -30,6 +30,8 @@ public class SqidConverterTests
 
         // assert
         result.Should().Be(expectedResult);
+        result.Should().HaveLength(5);
+        result.Should().MatchRegex("^[a-z0-9]*$");
     }
 
     [Theory]
