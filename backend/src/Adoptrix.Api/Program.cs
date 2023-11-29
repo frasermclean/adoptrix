@@ -1,5 +1,4 @@
 using Adoptrix.Api.Startup;
-using Adoptrix.Infrastructure;
 
 namespace Adoptrix.Api;
 

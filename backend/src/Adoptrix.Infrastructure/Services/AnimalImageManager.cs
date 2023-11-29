@@ -19,7 +19,7 @@ public class AnimalImageManager(
 
     public string GenerateFileName(int animalId, string contentType, string originalFileName)
     {
-        var baseName = hashGenerator.ComputeHash(animalId.ToString(), contentType, originalFileName);
+        var baseName = hashGenerator.ComputeHash(sqidConverter.ConvertToSqid(animalId), contentType, originalFileName);
         var fileExtension = GetFileExtension(contentType);
 
         return $"{baseName}.{fileExtension}";
@@ -31,9 +31,10 @@ public class AnimalImageManager(
         return new Uri(containerClient.Uri, $"{ContainerName}/{blobName}");
     }
 
-    public async Task<string> UploadImageAsync(string blobName, Stream imageStream, string contentType,
+    public async Task<string> UploadImageAsync(int animalId, string fileName, Stream imageStream, string contentType,
         CancellationToken cancellationToken)
     {
+        var blobName = GetBlobName(animalId, fileName);
         var blobClient = containerClient.GetBlobClient(blobName);
 
         var options = new BlobUploadOptions

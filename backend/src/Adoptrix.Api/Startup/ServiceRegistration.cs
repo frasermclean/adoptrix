@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Processors;
+using Adoptrix.Api.Services;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Services;
@@ -31,6 +32,7 @@ public static class ServiceRegistration
             .AddApplicationServices(builder.Configuration)
             .AddInfrastructureServices()
             .AddDevelopmentServices(builder.Environment)
+            .AddScoped<IResponseMappingService, ResponseMappingService>()
             .AddSingleton<EventDispatcherPostProcessor>();
 
         return builder;

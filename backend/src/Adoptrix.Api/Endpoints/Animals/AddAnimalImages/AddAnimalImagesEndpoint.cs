@@ -1,4 +1,6 @@
-﻿using Adoptrix.Api.Validators;
+﻿using Adoptrix.Api.Contracts.Responses;
+using Adoptrix.Api.Services;
+using Adoptrix.Api.Validators;
 using Adoptrix.Application.Commands;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
@@ -9,8 +11,9 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Adoptrix.Api.Endpoints.Animals.AddAnimalImages;
 
-public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValidator)
-    : Endpoint<AddAnimalImagesRequest, Results<Ok<Animal>, NotFound, BadRequest<IEnumerable<string>>>>
+public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValidator,
+        IResponseMappingService mappingService)
+    : Endpoint<AddAnimalImagesRequest, Results<Ok<AnimalResponse>, NotFound, BadRequest<IEnumerable<string>>>>
 {
     public override void Configure()
     {
@@ -18,7 +21,7 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
         AllowFileUploads(true);
     }
 
-    public override async Task<Results<Ok<Animal>, NotFound, BadRequest<IEnumerable<string>>>> ExecuteAsync(
+    public override async Task<Results<Ok<AnimalResponse>, NotFound, BadRequest<IEnumerable<string>>>> ExecuteAsync(
         AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
         var getResult = await new GetAnimalCommand { Id = request.Id }.ExecuteAsync(cancellationToken);
@@ -27,6 +30,7 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
             return TypedResults.NotFound();
         }
 
+        var animal = getResult.Value;
         var results = new List<Result>();
         await foreach (var section in FormFileSectionsAsync(cancellationToken))
         {
@@ -41,11 +45,11 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
                 continue;
             }
 
-            results.Add(await ExecuteCommandAsync(getResult.Value, section, cancellationToken));
+            results.Add(await ExecuteCommandAsync(animal, section, cancellationToken));
         }
 
         return results.TrueForAll(result => result.IsSuccess)
-            ? TypedResults.Ok(getResult.Value)
+            ? TypedResults.Ok(mappingService.MapAnimal(animal))
             : TypedResults.BadRequest(results.Where(result => result.IsFailed)
                 .Select(result => result.Errors.First().Message));
     }

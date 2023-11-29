@@ -9,4 +9,5 @@ public class AnimalResponse
     public required string? Description { get; init; }
     public required Species Species { get; init; }
     public required DateOnly DateOfBirth { get; init; }
+    public required IEnumerable<AnimalImageResponse> Images { get; init; }
 }
