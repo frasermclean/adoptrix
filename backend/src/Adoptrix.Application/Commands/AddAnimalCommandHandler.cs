@@ -15,7 +15,7 @@ public class AddAnimalCommandHandler(IAnimalsRepository repository, ILogger<AddA
         {
             Name = command.Name,
             Description = command.Description,
-            Species = command.Species,
+            SpeciesId = command.SpeciesId,
             DateOfBirth = command.DateOfBirth
         }, cancellationToken);
 

@@ -8,6 +8,6 @@ public class AddAnimalCommand : ICommand<Result<Animal>>
 {
     public required string Name { get; init; }
     public string? Description { get; init; }
-    public required Species Species { get; init; }
+    public required int SpeciesId { get; init; }
     public required DateOnly DateOfBirth { get; init; }
 }
