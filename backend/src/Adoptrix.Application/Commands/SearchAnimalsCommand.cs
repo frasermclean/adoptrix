@@ -5,6 +5,6 @@ namespace Adoptrix.Application.Commands;
 
 public class SearchAnimalsCommand : ICommand<IEnumerable<Animal>>
 {
-    public string? AnimalName { get; init; }
-    public string? SpeciesName { get; init; }
+    public string? Name { get; init; }
+    public string? Species { get; init; }
 }
