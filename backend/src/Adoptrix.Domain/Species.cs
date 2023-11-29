@@ -1,8 +1,8 @@
 ﻿namespace Adoptrix.Domain;
 
-public enum Species : byte
+public class Species : AggregateRoot
 {
-    Dog = 1,
-    Cat = 2,
-    Horse = 3,
+    public const int NameMaxLength = 20;
+    
+    public string Name { get; init; } = string.Empty;
 }

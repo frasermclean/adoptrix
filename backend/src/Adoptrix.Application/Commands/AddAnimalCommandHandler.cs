@@ -6,16 +6,26 @@ using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Application.Commands;
 
-public class AddAnimalCommandHandler(IAnimalsRepository repository, ILogger<AddAnimalCommandHandler> logger)
+public class AddAnimalCommandHandler(
+        ILogger<AddAnimalCommandHandler> logger,
+        IAnimalsRepository repository,
+        ISpeciesRepository speciesRepository)
     : ICommandHandler<AddAnimalCommand, Result<Animal>>
 {
     public async Task<Result<Animal>> ExecuteAsync(AddAnimalCommand command, CancellationToken cancellationToken)
     {
+        var speciesResult = await speciesRepository.GetSpeciesByNameAsync(command.SpeciesName, cancellationToken);
+        if (speciesResult.IsFailed)
+        {
+            logger.LogError("Could not find species with name: {Name}", command.SpeciesName);
+            return speciesResult.ToResult();
+        }
+
         var result = await repository.AddAsync(new Animal
         {
             Name = command.Name,
             Description = command.Description,
-            Species = command.Species,
+            Species = speciesResult.Value,
             DateOfBirth = command.DateOfBirth
         }, cancellationToken);
 

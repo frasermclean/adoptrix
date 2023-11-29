@@ -8,6 +8,7 @@ namespace Adoptrix.Infrastructure;
 
 public class AdoptrixDbContext(IConfiguration configuration) : DbContext
 {
+    public DbSet<Species> Species => Set<Species>();
     public DbSet<Animal> Animals => Set<Animal>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
@@ -20,6 +21,7 @@ public class AdoptrixDbContext(IConfiguration configuration) : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.ApplyConfiguration(new SpeciesConfiguration());
         builder.ApplyConfiguration(new AnimalConfiguration());
     }
 }

@@ -14,6 +14,7 @@ public static class ServiceRegistration
         services
             .AddDbContext<AdoptrixDbContext>()
             .AddScoped<IAnimalsRepository, AnimalsRepository>()
+            .AddScoped<ISpeciesRepository, SpeciesRepository>()
             .AddScoped<IAnimalImageManager, AnimalImageManager>()
             .AddKeyedScoped<BlobContainerClient>(AnimalImageManager.ContainerName, (provider, _) =>
             {

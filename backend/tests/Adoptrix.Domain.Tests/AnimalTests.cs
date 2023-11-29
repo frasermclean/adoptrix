@@ -17,7 +17,8 @@ public class AnimalTests
         fido.GetHashCode().Should().Be(felix.GetHashCode());
         fido.Name.Should().Be("Fido");
         fido.Description.Should().BeNull();
-        fido.Species.Should().Be(Species.Dog);
+        fido.Species.Id.Should().Be(1);
+        fido.Species.Name.Should().Be("Dog");
         fido.DateOfBirth.Should().Be(new DateOnly(2019, 1, 1));
     }
 
@@ -39,12 +40,12 @@ public class AnimalTests
     }
 
     private static Animal CreateAnimal(int id = 1, string name = "Fido", string? description = null,
-        Species species = Species.Dog, DateOnly? dateOfBirth = null) => new()
+        Species? species = null, DateOnly? dateOfBirth = null) => new()
     {
         Id = id,
         Name = name,
         Description = description,
-        Species = species,
+        Species = species ?? new Species { Id = 1, Name = "Dog" },
         DateOfBirth = dateOfBirth ?? new DateOnly(2019, 1, 1)
     };
 }
