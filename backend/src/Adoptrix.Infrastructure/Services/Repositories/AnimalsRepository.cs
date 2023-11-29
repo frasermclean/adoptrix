@@ -9,19 +9,22 @@ namespace Adoptrix.Infrastructure.Services.Repositories;
 public class AnimalsRepository(AdoptrixDbContext dbContext)
     : IAnimalsRepository
 {
-    public async Task<IEnumerable<Animal>> SearchAsync(string? name = null, Species? species = null,
+    public async Task<IEnumerable<Animal>> SearchAsync(string? animalName = null, string? speciesName = null,
         CancellationToken cancellationToken = default)
     {
         return await dbContext.Animals
-            .Where(animal => (name == null || animal.Name.Contains(name)) &&
-                             (species == null || animal.Species == species))
+            .Where(animal => (animalName == null || animal.Name.Contains(animalName)) &&
+                             (speciesName == null || animal.Species.Name == speciesName))
+            .Include(animal => animal.Species)
             .OrderBy(animal => animal.Name)
             .ToListAsync(cancellationToken);
     }
 
     public async Task<Result<Animal>> GetAsync(int animalId, CancellationToken cancellationToken = default)
     {
-        var animal = await dbContext.Animals.FindAsync(new object?[] { animalId }, cancellationToken);
+        var animal = await dbContext.Animals.Where(animal => animal.Id == animalId)
+            .Include(animal => animal.Species)
+            .FirstOrDefaultAsync(cancellationToken);
 
         return animal is null
             ? new AnimalNotFoundError(animalId)
