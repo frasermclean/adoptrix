@@ -41,9 +41,26 @@ public class SqidConverterTests
     public void ConvertToInt_Should_Return_ExpectedResult(string valueToConvert, int expectedResult)
     {
         // act
-        var result = sqidConverter.CovertToInt(valueToConvert);
+        var result = sqidConverter.ConvertToInt(valueToConvert);
+        var isValid = sqidConverter.IsValid(valueToConvert);
 
         // assert
         result.Should().Be(expectedResult);
+        isValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ConvertToInt_WithInvalidSqid_Should_ThrowException()
+    {
+        // arrange
+        const string invalidSqid = "XXX";
+
+        // act
+        Action act = () => sqidConverter.ConvertToInt(invalidSqid);
+        var isValid = sqidConverter.IsValid(invalidSqid);
+
+        // assert
+        act.Should().Throw<ArgumentException>().Which.Message.Should().Be("Invalid value to decode (Parameter 'sqid')");
+        isValid.Should().BeFalse();
     }
 }

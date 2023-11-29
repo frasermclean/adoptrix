@@ -5,16 +5,15 @@ using Adoptrix.Application.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Adoptrix.Api.Endpoints.Animals.Get;
+namespace Adoptrix.Api.Endpoints.Animals.UpdateAnimal;
 
-[HttpGet("animals/{id}")]
-public class GetAnimalEndpoint(ISqidConverter sqidConverter)
-    : Endpoint<GetAnimalRequest, Results<Ok<AnimalResponse>, NotFound>>
+[HttpPut("/animals/{id}")]
+public class UpdateAnimalEndpoint(ISqidConverter sqidConverter)
+    : Endpoint<UpdateAnimalCommand, Results<Ok<AnimalResponse>, NotFound>>
 {
-    public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(GetAnimalRequest request,
+    public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(UpdateAnimalCommand command,
         CancellationToken cancellationToken)
     {
-        var command = new GetAnimalCommand { Id = sqidConverter.CovertToInt(request.Id) };
         var result = await command.ExecuteAsync(cancellationToken);
 
         return result.IsSuccess

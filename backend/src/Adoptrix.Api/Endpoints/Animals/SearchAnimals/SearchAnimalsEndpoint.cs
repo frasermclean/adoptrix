@@ -4,7 +4,7 @@ using Adoptrix.Application.Commands;
 using Adoptrix.Application.Services;
 using FastEndpoints;
 
-namespace Adoptrix.Api.Endpoints.Animals.Search;
+namespace Adoptrix.Api.Endpoints.Animals.SearchAnimals;
 
 [HttpGet("animals")]
 public class SearchAnimalsEndpoint(ISqidConverter sqidConverter)

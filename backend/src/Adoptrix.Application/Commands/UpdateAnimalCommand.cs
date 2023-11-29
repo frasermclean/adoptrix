@@ -6,7 +6,7 @@ namespace Adoptrix.Application.Commands;
 
 public class UpdateAnimalCommand : ICommand<Result<Animal>>
 {
-    public int Id { get; init; }
+    public string Id { get; init; } = string.Empty;
     public required string Name { get; init; }
     public string? Description { get; init; }
     public required Species Species { get; init; }

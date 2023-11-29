@@ -1,16 +1,15 @@
-﻿using Adoptrix.Api.Contracts;
-using Adoptrix.Api.Validators;
+﻿using Adoptrix.Api.Validators;
 using Adoptrix.Application.Commands;
-using Adoptrix.Application.Services;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
 using FastEndpoints;
 using FluentResults;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.WebUtilities;
 
-namespace Adoptrix.Api.Endpoints.Animals;
+namespace Adoptrix.Api.Endpoints.Animals.AddAnimalImages;
 
-public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValidator, ISqidConverter sqidConverter)
+public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValidator)
     : Endpoint<AddAnimalImagesRequest, Results<Ok<Animal>, NotFound, BadRequest<IEnumerable<string>>>>
 {
     public override void Configure()
@@ -22,8 +21,7 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
     public override async Task<Results<Ok<Animal>, NotFound, BadRequest<IEnumerable<string>>>> ExecuteAsync(
         AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
-        var animalId = sqidConverter.CovertToInt(request.Id);
-        var getResult = await new GetAnimalCommand { Id = animalId }.ExecuteAsync(cancellationToken);
+        var getResult = await new GetAnimalCommand { Id = request.Id }.ExecuteAsync(cancellationToken);
         if (getResult.IsFailed)
         {
             return TypedResults.NotFound();
@@ -43,22 +41,27 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
                 continue;
             }
 
-            // execute command
-            var commandResult = await new AddAnimalImageCommand
-            {
-                Animal = getResult.Value,
-                FileStream = section.Section.Body,
-                ContentType = section.Section.ContentType!,
-                Description = section.Name,
-                OriginalFileName = section.FileName
-            }.ExecuteAsync(cancellationToken);
-
-            results.Add(commandResult);
+            results.Add(await ExecuteCommandAsync(getResult.Value, section, cancellationToken));
         }
 
         return results.TrueForAll(result => result.IsSuccess)
             ? TypedResults.Ok(getResult.Value)
             : TypedResults.BadRequest(results.Where(result => result.IsFailed)
                 .Select(result => result.Errors.First().Message));
+    }
+
+    private static async Task<Result> ExecuteCommandAsync(Animal animal, FileMultipartSection section,
+        CancellationToken cancellationToken)
+    {
+        var command = new AddAnimalImageCommand
+        {
+            Animal = animal,
+            FileStream = section.Section.Body,
+            ContentType = section.Section.ContentType!,
+            Description = section.Name,
+            OriginalFileName = section.FileName
+        };
+
+        return await command.ExecuteAsync(cancellationToken);
     }
 }

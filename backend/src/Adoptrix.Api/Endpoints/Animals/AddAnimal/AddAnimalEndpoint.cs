@@ -5,7 +5,7 @@ using Adoptrix.Application.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Adoptrix.Api.Endpoints.Animals;
+namespace Adoptrix.Api.Endpoints.Animals.AddAnimal;
 
 [HttpPost("animals")]
 public class AddAnimalEndpoint(ISqidConverter sqidConverter)
