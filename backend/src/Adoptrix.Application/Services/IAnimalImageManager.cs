@@ -4,11 +4,11 @@ namespace Adoptrix.Application.Services;
 
 public interface IAnimalImageManager
 {
-    string GenerateFileName(Guid animalId, string contentType, string originalFileName);
-    Uri GetImageUri(Guid animalId, string fileName);
+    string GenerateFileName(int animalId, string contentType, string originalFileName);
+    Uri GetImageUri(int animalId, string fileName);
 
-    Task<string> UploadImageAsync(string blobName, Stream imageStream, string contentType,
+    Task<string> UploadImageAsync(int animalId, string fileName, Stream imageStream, string contentType,
         CancellationToken cancellationToken = default);
 
-    Task<Result> DeleteImageAsync(Guid animalId, string fileName, CancellationToken cancellationToken = default);
+    Task<Result> DeleteImageAsync(int animalId, string fileName, CancellationToken cancellationToken = default);
 }

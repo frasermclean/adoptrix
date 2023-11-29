@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adoptrix.Infrastructure.Migrations
 {
     [DbContext(typeof(AdoptrixDbContext))]
-    [Migration("20231123032402_InitialSchema")]
-    partial class InitialSchema
+    [Migration("20231129045802_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,9 +27,11 @@ namespace Adoptrix.Infrastructure.Migrations
 
             modelBuilder.Entity("Adoptrix.Domain.Animal", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
@@ -57,12 +59,14 @@ namespace Adoptrix.Infrastructure.Migrations
                 {
                     b.OwnsMany("Adoptrix.Domain.ImageInformation", "Images", b1 =>
                         {
-                            b1.Property<Guid>("AnimalId")
-                                .HasColumnType("uniqueidentifier");
+                            b1.Property<int>("AnimalId")
+                                .HasColumnType("int");
 
-                            b1.Property<Guid>("Id")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Description")
                                 .HasColumnType("nvarchar(max)");

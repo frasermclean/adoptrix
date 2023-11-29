@@ -6,5 +6,5 @@ namespace Adoptrix.Application.Commands;
 
 public class GetAnimalCommand : ICommand<Result<Animal>>
 {
-    public required Guid Id { get; init; }
+    public required string Id { get; init; }
 }

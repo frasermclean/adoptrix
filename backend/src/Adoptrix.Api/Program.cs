@@ -6,10 +6,11 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        WebApplication.CreateBuilder(args)
+        var app = WebApplication.CreateBuilder(args)
             .RegisterServices()
             .Build()
-            .ConfigureMiddleware()
-            .Run();
+            .ConfigureMiddleware();
+
+        app.Run();
     }
 }

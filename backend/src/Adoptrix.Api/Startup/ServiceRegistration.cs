@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Processors;
+using Adoptrix.Api.Services;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Services;
@@ -28,9 +29,10 @@ public static class ServiceRegistration
             .AddFastEndpoints()
             .AddValidators()
             .AddDomainServices()
-            .AddApplicationServices()
+            .AddApplicationServices(builder.Configuration)
             .AddInfrastructureServices()
             .AddDevelopmentServices(builder.Environment)
+            .AddScoped<IResponseMappingService, ResponseMappingService>()
             .AddSingleton<EventDispatcherPostProcessor>();
 
         return builder;
@@ -56,6 +58,7 @@ public static class ServiceRegistration
 
     private static IServiceCollection AddValidators(this IServiceCollection services)
     {
+        services.AddSingleton<SqidValidator>();
         services.AddSingleton<ImageContentTypeValidator>();
         services.AddSingleton<DateOfBirthValidator>();
 

@@ -5,5 +5,5 @@ namespace Adoptrix.Application.Commands;
 
 public class DeleteAnimalCommand : ICommand<Result>
 {
-    public required Guid Id { get; init; }
+    public required string Id { get; init; }
 }

@@ -25,7 +25,7 @@ public class AddAnimalImageCommandHandler(ILogger<AddAnimalImageCommandHandler> 
         }
 
         // upload the image to blob storage
-        await imageManager.UploadImageAsync($"{command.Animal.Id}/{fileName}", command.FileStream, command.ContentType,
+        await imageManager.UploadImageAsync(command.Animal.Id, fileName, command.FileStream, command.ContentType,
             cancellationToken);
 
         // update animal in the database

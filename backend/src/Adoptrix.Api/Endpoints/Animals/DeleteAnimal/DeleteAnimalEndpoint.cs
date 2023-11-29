@@ -1,13 +1,11 @@
 ﻿using Adoptrix.Application.Commands;
-using Adoptrix.Application.Services.Repositories;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Adoptrix.Api.Endpoints.Animals;
+namespace Adoptrix.Api.Endpoints.Animals.DeleteAnimal;
 
 [HttpDelete("/animals/{id}")]
-public class DeleteAnimalEndpoint(IAnimalsRepository repository)
-    : Endpoint<DeleteAnimalCommand, Results<NoContent, NotFound>>
+public class DeleteAnimalEndpoint : Endpoint<DeleteAnimalCommand, Results<NoContent, NotFound>>
 {
     public override async Task<Results<NoContent, NotFound>> ExecuteAsync(DeleteAnimalCommand command,
         CancellationToken cancellationToken)

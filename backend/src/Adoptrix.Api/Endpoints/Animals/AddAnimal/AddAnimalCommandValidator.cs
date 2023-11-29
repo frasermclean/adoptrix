@@ -1,22 +1,23 @@
-﻿using Adoptrix.Application.Commands;
+﻿using Adoptrix.Api.Validators;
+using Adoptrix.Application.Commands;
 using Adoptrix.Domain;
 using FastEndpoints;
 using FluentValidation;
 
-namespace Adoptrix.Api.Validators;
+namespace Adoptrix.Api.Endpoints.Animals.AddAnimal;
 
 public class AddAnimalCommandValidator : Validator<AddAnimalCommand>
 {
     public AddAnimalCommandValidator(DateOfBirthValidator dateOfBirthValidator)
     {
-        RuleFor(request => request.Name)
+        RuleFor(command => command.Name)
             .NotEmpty()
             .MaximumLength(Animal.NameMaxLength);
 
-        RuleFor(request => request.Description)
+        RuleFor(command => command.Description)
             .MaximumLength(Animal.DescriptionMaxLength);
 
-        RuleFor(request => request.DateOfBirth)
+        RuleFor(command => command.DateOfBirth)
             .SetValidator(dateOfBirthValidator);
     }
 }
