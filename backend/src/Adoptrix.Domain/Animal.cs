@@ -16,18 +16,6 @@ public class Animal : AggregateRoot
     public required DateOnly DateOfBirth { get; set; }
     public IReadOnlyList<ImageInformation> Images => images;
 
-    /// <summary>
-    /// Updates the properties of this animal with values from the given animal.
-    /// </summary>
-    /// <param name="animal">The <see cref="Animal"/> to update from.</param>
-    public void UpdateFrom(Animal animal)
-    {
-        Name = animal.Name;
-        Description = animal.Description;
-        Species = animal.Species;
-        DateOfBirth = animal.DateOfBirth;
-    }
-
     public Result<ImageInformation> AddImage(string fileName, string? description, string originalFileName,
         Guid? uploadedBy = null)
     {
