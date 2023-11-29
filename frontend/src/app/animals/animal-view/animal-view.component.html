@@ -1,12 +1,12 @@
-@if (animal$ | async; as animal) {
+@switch (state$ | async) { @case ('loading') {
+<p>Loading...</p>
+} @case ('ready') { @if (animal$ | async; as animal) {
 <h1>{{ animal.name }}</h1>
 <p>{{ animal.description }}</p>
 <ul>
-  <li>Date of birth: {{ animal.dateOfBirth | date:'dd MMMM YYYY' }}</li>
+  <li>Date of birth: {{ animal.dateOfBirth | date : "dd MMMM YYYY" }}</li>
   <li>Age: {{ animal.dateOfBirth | age }}</li>
 </ul>
-}
+} } }
 
-<button mat-raised-button color="primary" routerLink="..">
-  BACK TO RESULTS
-</button>
+<button mat-raised-button color="primary" routerLink="..">BACK TO RESULTS</button>
