@@ -9,6 +9,11 @@ namespace Adoptrix.Infrastructure.Services.Repositories;
 public class SpeciesRepository(AdoptrixDbContext dbContext)
     : ISpeciesRepository
 {
+    public async Task<IEnumerable<Species>> GetAllSpeciesAsync(CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Species.ToListAsync(cancellationToken);
+    }
+
     public Task<Result<Species>> GetSpeciesByIdAsync(int speciesId, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
