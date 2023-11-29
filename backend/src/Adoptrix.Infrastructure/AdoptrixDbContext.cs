@@ -21,6 +21,7 @@ public class AdoptrixDbContext(IConfiguration configuration) : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.ApplyConfiguration(new SpeciesConfiguration());
         builder.ApplyConfiguration(new AnimalConfiguration());
     }
 }

@@ -12,8 +12,7 @@ public class Animal : AggregateRoot
 
     public required string Name { get; set; }
     public string? Description { get; set; }
-    public required int SpeciesId { get; set; }
-    public Species Species { get; set; } = new();
+    public required Species Species { get; set; }
     public required DateOnly DateOfBirth { get; set; }
     public IReadOnlyList<ImageInformation> Images => images;
 

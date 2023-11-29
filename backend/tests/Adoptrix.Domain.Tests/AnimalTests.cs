@@ -46,7 +46,6 @@ public class AnimalTests
         Name = name,
         Description = description,
         Species = species ?? new Species { Id = 1, Name = "Dog" },
-        SpeciesId = species?.Id ?? 1,
         DateOfBirth = dateOfBirth ?? new DateOnly(2019, 1, 1)
     };
 }
