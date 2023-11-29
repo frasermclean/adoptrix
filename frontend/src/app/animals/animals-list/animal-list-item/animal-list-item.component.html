@@ -8,8 +8,8 @@
     <img
       class="animal-image"
       mat-card-image
-      [src]="getImageUrl(animal)"
-      alt="{{ animal.mainImage ? 'Main image of {{ animal.name }}' : 'Placeholder image' }}"
+      [src]="imageUrl"
+      [alt]="imageAltText"
     />
     <mat-card-content>
       <p class="description">{{ animal.description }}</p>

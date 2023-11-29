@@ -1,4 +1,4 @@
-import { Species } from "./api-responses";
+import { Species } from './species.enum';
 
 export interface Animal {
   id: string;
@@ -6,4 +6,11 @@ export interface Animal {
   description?: string;
   species: Species;
   dateOfBirth: Date;
+  images: AnimalImage[];
+}
+
+interface AnimalImage {
+  id: number;
+  uri: string;
+  description?: string;
 }

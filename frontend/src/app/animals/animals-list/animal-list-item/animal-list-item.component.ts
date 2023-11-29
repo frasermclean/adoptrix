@@ -4,8 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-
-import { AnimalSearchResult } from '../../../models/api-responses';
+import { Animal } from '@models/animal.model';
 
 @Component({
   selector: 'app-animal-list-item',
@@ -21,9 +20,17 @@ import { AnimalSearchResult } from '../../../models/api-responses';
   styleUrl: './animal-list-item.component.scss',
 })
 export class AnimalListItemComponent {
-  @Input({ required: true }) animal!: AnimalSearchResult;
+  @Input({ required: true }) animal!: Animal;
 
-  getImageUrl(animal: AnimalSearchResult) {
-    return animal.mainImage?.uri || `images/${animal.species}.png`;
+  get imageUrl() {
+    return this.animal.images.length > 0
+      ? this.animal.images[0].uri
+      : `images/${this.animal.species.toLowerCase()}.png`;
+  }
+
+  get imageAltText() {
+    return this.animal.images.length > 0
+      ? this.animal.images[0].description
+      : `Placeholder image of a ${this.animal.species}`;
   }
 }
