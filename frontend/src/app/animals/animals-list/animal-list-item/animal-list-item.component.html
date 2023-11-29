@@ -6,7 +6,8 @@
     </mat-card-header>
 
     <img
-      class="animal-image"
+      class="image"
+      [ngClass]="hasImages ? 'image-custom' : 'image-default'"
       mat-card-image
       [src]="imageUrl"
       [alt]="imageAltText"

@@ -22,14 +22,18 @@ import { Animal } from '@models/animal.model';
 export class AnimalListItemComponent {
   @Input({ required: true }) animal!: Animal;
 
+  get hasImages() {
+    return this.animal.images.length > 0;
+  }
+
   get imageUrl() {
-    return this.animal.images.length > 0
+    return this.hasImages
       ? this.animal.images[0].uri
       : `images/${this.animal.species.toLowerCase()}.png`;
   }
 
   get imageAltText() {
-    return this.animal.images.length > 0
+    return this.hasImages
       ? this.animal.images[0].description
       : `Placeholder image of a ${this.animal.species}`;
   }
