@@ -12,11 +12,6 @@ public static class Program
             .Build()
             .ConfigureMiddleware();
 
-        var scope = app.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<AdoptrixDbContext>();
-        dbContext.Database.EnsureDeleted();
-        dbContext.Database.EnsureCreated();
-
         app.Run();
     }
 }
