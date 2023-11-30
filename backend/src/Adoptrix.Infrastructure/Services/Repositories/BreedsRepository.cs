@@ -10,7 +10,7 @@ namespace Adoptrix.Infrastructure.Services.Repositories;
 public class BreedsRepository(AdoptrixDbContext dbContext)
     : IBreedsRepository
 {
-    public async Task<IEnumerable<SearchBreedsResult>> SearchBreedsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<SearchBreedsResult>> SearchAsync(CancellationToken cancellationToken)
     {
         return await dbContext.Breeds
             .Select(breed => new SearchBreedsResult
@@ -24,7 +24,7 @@ public class BreedsRepository(AdoptrixDbContext dbContext)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Result<Breed>> GetBreedByNameAsync(string name, CancellationToken cancellationToken = default)
+    public async Task<Result<Breed>> GetByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         var breed = await dbContext.Breeds
             .Include(breed => breed.Species)
@@ -33,5 +33,13 @@ public class BreedsRepository(AdoptrixDbContext dbContext)
         return breed is not null
             ? breed
             : new BreedNotFoundError(name);
+    }
+
+    public async Task<Result<Breed>> AddAsync(Breed breed, CancellationToken cancellationToken = default)
+    {
+        var entry = dbContext.Breeds.Add(breed);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return entry.Entity;
     }
 }

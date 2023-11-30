@@ -16,7 +16,7 @@ public class AddAnimalCommandHandler(
     public async Task<Result<Animal>> ExecuteAsync(AddAnimalCommand command, CancellationToken cancellationToken)
     {
         // find species
-        var speciesResult = await speciesRepository.GetSpeciesByNameAsync(command.Species, cancellationToken);
+        var speciesResult = await speciesRepository.GetByNameAsync(command.Species, cancellationToken);
         if (speciesResult.IsFailed)
         {
             logger.LogError("Could not find species with name: {Species}", command.Species);
@@ -25,7 +25,7 @@ public class AddAnimalCommandHandler(
 
         // find breed if breed name was specified
         var breedResult = command.Breed is not null
-            ? await breedsRepository.GetBreedByNameAsync(command.Breed, cancellationToken)
+            ? await breedsRepository.GetByNameAsync(command.Breed, cancellationToken)
             : null;
         if (breedResult?.IsFailed ?? false)
         {

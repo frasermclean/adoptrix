@@ -9,6 +9,7 @@ public interface IResponseMappingService
 {
     AnimalResponse Map(Animal animal);
     AnimalResponse Map(SearchAnimalsResult result);
+    BreedResponse Map(Breed breed);
     BreedResponse Map(SearchBreedsResult result);
 }
 
@@ -50,6 +51,14 @@ public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageMa
                 }
             }
             : Enumerable.Empty<AnimalImageResponse>()
+    };
+
+    public BreedResponse Map(Breed breed) => new()
+    {
+        Id = breed.Id,
+        Name = breed.Name,
+        Species = breed.Species.Name,
+        AnimalIds = breed.Animals.Select(animal => sqidConverter.ConvertToSqid(animal.Id))
     };
 
     public BreedResponse Map(SearchBreedsResult result) => new()

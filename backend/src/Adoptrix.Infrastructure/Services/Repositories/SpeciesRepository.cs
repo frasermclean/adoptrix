@@ -14,12 +14,7 @@ public class SpeciesRepository(AdoptrixDbContext dbContext)
         return await dbContext.Species.ToListAsync(cancellationToken);
     }
 
-    public Task<Result<Species>> GetSpeciesByIdAsync(int speciesId, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Result<Species>> GetSpeciesByNameAsync(string name, CancellationToken cancellationToken = default)
+    public async Task<Result<Species>> GetByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         var species = await dbContext.Species.FirstOrDefaultAsync(species => species.Name == name, cancellationToken);
 

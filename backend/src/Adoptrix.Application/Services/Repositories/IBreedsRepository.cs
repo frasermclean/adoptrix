@@ -6,6 +6,7 @@ namespace Adoptrix.Application.Services.Repositories;
 
 public interface IBreedsRepository
 {
-    Task<IEnumerable<SearchBreedsResult>> SearchBreedsAsync(CancellationToken cancellationToken = default);
-    Task<Result<Breed>> GetBreedByNameAsync(string name, CancellationToken cancellationToken = default);
+    Task<IEnumerable<SearchBreedsResult>> SearchAsync(CancellationToken cancellationToken = default);
+    Task<Result<Breed>> GetByNameAsync(string name, CancellationToken cancellationToken = default);
+    Task<Result<Breed>> AddAsync(Breed breed, CancellationToken cancellationToken = default);
 }

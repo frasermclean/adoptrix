@@ -45,7 +45,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
 
     public async Task<Result<Animal>> AddAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        var entry = await dbContext.Animals.AddAsync(animal, cancellationToken);
+        var entry = dbContext.Animals.Add(animal);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return entry.Entity;
