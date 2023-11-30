@@ -7,7 +7,9 @@ using Adoptrix.Application.Services;
 using Adoptrix.Domain.Services;
 using Adoptrix.Infrastructure.Services;
 using FastEndpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Identity.Web;
 
 namespace Adoptrix.Api.Startup;
 
@@ -27,6 +29,7 @@ public static class ServiceRegistration
 
         builder.Services
             .AddFastEndpoints()
+            .AddAuthentication(builder.Configuration)
             .AddValidators()
             .AddDomainServices()
             .AddApplicationServices(builder.Configuration)
@@ -36,6 +39,14 @@ public static class ServiceRegistration
             .AddSingleton<EventDispatcherPostProcessor>();
 
         return builder;
+    }
+
+    private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApi(configuration);
+
+        return services;
     }
 
     private static IServiceCollection AddDevelopmentServices(this IServiceCollection services,
