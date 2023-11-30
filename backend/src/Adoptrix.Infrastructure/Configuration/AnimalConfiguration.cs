@@ -12,6 +12,11 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             .HasColumnType("nvarchar")
             .HasMaxLength(Animal.NameMaxLength);
 
+        builder.Property(animal => animal.CreatedAt)
+            .HasColumnType("datetime2")
+            .HasPrecision(2)
+            .HasDefaultValueSql("getutcdate()");
+
         var animalImagesBuilder = builder.OwnsMany(animal => animal.Images)
             .ToTable("AnimalImages");
 

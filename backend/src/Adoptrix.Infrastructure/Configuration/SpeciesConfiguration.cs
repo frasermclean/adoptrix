@@ -6,13 +6,6 @@ namespace Adoptrix.Infrastructure.Configuration;
 
 public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
 {
-    private static readonly Species[] SeedData =
-    {
-        new() { Id = 1, Name = "Dog" },
-        new() { Id = 2, Name = "Cat" },
-        new() { Id = 3, Name = "Horse" },
-    };
-
     public void Configure(EntityTypeBuilder<Species> builder)
     {
         builder.HasIndex(species => species.Name)
@@ -22,6 +15,14 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
             .HasColumnType("nvarchar")
             .HasMaxLength(Species.NameMaxLength);
 
-        builder.HasData(SeedData);
+        builder.Property(species => species.CreatedAt)
+            .HasColumnType("datetime2")
+            .HasPrecision(2)
+            .HasDefaultValueSql("getutcdate()");
+
+        builder.HasData(
+            new { Id = 1, Name = "Dog", CreatedBy = Guid.Empty },
+            new { Id = 2, Name = "Cat", CreatedBy = Guid.Empty },
+            new { Id = 3, Name = "Horse", CreatedBy = Guid.Empty });
     }
 }

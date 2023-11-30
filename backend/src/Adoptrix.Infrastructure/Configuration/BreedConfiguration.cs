@@ -15,10 +15,15 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
             .HasColumnType("nvarchar")
             .HasMaxLength(Breed.NameMaxLength);
 
+        builder.Property(breed => breed.CreatedAt)
+            .HasColumnType("datetime2")
+            .HasPrecision(2)
+            .HasDefaultValueSql("getutcdate()");
+
         builder.HasData(
-            new { Id = 1, Name = "Labrador Retriever", SpeciesId = 1 },
-            new { Id = 2, Name = "German Shepherd", SpeciesId = 1 },
-            new { Id = 3, Name = "Golden Retriever", SpeciesId = 1 }
+            new { Id = 1, Name = "Labrador Retriever", SpeciesId = 1, CreatedBy = Guid.Empty },
+            new { Id = 2, Name = "German Shepherd", SpeciesId = 1, CreatedBy = Guid.Empty },
+            new { Id = 3, Name = "Golden Retriever", SpeciesId = 1, CreatedBy = Guid.Empty }
         );
     }
 }

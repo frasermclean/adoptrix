@@ -3,7 +3,7 @@ using FluentResults;
 
 namespace Adoptrix.Domain;
 
-public class Animal : AggregateRoot
+public class Animal : Aggregate
 {
     public const int NameMaxLength = 50;
     public const int DescriptionMaxLength = 2000;
