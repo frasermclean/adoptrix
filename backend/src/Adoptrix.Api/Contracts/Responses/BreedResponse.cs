@@ -1,9 +1,9 @@
-﻿namespace Adoptrix.Application.Models;
+﻿namespace Adoptrix.Api.Contracts.Responses;
 
-public class SearchBreedsResult
+public class BreedResponse
 {
     public required int Id { get; init; }
     public required string Name { get; init; }
     public required string Species { get; init; }
-    public required IEnumerable<int> AnimalIds { get; init; }
+    public required IEnumerable<string> AnimalIds { get; init; }
 }

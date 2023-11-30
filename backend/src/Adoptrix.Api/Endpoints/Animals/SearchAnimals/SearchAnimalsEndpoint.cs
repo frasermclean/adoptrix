@@ -13,6 +13,6 @@ public class SearchAnimalsEndpoint(IResponseMappingService mappingService)
         CancellationToken cancellationToken)
     {
         var results = await command.ExecuteAsync(cancellationToken);
-        return results.Select(mappingService.MapToResponse);
+        return results.Select(mappingService.Map);
     }
 }

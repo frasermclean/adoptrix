@@ -20,7 +20,7 @@ public class AddAnimalEndpoint(IResponseMappingService mappingService)
             return TypedResults.UnprocessableEntity();
         }
 
-        var response = mappingService.MapToResponse(result.Value);
+        var response = mappingService.Map(result.Value);
         return TypedResults.Created($"api/animals/{response.Id}", response);
     }
 }

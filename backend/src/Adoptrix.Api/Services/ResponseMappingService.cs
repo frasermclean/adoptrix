@@ -7,14 +7,15 @@ namespace Adoptrix.Api.Services;
 
 public interface IResponseMappingService
 {
-    AnimalResponse MapToResponse(Animal animal);
-    AnimalResponse MapToResponse(SearchAnimalsResult result);
+    AnimalResponse Map(Animal animal);
+    AnimalResponse Map(SearchAnimalsResult result);
+    BreedResponse Map(SearchBreedsResult result);
 }
 
 public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageManager animalImageManager)
     : IResponseMappingService
 {
-    public AnimalResponse MapToResponse(Animal animal) => new()
+    public AnimalResponse Map(Animal animal) => new()
     {
         Id = sqidConverter.ConvertToSqid(animal.Id),
         Name = animal.Name,
@@ -30,7 +31,7 @@ public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageMa
         })
     };
 
-    public AnimalResponse MapToResponse(SearchAnimalsResult result) => new()
+    public AnimalResponse Map(SearchAnimalsResult result) => new()
     {
         Id = sqidConverter.ConvertToSqid(result.Id),
         Name = result.Name,
@@ -49,5 +50,13 @@ public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageMa
                 }
             }
             : Enumerable.Empty<AnimalImageResponse>()
+    };
+
+    public BreedResponse Map(SearchBreedsResult result) => new()
+    {
+        Id = result.Id,
+        Name = result.Name,
+        Species = result.Species,
+        AnimalIds = result.AnimalIds.Select(sqidConverter.ConvertToSqid)
     };
 }

@@ -49,7 +49,7 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
         }
 
         return results.TrueForAll(result => result.IsSuccess)
-            ? TypedResults.Ok(mappingService.MapToResponse(animal))
+            ? TypedResults.Ok(mappingService.Map(animal))
             : TypedResults.BadRequest(results.Where(result => result.IsFailed)
                 .Select(result => result.Errors.First().Message));
     }

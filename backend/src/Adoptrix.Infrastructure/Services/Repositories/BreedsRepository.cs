@@ -15,9 +15,9 @@ public class BreedsRepository(AdoptrixDbContext dbContext)
         return await dbContext.Breeds
             .Select(breed => new SearchBreedsResult
             {
+                Id = breed.Id,
                 Name = breed.Name,
                 Species = breed.Species.Name,
-                AnimalCount = breed.Animals.Count,
                 AnimalIds = breed.Animals.Select(animal => animal.Id)
             })
             .OrderBy(result => result.Name)
