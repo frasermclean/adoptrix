@@ -16,6 +16,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
             .Where(animal => (animalName == null || animal.Name.Contains(animalName)) &&
                              (speciesName == null || animal.Species.Name == speciesName))
             .Include(animal => animal.Species)
+            .Include(animal => animal.Breed)
             .OrderBy(animal => animal.Name)
             .ToListAsync(cancellationToken);
     }
@@ -24,6 +25,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
     {
         var animal = await dbContext.Animals.Where(animal => animal.Id == animalId)
             .Include(animal => animal.Species)
+            .Include(animal => animal.Breed)
             .FirstOrDefaultAsync(cancellationToken);
 
         return animal is null

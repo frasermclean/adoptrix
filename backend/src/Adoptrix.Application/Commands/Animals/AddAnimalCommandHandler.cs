@@ -9,16 +9,28 @@ namespace Adoptrix.Application.Commands.Animals;
 public class AddAnimalCommandHandler(
         ILogger<AddAnimalCommandHandler> logger,
         IAnimalsRepository repository,
-        ISpeciesRepository speciesRepository)
+        ISpeciesRepository speciesRepository,
+        IBreedsRepository breedsRepository)
     : ICommandHandler<AddAnimalCommand, Result<Animal>>
 {
     public async Task<Result<Animal>> ExecuteAsync(AddAnimalCommand command, CancellationToken cancellationToken)
     {
+        // find species
         var speciesResult = await speciesRepository.GetSpeciesByNameAsync(command.Species, cancellationToken);
         if (speciesResult.IsFailed)
         {
-            logger.LogError("Could not find species with name: {Name}", command.Species);
+            logger.LogError("Could not find species with name: {Species}", command.Species);
             return speciesResult.ToResult();
+        }
+
+        // find breed if breed name was specified
+        var breedResult = command.Breed is not null
+            ? await breedsRepository.GetBreedByNameAsync(command.Breed, cancellationToken)
+            : null;
+        if (breedResult?.IsFailed ?? false)
+        {
+            logger.LogError("Could not find breed with name: {Breed}", command.Breed);
+            return breedResult.ToResult();
         }
 
         var result = await repository.AddAsync(new Animal
@@ -26,6 +38,7 @@ public class AddAnimalCommandHandler(
             Name = command.Name,
             Description = command.Description,
             Species = speciesResult.Value,
+            Breed = breedResult?.Value,
             DateOfBirth = command.DateOfBirth
         }, cancellationToken);
 
