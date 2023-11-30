@@ -5,11 +5,11 @@ export interface Animal {
   name: string;
   description?: string;
   species: Species;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   images: AnimalImage[];
 }
 
-interface AnimalImage {
+export interface AnimalImage {
   id: number;
   uri: string;
   description?: string;

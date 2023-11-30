@@ -1,7 +1,11 @@
 <app-search-controls></app-search-controls>
 
+@switch (state$ | async) { @case ('loading') {
+<p>Loading...</p>
+} @case ('ready') {
 <div id="results-container">
   @for (animal of animals$ | async; track $index) {
   <app-animal-list-item [animal]="animal"></app-animal-list-item>
   }
 </div>
+} }

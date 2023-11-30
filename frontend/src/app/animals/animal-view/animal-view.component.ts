@@ -1,13 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AnimalsService } from '@services/animals.service';
-import { Observable } from 'rxjs';
-
+import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Store } from '@ngxs/store';
 
 import { AgePipe } from '@pipes/age.pipe';
-import { Animal } from '@models/animal.model';
+import { AnimalsState } from '../animals.state';
+import { GetAnimal } from '../animals.actions';
 
 @Component({
   selector: 'app-animal-view',
@@ -18,17 +17,12 @@ import { Animal } from '@models/animal.model';
 })
 export class AnimalViewComponent implements OnInit {
   @Input({ required: true }) animalId!: string;
-  animal$: Observable<Animal>;
+  readonly state$ = this.store.select(AnimalsState.state);
+  readonly animal$ = this.store.select(AnimalsState.currentAnimal);
 
-  constructor(
-    private animalsService: AnimalsService,
-    private route: ActivatedRoute
-  ) {
-    const animalId = this.route.snapshot.params['animalId'];
-    this.animal$ = this.animalsService.getAnimal(animalId).pipe();
-  }
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.animal$ = this.animalsService.getAnimal(this.animalId);
+    this.store.dispatch(new GetAnimal(this.animalId));
   }
 }
