@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
+using Adoptrix.Api.Extensions;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain;
@@ -24,6 +25,7 @@ public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageMa
         Species = animal.Species.Name,
         Breed = animal.Breed?.Name,
         DateOfBirth = animal.DateOfBirth,
+        CreatedAt = animal.CreatedAt.ToUtc(),
         Images = animal.Images.Select(image => new AnimalImageResponse
         {
             Id = image.Id,
@@ -40,6 +42,7 @@ public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageMa
         Species = result.Species,
         Breed = result.Breed,
         DateOfBirth = result.DateOfBirth,
+        CreatedAt = result.CreatedAt.ToUtc(),
         Images = result.PrimaryImage is not null
             ? new[]
             {

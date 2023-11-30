@@ -25,6 +25,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
                 Species = animal.Species.Name,
                 Breed = animal.Breed != null ? animal.Breed.Name : null,
                 DateOfBirth = animal.DateOfBirth,
+                CreatedAt = animal.CreatedAt,
                 PrimaryImage = animal.Images.Count > 0 ? animal.Images[0] : null
             })
             .OrderBy(animal => animal.Name)
