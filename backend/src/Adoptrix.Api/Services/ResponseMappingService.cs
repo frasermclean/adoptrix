@@ -18,6 +18,7 @@ public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageMa
         Name = animal.Name,
         Description = animal.Description,
         Species = animal.Species.Name,
+        Breed = animal.Breed?.Name,
         DateOfBirth = animal.DateOfBirth,
         Images = animal.Images.Select(image => new AnimalImageResponse
         {
