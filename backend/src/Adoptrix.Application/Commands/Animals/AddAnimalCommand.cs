@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Domain;
 using FastEndpoints;
 using FluentResults;
+using Microsoft.Identity.Web;
 
 namespace Adoptrix.Application.Commands.Animals;
 
@@ -11,4 +12,7 @@ public class AddAnimalCommand : ICommand<Result<Animal>>
     public required string Species { get; init; }
     public string? Breed { get; init; }
     public required DateOnly DateOfBirth { get; init; }
+
+    [FromClaim(ClaimConstants.NameIdentifierId)]
+    public Guid UserId { get; init; }
 }
