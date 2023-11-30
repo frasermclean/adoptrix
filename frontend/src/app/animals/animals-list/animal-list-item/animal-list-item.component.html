@@ -2,7 +2,10 @@
   <mat-card>
     <mat-card-header>
       <mat-card-title>{{ animal.name }}</mat-card-title>
-      <mat-card-subtitle>{{ animal.species | titlecase }}</mat-card-subtitle>
+      <mat-card-subtitle>
+        <span class="species">{{ animal.species | titlecase }}</span>
+        <span class="breed">{{ animal.breed || 'Unspecified breed' | titlecase }}</span>
+      </mat-card-subtitle>
     </mat-card-header>
 
     <img
