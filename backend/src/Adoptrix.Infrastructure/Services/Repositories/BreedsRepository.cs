@@ -42,4 +42,18 @@ public class BreedsRepository(AdoptrixDbContext dbContext)
 
         return entry.Entity;
     }
+
+    public async Task<Result> DeleteAsync(int breedId, CancellationToken cancellationToken = default)
+    {
+        var breed = await dbContext.Breeds.FindAsync(new object?[] { breedId }, cancellationToken: cancellationToken);
+        if (breed is null)
+        {
+            return new BreedNotFoundError(breedId);
+        }
+
+        dbContext.Breeds.Remove(breed);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Result.Ok();
+    }
 }
