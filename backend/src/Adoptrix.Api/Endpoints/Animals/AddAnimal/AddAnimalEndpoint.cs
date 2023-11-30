@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Services;
-using Adoptrix.Application.Commands;
+using Adoptrix.Application.Commands.Animals;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -20,7 +20,7 @@ public class AddAnimalEndpoint(IResponseMappingService mappingService)
             return TypedResults.UnprocessableEntity();
         }
 
-        var response = mappingService.MapAnimal(result.Value);
+        var response = mappingService.Map(result.Value);
         return TypedResults.Created($"api/animals/{response.Id}", response);
     }
 }

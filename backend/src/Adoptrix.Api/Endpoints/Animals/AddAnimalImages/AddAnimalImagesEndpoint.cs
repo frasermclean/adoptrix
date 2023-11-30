@@ -1,7 +1,8 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
+using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Services;
 using Adoptrix.Api.Validators;
-using Adoptrix.Application.Commands;
+using Adoptrix.Application.Commands.Animals;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
 using FastEndpoints;
@@ -49,9 +50,9 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
         }
 
         return results.TrueForAll(result => result.IsSuccess)
-            ? TypedResults.Ok(mappingService.MapAnimal(animal))
+            ? TypedResults.Ok(mappingService.Map(animal))
             : TypedResults.BadRequest(results.Where(result => result.IsFailed)
-                .Select(result => result.Errors.First().Message));
+                .Select(result => result.GetFirstErrorMessage()));
     }
 
     private static async Task<Result> ExecuteCommandAsync(Animal animal, FileMultipartSection section,

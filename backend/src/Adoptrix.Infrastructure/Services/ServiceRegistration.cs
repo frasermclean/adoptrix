@@ -13,8 +13,7 @@ public static class ServiceRegistration
     {
         services
             .AddDbContext<AdoptrixDbContext>()
-            .AddScoped<IAnimalsRepository, AnimalsRepository>()
-            .AddScoped<ISpeciesRepository, SpeciesRepository>()
+            .AddRepositories()
             .AddScoped<IAnimalImageManager, AnimalImageManager>()
             .AddKeyedScoped<BlobContainerClient>(AnimalImageManager.ContainerName, (provider, _) =>
             {
@@ -28,5 +27,13 @@ public static class ServiceRegistration
             });
 
         return services;
+    }
+
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        return services
+            .AddScoped<IAnimalsRepository, AnimalsRepository>()
+            .AddScoped<IBreedsRepository, BreedsRepository>()
+            .AddScoped<ISpeciesRepository, SpeciesRepository>();
     }
 }

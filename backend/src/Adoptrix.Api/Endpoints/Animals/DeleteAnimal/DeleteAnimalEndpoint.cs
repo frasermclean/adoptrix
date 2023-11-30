@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Commands;
+﻿using Adoptrix.Application.Commands.Animals;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
