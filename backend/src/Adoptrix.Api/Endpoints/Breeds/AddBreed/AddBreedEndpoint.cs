@@ -7,10 +7,14 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds.AddBreed;
 
-[HttpPost("breeds")]
 public class AddBreedEndpoint(IResponseMappingService mappingService)
     : Endpoint<AddBreedCommand, Results<Created<BreedResponse>, BadRequest<string>>>
 {
+    public override void Configure()
+    {
+        Post("admin/breeds");
+    }
+
     public override async Task<Results<Created<BreedResponse>, BadRequest<string>>> ExecuteAsync(
         AddBreedCommand command, CancellationToken cancellationToken)
     {

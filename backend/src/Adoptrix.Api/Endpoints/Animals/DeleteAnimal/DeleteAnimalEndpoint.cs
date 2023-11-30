@@ -4,9 +4,13 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals.DeleteAnimal;
 
-[HttpDelete("/animals/{id}")]
 public class DeleteAnimalEndpoint : Endpoint<DeleteAnimalCommand, Results<NoContent, NotFound>>
 {
+    public override void Configure()
+    {
+        Delete("admin/animals/{id}");
+    }
+
     public override async Task<Results<NoContent, NotFound>> ExecuteAsync(DeleteAnimalCommand command,
         CancellationToken cancellationToken)
     {

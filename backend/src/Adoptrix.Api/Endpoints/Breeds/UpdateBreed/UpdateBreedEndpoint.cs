@@ -8,10 +8,13 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds.UpdateBreed;
 
-[HttpPut("/breeds/{id}")]
 public class UpdateBreedEndpoint(IResponseMappingService mappingService)
     : Endpoint<UpdateBreedCommand, Results<Ok<BreedResponse>, BadRequest<string>, NotFound<string>>>
 {
+    public override void Configure()
+    {
+        Put("admin/breeds/{id}");
+    }
     public override async Task<Results<Ok<BreedResponse>, BadRequest<string>, NotFound<string>>> ExecuteAsync(
         UpdateBreedCommand command, CancellationToken cancellationToken)
     {
