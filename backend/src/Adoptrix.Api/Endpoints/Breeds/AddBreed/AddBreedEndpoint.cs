@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
+using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Services;
 using Adoptrix.Application.Commands.Breeds;
 using FastEndpoints;
@@ -17,6 +18,6 @@ public class AddBreedEndpoint(IResponseMappingService mappingService)
 
         return result.IsSuccess
             ? TypedResults.Created($"breeds/{result.Value.Id}", mappingService.Map(result.Value))
-            : TypedResults.BadRequest(result.Errors.First().Message);
+            : TypedResults.BadRequest(result.GetFirstErrorMessage());
     }
 }

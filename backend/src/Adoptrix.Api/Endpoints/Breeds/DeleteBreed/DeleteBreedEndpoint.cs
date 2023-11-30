@@ -1,4 +1,5 @@
-﻿using Adoptrix.Application.Commands.Breeds;
+﻿using Adoptrix.Api.Extensions;
+using Adoptrix.Application.Commands.Breeds;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -14,6 +15,6 @@ public class DeleteBreedEndpoint : Endpoint<DeleteBreedCommand, Results<NoConten
 
         return result.IsSuccess
             ? TypedResults.NoContent()
-            : TypedResults.NotFound(result.Errors.First().Message);
+            : TypedResults.NotFound(result.GetFirstErrorMessage());
     }
 }
