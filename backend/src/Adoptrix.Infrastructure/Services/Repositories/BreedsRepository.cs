@@ -29,6 +29,7 @@ public sealed class BreedsRepository(AdoptrixDbContext dbContext) : Repository(d
     {
         var breed = await DbContext.Breeds
             .Include(breed => breed.Species)
+            .Include(breed => breed.Animals)
             .FirstOrDefaultAsync(breed => breed.Id == breedId, cancellationToken);
 
         return breed is not null
@@ -40,6 +41,7 @@ public sealed class BreedsRepository(AdoptrixDbContext dbContext) : Repository(d
     {
         var breed = await DbContext.Breeds
             .Include(breed => breed.Species)
+            .Include(breed => breed.Animals)
             .FirstOrDefaultAsync(breed => breed.Name == name, cancellationToken);
 
         return breed is not null
