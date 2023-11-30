@@ -1,4 +1,5 @@
-﻿using Adoptrix.Application.Services.Repositories;
+﻿using Adoptrix.Application.Models;
+using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
 using FluentResults;
@@ -9,14 +10,23 @@ namespace Adoptrix.Infrastructure.Services.Repositories;
 public class AnimalsRepository(AdoptrixDbContext dbContext)
     : IAnimalsRepository
 {
-    public async Task<IEnumerable<Animal>> SearchAsync(string? animalName = null, string? speciesName = null,
-        CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<SearchAnimalsResult>> SearchAnimalsAsync(string? animalName = null,
+        string? speciesName = null, CancellationToken cancellationToken = default)
     {
         return await dbContext.Animals
+            .AsNoTracking()
             .Where(animal => (animalName == null || animal.Name.Contains(animalName)) &&
                              (speciesName == null || animal.Species.Name == speciesName))
-            .Include(animal => animal.Species)
-            .Include(animal => animal.Breed)
+            .Select(animal => new SearchAnimalsResult
+            {
+                Id = animal.Id,
+                Name = animal.Name,
+                Description = animal.Description,
+                Species = animal.Species.Name,
+                Breed = animal.Breed != null ? animal.Breed.Name : null,
+                DateOfBirth = animal.DateOfBirth,
+                PrimaryImage = animal.Images.Count > 0 ? animal.Images[0] : null
+            })
             .OrderBy(animal => animal.Name)
             .ToListAsync(cancellationToken);
     }

@@ -12,7 +12,7 @@ public class SearchAnimalsEndpoint(IResponseMappingService mappingService)
     public override async Task<IEnumerable<AnimalResponse>> ExecuteAsync(SearchAnimalsCommand command,
         CancellationToken cancellationToken)
     {
-        var animals = await command.ExecuteAsync(cancellationToken);
-        return animals.Select(mappingService.MapAnimal);
+        var results = await command.ExecuteAsync(cancellationToken);
+        return results.Select(mappingService.MapToResponse);
     }
 }

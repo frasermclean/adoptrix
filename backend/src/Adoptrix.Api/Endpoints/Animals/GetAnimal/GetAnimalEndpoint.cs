@@ -16,7 +16,7 @@ public class GetAnimalEndpoint(IResponseMappingService mappingService)
         var result = await command.ExecuteAsync(cancellationToken);
 
         return result.IsSuccess
-            ? TypedResults.Ok(mappingService.MapAnimal(result.Value))
+            ? TypedResults.Ok(mappingService.MapToResponse(result.Value))
             : TypedResults.NotFound();
     }
 }

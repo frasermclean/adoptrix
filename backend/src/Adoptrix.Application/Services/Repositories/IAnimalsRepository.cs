@@ -1,11 +1,12 @@
-﻿using Adoptrix.Domain;
+﻿using Adoptrix.Application.Models;
+using Adoptrix.Domain;
 using FluentResults;
 
 namespace Adoptrix.Application.Services.Repositories;
 
 public interface IAnimalsRepository
 {
-    Task<IEnumerable<Animal>> SearchAsync(string? animalName = null, string? speciesName = null,
+    Task<IEnumerable<SearchAnimalsResult>> SearchAnimalsAsync(string? animalName = null, string? speciesName = null,
         CancellationToken cancellationToken = default);
 
     Task<Result<Animal>> GetAsync(int animalId, CancellationToken cancellationToken = default);
