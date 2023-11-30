@@ -7,10 +7,15 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds.GetBreed;
 
-[HttpGet("/breeds/{id}")]
 public class GetBreedEndpoint(IResponseMappingService mappingService)
     : Endpoint<GetBreedCommand, Results<Ok<BreedResponse>, NotFound<string>>>
 {
+    public override void Configure()
+    {
+        Get("breeds/{id}");
+        AllowAnonymous();
+    }
+
     public override async Task<Results<Ok<BreedResponse>, NotFound<string>>> ExecuteAsync(GetBreedCommand command,
         CancellationToken cancellationToken)
     {
