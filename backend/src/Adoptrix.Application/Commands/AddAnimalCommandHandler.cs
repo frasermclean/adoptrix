@@ -14,10 +14,10 @@ public class AddAnimalCommandHandler(
 {
     public async Task<Result<Animal>> ExecuteAsync(AddAnimalCommand command, CancellationToken cancellationToken)
     {
-        var speciesResult = await speciesRepository.GetSpeciesByNameAsync(command.SpeciesName, cancellationToken);
+        var speciesResult = await speciesRepository.GetSpeciesByNameAsync(command.Species, cancellationToken);
         if (speciesResult.IsFailed)
         {
-            logger.LogError("Could not find species with name: {Name}", command.SpeciesName);
+            logger.LogError("Could not find species with name: {Name}", command.Species);
             return speciesResult.ToResult();
         }
 
