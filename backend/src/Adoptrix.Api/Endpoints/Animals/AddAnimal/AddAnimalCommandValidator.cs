@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Api.Validators;
-using Adoptrix.Application.Commands;
+using Adoptrix.Application.Commands.Animals;
 using Adoptrix.Domain;
 using FastEndpoints;
 using FluentValidation;

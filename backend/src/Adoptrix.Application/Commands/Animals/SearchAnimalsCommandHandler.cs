@@ -2,7 +2,7 @@
 using Adoptrix.Domain;
 using FastEndpoints;
 
-namespace Adoptrix.Application.Commands;
+namespace Adoptrix.Application.Commands.Animals;
 
 public class SearchAnimalsCommandHandler(IAnimalsRepository repository)
     : ICommandHandler<SearchAnimalsCommand, IEnumerable<Animal>>

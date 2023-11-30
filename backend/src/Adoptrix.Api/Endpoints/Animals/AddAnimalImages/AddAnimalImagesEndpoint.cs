@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Services;
 using Adoptrix.Api.Validators;
-using Adoptrix.Application.Commands;
+using Adoptrix.Application.Commands.Animals;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
 using FastEndpoints;

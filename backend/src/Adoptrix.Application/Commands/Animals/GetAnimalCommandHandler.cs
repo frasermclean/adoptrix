@@ -4,7 +4,7 @@ using Adoptrix.Domain;
 using FastEndpoints;
 using FluentResults;
 
-namespace Adoptrix.Application.Commands;
+namespace Adoptrix.Application.Commands.Animals;
 
 public class GetAnimalCommandHandler(IAnimalsRepository repository, ISqidConverter sqidConverter)
     : ICommandHandler<GetAnimalCommand, Result<Animal>>

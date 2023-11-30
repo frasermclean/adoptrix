@@ -5,7 +5,7 @@ using FastEndpoints;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
-namespace Adoptrix.Application.Commands;
+namespace Adoptrix.Application.Commands.Animals;
 
 public class UpdateAnimalCommandHandler(
         ISqidConverter sqidConverter,

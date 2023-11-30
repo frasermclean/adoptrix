@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Domain;
 using FastEndpoints;
 
-namespace Adoptrix.Application.Commands;
+namespace Adoptrix.Application.Commands.Animals;
 
 public class SearchAnimalsCommand : ICommand<IEnumerable<Animal>>
 {

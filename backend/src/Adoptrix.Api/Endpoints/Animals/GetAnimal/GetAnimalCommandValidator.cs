@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Api.Validators;
-using Adoptrix.Application.Commands;
+using Adoptrix.Application.Commands.Animals;
 using FastEndpoints;
 
 namespace Adoptrix.Api.Endpoints.Animals.GetAnimal;
