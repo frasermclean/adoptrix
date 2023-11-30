@@ -10,6 +10,6 @@ public class SearchBreedsCommandHandler(IBreedsRepository breedsRepository)
     public async Task<IEnumerable<SearchBreedsResult>> ExecuteAsync(SearchBreedsCommand command,
         CancellationToken cancellationToken)
     {
-        return await breedsRepository.SearchAsync(cancellationToken);
+        return await breedsRepository.SearchAsync(command.WithAnimals, cancellationToken);
     }
 }
