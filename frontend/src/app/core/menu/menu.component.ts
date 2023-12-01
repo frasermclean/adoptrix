@@ -24,7 +24,7 @@ export class MenuComponent {
   menuItems = [
     { text: 'Home', icon: 'home', route: '/' },
     { text: 'Animals for adoption', icon: 'pets', route: '/animals' },
-    { text: 'Admin portal', icon: 'admin_panel_settings', route: '/admin' },
+    { text: 'Site administration', icon: 'admin_panel_settings', route: '/admin' },
   ];
 
   onClick(route: string) {

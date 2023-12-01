@@ -45,10 +45,10 @@ export function msalGuardConfigurationFactory(): MsalGuardConfiguration {
   return {
     interactionType: InteractionType.Redirect,
     authRequest: {
-      scopes: [...environment.auth.scopes]
+      scopes: [...environment.auth.scopes],
     },
-    loginFailedRoute: 'login-failed' // TODO: Implement login failed route
-  }
+    loginFailedRoute: 'login-failed', // TODO: Implement login failed route
+  };
 }
 
 /**
@@ -60,7 +60,10 @@ export function msalInterceptorConfigurationFactory(): MsalInterceptorConfigurat
 
   return {
     interactionType: InteractionType.Redirect,
-    protectedResourceMap,
+    protectedResourceMap: new Map<string, Array<string> | null>([
+      [`${environment.apiBaseUrl}/admin/*`, environment.auth.scopes],
+      ['https://graph.microsoft.com/v1.0/me', ['user.read', 'profile']],
+    ]),
   };
 }
 

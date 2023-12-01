@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
-import { AccountInfo, InteractionStatus } from '@azure/msal-browser';
+import { Inject, Injectable } from '@angular/core';
+import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
+import { AccountInfo, InteractionStatus, RedirectRequest } from '@azure/msal-browser';
 import { Store } from '@ngxs/store';
 import { Processing, Completed } from '../auth/auth.actions';
 
@@ -11,6 +11,7 @@ export class AuthService {
   constructor(
     private msalService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
+    @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private store: Store
   ) {
     this.msalService.handleRedirectObservable().subscribe();
@@ -29,7 +30,11 @@ export class AuthService {
   }
 
   public login(): void {
-    this.msalService.loginRedirect();
+    if (this.msalGuardConfig.authRequest) {
+      this.msalService.loginRedirect({ ...this.msalGuardConfig.authRequest } as RedirectRequest);
+    } else {
+      this.msalService.loginRedirect();
+    }
   }
 
   public logout(): void {
