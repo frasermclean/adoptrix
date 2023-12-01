@@ -7,4 +7,8 @@ export const routes: Routes = [
     path: 'animals',
     loadChildren: () => import('./animals/animals.routes'),
   },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.routes'),
+  },
 ];
