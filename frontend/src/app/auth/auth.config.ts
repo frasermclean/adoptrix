@@ -7,7 +7,7 @@ import {
 } from '@azure/msal-browser';
 import { MsalGuardConfiguration, MsalInterceptorConfiguration } from '@azure/msal-angular';
 
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 
 const tenantName = 'adoptrixauth';
 const b2cPolicyName = 'B2C_1_Signup_SignIn';
