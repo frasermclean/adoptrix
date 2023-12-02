@@ -8,6 +8,27 @@ param category string
 @description('Azure region for the non-global resources')
 param location string = resourceGroup().location
 
+@description('Name of the Azure AD B2C tenant')
+param b2cTenantName string = 'adoptrixauth'
+
+@description('Azure resource group that contains the Azure AD B2C tenant')
+param b2cTenantResourceGroup string = 'adoptrix-auth-rg'
+
+@description('Azure AD B2C application client ID')
+param b2cAuthClientId string
+
+@description('Azure AD B2C audience')
+param b2cAuthAudience string
+
+@description('Azure AD B2C sign-up/sign-in policy ID')
+param b2cAuthSignUpSignInPolicyId string = 'B2C_1_Signup_SignIn'
+
+@description('Sqids alphabet')
+param appSettingsSqidsAlphabet string
+
+@description('Sqids minimum length')
+param appSettingsSqidsMinLength int = 8
+
 @description('First two octets of the virtual network address space')
 param vnetAddressPrefix string = '10.250'
 
@@ -21,6 +42,12 @@ param sqlAdminGroupObjectId string
 var tags = {
   workload: workload
   category: category
+}
+
+// existing Azure AD B2C tenant
+resource b2cTenant 'Microsoft.AzureActiveDirectory/b2cDirectories@2021-04-01' existing = {
+  name: '${b2cTenantName}.onmicrosoft.com'
+  scope: resourceGroup(b2cTenantResourceGroup)
 }
 
 // virtual network
@@ -145,6 +172,47 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
       linuxFxVersion: 'DOTNETCORE|8.0'
       http20Enabled: true
       ftpsState: 'FtpsOnly'
+      appSettings: [
+        {
+          name: 'AzureAd__Instance'
+          value: 'https://${b2cTenantName}.b2clogin.com'
+        }
+        {
+          name: 'AzureAd__Domain'
+          value: '${b2cTenantName}.onmicrosoft.com'
+        }
+        {
+          name: 'AzureAd__TenantId'
+          value: b2cTenant.properties.tenantId
+        }
+        {
+          name: 'AzureAd__ClientId'
+          value: b2cAuthClientId
+        }
+        {
+          name: 'AzureAd__Audience'
+          value: b2cAuthAudience
+        }
+        {
+          name: 'AzureAd__SignUpSignInPolicyId'
+          value: b2cAuthSignUpSignInPolicyId
+        }
+        {
+          name: 'Sqids__Alphabet'
+          value: appSettingsSqidsAlphabet
+        }
+        {
+          name: 'Sqids__MinLength'
+          value: string(appSettingsSqidsMinLength)
+        }
+      ]
+      connectionStrings: [
+        {
+          name: 'AdoptrixDb'
+          connectionString: 'Server=tcp:${sqlServer.name}${environment().suffixes.sqlServerHostname};Database=${sqlServer::database.name};Authentication="Active Directory Default";'
+          type: 'SQLAzure'
+        }
+      ]
     }
   }
 
