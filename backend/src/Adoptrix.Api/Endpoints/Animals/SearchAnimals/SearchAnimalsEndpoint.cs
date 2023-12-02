@@ -5,10 +5,15 @@ using FastEndpoints;
 
 namespace Adoptrix.Api.Endpoints.Animals.SearchAnimals;
 
-[HttpGet("animals")]
 public class SearchAnimalsEndpoint(IResponseMappingService mappingService)
     : Endpoint<SearchAnimalsCommand, IEnumerable<AnimalResponse>>
 {
+    public override void Configure()
+    {
+        Get("animals");
+        AllowAnonymous();
+    }
+
     public override async Task<IEnumerable<AnimalResponse>> ExecuteAsync(SearchAnimalsCommand command,
         CancellationToken cancellationToken)
     {

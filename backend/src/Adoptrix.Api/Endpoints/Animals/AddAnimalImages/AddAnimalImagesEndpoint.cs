@@ -18,7 +18,7 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
 {
     public override void Configure()
     {
-        Post("animals/{id}/images");
+        Post("admin/animals/{id}/images");
         AllowFileUploads(true);
     }
 

@@ -33,7 +33,8 @@ public class AddBreedCommandHandler(
         return await breedsRepository.AddAsync(new Breed
         {
             Name = command.Name,
-            Species = speciesResult.Value
+            Species = speciesResult.Value,
+            CreatedBy = command.UserId
         }, cancellationToken);
     }
 }

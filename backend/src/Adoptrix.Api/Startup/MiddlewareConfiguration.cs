@@ -17,13 +17,17 @@ public static class MiddlewareConfiguration
                 .UseCors();
         }
 
+        // enable authentication and authorization
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.UseFastEndpoints(config =>
         {
             config.Endpoints.RoutePrefix = "api";
             config.Endpoints.Configurator = definition =>
             {
-                definition.AllowAnonymous(); // TODO: Implement authentication and authorization
-                definition.PostProcessors(Order.After, app.Services.GetRequiredService<EventDispatcherPostProcessor>());
+                var eventDispatcher = app.Services.GetRequiredService<EventDispatcherPostProcessor>();
+                definition.PostProcessors(Order.After, eventDispatcher);
             };
         });
 

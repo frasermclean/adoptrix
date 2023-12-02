@@ -39,7 +39,8 @@ public class AddAnimalCommandHandler(
             Description = command.Description,
             Species = speciesResult.Value,
             Breed = breedResult?.Value,
-            DateOfBirth = command.DateOfBirth
+            DateOfBirth = command.DateOfBirth,
+            CreatedBy = command.UserId
         }, cancellationToken);
 
         if (result.IsFailed)

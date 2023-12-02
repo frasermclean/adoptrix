@@ -6,10 +6,15 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals.GetAnimal;
 
-[HttpGet("animals/{id}")]
 public class GetAnimalEndpoint(IResponseMappingService mappingService)
     : Endpoint<GetAnimalCommand, Results<Ok<AnimalResponse>, NotFound>>
 {
+    public override void Configure()
+    {
+        Get("animals/{id}");
+        AllowAnonymous();
+    }
+
     public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(GetAnimalCommand command,
         CancellationToken cancellationToken)
     {

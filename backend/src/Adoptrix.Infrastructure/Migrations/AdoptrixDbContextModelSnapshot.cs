@@ -33,6 +33,15 @@ namespace Adoptrix.Infrastructure.Migrations
                     b.Property<int?>("BreedId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(2)
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getutcdate()");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
 
@@ -43,6 +52,10 @@ namespace Adoptrix.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar");
+
+                    b.Property<char?>("Sex")
+                        .HasMaxLength(1)
+                        .HasColumnType("char");
 
                     b.Property<int>("SpeciesId")
                         .HasColumnType("int");
@@ -63,6 +76,15 @@ namespace Adoptrix.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(2)
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getutcdate()");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -85,18 +107,21 @@ namespace Adoptrix.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Labrador Retriever",
                             SpeciesId = 1
                         },
                         new
                         {
                             Id = 2,
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "German Shepherd",
                             SpeciesId = 1
                         },
                         new
                         {
                             Id = 3,
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Golden Retriever",
                             SpeciesId = 1
                         });
@@ -109,6 +134,15 @@ namespace Adoptrix.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(2)
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getutcdate()");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -126,16 +160,19 @@ namespace Adoptrix.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Dog"
                         },
                         new
                         {
                             Id = 2,
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Cat"
                         },
                         new
                         {
                             Id = 3,
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Horse"
                         });
                 });

@@ -1,6 +1,6 @@
 ﻿namespace Adoptrix.Domain;
 
-public class Breed : AggregateRoot
+public class Breed : Aggregate
 {
     public const int NameMaxLength = 30;
 

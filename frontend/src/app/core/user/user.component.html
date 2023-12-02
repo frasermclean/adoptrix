@@ -1,0 +1,7 @@
+@switch (status$ | async) { @case ('logged-out') {
+<button mat-raised-button (click)="onLogin()">LOG IN</button>
+} @case ('logged-in') {
+<button mat-raised-button (click)="onLogout()">LOG OUT</button>
+} @case ('busy') {
+<mat-spinner diameter="32" color="accent"></mat-spinner>
+} }

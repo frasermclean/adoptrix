@@ -6,10 +6,14 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals.AddAnimal;
 
-[HttpPost("animals")]
 public class AddAnimalEndpoint(IResponseMappingService mappingService)
     : Endpoint<AddAnimalCommand, Results<Created<AnimalResponse>, UnprocessableEntity>>
 {
+    public override void Configure()
+    {
+        Post("admin/animals");
+    }
+
     public override async Task<Results<Created<AnimalResponse>, UnprocessableEntity>> ExecuteAsync(
         AddAnimalCommand command, CancellationToken cancellationToken)
     {

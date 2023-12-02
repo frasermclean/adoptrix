@@ -3,7 +3,7 @@ using FluentResults;
 
 namespace Adoptrix.Domain;
 
-public class Animal : AggregateRoot
+public class Animal : Aggregate
 {
     public const int NameMaxLength = 50;
     public const int DescriptionMaxLength = 2000;
@@ -14,6 +14,7 @@ public class Animal : AggregateRoot
     public string? Description { get; set; }
     public required Species Species { get; set; }
     public Breed? Breed { get; set; }
+    public Sex? Sex { get; set; }
     public required DateOnly DateOfBirth { get; set; }
     public IReadOnlyList<ImageInformation> Images => images;
 
