@@ -8,8 +8,8 @@ param category string
 @description('Azure region for the non-global resources')
 param location string = resourceGroup().location
 
-@description('Address prefix for the virtual network in CIDR notation')
-param vnetAddressPrefix string = '10.250.0.0/16'
+@description('First two octets of the virtual network address space')
+param vnetAddressPrefix string = '10.250'
 
 var tags = {
   workload: workload
@@ -24,8 +24,30 @@ resource vnet 'Microsoft.Network/virtualNetworks@2023-05-01' = {
   properties: {
     addressSpace: {
       addressPrefixes: [
-        vnetAddressPrefix
+        '${vnetAddressPrefix}.0.0/16'
       ]
     }
+    subnets: [
+      {
+        name: 'apps-subnet'
+        properties: {
+          addressPrefix: '${vnetAddressPrefix}.1.0/24'
+          delegations: [
+            {
+              name: 'apps-delegation'
+              properties: {
+                serviceName: 'Microsoft.Web/serverFarms'
+              }
+            }
+          ]
+        }
+      }
+      {
+        name: 'data-subnet'
+        properties: {
+          addressPrefix: '${vnetAddressPrefix}.2.0/24'
+        }
+      }
+    ]
   }
 }
