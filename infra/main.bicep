@@ -11,12 +11,12 @@ param location string = resourceGroup().location
 @description('First two octets of the virtual network address space')
 param vnetAddressPrefix string = '10.250'
 
-@description('Login for the SQL Server administrator')
-param sqlAdministratorLogin string
+@description('SQL Server administrator group name')
+param sqlAdminGroupName string
 
 @secure()
-@description('Password for the SQL Server administrator')
-param sqlAdministratorSid string
+@description('SQL Server administrator group object ID')
+param sqlAdminGroupObjectId string
 
 var tags = {
   workload: workload
@@ -74,9 +74,9 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
     administrators: {
       administratorType: 'ActiveDirectory'
       azureADOnlyAuthentication: true
-      login: sqlAdministratorLogin
-      principalType: 'User'
-      sid: sqlAdministratorSid
+      login: sqlAdminGroupName
+      principalType: 'Group'
+      sid: sqlAdminGroupObjectId
       tenantId: subscription().tenantId
     }
     minimalTlsVersion: '1.2'
