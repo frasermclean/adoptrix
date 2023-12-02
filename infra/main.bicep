@@ -66,7 +66,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2023-05-01' = {
 }
 
 // azure sql server
-resource sqlServer 'Microsoft.Sql/servers@2021-11-01-preview' = {
+resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
   name: '${workload}-${category}-sql'
   location: location
   tags: tags
@@ -84,6 +84,28 @@ resource sqlServer 'Microsoft.Sql/servers@2021-11-01-preview' = {
     publicNetworkAccess: 'Enabled'
   }
 
+  // database
+  resource database 'databases' = {
+    name: '${workload}-${category}-sqldb'
+    location: location
+    tags: tags
+    sku: {
+      name: 'GP_S_Gen5_2'
+      tier: 'GeneralPurpose'
+      family: 'Gen5'
+      capacity: 2
+    }
+    properties: {
+      autoPauseDelay: 60
+      collation: 'SQL_Latin1_General_CP1_CI_AS'
+      freeLimitExhaustionBehavior: 'AutoPause'
+      maxSizeBytes: 34359738368 // 32 GB
+      minCapacity: json('0.5')
+      useFreeLimit: true
+    }
+  }
+
+  // virtual network rule
   resource vnetRule 'virtualNetworkRules' = {
     name: 'apps-subnet-rule'
     properties: {
