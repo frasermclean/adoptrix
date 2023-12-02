@@ -114,3 +114,45 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
     }
   }
 }
+
+// app service plan
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+  name: '${workload}-${category}-asp'
+  location: location
+  tags: tags
+  kind: 'linux'
+  sku: {
+    name: 'B1'
+  }
+  properties: {
+    reserved: true
+  }
+}
+
+// app service
+resource appService 'Microsoft.Web/sites@2022-09-01' = {
+  name: '${workload}-${category}-app'
+  location: location
+  tags: tags
+  kind: 'app'
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    serverFarmId: appServicePlan.id
+    httpsOnly: true
+    siteConfig: {
+      linuxFxVersion: 'DOTNETCORE|8.0'
+      http20Enabled: true
+      ftpsState: 'FtpsOnly'
+    }
+  }
+
+  // virtual network integration
+  resource vnetIntegration 'networkConfig' = {
+    name: 'virtualNetwork'
+    properties: {
+      subnetResourceId: vnet::appsSubnet.id
+    }
+  }
+}
