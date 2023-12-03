@@ -1,7 +1,10 @@
 targetScope = 'resourceGroup'
+
+@minLength(3)
 @description('Name of the workload')
 param workload string
 
+@minLength(3)
 @description('Category of the workload')
 param category string
 
@@ -77,9 +80,11 @@ resource vnet 'Microsoft.Network/virtualNetworks@2023-05-01' = {
           serviceEndpoints: [
             {
               service: 'Microsoft.Sql'
-              locations: [
-                location
-              ]
+              locations: [ location ]
+            }
+            {
+              service: 'Microsoft.Storage'
+              locations: [ location ]
             }
           ]
         }
@@ -221,6 +226,44 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
     name: 'virtualNetwork'
     properties: {
       subnetResourceId: vnet::appsSubnet.id
+    }
+  }
+}
+
+// storage account
+resource storageaccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: '${workload}${category}'
+  location: location
+  tags: tags
+  kind: 'StorageV2'
+  sku: {
+    name: 'Standard_LRS'
+  }
+  properties: {
+    allowBlobPublicAccess: true
+    allowSharedKeyAccess: false
+    defaultToOAuthAuthentication: true
+    minimumTlsVersion: 'TLS1_2'
+    networkAcls: {
+      bypass: 'AzureServices'
+      defaultAction: 'Deny'
+      virtualNetworkRules: [
+        {
+          id: vnet::appsSubnet.id
+          action: 'Allow'
+        }
+      ]
+    }
+  }
+
+  resource blobServices 'blobServices' = {
+    name: 'default'
+
+    resource container 'containers' = {
+      name: 'animal-images'
+      properties: {
+        publicAccess: 'Blob'
+      }
     }
   }
 }
