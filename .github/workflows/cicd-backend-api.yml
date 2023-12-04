@@ -94,6 +94,9 @@ jobs:
     needs:
       - build
       - deploy_infra
+    permissions:
+      id-token: write
+      contents: read
     environment: prod
     steps:
       # Download API artifact
