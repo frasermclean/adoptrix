@@ -87,3 +87,17 @@ jobs:
           deploymentName: main-cicd-backend-${{ github.run_number }}
           template: ${{ github.workspace }}/infra/main.bicep
           parameters: ${{ github.workspace }}/infra/main.bicepparam
+
+  # Deploy application job
+  deploy_api:
+    name: Deploy application
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - deploy_infra
+    steps:
+      # Download API artifact
+      - name: Download API artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.API_ARTIFACT_NAME }}
