@@ -98,12 +98,15 @@ jobs:
       id-token: write
       contents: read
     environment: prod
+    env:
+      ARTIFACT_DIRECTORY: ${{ github.workspace }}/artifact
     steps:
       # Download API artifact
       - name: Download API artifact
         uses: actions/download-artifact@v3
         with:
           name: ${{ env.API_ARTIFACT_NAME }}
+          path: ${{ env.ARTIFACT_DIRECTORY }}
 
       # Login to Azure
       - name: Login to Azure
@@ -118,4 +121,4 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          package: ${{ env.API_ARTIFACT_NAME }}
+          package: ${{ env.ARTIFACT_DIRECTORY }}

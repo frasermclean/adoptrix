@@ -302,3 +302,5 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (shouldAttemptRoleAssi
     storageAccountName: storageaccount.name
   }
 }
+
+output appServiceName string = appService.name
