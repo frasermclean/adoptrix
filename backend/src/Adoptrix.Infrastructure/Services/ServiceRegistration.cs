@@ -1,15 +1,18 @@
-﻿using Adoptrix.Application.Services;
+using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Infrastructure.Services.Repositories;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Adoptrix.Infrastructure.Services;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
+        IConfiguration configuration, IHostEnvironment environment)
     {
         services
             .AddDbContext<AdoptrixDbContext>()
@@ -22,8 +25,17 @@ public static class ServiceRegistration
             })
             .AddAzureClients(builder =>
             {
-                // TODO: Refactor connection string when moving to production
-                builder.AddBlobServiceClient("UseDevelopmentStorage=true");
+                if (environment.IsDevelopment())
+                {
+                    builder.AddBlobServiceClient("UseDevelopmentStorage=true");
+                    return;
+                }
+
+                var blobEndpoint = configuration.GetValue<string>("AzureStorage:BlobEndpoint") ??
+                                   throw new InvalidOperationException(
+                                       "Missing AzureStorage:BlobEndpoint configuration value.");
+
+                builder.AddBlobServiceClient(new Uri(blobEndpoint));
             });
 
         return services;

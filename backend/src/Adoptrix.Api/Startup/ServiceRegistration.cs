@@ -33,7 +33,7 @@ public static class ServiceRegistration
             .AddValidators()
             .AddDomainServices()
             .AddApplicationServices(builder.Configuration)
-            .AddInfrastructureServices()
+            .AddInfrastructureServices(builder.Configuration, builder.Environment)
             .AddDevelopmentServices(builder.Environment)
             .AddScoped<IResponseMappingService, ResponseMappingService>()
             .AddSingleton<EventDispatcherPostProcessor>();

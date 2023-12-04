@@ -5,7 +5,7 @@ public abstract class Aggregate : Entity
     /// <summary>
     /// User Id of the user who created the <see cref="Aggregate"/>
     /// </summary>
-    public required Guid CreatedBy { get; init; }
+    public Guid CreatedBy { get; init; }
 
     /// <summary>
     /// Date and time the <see cref="Aggregate"/> was created.
