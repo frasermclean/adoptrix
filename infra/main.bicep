@@ -274,14 +274,7 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
     defaultToOAuthAuthentication: true
     minimumTlsVersion: 'TLS1_2'
     networkAcls: {
-      bypass: 'AzureServices'
-      defaultAction: 'Deny'
-      virtualNetworkRules: [
-        {
-          id: vnet::appsSubnet.id
-          action: 'Allow'
-        }
-      ]
+      defaultAction: 'Allow'
     }
   }
 
