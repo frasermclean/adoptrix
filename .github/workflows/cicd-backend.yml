@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  PUBLISH_RUNTIME: linux-x64
+  API_ARTIFACT_NAME: api
 
 jobs:
   build:
@@ -42,16 +42,15 @@ jobs:
       # Publish API project
       - name: Publish API project
         run: >-
-          dotnet publish
-            --no-build
-            --configuration ${{ env.BUILD_CONFIGURATION }}
-            --runtime ${{ env.PUBLISH_RUNTIME }}
-            --output ${{ env.PUBLISH_DIRECTORY }}
+          dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --output ${{ env.PUBLISH_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Upload API artifact
       - name: Upload API artifact
         uses: actions/upload-artifact@v3
         with:
-          name: api-${{ env.PUBLISH_RUNTIME }}
+          name: ${{ env.API_ARTIFACT_NAME }}
           path: ${{ env.PUBLISH_DIRECTORY }}
