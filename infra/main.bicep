@@ -35,12 +35,15 @@ param appSettingsSqidsMinLength int = 8
 @description('First two octets of the virtual network address space')
 param vnetAddressPrefix string = '10.250'
 
-@description('SQL Server administrator group name')
-param sqlAdminGroupName string
+@description('Application administrator group name')
+param adminGroupName string
 
 @secure()
-@description('SQL Server administrator group object ID')
-param sqlAdminGroupObjectId string
+@description('Application administrator group object ID')
+param adminGroupObjectId string
+
+@description('Whether to attempt role assignments (requires appropriate permissions)')
+param shouldAttemptRoleAssignments bool = true
 
 var tags = {
   workload: workload
@@ -106,9 +109,9 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
     administrators: {
       administratorType: 'ActiveDirectory'
       azureADOnlyAuthentication: true
-      login: sqlAdminGroupName
+      login: adminGroupName
+      sid: adminGroupObjectId
       principalType: 'Group'
-      sid: sqlAdminGroupObjectId
       tenantId: subscription().tenantId
     }
     minimalTlsVersion: '1.2'
@@ -265,5 +268,14 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
         publicAccess: 'Blob'
       }
     }
+  }
+}
+
+module roleAssignemnt 'roleAssignments.bicep' = if (shouldAttemptRoleAssignments) {
+  name: 'roleAssignments'
+  params: {
+    adminGroupObjectId: adminGroupObjectId
+    appServiceIdentityPrincipalId: appService.identity.principalId
+    storageAccountName: storageaccount.name
   }
 }
