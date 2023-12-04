@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  API_ARTIFACT_NAME: api
+  API_ARTIFACT_NAME: backend-api
 
 jobs:
   build:
