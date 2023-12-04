@@ -1,0 +1,18 @@
+name: CI/CD Backend API
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build project
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
