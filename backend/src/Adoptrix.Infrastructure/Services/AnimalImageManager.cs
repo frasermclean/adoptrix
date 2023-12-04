@@ -31,7 +31,7 @@ public class AnimalImageManager(
         return new Uri(containerClient.Uri, $"{ContainerName}/{blobName}");
     }
 
-    public async Task<string> UploadImageAsync(int animalId, string fileName, Stream imageStream, string contentType,
+    public async Task UploadImageAsync(int animalId, string fileName, Stream imageStream, string contentType,
         CancellationToken cancellationToken)
     {
         var blobName = GetBlobName(animalId, fileName);
@@ -42,12 +42,10 @@ public class AnimalImageManager(
             HttpHeaders = new BlobHttpHeaders { ContentType = contentType }
         };
 
-        var response = await blobClient.UploadAsync(imageStream, options, cancellationToken);
+        await blobClient.UploadAsync(imageStream, options, cancellationToken);
 
         logger.LogInformation("Uploaded image {BlobName} with content type {ContentType} to blob storage",
             blobName, contentType);
-
-        return Convert.ToBase64String(response.Value.ContentHash);
     }
 
     public async Task<Result> DeleteImageAsync(int animalId, string fileName, CancellationToken cancellationToken)
