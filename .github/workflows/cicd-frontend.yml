@@ -1,0 +1,26 @@
+name: CI/CD Frontend
+
+on:
+  push:
+    branches: main
+    paths:
+      - frontend/**
+      - .github/workflows/cicd-frontend.yml
+  pull_request:
+    branches: main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+    paths:
+      - frontend/**
+      - .github/workflows/cicd-frontend.yml
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
