@@ -150,6 +150,35 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
   }
 }
 
+// log analytics workspace
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+  name: '${workload}-${category}-law'
+  location: location
+  tags: tags
+  properties: {
+    retentionInDays: 30
+    sku: {
+      name: 'PerGB2018'
+    }
+    workspaceCapping: {
+      dailyQuotaGb: 1
+    }
+  }
+}
+
+// application insights
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: '${workload}-${category}-appi'
+  location: location
+  tags: tags
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    Request_Source: 'rest'
+    WorkspaceResourceId: logAnalyticsWorkspace.id
+  }
+}
+
 // app service plan
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: '${workload}-${category}-asp'
@@ -181,6 +210,18 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
       http20Enabled: true
       ftpsState: 'FtpsOnly'
       appSettings: [
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: applicationInsights.properties.ConnectionString
+        }
+        {
+          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
+          value: '~3'
+        }
+        {
+          name: 'XDT_MicrosoftApplicationInsights_Mode'
+          value: 'recommended'
+        }
         {
           name: 'AzureAd__Instance'
           value: 'https://${b2cTenantName}.b2clogin.com'
