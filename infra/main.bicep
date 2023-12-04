@@ -150,32 +150,13 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
   }
 }
 
-// log analytics workspace
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
-  name: '${workload}-${category}-law'
-  location: location
-  tags: tags
-  properties: {
-    retentionInDays: 30
-    sku: {
-      name: 'PerGB2018'
-    }
-    workspaceCapping: {
-      dailyQuotaGb: 1
-    }
-  }
-}
-
-// application insights
-resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: '${workload}-${category}-appi'
-  location: location
-  tags: tags
-  kind: 'web'
-  properties: {
-    Application_Type: 'web'
-    Request_Source: 'rest'
-    WorkspaceResourceId: logAnalyticsWorkspace.id
+module appInsightsModule 'appInsights.bicep' = {
+  name: 'appInsights'
+  params: {
+    workload: workload
+    category: category
+    location: location
+    actionGroupShortName: 'AdoptrixDemo'
   }
 }
 
@@ -212,7 +193,7 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
       appSettings: [
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-          value: applicationInsights.properties.ConnectionString
+          value: appInsightsModule.outputs.connectionString
         }
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
