@@ -61,6 +61,9 @@ jobs:
     name: Deploy infrastructure
     runs-on: ubuntu-latest
     environment: prod
+    permissions:
+      id-token: write
+      contents: read
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -73,3 +76,15 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Deploy Bicep template
+      - name: Deploy Bicep template
+        uses: azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          deploymentName: main-ga-${{ github.run_number }}
+          template: ${{ github.workspace }}/infra/main.bicep
+          parameters: >-
+            ${{ github.workspace }}/infra/main.bicepparam
+            shouldAttemptRoleAssignments=false
