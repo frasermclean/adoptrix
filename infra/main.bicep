@@ -303,4 +303,14 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (shouldAttemptRoleAssi
   }
 }
 
+module staticWebAppModule 'staticWebApp.bicep' = {
+  name: 'staticWebApp${deploymentSuffix}'
+  params: {
+    category: category
+    workload: workload
+#disable-next-line no-hardcoded-location // static web apps have limited locations
+    location: 'eastasia'
+  }
+}
+
 output appServiceName string = appService.name
