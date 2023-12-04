@@ -206,6 +206,10 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
           value: b2cAuthSignUpSignInPolicyId
         }
         {
+          name: 'AzureStorage__BlobEndpoint'
+          value: storageaccount.properties.primaryEndpoints.blob
+        }
+        {
           name: 'Sqids__Alphabet'
           value: appSettingsSqidsAlphabet
         }
