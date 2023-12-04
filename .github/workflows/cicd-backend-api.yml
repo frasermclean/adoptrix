@@ -83,7 +83,7 @@ jobs:
         with:
           scope: resourcegroup
           resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          deploymentName: main-ga-${{ github.run_number }}
+          deploymentName: main-cicd-backend-${{ github.run_number }}
           template: ${{ github.workspace }}/infra/main.bicep
           parameters: >-
             ${{ github.workspace }}/infra/main.bicepparam
