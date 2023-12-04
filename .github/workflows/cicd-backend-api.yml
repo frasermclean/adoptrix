@@ -64,6 +64,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    outputs:
+      appServiceName: ${{ steps.deploy_bicep.outputs.appServiceName }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -80,6 +82,7 @@ jobs:
       # Deploy Bicep template
       - name: Deploy Bicep template
         uses: azure/arm-deploy@v1
+        id: deploy_bicep
         with:
           scope: resourcegroup
           resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
@@ -120,5 +123,5 @@ jobs:
       - name: Deploy to App Service
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          app-name: ${{ needs.deploy_infra.outputs.appServiceName }}
           package: ${{ env.ARTIFACT_DIRECTORY }}
