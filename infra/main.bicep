@@ -50,6 +50,10 @@ var tags = {
   category: category
 }
 
+var deploymentSuffix = startsWith(deployment().name, 'main-')
+ ? replace(deployment().name, 'main-', '-')
+ : ''
+
 // existing Azure AD B2C tenant
 resource b2cTenant 'Microsoft.AzureActiveDirectory/b2cDirectories@2021-04-01' existing = {
   name: '${b2cTenantName}.onmicrosoft.com'
@@ -151,7 +155,7 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
 }
 
 module appInsightsModule 'appInsights.bicep' = {
-  name: 'appInsights'
+  name: 'appInsights${deploymentSuffix}'
   params: {
     workload: workload
     category: category
@@ -290,8 +294,8 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-module roleAssignemnt 'roleAssignments.bicep' = if (shouldAttemptRoleAssignments) {
-  name: 'roleAssignments'
+module roleAssignmentsModule 'roleAssignments.bicep' = if (shouldAttemptRoleAssignments) {
+  name: 'roleAssignments${deploymentSuffix}'
   params: {
     adminGroupObjectId: adminGroupObjectId
     appServiceIdentityPrincipalId: appService.identity.principalId
