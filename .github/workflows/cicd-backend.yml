@@ -12,7 +12,25 @@ jobs:
   build:
     name: Build project
     runs-on: ubuntu-latest
+    env:
+      BACKEND_DIRECTORY: ${{ github.workspace }}/backend
+      BUILD_CONFIGURATION: Release
     steps:
       # Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # Restore NuGet packages
+      - name: Restore packages
+        run: dotnet restore
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
+
+      # Build solution
+      - name: Build solution
+        run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIGURATION }}
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
+
+      # Run tests
+      - name: Run tests
+        run: dotnet test --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
