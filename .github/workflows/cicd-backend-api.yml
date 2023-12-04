@@ -12,9 +12,9 @@ env:
   API_ARTIFACT_NAME: backend-api
 
 jobs:
-  # Build project job
+  # Build, test and publish API job
   build:
-    name: Build project
+    name: Build and test
     runs-on: ubuntu-latest
     env:
       BACKEND_DIRECTORY: ${{ github.workspace }}/backend
