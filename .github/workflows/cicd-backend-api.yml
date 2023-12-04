@@ -59,7 +59,6 @@ jobs:
   # Deploy infrastructure job
   deploy_infra:
     name: Deploy infrastructure
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment: prod
     permissions:
@@ -89,15 +88,31 @@ jobs:
           parameters: ${{ github.workspace }}/infra/main.bicepparam
 
   # Deploy application job
-  deploy_api:
+  deploy_app:
     name: Deploy application
     runs-on: ubuntu-latest
     needs:
       - build
       - deploy_infra
+    environment: prod
     steps:
       # Download API artifact
       - name: Download API artifact
         uses: actions/download-artifact@v3
         with:
           name: ${{ env.API_ARTIFACT_NAME }}
+
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Deploy to App Service
+      - name: Deploy to App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          package: ${{ env.API_ARTIFACT_NAME }}
