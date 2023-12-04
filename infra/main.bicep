@@ -43,12 +43,16 @@ param adminGroupName string
 param adminGroupObjectId string
 
 @description('Whether to attempt role assignments (requires appropriate permissions)')
-param shouldAttemptRoleAssignments bool = true
+param shouldAttemptRoleAssignments bool = false
 
 var tags = {
   workload: workload
   category: category
 }
+
+var deploymentSuffix = startsWith(deployment().name, 'main-')
+ ? replace(deployment().name, 'main-', '-')
+ : ''
 
 // existing Azure AD B2C tenant
 resource b2cTenant 'Microsoft.AzureActiveDirectory/b2cDirectories@2021-04-01' existing = {
@@ -151,7 +155,7 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
 }
 
 module appInsightsModule 'appInsights.bicep' = {
-  name: 'appInsights'
+  name: 'appInsights${deploymentSuffix}'
   params: {
     workload: workload
     category: category
@@ -290,11 +294,13 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-module roleAssignemnt 'roleAssignments.bicep' = if (shouldAttemptRoleAssignments) {
-  name: 'roleAssignments'
+module roleAssignmentsModule 'roleAssignments.bicep' = if (shouldAttemptRoleAssignments) {
+  name: 'roleAssignments${deploymentSuffix}'
   params: {
     adminGroupObjectId: adminGroupObjectId
     appServiceIdentityPrincipalId: appService.identity.principalId
     storageAccountName: storageaccount.name
   }
 }
+
+output appServiceName string = appService.name
