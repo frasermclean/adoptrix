@@ -43,7 +43,7 @@ param adminGroupName string
 param adminGroupObjectId string
 
 @description('Whether to attempt role assignments (requires appropriate permissions)')
-param shouldAttemptRoleAssignments bool = true
+param shouldAttemptRoleAssignments bool = false
 
 var tags = {
   workload: workload
