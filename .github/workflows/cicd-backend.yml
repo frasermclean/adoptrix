@@ -71,7 +71,7 @@ jobs:
     name: Deploy infrastructure
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
-    environment: prod
+    environment: demo-backend
     permissions:
       id-token: write
       contents: read
@@ -111,7 +111,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    environment: prod
+    environment: demo-backend
     env:
       ARTIFACT_DIRECTORY: ${{ github.workspace }}/artifact
     steps:
