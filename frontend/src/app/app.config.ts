@@ -34,8 +34,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom([
-      NgxsModule.forRoot([AuthState], { developmentMode: !environment.isProduction }),
-      NgxsLoggerPluginModule.forRoot({ disabled: environment.isProduction}),
+      NgxsModule.forRoot([AuthState], { developmentMode: environment.isDevelopment }),
+      NgxsLoggerPluginModule.forRoot({ disabled: !environment.isDevelopment}),
     ]),
     MsalService,
     MsalGuard,
