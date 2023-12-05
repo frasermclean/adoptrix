@@ -308,8 +308,10 @@ module staticWebAppModule 'staticWebApp.bicep' = {
   params: {
     category: category
     workload: workload
-#disable-next-line no-hardcoded-location // static web apps have limited locations
+    #disable-next-line no-hardcoded-location // static web apps have limited locations
     location: 'eastasia'
+    appServiceResourceId: appService.id
+    appServiceLocation: appService.location
   }
 }
 

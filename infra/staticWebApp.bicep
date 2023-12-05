@@ -14,7 +14,13 @@ param category string
   'westus2'
 ])
 @description('Location of the static web app')
-param location string = 'centralus'
+param location string
+
+@description('Resource ID of the app service that will be linked to the static web app')
+param appServiceResourceId string
+
+@description('Location of the app service that will be linked to the static web app')
+param appServiceLocation string
 
 var tags = {
   workload: workload
@@ -27,14 +33,22 @@ resource staticWebApp 'Microsoft.Web/staticSites@2022-03-01' = {
   location: location
   tags: tags
   sku: {
-    name: 'Free'
-    size: 'Free'
+    name: 'Standard'
   }
   properties: {
     stagingEnvironmentPolicy: 'Enabled'
     allowConfigFileUpdates: true
     buildProperties: {
       skipGithubActionWorkflowGeneration: true
+    }
+  }
+
+  // link to app service
+  resource linkedBackend 'linkedBackends' = {
+    name: 'appService'
+    properties: {
+      backendResourceId: appServiceResourceId
+      region: appServiceLocation
     }
   }
 }
