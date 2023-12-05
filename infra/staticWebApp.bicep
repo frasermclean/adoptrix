@@ -16,12 +16,6 @@ param category string
 @description('Location of the static web app')
 param location string
 
-@description('Resource ID of the app service that will be linked to the static web app')
-param appServiceResourceId string
-
-@description('Location of the app service that will be linked to the static web app')
-param appServiceLocation string
-
 var tags = {
   workload: workload
   category: category
@@ -33,7 +27,7 @@ resource staticWebApp 'Microsoft.Web/staticSites@2022-03-01' = {
   location: location
   tags: tags
   sku: {
-    name: 'Standard'
+    name: 'Free'
   }
   properties: {
     stagingEnvironmentPolicy: 'Enabled'
@@ -42,13 +36,6 @@ resource staticWebApp 'Microsoft.Web/staticSites@2022-03-01' = {
       skipGithubActionWorkflowGeneration: true
     }
   }
-
-  // link to app service
-  resource linkedBackend 'linkedBackends' = {
-    name: 'appService'
-    properties: {
-      backendResourceId: appServiceResourceId
-      region: appServiceLocation
-    }
-  }
 }
+
+output staticWebDefaultHostname string = staticWebApp.properties.defaultHostname
