@@ -251,6 +251,11 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
           type: 'SQLAzure'
         }
       ]
+      cors: {
+        allowedOrigins: [
+          'https://${staticWebAppModule.outputs.staticWebDefaultHostname}'
+        ]
+      }
     }
   }
 
