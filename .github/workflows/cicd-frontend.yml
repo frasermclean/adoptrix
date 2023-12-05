@@ -25,7 +25,7 @@ jobs:
     env:
       PROJECT_DIRECTORY: ${{ github.workspace }}/frontend
       BUILD_CONFIGURATION: demo
-      BUILD_DIRECTORY: ${{ github.workspace }}/frontend/dist
+      BUILD_DIRECTORY: ${{ github.workspace }}/frontend/dist/browser
     steps:
       # Checkout the repository
       - name: Checkout repository
