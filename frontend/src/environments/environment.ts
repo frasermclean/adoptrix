@@ -1,7 +1,7 @@
 import { Environment } from './environment.interface';
 
 export const environment: Environment = {
-  isDevelopment: false,
+  isDevelopment: true,
   apiBaseUrl: 'https://localhost:5443/api',
   auth: {
     clientId: '91556c30-ad29-4d36-a3df-29701eaba8a9',
