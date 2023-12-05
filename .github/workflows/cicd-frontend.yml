@@ -47,10 +47,6 @@ jobs:
         working-directory: ${{ env.PROJECT_DIRECTORY }}
         run: npx ng build --configuration ${{ env.BUILD_CONFIGURATION }}
 
-      # Copy static web app config
-      - name: Copy static web app config
-        run: cp ${{env.PROJECT_DIRECTORY}}/staticwebapp.config.json ${{env.BUILD_DIRECTORY}}
-
       # Deploy to Azure Static Web App
       - name: Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
