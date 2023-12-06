@@ -190,6 +190,8 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: true
+    clientAffinityEnabled: false
+    virtualNetworkSubnetId: vnet::appsSubnet.id
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|8.0'
       http20Enabled: true
@@ -256,14 +258,6 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
           'https://${staticWebAppModule.outputs.staticWebDefaultHostname}'
         ]
       }
-    }
-  }
-
-  // virtual network integration
-  resource vnetIntegration 'networkConfig' = {
-    name: 'virtualNetwork'
-    properties: {
-      subnetResourceId: vnet::appsSubnet.id
     }
   }
 }
