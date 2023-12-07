@@ -288,6 +288,7 @@ resource appServiceCertificate 'Microsoft.Web/certificates@2022-09-01' = {
   name: '${appService.name}-cert'
   location: location
   tags: tags
+  dependsOn: [ appService::hostNameBinding ]
   properties: {
     serverFarmId: appServicePlan.id
     canonicalName: 'api.${category}.${domainName}'
@@ -352,6 +353,15 @@ module staticWebAppModule 'staticWebApp.bicep' = {
     workload: workload
     #disable-next-line no-hardcoded-location // static web apps have limited locations
     location: 'eastasia'
+  }
+}
+
+module appServiceSniEnableModule 'siteSniEnable.bicep' = {
+  name: 'appServiceSniEnable${deploymentSuffix}'
+  params: {
+    siteName: appService.name
+    certificateThumbprint: appServiceCertificate.properties.thumbprint
+    hostname: appServiceCertificate.properties.canonicalName
   }
 }
 
