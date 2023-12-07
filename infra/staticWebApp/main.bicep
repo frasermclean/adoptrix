@@ -6,6 +6,12 @@ param workload string
 @description('Category of the workload')
 param category string
 
+@description('Domain name')
+param domainName string
+
+@description('Name of the shared resource group')
+param sharedResourceGroup string
+
 @allowed([
   'eastasia'
   'centralus'
@@ -36,6 +42,25 @@ resource staticWebApp 'Microsoft.Web/staticSites@2022-03-01' = {
       skipGithubActionWorkflowGeneration: true
     }
   }
+
+  // custom domain
+  resource customDomain 'customDomains' = {
+    name: '${category}.${domainName}'
+    dependsOn: [ swaDnsRecordModule ]
+  }
 }
 
-output staticWebDefaultHostname string = staticWebApp.properties.defaultHostname
+module swaDnsRecordModule 'swaDnsRecord.bicep' = {
+  name: replace(deployment().name, 'staticWebApp', 'swaDnsRecord-${category}')
+  scope: resourceGroup(sharedResourceGroup)
+  params: {
+    domainName: domainName
+    hostName: category
+    swaDefaultHostName: staticWebApp.properties.defaultHostname
+  }
+}
+
+output hostnames string[] = [
+  staticWebApp.properties.defaultHostname
+  staticWebApp::customDomain.name
+]
