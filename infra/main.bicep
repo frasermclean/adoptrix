@@ -269,6 +269,29 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
       subnetResourceId: vnet::appsSubnet.id
     }
   }
+
+  // custom hostname binding
+  resource hostNameBinding 'hostNameBindings' = {
+    name: 'api.${category}.${domainName}'
+    dependsOn: [ dnsRecords ]
+    properties: {
+      siteName: appService.name
+      customHostNameDnsRecordType: 'CName'
+      hostNameType: 'Verified'
+      sslState: 'Disabled' // will enable SNI using module
+    }
+  }
+}
+
+// app service certificate
+resource appServiceCertificate 'Microsoft.Web/certificates@2022-09-01' = {
+  name: '${appService.name}-cert'
+  location: location
+  tags: tags
+  properties: {
+    serverFarmId: appServicePlan.id
+    canonicalName: 'api.${category}.${domainName}'
+  }
 }
 
 // storage account
