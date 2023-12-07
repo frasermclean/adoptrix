@@ -1,4 +1,5 @@
-﻿using Adoptrix.Application.Models;
+﻿using Adoptrix.Api.Tests.EntityGenerators;
+using Adoptrix.Application.Models;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using FluentResults;

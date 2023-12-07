@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Domain;
 using Bogus;
 
-namespace Adoptrix.Api.Tests.Mocks;
+namespace Adoptrix.Api.Tests.EntityGenerators;
 
 public static class SpeciesGenerator
 {
