@@ -255,9 +255,7 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
         }
       ]
       cors: {
-        allowedOrigins: [
-          'https://${staticWebAppModule.outputs.staticWebDefaultHostname}'
-        ]
+        allowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
       }
     }
   }
@@ -346,11 +344,13 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (shouldAttemptRoleAssi
   }
 }
 
-module staticWebAppModule 'staticWebApp.bicep' = {
+module staticWebAppModule 'staticWebApp/main.bicep' = {
   name: 'staticWebApp${deploymentSuffix}'
   params: {
     category: category
     workload: workload
+    domainName: domainName
+    sharedResourceGroup: sharedResourceGroup
     #disable-next-line no-hardcoded-location // static web apps have limited locations
     location: 'eastasia'
   }
