@@ -36,7 +36,7 @@ public class MockAnimalsRepository : IAnimalsRepository
 
     public Task<Result<Animal>> AddAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(Result.Ok(animal));
     }
 
     public Task<Result<Animal>> UpdateAsync(Animal animal, CancellationToken cancellationToken = default)

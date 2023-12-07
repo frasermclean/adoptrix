@@ -15,7 +15,12 @@ public class ApiTestFixture : TestFixture<Program>
 
     protected override void ConfigureServices(IServiceCollection services)
     {
+        // remove the real repositories and replace them with mocks
         services.RemoveAll<IAnimalsRepository>();
+        services.RemoveAll<IBreedsRepository>();
+        services.RemoveAll<ISpeciesRepository>();
         services.AddScoped<IAnimalsRepository, MockAnimalsRepository>();
+        services.AddScoped<IBreedsRepository, MockBreedsRepository>();
+        services.AddScoped<ISpeciesRepository, MockSpeciesRepository>();
     }
 }
