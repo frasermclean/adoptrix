@@ -11,11 +11,11 @@ param category string
 @description('Azure region for the non-global resources')
 param location string = resourceGroup().location
 
+@description('Name of the shared resource group')
+param sharedResourceGroup string = 'adoptrix-shared-rg'
+
 @description('Name of the Azure AD B2C tenant')
 param b2cTenantName string = 'adoptrixauth'
-
-@description('Azure resource group that contains the Azure AD B2C tenant')
-param b2cTenantResourceGroup string = 'adoptrix-auth-rg'
 
 @description('Azure AD B2C application client ID')
 param b2cAuthClientId string
@@ -57,7 +57,7 @@ var deploymentSuffix = startsWith(deployment().name, 'main-')
 // existing Azure AD B2C tenant
 resource b2cTenant 'Microsoft.AzureActiveDirectory/b2cDirectories@2021-04-01' existing = {
   name: '${b2cTenantName}.onmicrosoft.com'
-  scope: resourceGroup(b2cTenantResourceGroup)
+  scope: resourceGroup(sharedResourceGroup)
 }
 
 // virtual network
