@@ -2,12 +2,15 @@
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
+using Adoptrix.Domain.Errors;
 using FluentResults;
 
 namespace Adoptrix.Api.Tests.Mocks;
 
 public class MockAnimalsRepository : IAnimalsRepository
 {
+    public const int UnknownAnimalId = 404;
+
     public Task<IEnumerable<SearchAnimalsResult>> SearchAnimalsAsync(string? animalName = null,
         string? speciesName = null, CancellationToken cancellationToken = default)
     {
@@ -19,6 +22,14 @@ public class MockAnimalsRepository : IAnimalsRepository
 
     public Task<Result<Animal>> GetAsync(int animalId, CancellationToken cancellationToken = default)
     {
+        if (animalId == UnknownAnimalId)
+        {
+            var error = new AnimalNotFoundError(UnknownAnimalId);
+            var result = new Result<Animal>().WithError(error);
+
+            return Task.FromResult(result);
+        }
+
         var animal = AnimalGenerator.Generate();
         return Task.FromResult(Result.Ok(animal));
     }

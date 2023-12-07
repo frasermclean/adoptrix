@@ -2,6 +2,7 @@
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Endpoints.Animals.GetAnimal;
 using Adoptrix.Api.Endpoints.Animals.SearchAnimals;
+using Adoptrix.Api.Tests.Mocks;
 using Adoptrix.Application.Commands.Animals;
 using Adoptrix.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,28 +22,36 @@ public class AnimalsTests(ApiTestFixture fixture, ITestOutputHelper outputHelper
         var command = new SearchAnimalsCommand();
 
         // act
-        var (message, responses) = await httpClient.GETAsync<SearchAnimalsEndpoint, SearchAnimalsCommand, IEnumerable<AnimalResponse>>(command);
+        var (message, responses) =
+            await httpClient
+                .GETAsync<SearchAnimalsEndpoint, SearchAnimalsCommand, IEnumerable<AnimalResponse>>(command);
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.OK);
         responses.Should().HaveCount(3).And.AllSatisfy(ValidateAnimalResponse);
     }
 
-    [Fact]
-    public async Task GetAnimal_WithValidRequest_Should_ReturnOk()
+    [Theory]
+    [InlineData(3, HttpStatusCode.OK)]
+    [InlineData(MockAnimalsRepository.UnknownAnimalId, HttpStatusCode.NotFound)]
+    public async Task GetAnimal_WithValidRequest_Should_ReturnOk(int animalId, HttpStatusCode expectedStatusCode)
     {
         // arrange
-        var id = sqidConverter.ConvertToSqid(3);
+        var id = sqidConverter.ConvertToSqid(animalId);
         var command = new GetAnimalCommand { Id = id };
 
         // act
-        var (message, response) = await httpClient.GETAsync<GetAnimalEndpoint, GetAnimalCommand, AnimalResponse>(command);
+        var (message, response) =
+            await httpClient.GETAsync<GetAnimalEndpoint, GetAnimalCommand, AnimalResponse>(command);
 
         // assert
-        message.StatusCode.Should().Be(HttpStatusCode.OK);
-        ValidateAnimalResponse(response);
-
+        message.StatusCode.Should().Be(expectedStatusCode);
+        if (expectedStatusCode == HttpStatusCode.OK)
+        {
+            ValidateAnimalResponse(response);
+        }
     }
+
 
     private static void ValidateAnimalResponse(AnimalResponse response)
     {
