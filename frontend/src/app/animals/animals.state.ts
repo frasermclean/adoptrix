@@ -8,7 +8,7 @@ import { AnimalsService } from '@services/animals.service';
 
 const ANIMALS_STATE_TOKEN = new StateToken<AnimalsStateModel>('animals');
 interface AnimalsStateModel {
-  state: 'initial' | 'loading' | 'ready' | 'error';
+  state: 'initial' | 'busy' | 'ready' | 'error';
   animals: Animal[];
   currentAnimal: Animal | null;
 }
@@ -27,7 +27,7 @@ export class AnimalsState {
 
   @Action(SearchAnimals)
   searchAnimals(context: StateContext<AnimalsStateModel>, action: SearchAnimals) {
-    context.patchState({ state: 'loading' });
+    context.patchState({ state: 'busy' });
     return this.animalsService
       .searchAnimals(action.params)
       .pipe(tap((animals) => context.patchState({ state: 'ready', animals })));
@@ -35,7 +35,7 @@ export class AnimalsState {
 
   @Action(GetAnimal)
   getAnimal(context: StateContext<AnimalsStateModel>, action: GetAnimal) {
-    context.patchState({ state: 'loading' });
+    context.patchState({ state: 'busy' });
     return this.animalsService
       .getAnimal(action.id)
       .pipe(tap((currentAnimal) => context.patchState({ state: 'ready', currentAnimal })));
