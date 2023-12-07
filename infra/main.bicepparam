@@ -2,6 +2,7 @@ using 'main.bicep'
 
 param workload = 'adoptrix'
 param category = 'demo'
+param domainName = 'adoptrix.com'
 
 param b2cAuthClientId = '91556c30-ad29-4d36-a3df-29701eaba8a9'
 param b2cAuthAudience = '2cb24eb4-3363-42fb-81ca-e69ff34ac201'
