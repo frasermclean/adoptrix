@@ -14,6 +14,9 @@ param location string = resourceGroup().location
 @description('Name of the shared resource group')
 param sharedResourceGroup string = 'adoptrix-shared-rg'
 
+@description('Domain name')
+param domainName string
+
 @description('Name of the Azure AD B2C tenant')
 param b2cTenantName string = 'adoptrixauth'
 
@@ -296,6 +299,17 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
         publicAccess: 'Blob'
       }
     }
+  }
+}
+
+module dnsRecords 'dnsRecords.bicep' = {
+  name: 'dnsRecords-${category}${deploymentSuffix}'
+  scope: resourceGroup(sharedResourceGroup)
+  params: {
+    domainName: domainName
+    category: category
+    appServiceDefaultHostName: appService.properties.defaultHostName
+    appServiceDomainVerificationId: appService.properties.customDomainVerificationId
   }
 }
 
