@@ -1,5 +1,5 @@
 @switch (state$ | async) { @case ('busy') {
-<p>Loading...</p>
+<app-loading-spinner title="Loading animal"></app-loading-spinner>
 } @case ('ready') { @if (animal$ | async; as animal) {
 <h1>{{ animal.name }}</h1>
 <p>{{ animal.description }}</p>
