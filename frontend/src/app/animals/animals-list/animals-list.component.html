@@ -8,4 +8,6 @@
   <app-animal-list-item [animal]="animal"></app-animal-list-item>
   }
 </div>
-} }
+} @case ('error') {
+  <h2>An error occurred while trying to search for animals.</h2>
+}}
