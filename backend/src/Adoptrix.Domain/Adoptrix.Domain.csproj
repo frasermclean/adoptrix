@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FastEndpoints.Messaging.Core" Version="5.20.1" />
-    <PackageReference Include="FluentResults" Version="3.15.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="FastEndpoints.Messaging.Core"/>
+    <PackageReference Include="FluentResults"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
   </ItemGroup>
 
 </Project>

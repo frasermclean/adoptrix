@@ -7,15 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Domain\Adoptrix.Domain.csproj" />
+    <ProjectReference Include="..\Adoptrix.Domain\Adoptrix.Domain.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FastEndpoints.Attributes" Version="5.20.1" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Identity.Web.TokenAcquisition" Version="2.16.0" />
-    <PackageReference Include="Sqids" Version="3.1.0" />
+    <PackageReference Include="FastEndpoints.Attributes"/>
+    <PackageReference Include="Microsoft.Extensions.Options"/>
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>
+    <PackageReference Include="Microsoft.Identity.Web.TokenAcquisition"/>
+    <PackageReference Include="Sqids"/>
   </ItemGroup>
 
 </Project>

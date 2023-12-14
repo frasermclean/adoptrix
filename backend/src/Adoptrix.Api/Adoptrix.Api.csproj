@@ -7,17 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FastEndpoints" Version="5.20.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+    <PackageReference Include="FastEndpoints"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Identity.Web" Version="2.16.0" />
+    <PackageReference Include="Microsoft.Identity.Web"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Application\Adoptrix.Application.csproj" />
-    <ProjectReference Include="..\Adoptrix.Infrastructure\Adoptrix.Infrastructure.csproj" />
+    <ProjectReference Include="..\Adoptrix.Application\Adoptrix.Application.csproj"/>
+    <ProjectReference Include="..\Adoptrix.Infrastructure\Adoptrix.Infrastructure.csproj"/>
   </ItemGroup>
 
 </Project>
