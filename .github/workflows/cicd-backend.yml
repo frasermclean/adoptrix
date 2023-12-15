@@ -54,11 +54,12 @@ jobs:
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --logger trx
+          --collect "XPlat Code Coverage"
           --results-directory ${{ env.TEST_RESULTS_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Publish test results
-      - name: Publish Test Results
+      - name: Publish test results
         if: always()
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
@@ -82,6 +83,14 @@ jobs:
         with:
           name: ${{ env.API_ARTIFACT_NAME }}
           path: ${{ env.PUBLISH_DIRECTORY }}
+
+      # Upload test results
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: ${{ env.TEST_RESULTS_DIRECTORY }}
 
   # Deploy infrastructure job
   deploy_infra:
