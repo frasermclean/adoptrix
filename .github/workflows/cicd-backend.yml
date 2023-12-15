@@ -28,6 +28,10 @@ jobs:
       BACKEND_DIRECTORY: ${{ github.workspace }}/backend
       BUILD_CONFIGURATION: Release
       PUBLISH_DIRECTORY: ${{ github.workspace }}/publish
+      TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/test-results
+    permissions:
+      checks: write
+      pull-requests: write
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -45,8 +49,21 @@ jobs:
 
       # Run tests
       - name: Run tests
-        run: dotnet test --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
+        run: >-
+          dotnet test
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --logger trx
+          --results-directory ${{ env.TEST_RESULTS_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
+
+      # Publish test results
+      - name: Publish Test Results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: ${{ env.TEST_RESULTS_DIRECTORY }}/*.trx
+          action_fail: true
 
       # Publish API project
       - name: Publish API project
