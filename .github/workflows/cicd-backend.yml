@@ -54,7 +54,6 @@ jobs:
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --logger trx
-          --collect "XPlat Code Coverage"
           --results-directory ${{ env.TEST_RESULTS_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
