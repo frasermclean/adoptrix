@@ -3,7 +3,6 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Endpoints.Animals.AddAnimal;
 using Adoptrix.Api.Endpoints.Animals.GetAnimal;
 using Adoptrix.Api.Endpoints.Animals.SearchAnimals;
-using Adoptrix.Api.Tests.EntityGenerators;
 using Adoptrix.Api.Tests.Mocks;
 using Adoptrix.Application.Commands.Animals;
 using Adoptrix.Application.Services;

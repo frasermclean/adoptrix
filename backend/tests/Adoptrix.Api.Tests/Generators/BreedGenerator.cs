@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Domain;
 using Bogus;
 
-namespace Adoptrix.Api.Tests.EntityGenerators;
+namespace Adoptrix.Api.Tests.Generators;
 
 public static class BreedGenerator
 {

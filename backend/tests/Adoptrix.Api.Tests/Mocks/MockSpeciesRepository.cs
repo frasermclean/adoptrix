@@ -1,4 +1,4 @@
-﻿using Adoptrix.Api.Tests.EntityGenerators;
+﻿using Adoptrix.Api.Tests.Generators;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
