@@ -63,6 +63,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: ${{ env.TEST_RESULTS_DIRECTORY }}/*.trx
+          check_name: Solution test results
           action_fail: true
 
       # Publish API project
@@ -78,7 +79,7 @@ jobs:
       # Upload API artifact
       - name: Upload API artifact
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.API_ARTIFACT_NAME }}
           path: ${{ env.PUBLISH_DIRECTORY }}
@@ -86,7 +87,7 @@ jobs:
       # Upload test results
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: ${{ env.TEST_RESULTS_DIRECTORY }}
