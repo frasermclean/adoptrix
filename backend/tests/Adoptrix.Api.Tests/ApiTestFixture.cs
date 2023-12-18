@@ -6,13 +6,9 @@ using Xunit.Abstractions;
 
 namespace Adoptrix.Api.Tests;
 
-public class ApiTestFixture : TestFixture<Program>
+public class ApiTestFixture(IMessageSink messageSink)
+    : TestFixture<Program>(messageSink)
 {
-    public ApiTestFixture(IMessageSink messageSink)
-        : base(messageSink)
-    {
-    }
-
     protected override void ConfigureServices(IServiceCollection services)
     {
         // remove the real repositories and replace them with mocks
