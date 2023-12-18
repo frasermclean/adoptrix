@@ -28,6 +28,10 @@ jobs:
       BACKEND_DIRECTORY: ${{ github.workspace }}/backend
       BUILD_CONFIGURATION: Release
       PUBLISH_DIRECTORY: ${{ github.workspace }}/publish
+      TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/test-results
+    permissions:
+      checks: write
+      pull-requests: write
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -45,8 +49,29 @@ jobs:
 
       # Run tests
       - name: Run tests
-        run: dotnet test --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
+        run: >-
+          dotnet test
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --logger trx
+          --collect "XPlat Code Coverage"
+          --results-directory ${{ env.TEST_RESULTS_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
+
+      # Publish test results
+      - name: Publish test results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: ${{ env.TEST_RESULTS_DIRECTORY }}/*.trx
+          check_name: Solution test results
+          action_fail: true
+
+      # Upload coverage reports
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       # Publish API project
       - name: Publish API project
@@ -61,10 +86,18 @@ jobs:
       # Upload API artifact
       - name: Upload API artifact
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.API_ARTIFACT_NAME }}
           path: ${{ env.PUBLISH_DIRECTORY }}
+
+      # Upload test results
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ${{ env.TEST_RESULTS_DIRECTORY }}
 
   # Deploy infrastructure job
   deploy_infra:

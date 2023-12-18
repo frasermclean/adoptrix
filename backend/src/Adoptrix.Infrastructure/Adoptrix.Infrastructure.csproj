@@ -7,17 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.1" />
+    <PackageReference Include="Azure.Storage.Blobs"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer"/>
+    <PackageReference Include="Microsoft.Extensions.Azure"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Application\Adoptrix.Application.csproj" />
+    <ProjectReference Include="..\Adoptrix.Application\Adoptrix.Application.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <Folder Include="Migrations\"/>
   </ItemGroup>
 
 </Project>

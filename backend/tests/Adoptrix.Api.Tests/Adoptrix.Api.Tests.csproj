@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FastEndpoints.Testing"/>
     <PackageReference Include="FluentAssertions"/>
     <PackageReference Include="FluentAssertions.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FluentResults.Extensions.FluentAssertions"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk"/>
     <PackageReference Include="xunit"/>
     <PackageReference Include="xunit.runner.visualstudio">
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Adoptrix.Domain\Adoptrix.Domain.csproj"/>
+    <ProjectReference Include="..\..\src\Adoptrix.Api\Adoptrix.Api.csproj"/>
   </ItemGroup>
 
 </Project>

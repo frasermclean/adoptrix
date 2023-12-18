@@ -26,6 +26,11 @@ public static class MiddlewareConfiguration
             config.Endpoints.RoutePrefix = "api";
             config.Endpoints.Configurator = definition =>
             {
+                if (app.Configuration.GetValue<bool>("FastEndpoints:DisableAuthorization"))
+                {
+                    definition.AllowAnonymous();
+                }
+
                 var eventDispatcher = app.Services.GetRequiredService<EventDispatcherPostProcessor>();
                 definition.PostProcessors(Order.After, eventDispatcher);
             };
