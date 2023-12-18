@@ -54,6 +54,7 @@ jobs:
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --logger trx
+          --collect "XPlat Code Coverage"
           --results-directory ${{ env.TEST_RESULTS_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
@@ -65,6 +66,12 @@ jobs:
           files: ${{ env.TEST_RESULTS_DIRECTORY }}/*.trx
           check_name: Solution test results
           action_fail: true
+
+      # Upload coverage reports
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       # Publish API project
       - name: Publish API project
