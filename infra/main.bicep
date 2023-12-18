@@ -268,7 +268,6 @@ resource appServiceCertificate 'Microsoft.Web/certificates@2022-09-01' = {
   name: '${appService.name}-cert'
   location: location
   tags: tags
-  dependsOn: [ appService::hostNameBinding ]
   properties: {
     serverFarmId: appServicePlan.id
     canonicalName: 'api.${category}.${domainName}'
