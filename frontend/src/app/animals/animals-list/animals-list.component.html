@@ -1,11 +1,13 @@
 <app-search-controls></app-search-controls>
 
-@switch (state$ | async) { @case ('loading') {
-<p>Loading...</p>
+@switch (state$ | async) { @case ('busy') {
+<app-loading-spinner title="Loading animals"></app-loading-spinner>
 } @case ('ready') {
 <div id="results-container">
   @for (animal of animals$ | async; track $index) {
   <app-animal-list-item [animal]="animal"></app-animal-list-item>
   }
 </div>
-} }
+} @case ('error') {
+  <h2>An error occurred while trying to search for animals.</h2>
+}}

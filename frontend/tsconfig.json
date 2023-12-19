@@ -22,6 +22,7 @@
       "@models/*": ["./src/app/models/*"],
       "@pipes/*": ["./src/app/pipes/*"],
       "@services/*": ["./src/app/services/*"],
+      "@shared/*": ["./src/app/shared/*"],
     },
     "lib": ["ES2022", "dom"]
   },
