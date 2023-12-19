@@ -36,6 +36,8 @@ public static class MiddlewareConfiguration
             };
         });
 
+        app.MapHealthChecks("/health").AllowAnonymous();
+
         return app;
     }
 }
