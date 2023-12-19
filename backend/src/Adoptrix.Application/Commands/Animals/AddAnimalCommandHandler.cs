@@ -7,10 +7,10 @@ using Microsoft.Extensions.Logging;
 namespace Adoptrix.Application.Commands.Animals;
 
 public class AddAnimalCommandHandler(
-        ILogger<AddAnimalCommandHandler> logger,
-        IAnimalsRepository repository,
-        ISpeciesRepository speciesRepository,
-        IBreedsRepository breedsRepository)
+    ILogger<AddAnimalCommandHandler> logger,
+    IAnimalsRepository repository,
+    ISpeciesRepository speciesRepository,
+    IBreedsRepository breedsRepository)
     : ICommandHandler<AddAnimalCommand, Result<Animal>>
 {
     public async Task<Result<Animal>> ExecuteAsync(AddAnimalCommand command, CancellationToken cancellationToken)
@@ -39,6 +39,7 @@ public class AddAnimalCommandHandler(
             Description = command.Description,
             Species = speciesResult.Value,
             Breed = breedResult?.Value,
+            Sex = command.Sex,
             DateOfBirth = command.DateOfBirth,
             CreatedBy = command.UserId
         }, cancellationToken);

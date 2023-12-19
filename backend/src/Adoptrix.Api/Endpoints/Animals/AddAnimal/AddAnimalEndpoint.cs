@@ -7,21 +7,21 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace Adoptrix.Api.Endpoints.Animals.AddAnimal;
 
 public class AddAnimalEndpoint(IResponseMappingService mappingService)
-    : Endpoint<AddAnimalCommand, Results<Created<AnimalResponse>, UnprocessableEntity>>
+    : Endpoint<AddAnimalCommand, Results<Created<AnimalResponse>, BadRequest>>
 {
     public override void Configure()
     {
         Post("admin/animals");
     }
 
-    public override async Task<Results<Created<AnimalResponse>, UnprocessableEntity>> ExecuteAsync(
+    public override async Task<Results<Created<AnimalResponse>, BadRequest>> ExecuteAsync(
         AddAnimalCommand command, CancellationToken cancellationToken)
     {
         var result = await command.ExecuteAsync(cancellationToken);
 
         if (result.IsFailed)
         {
-            return TypedResults.UnprocessableEntity();
+            return TypedResults.BadRequest();
         }
 
         var response = mappingService.Map(result.Value);

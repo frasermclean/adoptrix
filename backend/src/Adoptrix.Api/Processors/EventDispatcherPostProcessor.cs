@@ -1,20 +1,14 @@
 ﻿using Adoptrix.Domain.Services;
 using FastEndpoints;
-using FluentValidation.Results;
 
 namespace Adoptrix.Api.Processors;
 
 public class EventDispatcherPostProcessor(ILogger<EventDispatcherPostProcessor> logger,
-        IEventQueueService eventQueueService)
-    : IGlobalPostProcessor
+    IEventQueueService eventQueueService) : IGlobalPostProcessor
 {
-    private readonly ILogger<EventDispatcherPostProcessor> logger = logger;
-    private readonly IEventQueueService eventQueueService = eventQueueService;
-
-    public Task PostProcessAsync(object request, object? response, HttpContext httpContext,
-        IReadOnlyCollection<ValidationFailure> failures, CancellationToken cancellationToken)
+    public Task PostProcessAsync(IPostProcessorContext context, CancellationToken cancellationToken)
     {
-        httpContext.Response.OnCompleted(OnResponseCompleted);
+        context.HttpContext.Response.OnCompleted(OnResponseCompleted);
         return Task.CompletedTask;
     }
 

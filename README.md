@@ -1,5 +1,7 @@
 # Adoptrix - Pet adoption centre platform
 
+[![codecov](https://codecov.io/github/frasermclean/adoptrix/graph/badge.svg?token=ZEN83PQHWW)](https://codecov.io/github/frasermclean/adoptrix)
+
 ## Description
 
 Adoptrix is a platform for animal adoption centres to manage their animals and adoptions. It allows users to view animals available for adoption, and to submit adoption applications for animals they are interested in. It also allows adoption centre staff to manage their animals and applications.

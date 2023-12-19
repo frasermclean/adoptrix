@@ -2,7 +2,7 @@ using Adoptrix.Api.Startup;
 
 namespace Adoptrix.Api;
 
-public static class Program
+public class Program
 {
     public static void Main(string[] args)
     {
