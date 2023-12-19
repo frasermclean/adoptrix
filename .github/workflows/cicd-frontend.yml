@@ -17,6 +17,9 @@ on:
       - frontend/**
       - .github/workflows/cicd-frontend.yml
 
+env:
+  DEPLOYMENT_NAME: ${{ github.event_name == 'pull_request' && 'pr' || null }}
+
 jobs:
   # Build and deploy. Create preview environment for pull requests
   build_deploy:
@@ -57,6 +60,7 @@ jobs:
           production_branch: main
           azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_DEPLOYMENT_TOKEN }}
           app_location: ${{ env.BUILD_DIRECTORY }}
+          deployment_environment: ${{ env.DEPLOYMENT_NAME }}
           skip_app_build: true
           skip_api_build: true
 
@@ -73,3 +77,4 @@ jobs:
           action: close
           azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_DEPLOYMENT_TOKEN }}
           app_location: null # Unused in close pr step
+          deployment_environment: ${{ env.DEPLOYMENT_NAME }}
