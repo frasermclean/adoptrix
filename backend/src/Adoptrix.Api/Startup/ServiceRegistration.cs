@@ -5,6 +5,7 @@ using Adoptrix.Api.Services;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Services;
+using Adoptrix.Infrastructure;
 using Adoptrix.Infrastructure.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -37,6 +38,11 @@ public static class ServiceRegistration
             .AddDevelopmentServices(builder.Environment)
             .AddScoped<IResponseMappingService, ResponseMappingService>()
             .AddSingleton<EventDispatcherPostProcessor>();
+
+        // health checks services
+        builder.Services.AddHealthChecks()
+            .AddDbContextCheck<AdoptrixDbContext>()
+            .AddAzureBlobStorage();
 
         return builder;
     }

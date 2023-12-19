@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="FastEndpoints.Attributes"/>
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Microsoft.Extensions.Options"/>
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>
     <PackageReference Include="Microsoft.Identity.Web.TokenAcquisition"/>

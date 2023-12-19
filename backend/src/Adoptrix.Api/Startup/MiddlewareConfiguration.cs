@@ -5,6 +5,8 @@ namespace Adoptrix.Api.Startup;
 
 public static class MiddlewareConfiguration
 {
+    private const string ApiRoutePrefix = "api";
+
     /// <summary>
     /// Adds middleware to the application pipeline.
     /// </summary>
@@ -23,7 +25,7 @@ public static class MiddlewareConfiguration
 
         app.UseFastEndpoints(config =>
         {
-            config.Endpoints.RoutePrefix = "api";
+            config.Endpoints.RoutePrefix = ApiRoutePrefix;
             config.Endpoints.Configurator = definition =>
             {
                 if (app.Configuration.GetValue<bool>("FastEndpoints:DisableAuthorization"))
@@ -35,6 +37,8 @@ public static class MiddlewareConfiguration
                 definition.PostProcessors(Order.After, eventDispatcher);
             };
         });
+
+        app.MapHealthChecks($"{ApiRoutePrefix}/health").AllowAnonymous();
 
         return app;
     }
