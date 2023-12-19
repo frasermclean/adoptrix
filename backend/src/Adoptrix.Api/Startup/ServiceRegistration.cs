@@ -41,7 +41,8 @@ public static class ServiceRegistration
 
         // health checks services
         builder.Services.AddHealthChecks()
-            .AddDbContextCheck<AdoptrixDbContext>();
+            .AddDbContextCheck<AdoptrixDbContext>()
+            .AddAzureBlobStorage();
 
         return builder;
     }
