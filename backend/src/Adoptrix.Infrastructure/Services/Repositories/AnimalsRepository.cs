@@ -17,7 +17,18 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
             .AsNoTracking()
             .Where(animal => (animalName == null || animal.Name.Contains(animalName)) &&
                              (speciesName == null || animal.Species.Name == speciesName))
-            .Select(animal => SearchAnimalsResult.FromAnimal(animal))
+            .Select(animal => new SearchAnimalsResult
+            {
+                Id = animal.Id,
+                Name = animal.Name,
+                Description = animal.Description,
+                Species = animal.Species.Name,
+                Breed = animal.Breed != null ? animal.Breed.Name : null,
+                Sex = animal.Sex,
+                DateOfBirth = animal.DateOfBirth,
+                CreatedAt = animal.CreatedAt,
+                PrimaryImage = animal.Images.Count > 0 ? animal.Images[0] : null
+            })
             .OrderBy(animal => animal.Name)
             .ToListAsync(cancellationToken);
     }
