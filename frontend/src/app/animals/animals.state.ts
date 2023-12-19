@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Animal } from '@models/animal.model';
-import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
+import { Action, Selector, State, StateContext, StateToken, createSelector } from '@ngxs/store';
 import { catchError, of, tap } from 'rxjs';
 
 import { GetAnimal, SearchAnimals } from './animals.actions';
@@ -11,7 +11,7 @@ interface AnimalsStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
   animals: Animal[];
-  currentAnimal: Animal | null;
+  lastUpdate: Date | null;
 }
 
 @State<AnimalsStateModel>({
@@ -20,7 +20,7 @@ interface AnimalsStateModel {
     state: 'initial',
     error: null,
     animals: [],
-    currentAnimal: null,
+    lastUpdate: null,
   },
 })
 @Injectable()
@@ -31,22 +31,29 @@ export class AnimalsState {
   searchAnimals(context: StateContext<AnimalsStateModel>, action: SearchAnimals) {
     context.patchState({ state: 'busy' });
     return this.animalsService.searchAnimals(action.params).pipe(
-      tap((animals) => context.patchState({ state: 'ready', animals })),
+      tap((animals) => context.patchState({ state: 'ready', lastUpdate: new Date(), animals })),
       catchError((error) => {
         context.patchState({ state: 'error', animals: [], error });
-        return of(error);
+        throw error;
       })
     );
   }
 
   @Action(GetAnimal)
   getAnimal(context: StateContext<AnimalsStateModel>, action: GetAnimal) {
+    // if the animal is already in the store, don't make a request
+    const animal = context.getState().animals.find((animal) => animal.id === action.id);
+    if (animal) {
+      return of(animal);
+    }
+
+    // look up the animal
     context.patchState({ state: 'busy' });
     return this.animalsService.getAnimal(action.id).pipe(
-      tap((currentAnimal) => context.patchState({ state: 'ready', currentAnimal })),
+      tap((animal) => context.patchState({ state: 'ready', animals: [animal] })),
       catchError((error) => {
-        context.patchState({ state: 'error', currentAnimal: null, error });
-        return of(error);
+        context.patchState({ state: 'error', error });
+        throw error;
       })
     );
   }
@@ -62,7 +69,7 @@ export class AnimalsState {
   }
 
   @Selector()
-  static currentAnimal(state: AnimalsStateModel) {
-    return state.currentAnimal;
+  static animal(state: AnimalsStateModel) {
+    return (id: string) => state.animals.find((animal) => animal.id === id);
   }
 }

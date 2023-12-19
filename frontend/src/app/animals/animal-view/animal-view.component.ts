@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { Store } from '@ngxs/store';
+import { map } from 'rxjs';
 
 import { AgePipe } from '@pipes/age.pipe';
 import { LoadingSpinnerComponent } from '@shared/loading-spinner/loading-spinner.component';
@@ -19,7 +20,7 @@ import { GetAnimal } from '../animals.actions';
 export class AnimalViewComponent implements OnInit {
   @Input({ required: true }) animalId!: string;
   readonly state$ = this.store.select(AnimalsState.state);
-  readonly animal$ = this.store.select(AnimalsState.currentAnimal);
+  readonly animal$ = this.store.select(AnimalsState.animal).pipe(map((filterFn) => filterFn(this.animalId)));
 
   constructor(private store: Store) {}
 
