@@ -193,6 +193,7 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
       linuxFxVersion: 'DOTNETCORE|8.0'
       http20Enabled: true
       ftpsState: 'FtpsOnly'
+      healthCheckPath: '/api/health'
       appSettings: [
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
