@@ -132,18 +132,12 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
     location: location
     tags: tags
     sku: {
-      name: 'GP_S_Gen5_2'
-      tier: 'GeneralPurpose'
-      family: 'Gen5'
-      capacity: 2
+      name: 'S0'
+      tier: 'Standard'
+      capacity: 10
     }
     properties: {
-      autoPauseDelay: 60
       collation: 'SQL_Latin1_General_CP1_CI_AS'
-      freeLimitExhaustionBehavior: 'AutoPause'
-      maxSizeBytes: 34359738368 // 32 GB
-      minCapacity: json('0.5')
-      useFreeLimit: true
     }
   }
 
