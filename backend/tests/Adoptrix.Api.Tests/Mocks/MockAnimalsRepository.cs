@@ -15,7 +15,18 @@ public class MockAnimalsRepository : IAnimalsRepository
         string? speciesName = null, CancellationToken cancellationToken = default)
     {
         var animals = AnimalGenerator.Generate(3)
-            .Select(SearchAnimalsResult.FromAnimal);
+            .Select(animal => new SearchAnimalsResult()
+            {
+                Id = animal.Id,
+                Name = animal.Name,
+                Description = animal.Description,
+                Species = animal.Species.Name,
+                Breed = animal.Breed?.Name,
+                Sex = animal.Sex,
+                DateOfBirth = animal.DateOfBirth,
+                CreatedAt = animal.CreatedAt,
+                PrimaryImage = animal.Images.Count > 0 ? animal.Images[0] : null
+            });
 
         return Task.FromResult(animals);
     }
