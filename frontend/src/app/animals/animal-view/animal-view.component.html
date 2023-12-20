@@ -7,6 +7,15 @@
   <li>Date of birth: {{ animal.dateOfBirth | date : "dd MMMM YYYY" }}</li>
   <li>Age: {{ animal.dateOfBirth | age }}</li>
 </ul>
+<div id="images-container">
+  <h2>Images <span class="image-count">({{ animal.images.length }})</span></h2>
+  <div id="image-previews">
+    @for (image of animal.images; track $index) {
+    <img class="preview" [src]="image.uri" [alt]="image.description" />
+    }
+  </div>
+</div>
+
 } } }
 
 <button mat-raised-button color="primary" routerLink="..">BACK TO RESULTS</button>
