@@ -1,5 +1,7 @@
-<div id="previews-container">
-  @for (image of images; track $index) {
-  <img class="preview" [src]="image.uri" [alt]="image.description" />
+<div id="container">
+  @for (item of galleryItems; track $index) {
+  <div class="grid-item" [lightbox]="$index" [gallery]="galleryId">
+    <img [src]="item.data?.thumb" [alt]="item.data?.args.description" />
+  </div>
   }
 </div>

@@ -1,11 +1,12 @@
-#previews-container {
+#container {
   display: flex;
   gap: 8px;
-
-  .preview {
-    border-radius: 4px;
-    width: 240px;
-    height: 200px;
-    object-fit: cover;
+  .grid-item {
+    img {
+      border-radius: 4px;
+      width: 200px;
+      height: 160px;
+      object-fit: cover;
+    }
   }
 }
