@@ -1,3 +1,4 @@
+import { ImageInformation } from './image-information.model';
 import { Species } from './species.enum';
 
 export interface Animal {
@@ -7,11 +8,5 @@ export interface Animal {
   species: Species;
   breed?: string;
   dateOfBirth: string;
-  images: AnimalImage[];
-}
-
-export interface AnimalImage {
-  id: number;
-  uri: string;
-  description?: string;
+  images: ImageInformation[];
 }

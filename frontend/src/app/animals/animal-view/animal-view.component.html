@@ -8,12 +8,10 @@
   <li>Age: {{ animal.dateOfBirth | age }}</li>
 </ul>
 <div id="images-container">
-  <h2>Images <span class="image-count">({{ animal.images.length }})</span></h2>
-  <div id="image-previews">
-    @for (image of animal.images; track $index) {
-    <img class="preview" [src]="image.uri" [alt]="image.description" />
-    }
-  </div>
+  <h2>
+    Images <span class="image-count">({{ animal.images.length }})</span>
+  </h2>
+  <app-image-gallery [images]="animal.images"></app-image-gallery>
 </div>
 
 } } }

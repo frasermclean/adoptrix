@@ -1,0 +1,5 @@
+<div id="previews-container">
+  @for (image of images; track $index) {
+  <img class="preview" [src]="image.uri" [alt]="image.description" />
+  }
+</div>

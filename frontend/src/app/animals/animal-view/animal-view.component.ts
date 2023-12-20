@@ -7,13 +7,14 @@ import { map } from 'rxjs';
 
 import { AgePipe } from '@pipes/age.pipe';
 import { LoadingSpinnerComponent } from '@shared/loading-spinner/loading-spinner.component';
+import { ImageGalleryComponent } from '@shared/image-gallery/image-gallery.component';
 import { AnimalsState } from '../animals.state';
 import { GetAnimal } from '../animals.actions';
 
 @Component({
   selector: 'app-animal-view',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, AgePipe, LoadingSpinnerComponent],
+  imports: [CommonModule, RouterModule, MatButtonModule, AgePipe, LoadingSpinnerComponent, ImageGalleryComponent],
   templateUrl: './animal-view.component.html',
   styleUrl: './animal-view.component.scss',
 })
