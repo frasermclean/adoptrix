@@ -1,11 +1,13 @@
 #container {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
-  .grid-item {
+  .item {
     img {
       border-radius: 4px;
-      width: 200px;
-      height: 160px;
+      width: 160px;
+      height: 120px;
       object-fit: cover;
     }
   }
