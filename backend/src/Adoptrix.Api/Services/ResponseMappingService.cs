@@ -45,17 +45,12 @@ public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageMa
         Sex = result.Sex,
         DateOfBirth = result.DateOfBirth,
         CreatedAt = result.CreatedAt.ToUtc(),
-        Images = result.PrimaryImage is not null
-            ? new[]
-            {
-                new AnimalImageResponse
-                {
-                    Id = result.PrimaryImage.Id,
-                    Uri = animalImageManager.GetImageUri(result.Id, result.PrimaryImage.FileName),
-                    Description = result.PrimaryImage.Description
-                }
-            }
-            : Enumerable.Empty<AnimalImageResponse>()
+        Images = result.Images.Select(imageInfo => new AnimalImageResponse
+        {
+            Id = imageInfo.Id,
+            Uri = animalImageManager.GetImageUri(result.Id, imageInfo.FileName),
+            Description = imageInfo.Description
+        })
     };
 
     public BreedResponse Map(Breed breed) => new()
