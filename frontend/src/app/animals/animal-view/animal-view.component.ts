@@ -5,16 +5,23 @@ import { MatButtonModule } from '@angular/material/button';
 import { Store } from '@ngxs/store';
 import { map } from 'rxjs';
 
-import { AgePipe } from '@pipes/age.pipe';
 import { LoadingSpinnerComponent } from '@shared/loading-spinner/loading-spinner.component';
 import { ImageGalleryComponent } from '@shared/image-gallery/image-gallery.component';
+import { AnimalDetailsComponent } from './animal-details/animal-details.component';
 import { AnimalsState } from '../animals.state';
 import { GetAnimal } from '../animals.actions';
 
 @Component({
   selector: 'app-animal-view',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, AgePipe, LoadingSpinnerComponent, ImageGalleryComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatButtonModule,
+    LoadingSpinnerComponent,
+    ImageGalleryComponent,
+    AnimalDetailsComponent,
+  ],
   templateUrl: './animal-view.component.html',
   styleUrl: './animal-view.component.scss',
 })

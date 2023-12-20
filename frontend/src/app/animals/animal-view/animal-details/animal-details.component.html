@@ -1,0 +1,18 @@
+<mat-list>
+  <mat-list-item>
+    <span matListItemTitle>Breed</span>
+    <span matListItemLine>{{ animal.breed || "Unspecified" }}</span>
+  </mat-list-item>
+  <mat-list-item>
+    <span matListItemTitle>Sex</span>
+    <span matListItemLine>{{ animal.sex || "Unspecified" }}</span>
+  </mat-list-item>
+  <mat-list-item>
+    <span matListItemTitle>Date of birth</span>
+    <span matListItemLine>{{ animal.dateOfBirth | date : "dd MMMM YYYY" }}</span>
+  </mat-list-item>
+  <mat-list-item>
+    <span matListItemTitle>Age</span>
+    <span matListItemLine>{{ animal.dateOfBirth | age }}</span>
+  </mat-list-item>
+</mat-list>

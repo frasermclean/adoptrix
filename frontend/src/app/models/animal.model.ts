@@ -7,6 +7,7 @@ export interface Animal {
   description?: string;
   species: Species;
   breed?: string;
+  sex?: string;
   dateOfBirth: string;
   images: ImageInformation[];
 }
