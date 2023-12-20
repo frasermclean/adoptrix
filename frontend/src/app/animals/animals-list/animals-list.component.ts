@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatDividerModule } from '@angular/material/divider';
 import { Store } from '@ngxs/store';
 import { AnimalListItemComponent } from './animal-list-item/animal-list-item.component';
 import { SearchControlsComponent } from './search-controls/search-controls.component';
@@ -10,7 +11,7 @@ import { LoadingSpinnerComponent } from '@shared/loading-spinner/loading-spinner
 @Component({
   selector: 'app-animals',
   standalone: true,
-  imports: [CommonModule, AnimalListItemComponent, SearchControlsComponent, LoadingSpinnerComponent],
+  imports: [CommonModule, AnimalListItemComponent, MatDividerModule, SearchControlsComponent, LoadingSpinnerComponent],
   templateUrl: './animals-list.component.html',
   styleUrl: './animals-list.component.scss',
 })
