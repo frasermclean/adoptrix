@@ -12,6 +12,5 @@ public class SearchAnimalsResult
     public required Sex? Sex { get; init; }
     public required DateOnly DateOfBirth { get; init; }
     public required DateTime CreatedAt { get; init; }
-    public required ImageInformation? PrimaryImage { get; init; }
-
+    public required IEnumerable<ImageInformation> Images { get; init; }
 }

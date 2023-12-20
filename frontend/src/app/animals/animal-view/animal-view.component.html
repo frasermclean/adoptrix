@@ -3,10 +3,17 @@
 } @case ('ready') { @if (animal$ | async; as animal) {
 <h1>{{ animal.name }}</h1>
 <p>{{ animal.description }}</p>
-<ul>
-  <li>Date of birth: {{ animal.dateOfBirth | date : "dd MMMM YYYY" }}</li>
-  <li>Age: {{ animal.dateOfBirth | age }}</li>
-</ul>
+<div id="details-container">
+  <app-animal-details [animal]="animal"></app-animal-details>
+</div>
+
+<div id="images-container">
+  <h2>
+    Images <span class="image-count">({{ animal.images.length }})</span>
+  </h2>
+  <app-image-gallery [images]="animal.images"></app-image-gallery>
+</div>
+
 } } }
 
 <button mat-raised-button color="primary" routerLink="..">BACK TO RESULTS</button>

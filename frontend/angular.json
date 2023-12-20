@@ -31,8 +31,7 @@
               "src/staticwebapp.config.json"
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.scss"
+              "src/styles/main.scss"
             ],
             "scripts": []
           },
@@ -98,8 +97,7 @@
               "src/images"
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.scss"
+              "src/styles/main.scss"
             ],
             "scripts": []
           }

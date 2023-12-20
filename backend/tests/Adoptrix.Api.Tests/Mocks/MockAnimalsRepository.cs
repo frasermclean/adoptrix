@@ -25,7 +25,7 @@ public class MockAnimalsRepository : IAnimalsRepository
                 Sex = animal.Sex,
                 DateOfBirth = animal.DateOfBirth,
                 CreatedAt = animal.CreatedAt,
-                PrimaryImage = animal.Images.Count > 0 ? animal.Images[0] : null
+                Images = animal.Images
             });
 
         return Task.FromResult(animals);
