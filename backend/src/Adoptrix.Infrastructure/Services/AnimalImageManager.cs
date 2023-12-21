@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using FluentResults;
@@ -9,47 +10,38 @@ namespace Adoptrix.Infrastructure.Services;
 
 public class AnimalImageManager(
     ILogger<AnimalImageManager> logger,
-    IHashGenerator hashGenerator,
     [FromKeyedServices(AnimalImageManager.ContainerName)]
     BlobContainerClient containerClient)
     : IAnimalImageManager
 {
     public const string ContainerName = "animal-images";
 
-    public string GenerateFileName(Guid animalId, string contentType, string originalFileName)
+    public Uri GetImageUri(Guid animalId, Guid imageId, ImageCategory category)
     {
-        var baseName = hashGenerator.ComputeHash(animalId.ToString(), contentType, originalFileName);
-        var fileExtension = GetFileExtension(contentType);
-
-        return $"{baseName}.{fileExtension}";
-    }
-
-    public Uri GetImageUri(Guid animalId, string fileName)
-    {
-        var blobName = GetBlobName(animalId, fileName);
+        var blobName = GetBlobName(animalId, imageId);
         return new Uri(containerClient.Uri, $"{ContainerName}/{blobName}");
     }
 
-    public async Task UploadImageAsync(Guid animalId, string fileName, Stream imageStream, string contentType,
+    public async Task UploadImageAsync(Guid animalId, ImageInformation information, Stream imageStream,
         CancellationToken cancellationToken)
     {
-        var blobName = GetBlobName(animalId, fileName);
+        var blobName = GetBlobName(animalId, information.Id);
         var blobClient = containerClient.GetBlobClient(blobName);
 
         var options = new BlobUploadOptions
         {
-            HttpHeaders = new BlobHttpHeaders { ContentType = contentType }
+            HttpHeaders = new BlobHttpHeaders { ContentType = information.OriginalContentType }
         };
 
         await blobClient.UploadAsync(imageStream, options, cancellationToken);
 
         logger.LogInformation("Uploaded image {BlobName} with content type {ContentType} to blob storage",
-            blobName, contentType);
+            blobName, information.OriginalContentType);
     }
 
-    public async Task<Result> DeleteImageAsync(Guid animalId, string fileName, CancellationToken cancellationToken)
+    public async Task<Result> DeleteImageAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken)
     {
-        var blobName = GetBlobName(animalId, fileName);
+        var blobName = GetBlobName(animalId, imageId);
         var blobClient = containerClient.GetBlobClient(blobName);
         var response = await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots,
             cancellationToken: cancellationToken);
@@ -57,7 +49,18 @@ public class AnimalImageManager(
         return Result.OkIf(response.Value, "Specified blob was not found");
     }
 
-    private static string GetBlobName(Guid animalId, string fileName) => $"{animalId}/{fileName}";
+    private static string GetBlobName(Guid animalId, Guid imageId, ImageCategory category = ImageCategory.Original)
+    {
+        var suffix = category switch
+        {
+            ImageCategory.FullSize => "full",
+            ImageCategory.Thumbnail => "thumb",
+            ImageCategory.Preview => "preview",
+            _ => "original"
+        };
+
+        return $"{animalId}/{imageId}-{suffix}.jpg";
+    }
 
     private static string GetFileExtension(string contentType)
         => contentType switch

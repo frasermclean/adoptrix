@@ -28,16 +28,18 @@ public class AnimalTests
     {
         // arrange
         var animal = CreateAnimal();
+        const string fileName = "DSC0001.jpg";
+        const string contentType = "image/jpeg";
 
         // act
-        var result1 = animal.AddImage("abc.jpg", "A nice image", "image.jpg");
-        var result2 = animal.AddImage("abc.jpg", "A nice image", "image.jpg");
+        var result1 = animal.AddImage(fileName, contentType);
+        var result2 = animal.AddImage(fileName, contentType);
 
         // assert
-        result1.Should().BeSuccess().Which.Value.FileName.Should().Be("abc.jpg");
-        animal.Images.Should().ContainSingle().Which.FileName.Should().Be("abc.jpg");
+        result1.Should().BeSuccess().Which.Value.OriginalFileName.Should().Be(fileName);
+        animal.Images.Should().ContainSingle().Which.OriginalFileName.Should().Be("abc.jpg");
         result2.Should().BeFailure().Which.Should()
-            .HaveReason<DuplicateImageError>("Image with filename abc.jpg already exists");
+            .HaveReason<DuplicateImageError>("Image with original filename abc.jpg already exists");
     }
 
     private static Animal CreateAnimal(Guid? id = null, string name = "Fido", string? description = null,

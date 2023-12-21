@@ -20,16 +20,16 @@ public class AnimalDeletedEventHandler(IServiceScopeFactory serviceScopeFactory,
         // delete all images associated with the animal
         foreach (var image in animal.Images)
         {
-            var result = await imageManager.DeleteImageAsync(animal.Id, image.FileName, cancellationToken);
+            var result = await imageManager.DeleteImageAsync(animal.Id, image.Id, cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Deleted image {FileName} for animal {AnimalId}", image.FileName, animal.Id);
+                logger.LogInformation("Deleted image {ImageId} for animal {AnimalId}", image.Id, animal.Id);
             }
             else
             {
-                logger.LogError("Failed to delete image {FileName} for animal {AnimalId}: {Error}",
-                    image.FileName, animal.Id, result.Errors.First());
+                logger.LogError("Failed to delete image {ImageId} for animal {AnimalId}: {Error}",
+                    image.Id, animal.Id, result.Errors.First());
             }
         }
     }

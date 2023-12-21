@@ -64,7 +64,7 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
             FileStream = section.Section.Body,
             ContentType = section.Section.ContentType!,
             Description = section.Name,
-            OriginalFileName = section.FileName
+            FileName = section.FileName
         };
 
         return await command.ExecuteAsync(cancellationToken);

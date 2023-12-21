@@ -30,7 +30,7 @@ public class ResponseMappingService(IAnimalImageManager animalImageManager)
         Images = animal.Images.Select(image => new AnimalImageResponse
         {
             Id = image.Id,
-            Uri = animalImageManager.GetImageUri(animal.Id, image.FileName),
+            Uri = animalImageManager.GetImageUri(animal.Id, image.Id, ImageCategory.Original),
             Description = image.Description
         })
     };
@@ -45,11 +45,11 @@ public class ResponseMappingService(IAnimalImageManager animalImageManager)
         Sex = result.Sex,
         DateOfBirth = result.DateOfBirth,
         CreatedAt = result.CreatedAt.ToUtc(),
-        Images = result.Images.Select(imageInfo => new AnimalImageResponse
+        Images = result.Images.Select(image => new AnimalImageResponse
         {
-            Id = imageInfo.Id,
-            Uri = animalImageManager.GetImageUri(result.Id, imageInfo.FileName),
-            Description = imageInfo.Description
+            Id = image.Id,
+            Uri = animalImageManager.GetImageUri(result.Id, image.Id, ImageCategory.Original),
+            Description = image.Description
         })
     };
 

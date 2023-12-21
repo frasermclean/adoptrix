@@ -31,10 +31,6 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 
     private static void ConfigureAnimalImagesTable(OwnedNavigationBuilder<Animal, ImageInformation> builder)
     {
-        builder.Property(imageInformation => imageInformation.FileName)
-            .HasColumnType("varchar")
-            .HasMaxLength(ImageInformation.FileNameMaxLength);
-
         builder.Property(imageInformation => imageInformation.UploadedAt)
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
@@ -42,5 +38,9 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
         builder.Property(imageInformation => imageInformation.OriginalFileName)
             .HasColumnType("nvarchar")
             .HasMaxLength(512);
+
+        builder.Property(imageInformation => imageInformation.OriginalContentType)
+            .HasColumnType("varchar")
+            .HasMaxLength(ImageInformation.ContentTypeMaxLength);
     }
 }

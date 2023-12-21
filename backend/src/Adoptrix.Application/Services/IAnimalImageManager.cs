@@ -1,14 +1,14 @@
-﻿using FluentResults;
+﻿using Adoptrix.Domain;
+using FluentResults;
 
 namespace Adoptrix.Application.Services;
 
 public interface IAnimalImageManager
 {
-    string GenerateFileName(Guid animalId, string contentType, string originalFileName);
-    Uri GetImageUri(Guid animalId, string fileName);
+    Uri GetImageUri(Guid animalId, Guid imageId, ImageCategory category);
 
-    Task UploadImageAsync(Guid animalId, string fileName, Stream imageStream, string contentType,
+    Task UploadImageAsync(Guid animalId, ImageInformation information, Stream imageStream,
         CancellationToken cancellationToken = default);
 
-    Task<Result> DeleteImageAsync(Guid animalId, string fileName, CancellationToken cancellationToken = default);
+    Task<Result> DeleteImageAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken = default);
 }
