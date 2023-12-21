@@ -1,5 +1,7 @@
 export interface ImageInformation {
   id: number;
-  uri: string;
   description?: string;
+  hasThumbnail: boolean;
+  hasPreview: boolean;
+  hasFullSize: boolean;
 }
