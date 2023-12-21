@@ -26,7 +26,8 @@ import {
   msalInterceptorConfigurationFactory,
 } from './auth/auth.config';
 import { AuthState } from './auth/auth.state';
-
+import { GALLERY_CONFIG } from 'ng-gallery';
+import { galleryConfigFactory } from '@shared/gallery.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,7 +36,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom([
       NgxsModule.forRoot([AuthState], { developmentMode: environment.isDevelopment }),
-      NgxsLoggerPluginModule.forRoot({ disabled: !environment.isDevelopment}),
+      NgxsLoggerPluginModule.forRoot({ disabled: !environment.isDevelopment }),
     ]),
     MsalService,
     MsalGuard,
@@ -56,6 +57,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: MSAL_INTERCEPTOR_CONFIG,
       useFactory: msalInterceptorConfigurationFactory,
+    },
+    {
+      provide: GALLERY_CONFIG,
+      useFactory: galleryConfigFactory,
     },
   ],
 };
