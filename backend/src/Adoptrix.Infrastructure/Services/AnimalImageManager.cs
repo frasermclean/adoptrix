@@ -8,11 +8,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Infrastructure.Services;
 
-public class AnimalImageManager(
+public sealed class AnimalImageManager(
     ILogger<AnimalImageManager> logger,
     [FromKeyedServices(AnimalImageManager.ContainerName)]
     BlobContainerClient containerClient)
-    : IAnimalImageManager
+    : BlobContainerManager(containerClient), IAnimalImageManager
 {
     public const string ContainerName = "animal-images";
 
@@ -20,14 +20,7 @@ public class AnimalImageManager(
         CancellationToken cancellationToken)
     {
         var blobName = GetBlobName(animalId, information.Id);
-        var blobClient = containerClient.GetBlobClient(blobName);
-
-        var options = new BlobUploadOptions
-        {
-            HttpHeaders = new BlobHttpHeaders { ContentType = information.OriginalContentType }
-        };
-
-        await blobClient.UploadAsync(imageStream, options, cancellationToken);
+        await UploadBlobAsync(blobName, imageStream, information.OriginalContentType, cancellationToken);
 
         logger.LogInformation("Uploaded image {BlobName} with content type {ContentType} to blob storage",
             blobName, information.OriginalContentType);
@@ -36,11 +29,8 @@ public class AnimalImageManager(
     public async Task<Result> DeleteImageAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken)
     {
         var blobName = GetBlobName(animalId, imageId);
-        var blobClient = containerClient.GetBlobClient(blobName);
-        var response = await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots,
-            cancellationToken: cancellationToken);
-
-        return Result.OkIf(response.Value, "Specified blob was not found");
+        var result = await DeleteBlobAsync(blobName, cancellationToken);
+        return result;
     }
 
     private static string GetBlobName(Guid animalId, Guid imageId, ImageCategory category = ImageCategory.Original)
