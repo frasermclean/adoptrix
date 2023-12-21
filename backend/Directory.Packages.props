@@ -20,7 +20,6 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Identity.Web" Version="2.16.0" />
     <PackageVersion Include="Microsoft.Identity.Web.TokenAcquisition" Version="2.16.0" />
-    <PackageVersion Include="Sqids" Version="3.1.0" />
   </ItemGroup>
   <!--  Testing project packages -->
   <ItemGroup>
