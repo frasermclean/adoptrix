@@ -30,8 +30,10 @@ public class ResponseMappingService(IAnimalImageManager animalImageManager)
         Images = animal.Images.Select(image => new AnimalImageResponse
         {
             Id = image.Id,
-            Uri = animalImageManager.GetImageUri(animal.Id, image.Id, ImageCategory.Original),
-            Description = image.Description
+            Description = image.Description,
+            HasThumbnail = image.HasThumbnail,
+            HasPreview = image.HasPreview,
+            HasFullSize = image.HasFullSize
         })
     };
 
@@ -48,8 +50,10 @@ public class ResponseMappingService(IAnimalImageManager animalImageManager)
         Images = result.Images.Select(image => new AnimalImageResponse
         {
             Id = image.Id,
-            Uri = animalImageManager.GetImageUri(result.Id, image.Id, ImageCategory.Original),
-            Description = image.Description
+            Description = image.Description,
+            HasThumbnail = image.HasThumbnail,
+            HasPreview = image.HasPreview,
+            HasFullSize = image.HasFullSize
         })
     };
 
