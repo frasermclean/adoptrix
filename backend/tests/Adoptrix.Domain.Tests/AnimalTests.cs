@@ -8,16 +8,17 @@ public class AnimalTests
     public void TwoEntities_WithSameIds_Should_BeEqual()
     {
         // arrange
-        var fido = CreateAnimal();
-        var felix = CreateAnimal(fido.Id, "Felix");
+        var id = Guid.NewGuid();
+        var fido = CreateAnimal(id);
+        var felix = CreateAnimal(id, "Felix");
 
         // assert
         fido.Should().Be(felix);
         fido.Equals(new { }).Should().BeFalse();
         fido.GetHashCode().Should().Be(felix.GetHashCode());
+        fido.Id.Should().Be(id);
         fido.Name.Should().Be("Fido");
         fido.Description.Should().BeNull();
-        fido.Species.Id.Should().Be(1);
         fido.Species.Name.Should().Be("Dog");
         fido.DateOfBirth.Should().Be(new DateOnly(2019, 1, 1));
     }
@@ -39,13 +40,13 @@ public class AnimalTests
             .HaveReason<DuplicateImageError>("Image with filename abc.jpg already exists");
     }
 
-    private static Animal CreateAnimal(int id = 1, string name = "Fido", string? description = null,
+    private static Animal CreateAnimal(Guid? id = null, string name = "Fido", string? description = null,
         Species? species = null, DateOnly? dateOfBirth = null) => new()
     {
-        Id = id,
+        Id = id ?? Guid.NewGuid(),
         Name = name,
         Description = description,
-        Species = species ?? new Species { Id = 1, Name = "Dog" },
+        Species = species ?? new Species { Id = Guid.NewGuid(), Name = "Dog" },
         DateOfBirth = dateOfBirth ?? new DateOnly(2019, 1, 1)
     };
 }

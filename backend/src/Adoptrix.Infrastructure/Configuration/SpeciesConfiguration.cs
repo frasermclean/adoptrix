@@ -21,8 +21,8 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
             .HasDefaultValueSql("getutcdate()");
 
         builder.HasData(
-            new { Id = 1, Name = "Dog", CreatedBy = Guid.Empty },
-            new { Id = 2, Name = "Cat", CreatedBy = Guid.Empty },
-            new { Id = 3, Name = "Horse", CreatedBy = Guid.Empty });
+            new { Id = Species.DogSpeciesId, Name = "Dog", CreatedBy = Guid.Empty },
+            new { Id = Species.CatSpeciesId, Name = "Cat", CreatedBy = Guid.Empty },
+            new { Id = Species.HorseSpeciesId, Name = "Horse", CreatedBy = Guid.Empty });
     }
 }

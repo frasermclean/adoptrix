@@ -16,7 +16,7 @@ public class MockBreedsRepository : IBreedsRepository
         throw new NotImplementedException();
     }
 
-    public Task<Result<Breed>> GetByIdAsync(int breedId, CancellationToken cancellationToken = default)
+    public Task<Result<Breed>> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -45,7 +45,7 @@ public class MockBreedsRepository : IBreedsRepository
         throw new NotImplementedException();
     }
 
-    public Task<Result> DeleteAsync(int breedId, CancellationToken cancellationToken = default)
+    public Task<Result> DeleteAsync(Guid breedId, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

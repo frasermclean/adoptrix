@@ -1,5 +1,4 @@
-﻿using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Repositories;
+﻿using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using FastEndpoints;
 using FluentResults;
@@ -8,18 +7,16 @@ using Microsoft.Extensions.Logging;
 namespace Adoptrix.Application.Commands.Animals;
 
 public class UpdateAnimalCommandHandler(
-        ISqidConverter sqidConverter,
-        IAnimalsRepository repository,
-        ILogger<UpdateAnimalCommandHandler> logger)
+    IAnimalsRepository repository,
+    ILogger<UpdateAnimalCommandHandler> logger)
     : ICommandHandler<UpdateAnimalCommand, Result<Animal>>
 {
     public async Task<Result<Animal>> ExecuteAsync(UpdateAnimalCommand command, CancellationToken cancellationToken)
     {
-        var animalId = sqidConverter.ConvertToInt(command.Id);
-        var getResult = await repository.GetAsync(animalId, cancellationToken);
+        var getResult = await repository.GetAsync(command.Id, cancellationToken);
         if (getResult.IsFailed)
         {
-            logger.LogError("Could not find animal with Id {Id} to update", animalId);
+            logger.LogError("Could not find animal with Id {AnimalId} to update", command.Id);
             return getResult;
         }
 
@@ -34,11 +31,11 @@ public class UpdateAnimalCommandHandler(
         var updateResult = await repository.UpdateAsync(animal, cancellationToken);
         if (updateResult.IsFailed)
         {
-            logger.LogError("Could not update animal with Id {Id}", animalId);
+            logger.LogError("Could not update animal with Id {AnimalId}", command.Id);
             return updateResult;
         }
 
-        logger.LogInformation("Updated animal with id {Id}", updateResult.Value.Id);
+        logger.LogInformation("Updated animal with id {AnimalId}", updateResult.Value.Id);
         return updateResult;
     }
 }

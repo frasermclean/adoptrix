@@ -9,8 +9,6 @@ namespace Adoptrix.Api.Tests.Mocks;
 
 public class MockAnimalsRepository : IAnimalsRepository
 {
-    public const int UnknownAnimalId = 404;
-
     public Task<IEnumerable<SearchAnimalsResult>> SearchAnimalsAsync(string? animalName = null,
         string? speciesName = null, CancellationToken cancellationToken = default)
     {
@@ -31,11 +29,11 @@ public class MockAnimalsRepository : IAnimalsRepository
         return Task.FromResult(animals);
     }
 
-    public Task<Result<Animal>> GetAsync(int animalId, CancellationToken cancellationToken = default)
+    public Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default)
     {
-        if (animalId == UnknownAnimalId)
+        if (animalId == Guid.Empty)
         {
-            var error = new AnimalNotFoundError(UnknownAnimalId);
+            var error = new AnimalNotFoundError(Guid.Empty);
             var result = new Result<Animal>().WithError(error);
 
             return Task.FromResult(result);

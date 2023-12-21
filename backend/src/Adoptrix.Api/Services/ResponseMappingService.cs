@@ -14,12 +14,12 @@ public interface IResponseMappingService
     BreedResponse Map(SearchBreedsResult result);
 }
 
-public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageManager animalImageManager)
+public class ResponseMappingService(IAnimalImageManager animalImageManager)
     : IResponseMappingService
 {
     public AnimalResponse Map(Animal animal) => new()
     {
-        Id = sqidConverter.ConvertToSqid(animal.Id),
+        Id = animal.Id,
         Name = animal.Name,
         Description = animal.Description,
         Species = animal.Species.Name,
@@ -37,7 +37,7 @@ public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageMa
 
     public AnimalResponse Map(SearchAnimalsResult result) => new()
     {
-        Id = sqidConverter.ConvertToSqid(result.Id),
+        Id = result.Id,
         Name = result.Name,
         Description = result.Description,
         Species = result.Species,
@@ -58,7 +58,7 @@ public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageMa
         Id = breed.Id,
         Name = breed.Name,
         Species = breed.Species.Name,
-        AnimalIds = breed.Animals.Select(animal => sqidConverter.ConvertToSqid(animal.Id))
+        AnimalIds = breed.Animals.Select(animal => animal.Id)
     };
 
     public BreedResponse Map(SearchBreedsResult result) => new()
@@ -66,6 +66,6 @@ public class ResponseMappingService(ISqidConverter sqidConverter, IAnimalImageMa
         Id = result.Id,
         Name = result.Name,
         Species = result.Species,
-        AnimalIds = result.AnimalIds.Select(sqidConverter.ConvertToSqid)
+        AnimalIds = result.AnimalIds
     };
 }

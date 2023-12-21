@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adoptrix.Infrastructure.Migrations
 {
     [DbContext(typeof(AdoptrixDbContext))]
-    [Migration("20231130103710_AddCreationProperties")]
-    partial class AddCreationProperties
+    [Migration("20231221042802_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,14 +27,12 @@ namespace Adoptrix.Infrastructure.Migrations
 
             modelBuilder.Entity("Adoptrix.Domain.Animal", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("BreedId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("BreedId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -56,8 +54,12 @@ namespace Adoptrix.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar");
 
-                    b.Property<int>("SpeciesId")
-                        .HasColumnType("int");
+                    b.Property<char?>("Sex")
+                        .HasMaxLength(1)
+                        .HasColumnType("char");
+
+                    b.Property<Guid>("SpeciesId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -70,16 +72,14 @@ namespace Adoptrix.Infrastructure.Migrations
 
             modelBuilder.Entity("Adoptrix.Domain.Breed", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(2)
-                        .HasColumnType("datetime2(2)")
+                        .HasColumnType("datetime2")
                         .HasDefaultValueSql("getutcdate()");
 
                     b.Property<Guid>("CreatedBy")
@@ -90,8 +90,8 @@ namespace Adoptrix.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar");
 
-                    b.Property<int>("SpeciesId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("SpeciesId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -105,34 +105,32 @@ namespace Adoptrix.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("e719fea1-14d5-45a3-845d-404c88c4549f"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Labrador Retriever",
-                            SpeciesId = 1
+                            SpeciesId = new Guid("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a")
                         },
                         new
                         {
-                            Id = 2,
+                            Id = new Guid("9b2ace0b-fb18-4da4-86a5-c7404cfbf145"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "German Shepherd",
-                            SpeciesId = 1
+                            SpeciesId = new Guid("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a")
                         },
                         new
                         {
-                            Id = 3,
+                            Id = new Guid("4fb1e168-bf13-4702-9b61-0b8df2ef0c7d"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Golden Retriever",
-                            SpeciesId = 1
+                            SpeciesId = new Guid("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a")
                         });
                 });
 
             modelBuilder.Entity("Adoptrix.Domain.Species", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -158,19 +156,19 @@ namespace Adoptrix.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Dog"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = new Guid("c9c1836b-1051-45c3-a2c4-0d841e69e6d3"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Cat"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = new Guid("e6d11a53-bacb-4a8b-a171-beea7e935467"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Horse"
                         });
@@ -190,14 +188,12 @@ namespace Adoptrix.Infrastructure.Migrations
 
                     b.OwnsMany("Adoptrix.Domain.ImageInformation", "Images", b1 =>
                         {
-                            b1.Property<int>("AnimalId")
-                                .HasColumnType("int");
+                            b1.Property<Guid>("AnimalId")
+                                .HasColumnType("uniqueidentifier");
 
-                            b1.Property<int>("Id")
+                            b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Description")
                                 .HasColumnType("nvarchar(max)");

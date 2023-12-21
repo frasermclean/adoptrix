@@ -26,7 +26,7 @@ public sealed class BreedsRepository(AdoptrixDbContext dbContext) : Repository(d
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Result<Breed>> GetByIdAsync(int breedId, CancellationToken cancellationToken = default)
+    public async Task<Result<Breed>> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default)
     {
         var breed = await DbContext.Breeds
             .Include(breed => breed.Species)
@@ -64,9 +64,9 @@ public sealed class BreedsRepository(AdoptrixDbContext dbContext) : Repository(d
         return result.ToResult(breed);
     }
 
-    public async Task<Result> DeleteAsync(int breedId, CancellationToken cancellationToken = default)
+    public async Task<Result> DeleteAsync(Guid breedId, CancellationToken cancellationToken = default)
     {
-        var breed = await DbContext.Breeds.FindAsync(new object?[] { breedId }, cancellationToken: cancellationToken);
+        var breed = await DbContext.Breeds.FindAsync([breedId], cancellationToken: cancellationToken);
         if (breed is null)
         {
             return new BreedNotFoundError(breedId);

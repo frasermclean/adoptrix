@@ -5,9 +5,7 @@ using Adoptrix.Api.Endpoints.Animals.GetAnimal;
 using Adoptrix.Api.Endpoints.Animals.SearchAnimals;
 using Adoptrix.Api.Tests.Mocks;
 using Adoptrix.Application.Commands.Animals;
-using Adoptrix.Application.Services;
 using Adoptrix.Domain;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
 namespace Adoptrix.Api.Tests.Endpoints;
@@ -16,7 +14,6 @@ public class AnimalsTests(ApiTestFixture fixture, ITestOutputHelper outputHelper
     : TestClass<ApiTestFixture>(fixture, outputHelper)
 {
     private readonly HttpClient httpClient = fixture.Client;
-    private readonly ISqidConverter sqidConverter = fixture.Services.GetRequiredService<ISqidConverter>();
 
     [Fact]
     public async Task SearchAnimals_WithValidRequest_Should_ReturnOk()
@@ -34,14 +31,13 @@ public class AnimalsTests(ApiTestFixture fixture, ITestOutputHelper outputHelper
     }
 
     [Theory]
-    [InlineData(3, HttpStatusCode.OK)]
-    [InlineData(MockAnimalsRepository.UnknownAnimalId, HttpStatusCode.NotFound)]
-    public async Task GetAnimal_WithValidRequest_Should_ExpectedStatusCode(int animalId,
+    [InlineData("dc1ff27e-e14a-4f4d-af5a-2cba7f9c9749", HttpStatusCode.OK)]
+    [InlineData("00000000-0000-0000-0000-000000000000", HttpStatusCode.NotFound)]
+    public async Task GetAnimal_WithValidRequest_Should_ExpectedStatusCode(Guid animalId,
         HttpStatusCode expectedStatusCode)
     {
         // arrange
-        var id = sqidConverter.ConvertToSqid(animalId);
-        var command = new GetAnimalCommand { Id = id };
+        var command = new GetAnimalCommand { Id = animalId };
 
         // act
         var (message, response) =

@@ -75,7 +75,6 @@ public static class ServiceRegistration
 
     private static IServiceCollection AddValidators(this IServiceCollection services)
     {
-        services.AddSingleton<SqidValidator>();
         services.AddSingleton<ImageContentTypeValidator>();
         services.AddSingleton<DateOfBirthValidator>();
 

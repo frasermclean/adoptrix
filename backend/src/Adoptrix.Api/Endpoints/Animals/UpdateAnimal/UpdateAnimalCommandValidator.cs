@@ -8,11 +8,8 @@ namespace Adoptrix.Api.Endpoints.Animals.UpdateAnimal;
 
 public class UpdateAnimalCommandValidator : Validator<UpdateAnimalCommand>
 {
-    public UpdateAnimalCommandValidator(SqidValidator sqidValidator, DateOfBirthValidator dateOfBirthValidator)
+    public UpdateAnimalCommandValidator(DateOfBirthValidator dateOfBirthValidator)
     {
-        RuleFor(command => command.Id)
-            .SetValidator(sqidValidator);
-
         RuleFor(command => command.Name)
             .NotEmpty()
             .MaximumLength(Animal.NameMaxLength);
