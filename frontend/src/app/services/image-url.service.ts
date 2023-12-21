@@ -31,6 +31,6 @@ export class ImageUrlService {
       suffix = 'thumb';
     }
 
-    return `${environment.blobStorageBaseUrl}/${animalId}/${image.id}-${suffix}.jpg`;
+    return `${environment.blobStorageBaseUrl}/${animalId}/${image.id}/${suffix}`;
   }
 }

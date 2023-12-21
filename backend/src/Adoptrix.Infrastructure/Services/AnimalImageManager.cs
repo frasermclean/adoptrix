@@ -16,12 +16,6 @@ public class AnimalImageManager(
 {
     public const string ContainerName = "animal-images";
 
-    public Uri GetImageUri(Guid animalId, Guid imageId, ImageCategory category)
-    {
-        var blobName = GetBlobName(animalId, imageId);
-        return new Uri(containerClient.Uri, $"{ContainerName}/{blobName}");
-    }
-
     public async Task UploadImageAsync(Guid animalId, ImageInformation information, Stream imageStream,
         CancellationToken cancellationToken)
     {
@@ -59,15 +53,6 @@ public class AnimalImageManager(
             _ => "original"
         };
 
-        return $"{animalId}/{imageId}-{suffix}.jpg";
+        return $"{animalId}/{imageId}/{suffix}";
     }
-
-    private static string GetFileExtension(string contentType)
-        => contentType switch
-        {
-            "image/jpeg" => "jpg",
-            "image/png" => "png",
-            "image/gif" => "gif",
-            _ => throw new InvalidOperationException($"Unsupported content type: {contentType}")
-        };
 }
