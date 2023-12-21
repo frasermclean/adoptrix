@@ -9,4 +9,5 @@ public interface IAnimalImageManager
         CancellationToken cancellationToken = default);
 
     Task<Result> DeleteImageAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken = default);
+    Task<Stream> GetOriginalImageAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken = default);
 }

@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain;
 using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -31,6 +30,12 @@ public sealed class AnimalImageManager(
         var blobName = GetBlobName(animalId, imageId);
         var result = await DeleteBlobAsync(blobName, cancellationToken);
         return result;
+    }
+
+    public Task<Stream> GetOriginalImageAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken = default)
+    {
+        var blobName = GetBlobName(animalId, imageId);
+        return GetBlobStreamAsync(blobName, cancellationToken);
     }
 
     private static string GetBlobName(Guid animalId, Guid imageId, ImageCategory category = ImageCategory.Original)

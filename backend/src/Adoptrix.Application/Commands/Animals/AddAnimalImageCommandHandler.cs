@@ -1,6 +1,8 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Events;
+using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
+using Adoptrix.Domain.Services;
 using FastEndpoints;
 using FluentResults;
 using Microsoft.Extensions.Logging;
@@ -10,7 +12,8 @@ namespace Adoptrix.Application.Commands.Animals;
 public class AddAnimalImageCommandHandler(
     ILogger<AddAnimalImageCommandHandler> logger,
     IAnimalsRepository repository,
-    IAnimalImageManager imageManager) : ICommandHandler<AddAnimalImageCommand, Result>
+    IAnimalImageManager imageManager,
+    IEventQueueService eventQueueService) : ICommandHandler<AddAnimalImageCommand, Result>
 {
     public async Task<Result> ExecuteAsync(AddAnimalImageCommand command, CancellationToken cancellationToken)
     {
@@ -24,10 +27,16 @@ public class AddAnimalImageCommandHandler(
         }
 
         // upload the image to blob storage
-        await imageManager.UploadImageAsync(command.Animal.Id, addImageResult.Value, command.FileStream);
+        await imageManager.UploadImageAsync(command.Animal.Id, addImageResult.Value, command.FileStream,
+            cancellationToken);
 
         // update animal in the database
         var updateResult = await repository.UpdateAsync(command.Animal, cancellationToken);
+        if (updateResult.IsSuccess)
+        {
+            eventQueueService.PushDomainEvent(new AnimalImageAddedEvent(command.Animal.Id, addImageResult.Value.Id));
+        }
+
         return updateResult.ToResult();
     }
 }
