@@ -33,7 +33,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Result<Animal>> GetAsync(int animalId, CancellationToken cancellationToken = default)
+    public async Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default)
     {
         var animal = await dbContext.Animals.Where(animal => animal.Id == animalId)
             .Include(animal => animal.Species)

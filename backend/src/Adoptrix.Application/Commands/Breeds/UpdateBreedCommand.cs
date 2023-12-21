@@ -6,6 +6,6 @@ namespace Adoptrix.Application.Commands.Breeds;
 
 public class UpdateBreedCommand : ICommand<Result<Breed>>
 {
-    public int Id { get; init; }
+    public Guid Id { get; init; }
     public required string Name { get; init; }
 }

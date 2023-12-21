@@ -4,7 +4,7 @@ namespace Adoptrix.Domain.Errors;
 
 public class BreedNotFoundError : Error
 {
-    public BreedNotFoundError(int id)
+    public BreedNotFoundError(Guid id)
         : base($"Breed with id: {id} was not found.")
     {
     }

@@ -6,7 +6,7 @@ namespace Adoptrix.Api.Tests.Generators;
 public static class AnimalGenerator
 {
     private static readonly Faker<Animal> AnimalFaker = new Faker<Animal>()
-        .RuleFor(animal => animal.Id, faker => faker.Random.Int(1, 1000))
+        .RuleFor(animal => animal.Id, Guid.NewGuid)
         .RuleFor(animal => animal.Name, faker => faker.Name.FirstName())
         .RuleFor(animal => animal.Description, faker => faker.Lorem.Paragraph())
         .RuleFor(animal => animal.Species, SpeciesGenerator.Generate)
