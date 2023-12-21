@@ -21,9 +21,27 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
             .HasDefaultValueSql("getutcdate()");
 
         builder.HasData(
-            new { Id = 1, Name = "Labrador Retriever", SpeciesId = 1, CreatedBy = Guid.Empty },
-            new { Id = 2, Name = "German Shepherd", SpeciesId = 1, CreatedBy = Guid.Empty },
-            new { Id = 3, Name = "Golden Retriever", SpeciesId = 1, CreatedBy = Guid.Empty }
+            new
+            {
+                Id = Guid.Parse("e719fea1-14d5-45a3-845d-404c88c4549f"),
+                Name = "Labrador Retriever",
+                SpeciesId = Species.DogSpeciesId,
+                CreatedBy = Guid.Empty
+            },
+            new
+            {
+                Id = Guid.Parse("9b2ace0b-fb18-4da4-86a5-c7404cfbf145"),
+                Name = "German Shepherd",
+                SpeciesId = Species.DogSpeciesId,
+                CreatedBy = Guid.Empty
+            },
+            new
+            {
+                Id = Guid.Parse("4fb1e168-bf13-4702-9b61-0b8df2ef0c7d"),
+                Name = "Golden Retriever",
+                SpeciesId = Species.DogSpeciesId,
+                CreatedBy = Guid.Empty
+            }
         );
     }
 }
