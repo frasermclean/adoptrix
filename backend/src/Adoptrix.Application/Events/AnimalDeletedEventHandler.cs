@@ -30,8 +30,8 @@ public class AnimalDeletedEventHandler(
 
             if (results.All(r => r.IsSuccess))
             {
-                logger.LogInformation("Deleted all versions of image {ImageId} for animal {AnimalId}", image.Id,
-                    animal.Id);
+                logger.LogInformation("Deleted {VersionCount} versions of image {ImageId} for animal {AnimalId}",
+                    results.Length, image.Id, animal.Id);
                 return;
             }
 
