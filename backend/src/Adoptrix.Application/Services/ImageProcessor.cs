@@ -40,7 +40,7 @@ public class ImageProcessor : IImageProcessor
     private static async Task<Stream> CreateResizedImageStreamAsync(Image image, int width, int height,
         CancellationToken cancellationToken)
     {
-        using var clonedImage = image.Clone(context => context.Resize(width, height));
+        using var clonedImage = image.Clone(context => context.Resize(width, height, KnownResamplers.Lanczos3));
 
         var stream = new MemoryStream();
         await clonedImage.SaveAsWebpAsync(stream, cancellationToken);
