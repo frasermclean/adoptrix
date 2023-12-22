@@ -26,9 +26,9 @@ public class AddAnimalImageCommandHandler(
             return addImageResult.ToResult();
         }
 
-        // upload the image to blob storage
-        await imageManager.UploadImageAsync(command.Animal.Id, addImageResult.Value, command.FileStream,
-            cancellationToken);
+        // upload the original image to blob storage
+        await imageManager.UploadImageAsync(command.Animal.Id, addImageResult.Value.Id, command.FileStream,
+            command.ContentType, ImageCategory.Original, cancellationToken);
 
         // update animal in the database
         var updateResult = await repository.UpdateAsync(command.Animal, cancellationToken);

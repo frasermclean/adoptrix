@@ -3,39 +3,35 @@ using Adoptrix.Domain;
 using Azure.Storage.Blobs;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Infrastructure.Services;
 
 public sealed class AnimalImageManager(
-    ILogger<AnimalImageManager> logger,
     [FromKeyedServices(AnimalImageManager.ContainerName)]
     BlobContainerClient containerClient)
     : BlobContainerManager(containerClient), IAnimalImageManager
 {
     public const string ContainerName = "animal-images";
 
-    public async Task UploadImageAsync(Guid animalId, ImageInformation information, Stream imageStream,
+    public async Task UploadImageAsync(Guid animalId, Guid imageId, Stream imageStream, string contentType,
+        ImageCategory category, CancellationToken cancellationToken)
+    {
+        var blobName = GetBlobName(animalId, imageId, category);
+        await UploadBlobAsync(blobName, imageStream, contentType, cancellationToken);
+    }
+
+    public async Task<Result> DeleteImageAsync(Guid animalId, Guid imageId, ImageCategory category,
         CancellationToken cancellationToken)
     {
-        var blobName = GetBlobName(animalId, information.Id);
-        await UploadBlobAsync(blobName, imageStream, information.OriginalContentType, cancellationToken);
-
-        logger.LogInformation("Uploaded image {BlobName} with content type {ContentType} to blob storage",
-            blobName, information.OriginalContentType);
+        var blobName = GetBlobName(animalId, imageId, category);
+        return await DeleteBlobAsync(blobName, cancellationToken);
     }
 
-    public async Task<Result> DeleteImageAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken)
+    public Task<Stream> GetImageReadStreamAsync(Guid animalId, Guid imageId, ImageCategory category,
+        CancellationToken cancellationToken)
     {
-        var blobName = GetBlobName(animalId, imageId);
-        var result = await DeleteBlobAsync(blobName, cancellationToken);
-        return result;
-    }
-
-    public Task<Stream> GetOriginalImageAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken = default)
-    {
-        var blobName = GetBlobName(animalId, imageId);
-        return GetBlobStreamAsync(blobName, cancellationToken);
+        var blobName = GetBlobName(animalId, imageId, category);
+        return OpenReadStreamAsync(blobName, cancellationToken);
     }
 
     private static string GetBlobName(Guid animalId, Guid imageId, ImageCategory category = ImageCategory.Original)

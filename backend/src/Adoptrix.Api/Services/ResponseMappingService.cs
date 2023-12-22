@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Application.Models;
-using Adoptrix.Application.Services;
 using Adoptrix.Domain;
 
 namespace Adoptrix.Api.Services;
@@ -14,8 +13,7 @@ public interface IResponseMappingService
     BreedResponse Map(SearchBreedsResult result);
 }
 
-public class ResponseMappingService(IAnimalImageManager animalImageManager)
-    : IResponseMappingService
+public class ResponseMappingService : IResponseMappingService
 {
     public AnimalResponse Map(Animal animal) => new()
     {

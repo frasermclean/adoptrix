@@ -37,9 +37,9 @@ public class AnimalTests
 
         // assert
         result1.Should().BeSuccess().Which.Value.OriginalFileName.Should().Be(fileName);
-        animal.Images.Should().ContainSingle().Which.OriginalFileName.Should().Be("abc.jpg");
+        animal.Images.Should().ContainSingle().Which.OriginalFileName.Should().Be(fileName);
         result2.Should().BeFailure().Which.Should()
-            .HaveReason<DuplicateImageError>("Image with original filename abc.jpg already exists");
+            .HaveReason<DuplicateImageError>($"Image with original filename {fileName} already exists");
     }
 
     private static Animal CreateAnimal(Guid? id = null, string name = "Fido", string? description = null,

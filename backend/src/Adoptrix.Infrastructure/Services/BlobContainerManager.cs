@@ -27,7 +27,7 @@ public abstract class BlobContainerManager(BlobContainerClient containerClient)
         return Result.OkIf(response.Value, $"Blob {blobName} was not found.");
     }
 
-    protected async Task<Stream> GetBlobStreamAsync(string blobName, CancellationToken cancellationToken)
+    protected async Task<Stream> OpenReadStreamAsync(string blobName, CancellationToken cancellationToken)
     {
         var blobClient = containerClient.GetBlobClient(blobName);
         return await blobClient.OpenReadAsync(cancellationToken: cancellationToken);

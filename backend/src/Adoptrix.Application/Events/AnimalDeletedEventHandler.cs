@@ -1,12 +1,14 @@
 ﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain;
 using FastEndpoints;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Application.Events;
 
-public class AnimalDeletedEventHandler(IServiceScopeFactory serviceScopeFactory,
-        ILogger<AnimalDeletedEventHandler> logger)
+public class AnimalDeletedEventHandler(
+    IServiceScopeFactory serviceScopeFactory,
+    ILogger<AnimalDeletedEventHandler> logger)
     : IEventHandler<AnimalDeletedEvent>
 {
     public async Task HandleAsync(AnimalDeletedEvent eventModel, CancellationToken cancellationToken)
@@ -20,16 +22,23 @@ public class AnimalDeletedEventHandler(IServiceScopeFactory serviceScopeFactory,
         // delete all images associated with the animal
         foreach (var image in animal.Images)
         {
-            var result = await imageManager.DeleteImageAsync(animal.Id, image.Id, cancellationToken);
+            var results = await Task.WhenAll(
+                imageManager.DeleteImageAsync(animal.Id, image.Id, ImageCategory.Original, cancellationToken),
+                imageManager.DeleteImageAsync(animal.Id, image.Id, ImageCategory.Thumbnail, cancellationToken),
+                imageManager.DeleteImageAsync(animal.Id, image.Id, ImageCategory.Preview, cancellationToken),
+                imageManager.DeleteImageAsync(animal.Id, image.Id, ImageCategory.FullSize, cancellationToken));
 
-            if (result.IsSuccess)
+            if (results.All(r => r.IsSuccess))
             {
-                logger.LogInformation("Deleted image {ImageId} for animal {AnimalId}", image.Id, animal.Id);
+                logger.LogInformation("Deleted all versions of image {ImageId} for animal {AnimalId}", image.Id,
+                    animal.Id);
+                return;
             }
-            else
+
+            foreach (var result in results.Where(r => r.IsFailed))
             {
-                logger.LogError("Failed to delete image {ImageId} for animal {AnimalId}: {Error}",
-                    image.Id, animal.Id, result.Errors.First());
+                logger.LogWarning("Failed to delete image {ImageId} for animal {AnimalId}: {Message}",
+                    image.Id, animal.Id, result.Errors.First().Message);
             }
         }
     }
