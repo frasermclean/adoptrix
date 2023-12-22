@@ -24,7 +24,7 @@ public class EventDispatcherPostProcessor(ILogger<EventDispatcherPostProcessor> 
 
             logger.LogInformation("Dispatching domain event {DomainEvent}", domainEvent.GetType().Name);
 
-            await domainEvent.PublishAsync(Mode.WaitForNone);
+            await domainEvent.PublishAsync();
         }
     }
 }
