@@ -55,6 +55,7 @@ jobs:
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --logger trx
           --collect "XPlat Code Coverage"
+          --settings ${{ env.BACKEND_DIRECTORY }}/coverlet.runsettings
           --results-directory ${{ env.TEST_RESULTS_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
