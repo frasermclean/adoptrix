@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ImageInformation } from '@models/image-information.model';
+import { ImageUrlService } from '@services/image-url.service';
 import { Gallery, GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
 
@@ -11,16 +12,22 @@ import { LightboxModule } from 'ng-gallery/lightbox';
   styleUrl: './image-gallery.component.scss',
 })
 export class ImageGalleryComponent implements OnInit {
+  @Input({ required: true }) animalId!: string;
   @Input({ required: true }) images!: ImageInformation[];
 
   readonly galleryId = 'gallery';
   galleryItems: GalleryItem[] = [];
 
-  constructor(private galleryService: Gallery) {}
+  constructor(private galleryService: Gallery, private imageUrlService: ImageUrlService) {}
 
   ngOnInit(): void {
     this.galleryItems = this.images.map(
-      (image) => new ImageItem({ src: image.uri, thumb: image.uri, args: { description: image.description } })
+      (image) =>
+        new ImageItem({
+          src: this.imageUrlService.getFullSizeUrl(this.animalId, image),
+          thumb: this.imageUrlService.getThumbnailUrl(this.animalId, image),
+          args: { description: image.description },
+        })
     );
     const galleryRef = this.galleryService.ref(this.galleryId);
     galleryRef.load(this.galleryItems);

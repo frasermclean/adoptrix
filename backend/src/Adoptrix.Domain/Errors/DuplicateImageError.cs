@@ -2,11 +2,5 @@
 
 namespace Adoptrix.Domain.Errors;
 
-public class DuplicateImageError : Error
-{
-    public DuplicateImageError(string fileName)
-        : base($"Image with filename {fileName} already exists")
-    {
-        Metadata.Add(nameof(fileName), fileName);
-    }
-}
+public class DuplicateImageError(string originalFileName)
+    : Error($"Image with original filename {originalFileName} already exists");

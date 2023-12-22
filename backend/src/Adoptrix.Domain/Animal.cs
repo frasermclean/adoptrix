@@ -8,7 +8,7 @@ public class Animal : Aggregate
     public const int NameMaxLength = 50;
     public const int DescriptionMaxLength = 2000;
 
-    private readonly List<ImageInformation> images = new();
+    private readonly List<ImageInformation> images = [];
 
     public required string Name { get; set; }
     public string? Description { get; set; }
@@ -18,19 +18,19 @@ public class Animal : Aggregate
     public required DateOnly DateOfBirth { get; set; }
     public IReadOnlyList<ImageInformation> Images => images;
 
-    public Result<ImageInformation> AddImage(string fileName, string? description, string originalFileName,
-        Guid? uploadedBy = null)
+    public Result<ImageInformation> AddImage(string originalFileName, string originalContentType,
+        string? description = null, Guid? uploadedBy = null)
     {
-        if (ImageExists(fileName))
+        if (images.Any(image => image.OriginalFileName == originalFileName))
         {
-            return new DuplicateImageError(fileName);
+            return new DuplicateImageError(originalFileName);
         }
 
         var image = new ImageInformation
         {
-            FileName = fileName,
             Description = description,
             OriginalFileName = originalFileName,
+            OriginalContentType = originalContentType,
             UploadedBy = uploadedBy
         };
 
@@ -38,6 +38,4 @@ public class Animal : Aggregate
 
         return image;
     }
-
-    public bool ImageExists(string fileName) => Images.Any(image => image.FileName == fileName);
 }

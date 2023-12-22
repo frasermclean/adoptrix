@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Application.Models;
-using Adoptrix.Application.Services;
 using Adoptrix.Domain;
 
 namespace Adoptrix.Api.Services;
@@ -14,8 +13,7 @@ public interface IResponseMappingService
     BreedResponse Map(SearchBreedsResult result);
 }
 
-public class ResponseMappingService(IAnimalImageManager animalImageManager)
-    : IResponseMappingService
+public class ResponseMappingService : IResponseMappingService
 {
     public AnimalResponse Map(Animal animal) => new()
     {
@@ -30,8 +28,8 @@ public class ResponseMappingService(IAnimalImageManager animalImageManager)
         Images = animal.Images.Select(image => new AnimalImageResponse
         {
             Id = image.Id,
-            Uri = animalImageManager.GetImageUri(animal.Id, image.FileName),
-            Description = image.Description
+            Description = image.Description,
+            IsProcessed = image.IsProcessed
         })
     };
 
@@ -45,11 +43,11 @@ public class ResponseMappingService(IAnimalImageManager animalImageManager)
         Sex = result.Sex,
         DateOfBirth = result.DateOfBirth,
         CreatedAt = result.CreatedAt.ToUtc(),
-        Images = result.Images.Select(imageInfo => new AnimalImageResponse
+        Images = result.Images.Select(image => new AnimalImageResponse
         {
-            Id = imageInfo.Id,
-            Uri = animalImageManager.GetImageUri(result.Id, imageInfo.FileName),
-            Description = imageInfo.Description
+            Id = image.Id,
+            Description = image.Description,
+            IsProcessed = image.IsProcessed
         })
     };
 

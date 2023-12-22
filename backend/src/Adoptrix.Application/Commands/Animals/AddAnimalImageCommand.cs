@@ -10,5 +10,6 @@ public class AddAnimalImageCommand : ICommand<Result>
     public required Stream FileStream { get; init; }
     public required string? Description { get; init; }
     public required string ContentType { get; init; }
-    public required string OriginalFileName { get; init; }
+    public required string FileName { get; init; }
+    public Guid? UserId { get; set; }
 }

@@ -27,7 +27,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext)
                 Sex = animal.Sex,
                 DateOfBirth = animal.DateOfBirth,
                 CreatedAt = animal.CreatedAt,
-                Images = animal.Images
+                Images = animal.Images,
             })
             .OrderBy(animal => animal.Name)
             .ToListAsync(cancellationToken);

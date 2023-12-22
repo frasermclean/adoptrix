@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { Animal } from '@models/animal.model';
+import { ImageUrlService } from '@services/image-url.service';
 
 @Component({
   selector: 'app-animal-list-item',
@@ -22,13 +23,15 @@ import { Animal } from '@models/animal.model';
 export class AnimalListItemComponent {
   @Input({ required: true }) animal!: Animal;
 
+  constructor(private imageUrlService: ImageUrlService) {}
+
   get hasImages() {
     return this.animal.images.length > 0;
   }
 
   get imageUrl() {
     return this.hasImages
-      ? this.animal.images[0].uri
+      ? this.imageUrlService.getPreviewUrl(this.animal.id, this.animal.images[0])
       : `images/${this.animal.species.toLowerCase()}.png`;
   }
 

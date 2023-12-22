@@ -9,6 +9,7 @@ public static class ServiceRegistration
         IConfiguration configuration)
     {
         services.AddSingleton<IHashGenerator, HashGenerator>();
+        services.AddSingleton<IImageProcessor, ImageProcessor>();
 
         return services;
     }

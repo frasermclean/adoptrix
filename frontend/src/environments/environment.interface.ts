@@ -4,6 +4,7 @@
 export interface Environment {
   isDevelopment: boolean;
   apiBaseUrl: string;
+  blobStorageBaseUrl: string;
   auth: {
     clientId: string;
     redirectUri: string;

@@ -20,6 +20,7 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Identity.Web" Version="2.16.0" />
     <PackageVersion Include="Microsoft.Identity.Web.TokenAcquisition" Version="2.16.0" />
+    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.1" />
   </ItemGroup>
   <!--  Testing project packages -->
   <ItemGroup>
