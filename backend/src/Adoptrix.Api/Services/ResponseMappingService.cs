@@ -29,9 +29,7 @@ public class ResponseMappingService : IResponseMappingService
         {
             Id = image.Id,
             Description = image.Description,
-            HasThumbnail = image.HasThumbnail,
-            HasPreview = image.HasPreview,
-            HasFullSize = image.HasFullSize
+            IsProcessed = image.IsProcessed
         })
     };
 
@@ -49,9 +47,7 @@ public class ResponseMappingService : IResponseMappingService
         {
             Id = image.Id,
             Description = image.Description,
-            HasThumbnail = image.HasThumbnail,
-            HasPreview = image.HasPreview,
-            HasFullSize = image.HasFullSize
+            IsProcessed = image.IsProcessed
         })
     };
 

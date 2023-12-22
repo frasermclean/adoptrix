@@ -5,7 +5,7 @@
 namespace Adoptrix.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddImageProperties : Migration
+    public partial class AddImageIsProcessed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,21 +15,7 @@ namespace Adoptrix.Infrastructure.Migrations
                 table: "AnimalImages");
 
             migrationBuilder.AddColumn<bool>(
-                name: "HasFullSize",
-                table: "AnimalImages",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
-
-            migrationBuilder.AddColumn<bool>(
-                name: "HasPreview",
-                table: "AnimalImages",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
-
-            migrationBuilder.AddColumn<bool>(
-                name: "HasThumbnail",
+                name: "IsProcessed",
                 table: "AnimalImages",
                 type: "bit",
                 nullable: false,
@@ -48,15 +34,7 @@ namespace Adoptrix.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "HasFullSize",
-                table: "AnimalImages");
-
-            migrationBuilder.DropColumn(
-                name: "HasPreview",
-                table: "AnimalImages");
-
-            migrationBuilder.DropColumn(
-                name: "HasThumbnail",
+                name: "IsProcessed",
                 table: "AnimalImages");
 
             migrationBuilder.DropColumn(

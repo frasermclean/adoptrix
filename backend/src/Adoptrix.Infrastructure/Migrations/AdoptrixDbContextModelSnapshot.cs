@@ -195,13 +195,7 @@ namespace Adoptrix.Infrastructure.Migrations
                             b1.Property<string>("Description")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<bool>("HasFullSize")
-                                .HasColumnType("bit");
-
-                            b1.Property<bool>("HasPreview")
-                                .HasColumnType("bit");
-
-                            b1.Property<bool>("HasThumbnail")
+                            b1.Property<bool>("IsProcessed")
                                 .HasColumnType("bit");
 
                             b1.Property<string>("OriginalContentType")

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adoptrix.Infrastructure.Migrations
 {
     [DbContext(typeof(AdoptrixDbContext))]
-    [Migration("20231221055837_AddImageProperties")]
-    partial class AddImageProperties
+    [Migration("20231222032707_AddImageIsProcessed")]
+    partial class AddImageIsProcessed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -198,13 +198,7 @@ namespace Adoptrix.Infrastructure.Migrations
                             b1.Property<string>("Description")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<bool>("HasFullSize")
-                                .HasColumnType("bit");
-
-                            b1.Property<bool>("HasPreview")
-                                .HasColumnType("bit");
-
-                            b1.Property<bool>("HasThumbnail")
+                            b1.Property<bool>("IsProcessed")
                                 .HasColumnType("bit");
 
                             b1.Property<string>("OriginalContentType")
