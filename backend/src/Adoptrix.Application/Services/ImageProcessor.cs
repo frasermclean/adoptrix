@@ -13,6 +13,8 @@ public interface IImageProcessor
 public class ImageProcessor : IImageProcessor
 {
     public const int ThumbnailWidth = 160;
+    public const int PreviewHeight = 240;
+    public const int FullSizeWidth = 1280;
     public const string OutputContentType = "image/webp";
 
     public async Task<ImageStreamBundle> ProcessOriginalAsync(Stream originalReadStream,
@@ -21,17 +23,27 @@ public class ImageProcessor : IImageProcessor
         // load original image from stream
         using var image = await Image.LoadAsync(originalReadStream, cancellationToken);
 
+        var streams = await Task.WhenAll(
+            CreateResizedImageStreamAsync(image, ThumbnailWidth, 0, cancellationToken),
+            CreateResizedImageStreamAsync(image, 0, PreviewHeight, cancellationToken),
+            CreateResizedImageStreamAsync(image, FullSizeWidth, 0, cancellationToken)
+        );
+
         return new ImageStreamBundle
         {
-            ThumbnailWriteStream = await CreateThumbnailStreamAsync(image, cancellationToken)
+            ThumbnailWriteStream = streams[0],
+            PreviewWriteStream = streams[1],
+            FullSizeWriteStream = streams[2]
         };
     }
 
-    private static async Task<Stream> CreateThumbnailStreamAsync(Image image, CancellationToken cancellationToken)
+    private static async Task<Stream> CreateResizedImageStreamAsync(Image image, int width, int height,
+        CancellationToken cancellationToken)
     {
-        image.Mutate(context => context.Resize(ThumbnailWidth, 0));
+        using var clonedImage = image.Clone(context => context.Resize(width, height));
+
         var stream = new MemoryStream();
-        await image.SaveAsWebpAsync(stream, cancellationToken);
+        await clonedImage.SaveAsWebpAsync(stream, cancellationToken);
         stream.Position = 0;
 
         return stream;

@@ -18,10 +18,16 @@ public class ImageProcessorTests
 
         // act
         await using var bundle = await imageProcessor.ProcessOriginalAsync(readStream, default);
-        using var thumbnail = await Image.LoadAsync(bundle.ThumbnailWriteStream);
+        using var thumbnailImage = await Image.LoadAsync(bundle.ThumbnailWriteStream);
+        using var previewImage = await Image.LoadAsync(bundle.PreviewWriteStream);
+        using var fullSizeImage = await Image.LoadAsync(bundle.FullSizeWriteStream);
 
         // assert
-        thumbnail.Width.Should().Be(ImageProcessor.ThumbnailWidth);
-        thumbnail.Metadata.DecodedImageFormat?.DefaultMimeType.Should().Be(ImageProcessor.OutputContentType);
+        thumbnailImage.Width.Should().Be(ImageProcessor.ThumbnailWidth);
+        thumbnailImage.Metadata.DecodedImageFormat?.DefaultMimeType.Should().Be(ImageProcessor.OutputContentType);
+        previewImage.Height.Should().Be(ImageProcessor.PreviewHeight);
+        previewImage.Metadata.DecodedImageFormat?.DefaultMimeType.Should().Be(ImageProcessor.OutputContentType);
+        fullSizeImage.Width.Should().Be(ImageProcessor.FullSizeWidth);
+        fullSizeImage.Metadata.DecodedImageFormat?.DefaultMimeType.Should().Be(ImageProcessor.OutputContentType);
     }
 }

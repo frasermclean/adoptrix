@@ -22,7 +22,14 @@ public class AnimalImageAddedEventHandler(IServiceScopeFactory serviceScopeFacto
         // process original image
         await using var bundle = await imageProcessor.ProcessOriginalAsync(originalReadStream, cancellationToken);
 
-        await animalImageManager.UploadImageAsync(animalId, imageId, bundle.ThumbnailWriteStream,
-            ImageProcessor.OutputContentType, ImageCategory.Thumbnail, cancellationToken);
+        // upload processed images
+        await Task.WhenAll(
+            animalImageManager.UploadImageAsync(animalId, imageId, bundle.ThumbnailWriteStream,
+                ImageProcessor.OutputContentType, ImageCategory.Thumbnail, cancellationToken),
+            animalImageManager.UploadImageAsync(animalId, imageId, bundle.PreviewWriteStream,
+                ImageProcessor.OutputContentType, ImageCategory.Preview, cancellationToken),
+            animalImageManager.UploadImageAsync(animalId, imageId, bundle.FullSizeWriteStream,
+                ImageProcessor.OutputContentType, ImageCategory.FullSize, cancellationToken)
+        );
     }
 }
