@@ -21,16 +21,7 @@ export class ImageUrlService {
   }
 
   private getImageUrl(animalId: string, image: ImageInformation, category: 'full' | 'thumb' | 'preview'): string {
-    let suffix = 'original';
-
-    if (category === 'full' && image.hasFullSize) {
-      suffix = 'full';
-    } else if (category === 'preview' && image.hasPreview) {
-      suffix = 'preview';
-    } else if (category === 'thumb' && image.hasThumbnail) {
-      suffix = 'thumb';
-    }
-
+    const suffix = (image.isProcessed && category) || 'original';
     return `${environment.blobStorageBaseUrl}/${animalId}/${image.id}/${suffix}`;
   }
 }
