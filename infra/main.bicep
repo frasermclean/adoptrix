@@ -298,6 +298,18 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
       }
     }
   }
+
+  resource queueServices 'queueServices' = {
+    name: 'default'
+
+    resource animalDeletedQueue 'queues' = {
+      name: 'animal-deleted'
+    }
+
+    resource animalImageAddedQueue 'queues' = {
+      name: 'animal-image-added'
+    }
+  }
 }
 
 module dnsRecords 'dnsRecords.bicep' = {
