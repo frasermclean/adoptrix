@@ -19,7 +19,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Adoptrix.Application\Adoptrix.Application.csproj"/>
-    <ProjectReference Include="..\Adoptrix.Infrastructure\Adoptrix.Infrastructure.csproj"/>
+    <ProjectReference Include="..\Adoptrix.Infrastructure.Storage\Adoptrix.Infrastructure.Storage.csproj" />
+    <ProjectReference Include="..\Adoptrix.Infrastructure.Data\Adoptrix.Infrastructure.Data.csproj" />
   </ItemGroup>
 
 </Project>

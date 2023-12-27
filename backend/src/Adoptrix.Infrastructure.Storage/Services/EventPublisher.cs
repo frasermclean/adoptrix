@@ -5,7 +5,7 @@ using Azure.Storage.Queues;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Adoptrix.Infrastructure.Services;
+namespace Adoptrix.Infrastructure.Storage.Services;
 
 public class EventPublisher(
     ILogger<EventPublisher> logger,

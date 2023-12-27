@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace Adoptrix.Infrastructure.Services.Repositories;
+namespace Adoptrix.Infrastructure.Data.Services;
 
 public abstract class Repository(AdoptrixDbContext dbContext)
 {

@@ -5,8 +5,9 @@ using Adoptrix.Api.Services;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Services;
-using Adoptrix.Infrastructure;
-using Adoptrix.Infrastructure.Services;
+using Adoptrix.Infrastructure.Data;
+using Adoptrix.Infrastructure.Data.DependencyInjection;
+using Adoptrix.Infrastructure.Storage.DependencyInjection;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
@@ -34,7 +35,8 @@ public static class ServiceRegistration
             .AddValidators()
             .AddDomainServices()
             .AddApplicationServices(builder.Configuration)
-            .AddInfrastructureServices(builder.Configuration, builder.Environment)
+            .AddInfrastructureData()
+            .AddInfrastructureStorage(builder.Configuration, builder.Environment)
             .AddDevelopmentServices(builder.Environment)
             .AddScoped<IResponseMappingService, ResponseMappingService>()
             .AddSingleton<EventDispatcherPostProcessor>();

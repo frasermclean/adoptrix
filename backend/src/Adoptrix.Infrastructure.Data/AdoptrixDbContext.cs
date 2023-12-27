@@ -1,10 +1,10 @@
 ﻿using Adoptrix.Domain;
-using Adoptrix.Infrastructure.Configuration;
+using Adoptrix.Infrastructure.Data.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Adoptrix.Infrastructure;
+namespace Adoptrix.Infrastructure.Data;
 
 public class AdoptrixDbContext(IConfiguration configuration) : DbContext
 {

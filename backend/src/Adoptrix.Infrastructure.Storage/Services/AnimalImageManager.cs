@@ -4,7 +4,7 @@ using Azure.Storage.Blobs;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Adoptrix.Infrastructure.Services;
+namespace Adoptrix.Infrastructure.Storage.Services;
 
 public sealed class AnimalImageManager(
     [FromKeyedServices(AnimalImageManager.ContainerName)]

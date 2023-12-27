@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Domain", "src\Adop
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Api", "src\Adoptrix.Api\Adoptrix.Api.csproj", "{E738094C-FBA8-4A83-8925-2D622504F369}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Infrastructure", "src\Adoptrix.Infrastructure\Adoptrix.Infrastructure.csproj", "{5691F28D-9406-4FFF-9F2D-226F72A167FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Infrastructure.Data", "src\Adoptrix.Infrastructure.Data\Adoptrix.Infrastructure.Data.csproj", "{5691F28D-9406-4FFF-9F2D-226F72A167FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Application", "src\Adoptrix.Application\Adoptrix.Application.csproj", "{E9A92DCD-34B6-4B41-A2DB-5AD9AF3E564C}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Api.Tests", "tests\Adoptrix.Api.Tests\Adoptrix.Api.Tests.csproj", "{EEBDB0C2-ACD8-4F34-85DD-1A3959DE09E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Functions", "src\Adoptrix.Functions\Adoptrix.Functions.csproj", "{3B459084-AC6B-4907-A02A-F947541CBAAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Infrastructure.Storage", "src\Adoptrix.Infrastructure.Storage\Adoptrix.Infrastructure.Storage.csproj", "{3A1186A3-483B-473D-889C-179CF887B191}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,10 @@ Global
 		{3B459084-AC6B-4907-A02A-F947541CBAAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B459084-AC6B-4907-A02A-F947541CBAAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B459084-AC6B-4907-A02A-F947541CBAAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A1186A3-483B-473D-889C-179CF887B191}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A1186A3-483B-473D-889C-179CF887B191}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A1186A3-483B-473D-889C-179CF887B191}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A1186A3-483B-473D-889C-179CF887B191}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CF65350A-8D80-4AF2-B369-8C71A5BFB620} = {4958F816-17AA-4833-819B-5D666C416361}

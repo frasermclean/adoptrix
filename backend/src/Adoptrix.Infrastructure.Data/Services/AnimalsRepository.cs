@@ -5,7 +5,7 @@ using Adoptrix.Domain.Errors;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace Adoptrix.Infrastructure.Services.Repositories;
+namespace Adoptrix.Infrastructure.Data.Services;
 
 public class AnimalsRepository(AdoptrixDbContext dbContext)
     : IAnimalsRepository

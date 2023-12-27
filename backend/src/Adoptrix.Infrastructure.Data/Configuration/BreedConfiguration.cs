@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Adoptrix.Infrastructure.Configuration;
+namespace Adoptrix.Infrastructure.Data.Configuration;
 
 public class BreedConfiguration : IEntityTypeConfiguration<Breed>
 {

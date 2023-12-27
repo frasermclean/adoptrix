@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Domain;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Adoptrix.Infrastructure.ValueConverters;
+namespace Adoptrix.Infrastructure.Data.ValueConverters;
 
 public class SexConverter()
     : ValueConverter<Sex?, char?>(sex => SexToChar(sex), c => CharToSex(c))

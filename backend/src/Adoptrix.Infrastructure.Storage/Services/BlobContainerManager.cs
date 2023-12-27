@@ -2,7 +2,7 @@
 using Azure.Storage.Blobs.Models;
 using FluentResults;
 
-namespace Adoptrix.Infrastructure.Services;
+namespace Adoptrix.Infrastructure.Storage.Services;
 
 public abstract class BlobContainerManager(BlobContainerClient containerClient)
 {

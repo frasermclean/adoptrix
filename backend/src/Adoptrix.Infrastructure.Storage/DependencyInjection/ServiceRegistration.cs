@@ -1,6 +1,5 @@
-using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Infrastructure.Services.Repositories;
+﻿using Adoptrix.Application.Services;
+using Adoptrix.Infrastructure.Storage.Services;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
@@ -9,34 +8,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Adoptrix.Infrastructure.Services;
+namespace Adoptrix.Infrastructure.Storage.DependencyInjection;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
+    public static IServiceCollection AddInfrastructureStorage(this IServiceCollection services,
         IConfiguration configuration, IHostEnvironment environment)
     {
-        services
-            .AddDataServices()
-            .AddScoped<IAnimalImageManager, AnimalImageManager>()
-            .AddSingleton<IEventPublisher, EventPublisher>()
-            .AddAzureClients(configuration, environment);
+        services.AddScoped<IAnimalImageManager, AnimalImageManager>();
+        services.AddSingleton<IEventPublisher, EventPublisher>();
 
-        return services;
-    }
-
-    private static IServiceCollection AddDataServices(this IServiceCollection services)
-    {
-        return services
-            .AddDbContext<AdoptrixDbContext>()
-            .AddScoped<IAnimalsRepository, AnimalsRepository>()
-            .AddScoped<IBreedsRepository, BreedsRepository>()
-            .AddScoped<ISpeciesRepository, SpeciesRepository>();
-    }
-
-    private static IServiceCollection AddAzureClients(this IServiceCollection services,
-        IConfiguration configuration, IHostEnvironment environment)
-    {
         services.AddAzureClients(builder =>
         {
             if (environment.IsDevelopment())
