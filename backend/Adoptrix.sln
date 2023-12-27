@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Application.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Api.Tests", "tests\Adoptrix.Api.Tests\Adoptrix.Api.Tests.csproj", "{EEBDB0C2-ACD8-4F34-85DD-1A3959DE09E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Functions", "src\Adoptrix.Functions\Adoptrix.Functions.csproj", "{3B459084-AC6B-4907-A02A-F947541CBAAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{EEBDB0C2-ACD8-4F34-85DD-1A3959DE09E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEBDB0C2-ACD8-4F34-85DD-1A3959DE09E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEBDB0C2-ACD8-4F34-85DD-1A3959DE09E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B459084-AC6B-4907-A02A-F947541CBAAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B459084-AC6B-4907-A02A-F947541CBAAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B459084-AC6B-4907-A02A-F947541CBAAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B459084-AC6B-4907-A02A-F947541CBAAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CF65350A-8D80-4AF2-B369-8C71A5BFB620} = {4958F816-17AA-4833-819B-5D666C416361}

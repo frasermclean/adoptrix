@@ -23,6 +23,11 @@
     <PackageVersion Include="Microsoft.Identity.Web.TokenAcquisition" Version="2.16.0" />
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.1" />
   </ItemGroup>
+  <!--  Azure functions packages -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="1.20.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.16.4"/>
+  </ItemGroup>
   <!--  Testing project packages -->
   <ItemGroup>
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
