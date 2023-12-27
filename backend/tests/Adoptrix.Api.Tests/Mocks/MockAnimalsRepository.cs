@@ -53,7 +53,7 @@ public class MockAnimalsRepository : IAnimalsRepository
         throw new NotImplementedException();
     }
 
-    public Task DeleteAsync(Animal animal, CancellationToken cancellationToken = default)
+    public Task<Result> DeleteAsync(Animal animal, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
+using Adoptrix.Domain.Events;
 using FastEndpoints;
 using FluentResults;
 using Microsoft.Extensions.Logging;
@@ -30,12 +31,12 @@ public class AddAnimalImageCommandHandler(
 
         // update animal in the database
         var updateResult = await repository.UpdateAsync(command.Animal, cancellationToken);
-        if (updateResult.IsSuccess)
-        {
-            await eventPublisher.PublishAnimalImageAddedEventAsync(command.Animal.Id, addImageResult.Value.Id,
-                cancellationToken);
-        }
+        if (updateResult.IsFailed) return updateResult.ToResult();
 
-        return updateResult.ToResult();
+        // publish domain event
+        var domainEvent = new AnimalImageAddedEvent(command.Animal.Id, addImageResult.Value.Id);
+        await eventPublisher.PublishDomainEventAsync(domainEvent, cancellationToken);
+
+        return Result.Ok();
     }
 }

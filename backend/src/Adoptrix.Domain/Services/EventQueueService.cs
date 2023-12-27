@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using FastEndpoints;
+using Adoptrix.Domain.Events;
 
 namespace Adoptrix.Domain.Services;
 
@@ -14,27 +14,27 @@ public interface IEventQueueService
     /// Add a domain event to the queue.
     /// </summary>
     /// <param name="domainEvent">The domain event to add.</param>
-    void PushDomainEvent(IEvent domainEvent);
+    void PushDomainEvent(IDomainEvent domainEvent);
 
     /// <summary>
     /// Remove the next domain event from the queue.
     /// </summary>
     /// <exception cref="InvalidOperationException">There are no items left in the queue.</exception>
-    IEvent? PopDomainEvent();
+    IDomainEvent? PopDomainEvent();
 }
 
 public class EventQueueService : IEventQueueService
 {
-    private readonly ConcurrentQueue<IEvent> domainEvents = new();
+    private readonly ConcurrentQueue<IDomainEvent> domainEvents = new();
 
     public bool HasEvents => !domainEvents.IsEmpty;
 
-    public void PushDomainEvent(IEvent domainEvent)
+    public void PushDomainEvent(IDomainEvent domainEvent)
     {
         domainEvents.Enqueue(domainEvent);
     }
 
-    public IEvent? PopDomainEvent()
+    public IDomainEvent? PopDomainEvent()
     {
         domainEvents.TryDequeue(out var domainEvent);
         return domainEvent;

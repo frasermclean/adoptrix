@@ -1,7 +1,9 @@
-﻿namespace Adoptrix.Application.Services;
+﻿using Adoptrix.Domain.Events;
+
+namespace Adoptrix.Application.Services;
 
 public interface IEventPublisher
 {
-    Task PublishAnimalDeletedEventAsync(Guid animalId, CancellationToken cancellationToken = default);
-    Task PublishAnimalImageAddedEventAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken = default);
+    Task PublishDomainEventAsync<T>(T domainEvent, CancellationToken cancellationToken = default)
+        where T : IDomainEvent;
 }

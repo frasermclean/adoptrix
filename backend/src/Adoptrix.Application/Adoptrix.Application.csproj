@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="FastEndpoints.Attributes"/>
+    <PackageReference Include="FastEndpoints.Messaging.Core" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Microsoft.Extensions.Options"/>
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>

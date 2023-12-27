@@ -1,27 +1,40 @@
-﻿using Adoptrix.Application.Events;
+﻿using System.Text.Json;
 using Adoptrix.Application.Services;
+using Adoptrix.Domain.Events;
 using Azure.Storage.Queues;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Infrastructure.Services;
 
 public class EventPublisher(
+    ILogger<EventPublisher> logger,
     [FromKeyedServices(QueueKeys.AnimalDeleted)]
     QueueClient animalDeletedQueueClient,
     [FromKeyedServices(QueueKeys.AnimalImageAdded)]
     QueueClient animalImageAddedQueueClient
-)
-    : IEventPublisher
+) : IEventPublisher
 {
-    public async Task PublishAnimalDeletedEventAsync(Guid animalId, CancellationToken cancellationToken = default)
+    private static readonly JsonSerializerOptions SerializerOptions = new()
     {
-        await animalDeletedQueueClient.SendMessageAsync(animalId.ToString(), cancellationToken);
-    }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
 
-    public async Task PublishAnimalImageAddedEventAsync(Guid animalId, Guid imageId,
-        CancellationToken cancellationToken = default)
+    public async Task PublishDomainEventAsync<T>(T domainEvent, CancellationToken cancellationToken = default)
+        where T : IDomainEvent
     {
-        var data = new BinaryData(new AnimalImageAddedEvent(animalId, imageId));
-        await animalImageAddedQueueClient.SendMessageAsync(data, cancellationToken: cancellationToken);
+        var data = new BinaryData(domainEvent, SerializerOptions);
+
+        var queueClient = domainEvent switch
+        {
+            AnimalDeletedEvent => animalDeletedQueueClient,
+            AnimalImageAddedEvent => animalImageAddedQueueClient,
+            _ => throw new ArgumentOutOfRangeException(nameof(domainEvent))
+        };
+
+        logger.LogInformation("Publishing domain event {DomainEvent} to queue {QueueName}",
+            domainEvent.GetType().Name, queueClient.Name);
+
+        await queueClient.SendMessageAsync(data, cancellationToken: cancellationToken);
     }
 }

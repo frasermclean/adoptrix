@@ -11,6 +11,9 @@
     <PackageVersion Include="FastEndpoints.Attributes" Version="5.20.1" />
     <PackageVersion Include="FastEndpoints.Messaging.Core" Version="5.20.1" />
     <PackageVersion Include="FluentResults" Version="3.15.2" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="1.20.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Storage.Queues" Version="5.2.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.16.4" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
@@ -22,11 +25,6 @@
     <PackageVersion Include="Microsoft.Identity.Web" Version="2.16.0" />
     <PackageVersion Include="Microsoft.Identity.Web.TokenAcquisition" Version="2.16.0" />
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.1" />
-  </ItemGroup>
-  <!--  Azure functions packages -->
-  <ItemGroup>
-    <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="1.20.0" />
-    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.16.4"/>
   </ItemGroup>
   <!--  Testing project packages -->
   <ItemGroup>

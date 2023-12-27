@@ -42,12 +42,16 @@ public static class ServiceRegistration
             if (environment.IsDevelopment())
             {
                 builder.AddBlobServiceClient("UseDevelopmentStorage=true");
-                builder.AddQueueServiceClient("UseDevelopmentStorage=true");
+                builder.AddQueueServiceClient("UseDevelopmentStorage=true")
+                    .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
+
                 return;
             }
 
             builder.AddBlobServiceClient(new Uri(configuration.GetValue<string>("AzureStorage:BlobEndpoint")!));
-            builder.AddQueueServiceClient(new Uri(configuration.GetValue<string>("AzureStorage:QueueEndpoint")!));
+            builder.AddQueueServiceClient(new Uri(configuration.GetValue<string>("AzureStorage:QueueEndpoint")!))
+                .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
+
             builder.UseCredential(new DefaultAzureCredential());
         });
 

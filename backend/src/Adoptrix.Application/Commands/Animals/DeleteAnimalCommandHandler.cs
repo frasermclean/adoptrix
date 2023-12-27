@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Domain.Events;
 using FastEndpoints;
 using FluentResults;
 using Microsoft.Extensions.Logging;
@@ -23,11 +24,16 @@ public class DeleteAnimalCommandHandler(
         }
 
         var animal = result.Value;
-        await repository.DeleteAsync(animal, cancellationToken);
+        var deleteResult = await repository.DeleteAsync(animal, cancellationToken);
 
-        await eventPublisher.PublishAnimalDeletedEventAsync(animal.Id, cancellationToken);
+        if (deleteResult.IsFailed) return deleteResult;
 
         logger.LogInformation("Deleted animal with id {Id}", animal.Id);
-        return Result.Ok();
+
+        // publish domain event
+        var domainEvent = new AnimalDeletedEvent(animal.Id);
+        await eventPublisher.PublishDomainEventAsync(domainEvent, cancellationToken);
+
+        return deleteResult;
     }
 }
