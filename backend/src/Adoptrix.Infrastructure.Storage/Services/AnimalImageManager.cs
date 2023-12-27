@@ -7,12 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Adoptrix.Infrastructure.Storage.Services;
 
 public sealed class AnimalImageManager(
-    [FromKeyedServices(AnimalImageManager.ContainerName)]
+    [FromKeyedServices(BlobContainerKeys.AnimalImages)]
     BlobContainerClient containerClient)
     : BlobContainerManager(containerClient), IAnimalImageManager
 {
-    public const string ContainerName = "animal-images";
-
     public async Task UploadImageAsync(Guid animalId, Guid imageId, Stream imageStream, string contentType,
         ImageCategory category, CancellationToken cancellationToken)
     {

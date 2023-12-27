@@ -36,9 +36,9 @@ public static class ServiceRegistration
             builder.UseCredential(new DefaultAzureCredential());
         });
 
-        services.AddKeyedScoped<BlobContainerClient>(AnimalImageManager.ContainerName, (provider, _)
+        services.AddKeyedScoped<BlobContainerClient>(BlobContainerKeys.AnimalImages, (provider, _)
             => provider.GetRequiredService<BlobServiceClient>()
-                .GetBlobContainerClient(AnimalImageManager.ContainerName));
+                .GetBlobContainerClient("animal-images"));
 
         // animal deleted queue
         services.AddKeyedSingleton<QueueClient>(QueueKeys.AnimalDeleted, (provider, _)
