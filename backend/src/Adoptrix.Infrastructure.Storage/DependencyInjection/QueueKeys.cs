@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Infrastructure.Storage;
+﻿namespace Adoptrix.Infrastructure.Storage.DependencyInjection;
 
 public enum QueueKeys
 {

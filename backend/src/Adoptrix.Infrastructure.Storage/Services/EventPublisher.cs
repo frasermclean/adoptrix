@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Events;
+using Adoptrix.Infrastructure.Storage.DependencyInjection;
 using Azure.Storage.Queues;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
