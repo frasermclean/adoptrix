@@ -3,6 +3,7 @@ using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Infrastructure.Services.Repositories;
 using Azure.Identity;
 using Azure.Storage.Blobs;
+using Azure.Storage.Queues;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ public static class ServiceRegistration
         services
             .AddDataServices()
             .AddScoped<IAnimalImageManager, AnimalImageManager>()
+            .AddSingleton<IEventPublisher, EventPublisher>()
             .AddAzureClients(configuration, environment);
 
         return services;
@@ -52,6 +54,16 @@ public static class ServiceRegistration
         services.AddKeyedScoped<BlobContainerClient>(AnimalImageManager.ContainerName, (provider, _)
             => provider.GetRequiredService<BlobServiceClient>()
                 .GetBlobContainerClient(AnimalImageManager.ContainerName));
+
+        // animal deleted queue
+        services.AddKeyedSingleton<QueueClient>(QueueKeys.AnimalDeleted, (provider, _)
+            => provider.GetRequiredService<QueueServiceClient>()
+                .GetQueueClient(configuration.GetValue<string>("AzureStorage:QueueNames:AnimalDeleted")));
+
+        // animal image added queue
+        services.AddKeyedSingleton<QueueClient>(QueueKeys.AnimalImageAdded, (provider, _)
+            => provider.GetRequiredService<QueueServiceClient>()
+                .GetQueueClient(configuration.GetValue<string>("AzureStorage:QueueNames:AnimalImageAdded")));
 
         return services;
     }
