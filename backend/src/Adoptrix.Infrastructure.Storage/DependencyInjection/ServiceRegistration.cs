@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Application.Services;
+using Adoptrix.Infrastructure.Storage.Options;
 using Adoptrix.Infrastructure.Storage.Services;
 using Azure.Identity;
 using Azure.Storage.Blobs;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Adoptrix.Infrastructure.Storage.DependencyInjection;
 
@@ -17,6 +19,11 @@ public static class ServiceRegistration
     {
         services.AddScoped<IAnimalImageManager, AnimalImageManager>();
         services.AddSingleton<IEventPublisher, EventPublisher>();
+
+        services.AddOptions<StorageOptions>()
+            .BindConfiguration(StorageOptions.SectionName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.AddAzureClients(builder =>
         {
@@ -36,19 +43,41 @@ public static class ServiceRegistration
             builder.UseCredential(new DefaultAzureCredential());
         });
 
-        services.AddKeyedScoped<BlobContainerClient>(BlobContainerKeys.AnimalImages, (provider, _)
-            => provider.GetRequiredService<BlobServiceClient>()
-                .GetBlobContainerClient("animal-images"));
+        return services
+            .AddBlobContainerClients()
+            .AddStorageQueueClients();
+    }
 
+    private static IServiceCollection AddBlobContainerClients(this IServiceCollection services)
+    {
+        return services.AddKeyedScoped<BlobContainerClient>(BlobContainerKeys.AnimalImages, (provider, _)
+            =>
+        {
+            var options = provider.GetRequiredService<IOptions<StorageOptions>>().Value;
+            return provider.GetRequiredService<BlobServiceClient>()
+                .GetBlobContainerClient(options.BlobContainerNames.AnimalImages);
+        });
+    }
+
+    private static IServiceCollection AddStorageQueueClients(this IServiceCollection services)
+    {
         // animal deleted queue
         services.AddKeyedSingleton<QueueClient>(QueueKeys.AnimalDeleted, (provider, _)
-            => provider.GetRequiredService<QueueServiceClient>()
-                .GetQueueClient(configuration.GetValue<string>("AzureStorage:QueueNames:AnimalDeleted")));
+            =>
+        {
+            var options = provider.GetRequiredService<IOptions<StorageOptions>>().Value;
+            return provider.GetRequiredService<QueueServiceClient>()
+                .GetQueueClient(options.QueueNames.AnimalDeleted);
+        });
 
         // animal image added queue
         services.AddKeyedSingleton<QueueClient>(QueueKeys.AnimalImageAdded, (provider, _)
-            => provider.GetRequiredService<QueueServiceClient>()
-                .GetQueueClient(configuration.GetValue<string>("AzureStorage:QueueNames:AnimalImageAdded")));
+            =>
+        {
+            var options = provider.GetRequiredService<IOptions<StorageOptions>>().Value;
+            return provider.GetRequiredService<QueueServiceClient>()
+                .GetQueueClient(options.QueueNames.AnimalImageAdded);
+        });
 
         return services;
     }
