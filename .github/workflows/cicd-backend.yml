@@ -28,6 +28,7 @@ jobs:
     env:
       BACKEND_DIRECTORY: ${{ github.workspace }}/backend
       BUILD_CONFIGURATION: Release
+      RUNTIME_IDENTIFIER: linux-x64
       API_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/api
       FUNCTIONS_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/functions
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/test-results
@@ -41,12 +42,12 @@ jobs:
 
       # Restore NuGet packages
       - name: Restore packages
-        run: dotnet restore
+        run: dotnet restore --runtime ${{ env.RUNTIME_IDENTIFIER }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Build solution
       - name: Build solution
-        run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIGURATION }} --use-current-runtime
+        run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIGURATION }} --runtime ${{ env.RUNTIME_IDENTIFIER }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Run tests
