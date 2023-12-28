@@ -18,6 +18,7 @@ on:
 
 env:
   API_ARTIFACT_NAME: backend-api
+  FUNCTIONS_ARTIFACT_NAME: backend-functions
 
 jobs:
   # Build, test and publish API job
@@ -27,7 +28,8 @@ jobs:
     env:
       BACKEND_DIRECTORY: ${{ github.workspace }}/backend
       BUILD_CONFIGURATION: Release
-      PUBLISH_DIRECTORY: ${{ github.workspace }}/publish
+      API_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/api
+      FUNCTIONS_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/functions
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/test-results
     permissions:
       checks: write
@@ -44,7 +46,7 @@ jobs:
 
       # Build solution
       - name: Build solution
-        run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIGURATION }}
+        run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIGURATION }} --use-current-runtime
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Run tests
@@ -81,7 +83,17 @@ jobs:
           dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
-          --output ${{ env.PUBLISH_DIRECTORY }}
+          --output ${{ env.API_PUBLISH_DIRECTORY }}
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
+
+      # Publish Functions project
+      - name: Publish Functions project
+        #if: github.event_name != 'pull_request'
+        run: >-
+          dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Functions
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --output ${{ env.FUNCTIONS_PUBLISH_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Upload API artifact
@@ -90,15 +102,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.API_ARTIFACT_NAME }}
-          path: ${{ env.PUBLISH_DIRECTORY }}
+          path: ${{ env.API_PUBLISH_DIRECTORY }}
 
-      # Upload test results
-      - name: Upload test results
-        if: always()
+      # Upload Functions artifact
+      - name: Upload Functions artifact
+        #if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: ${{ env.TEST_RESULTS_DIRECTORY }}
+          name: ${{ env.FUNCTIONS_ARTIFACT_NAME }}
+          path: ${{ env.FUNCTIONS_PUBLISH_DIRECTORY }}
 
   # Deploy infrastructure job
   deploy_infra:
