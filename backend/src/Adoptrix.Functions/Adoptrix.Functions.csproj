@@ -21,7 +21,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Infrastructure.Data\Adoptrix.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\Adoptrix.Infrastructure.Storage\Adoptrix.Infrastructure.Storage.csproj" />
   </ItemGroup>
 
 </Project>

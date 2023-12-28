@@ -1,10 +1,11 @@
-﻿using Adoptrix.Domain.Events;
+﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain.Events;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Functions.Functions;
 
-public class AnimalDeleted(ILogger<AnimalDeleted> logger)
+public class AnimalDeleted(ILogger<AnimalDeleted> logger, IAnimalImageManager animalImageManager)
 {
     [Function(nameof(AnimalDeleted))]
     public void Run([QueueTrigger("animal-deleted")] AnimalDeletedEvent eventData)

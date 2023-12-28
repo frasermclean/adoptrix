@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services;
+using Adoptrix.Application.Services;
 using Adoptrix.Infrastructure.Storage.Options;
 using Adoptrix.Infrastructure.Storage.Services;
 using Azure.Identity;
@@ -22,8 +22,7 @@ public static class ServiceRegistration
 
         services.AddOptions<StorageOptions>()
             .BindConfiguration(StorageOptions.SectionName)
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
+            .ValidateDataAnnotations();
 
         services.AddAzureClients(builder =>
         {

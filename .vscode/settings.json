@@ -1,7 +1,8 @@
 {
-  "azureFunctions.deploySubpath": "backend/src/Adoptrix.Functions/bin/Release/net8.0/publish",
+  "azureFunctions.projectSubpath": "backend/src/Adoptrix.Functions",
   "azureFunctions.projectLanguage": "C#",
   "azureFunctions.projectRuntime": "~4",
+  "azureFunctions.deploySubpath": "backend/src/Adoptrix.Functions/bin/Release/net8.0/publish",
   "azureFunctions.preDeployTask": "publish (functions)",
   "debug.internalConsoleOptions": "neverOpen"
 }
