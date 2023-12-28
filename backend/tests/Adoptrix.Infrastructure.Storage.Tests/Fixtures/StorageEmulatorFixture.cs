@@ -33,7 +33,7 @@ public class StorageEmulatorFixture : IAsyncLifetime
         var connectionString =
             $"DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:{blobPort}/devstoreaccount1;QueueEndpoint=http://127.0.0.1:{queuePort}/devstoreaccount1;TableEndpoint=http://127.0.0.1:{tablePort}/devstoreaccount1;";
 
-        BlobContainerClient = new BlobContainerClient(connectionString, "animal-images");
+        BlobContainerClient = new BlobContainerClient(connectionString, BlobContainerNames.AnimalImages);
         await BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
     }
 

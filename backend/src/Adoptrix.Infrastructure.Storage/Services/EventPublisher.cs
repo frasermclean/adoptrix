@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Events;
-using Adoptrix.Infrastructure.Storage.DependencyInjection;
 using Azure.Storage.Queues;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,9 +9,9 @@ namespace Adoptrix.Infrastructure.Storage.Services;
 
 public class EventPublisher(
     ILogger<EventPublisher> logger,
-    [FromKeyedServices(QueueKeys.AnimalDeleted)]
+    [FromKeyedServices(QueueNames.AnimalDeleted)]
     QueueClient animalDeletedQueueClient,
-    [FromKeyedServices(QueueKeys.AnimalImageAdded)]
+    [FromKeyedServices(QueueNames.AnimalImageAdded)]
     QueueClient animalImageAddedQueueClient
 ) : IEventPublisher
 {

@@ -1,8 +1,6 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain;
-using Adoptrix.Infrastructure.Storage.DependencyInjection;
 using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,7 +9,7 @@ namespace Adoptrix.Infrastructure.Storage.Services;
 
 public sealed class AnimalImageManager(
     ILogger<AnimalImageManager> logger,
-    [FromKeyedServices(BlobContainerKeys.AnimalImages)]
+    [FromKeyedServices(BlobContainerNames.AnimalImages)]
     BlobContainerClient containerClient)
     : BlobContainerManager(containerClient), IAnimalImageManager
 {

@@ -49,34 +49,24 @@ public static class ServiceRegistration
 
     private static IServiceCollection AddBlobContainerClients(this IServiceCollection services)
     {
-        return services.AddKeyedScoped<BlobContainerClient>(BlobContainerKeys.AnimalImages, (provider, _)
-            =>
-        {
-            var options = provider.GetRequiredService<IOptions<StorageOptions>>().Value;
-            return provider.GetRequiredService<BlobServiceClient>()
-                .GetBlobContainerClient(options.BlobContainerNames.AnimalImages);
-        });
+        services.AddKeyedScoped<BlobContainerClient>(BlobContainerNames.AnimalImages, (provider, _)
+            => provider.GetRequiredService<BlobServiceClient>()
+                .GetBlobContainerClient(BlobContainerNames.AnimalImages));
+
+        return services;
     }
 
     private static IServiceCollection AddStorageQueueClients(this IServiceCollection services)
     {
         // animal deleted queue
-        services.AddKeyedSingleton<QueueClient>(QueueKeys.AnimalDeleted, (provider, _)
-            =>
-        {
-            var options = provider.GetRequiredService<IOptions<StorageOptions>>().Value;
-            return provider.GetRequiredService<QueueServiceClient>()
-                .GetQueueClient(options.QueueNames.AnimalDeleted);
-        });
+        services.AddKeyedSingleton<QueueClient>(QueueNames.AnimalDeleted, (provider, _)
+            => provider.GetRequiredService<QueueServiceClient>()
+                .GetQueueClient(QueueNames.AnimalDeleted));
 
         // animal image added queue
-        services.AddKeyedSingleton<QueueClient>(QueueKeys.AnimalImageAdded, (provider, _)
-            =>
-        {
-            var options = provider.GetRequiredService<IOptions<StorageOptions>>().Value;
-            return provider.GetRequiredService<QueueServiceClient>()
-                .GetQueueClient(options.QueueNames.AnimalImageAdded);
-        });
+        services.AddKeyedSingleton<QueueClient>(QueueNames.AnimalImageAdded, (provider, _)
+            => provider.GetRequiredService<QueueServiceClient>()
+                .GetQueueClient(QueueNames.AnimalImageAdded));
 
         return services;
     }
