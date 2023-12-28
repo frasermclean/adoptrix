@@ -18,7 +18,7 @@ public abstract class BlobContainerManager(BlobContainerClient containerClient)
         };
 
         var response = await blobClient.UploadAsync(stream, options, cancellationToken);
-        return Result.OkIf(response.GetRawResponse().Status == 201, $"Blob {blobName} was not created.");
+        return Result.FailIf(response.GetRawResponse().IsError, $"Blob {blobName} was not created.");
     }
 
     protected async Task<Result> DeleteBlobAsync(string blobName, CancellationToken cancellationToken)

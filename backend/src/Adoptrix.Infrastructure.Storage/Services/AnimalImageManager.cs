@@ -39,7 +39,7 @@ public sealed class AnimalImageManager(
     }
 
     public async Task<Result> DeleteImageAsync(Guid animalId, Guid imageId, ImageCategory category,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var blobName = GetBlobName(animalId, imageId, category);
         return await DeleteBlobAsync(blobName, cancellationToken);
