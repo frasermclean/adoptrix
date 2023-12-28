@@ -8,8 +8,8 @@ namespace Adoptrix.Functions.Functions;
 public class AnimalDeleted(ILogger<AnimalDeleted> logger, IAnimalImageManager animalImageManager)
 {
     [Function(nameof(AnimalDeleted))]
-    public void Run([QueueTrigger("animal-deleted")] AnimalDeletedEvent eventData)
+    public async Task Run([QueueTrigger("animal-deleted")] AnimalDeletedEvent eventData)
     {
-        logger.LogInformation("Animal deleted event. Animal ID : {AnimalId}", eventData.AnimalId);
+        await animalImageManager.DeleteAnimalImagesAsync(eventData.AnimalId);
     }
 }

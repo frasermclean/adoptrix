@@ -6,21 +6,24 @@ namespace Adoptrix.Infrastructure.Storage.Services;
 
 public abstract class BlobContainerManager(BlobContainerClient containerClient)
 {
-    protected async Task UploadBlobAsync(string blobName, Stream stream, string contentType,
+    protected readonly BlobContainerClient ContainerClient = containerClient;
+
+    protected async Task<Result> UploadBlobAsync(string blobName, Stream stream, string contentType,
         CancellationToken cancellationToken)
     {
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var blobClient = ContainerClient.GetBlobClient(blobName);
         var options = new BlobUploadOptions
         {
             HttpHeaders = new BlobHttpHeaders { ContentType = contentType }
         };
 
-        await blobClient.UploadAsync(stream, options, cancellationToken);
+        var response = await blobClient.UploadAsync(stream, options, cancellationToken);
+        return Result.OkIf(response.GetRawResponse().Status == 201, $"Blob {blobName} was not created.");
     }
 
     protected async Task<Result> DeleteBlobAsync(string blobName, CancellationToken cancellationToken)
     {
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var blobClient = ContainerClient.GetBlobClient(blobName);
         var response = await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots,
             cancellationToken: cancellationToken);
 
@@ -29,7 +32,7 @@ public abstract class BlobContainerManager(BlobContainerClient containerClient)
 
     protected async Task<Stream> OpenReadStreamAsync(string blobName, CancellationToken cancellationToken)
     {
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var blobClient = ContainerClient.GetBlobClient(blobName);
         return await blobClient.OpenReadAsync(cancellationToken: cancellationToken);
     }
 }
