@@ -27,22 +27,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Resources\puppy1.jpeg">
+    <Content Include="..\..\..\data\images\lab_puppy_1.jpeg">
+      <Link>Data\lab_puppy_1.jpeg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\lab_puppy_1.jpeg">
+    </Content>
+    <Content Include="..\..\..\data\images\lab_puppy_2.jpeg">
+      <Link>Data\lab_puppy_2.jpeg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\lab_puppy_2.jpeg">
+    </Content>
+    <Content Include="..\..\..\data\images\lab_puppy_3.jpeg">
+      <Link>Data\lab_puppy_3.jpeg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\lab_puppy_3.jpeg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 
 </Project>
