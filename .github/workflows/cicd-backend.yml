@@ -86,16 +86,6 @@ jobs:
           --output ${{ env.API_PUBLISH_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
-      # Publish Functions project
-      - name: Publish Functions project
-        #if: github.event_name != 'pull_request'
-        run: >-
-          dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Functions
-          --no-build
-          --configuration ${{ env.BUILD_CONFIGURATION }}
-          --output ${{ env.FUNCTIONS_PUBLISH_DIRECTORY }}
-        working-directory: ${{ env.BACKEND_DIRECTORY }}
-
       # Upload API artifact
       - name: Upload API artifact
         if: github.event_name != 'pull_request'
@@ -104,9 +94,19 @@ jobs:
           name: ${{ env.API_ARTIFACT_NAME }}
           path: ${{ env.API_PUBLISH_DIRECTORY }}
 
+      # Publish Functions project
+      - name: Publish Functions project
+        if: github.event_name != 'pull_request'
+        run: >-
+          dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Functions
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --output ${{ env.FUNCTIONS_PUBLISH_DIRECTORY }}
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
+
       # Upload Functions artifact
       - name: Upload Functions artifact
-        #if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.FUNCTIONS_ARTIFACT_NAME }}
