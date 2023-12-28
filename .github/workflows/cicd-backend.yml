@@ -28,7 +28,6 @@ jobs:
     env:
       BACKEND_DIRECTORY: ${{ github.workspace }}/backend
       BUILD_CONFIGURATION: Release
-      RUNTIME_IDENTIFIER: linux-x64
       API_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/api
       FUNCTIONS_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/functions
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/test-results
@@ -42,7 +41,7 @@ jobs:
 
       # Restore NuGet packages
       - name: Restore packages
-        run: dotnet restore --runtime ${{ env.RUNTIME_IDENTIFIER }}
+        run: dotnet restore
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Build solution
@@ -84,7 +83,6 @@ jobs:
           dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
-          --runtime ${{ env.RUNTIME_IDENTIFIER }}
           --output ${{ env.API_PUBLISH_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
@@ -95,7 +93,6 @@ jobs:
           dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Functions
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
-          --runtime ${{ env.RUNTIME_IDENTIFIER }}
           --output ${{ env.FUNCTIONS_PUBLISH_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
