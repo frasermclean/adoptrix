@@ -16,30 +16,35 @@ public sealed class AnimalImageManager(
     : BlobContainerManager(containerClient), IAnimalImageManager
 {
     public async Task<Result> UploadImageAsync(Guid animalId, Guid imageId, Stream imageStream, string contentType,
-        ImageCategory category, CancellationToken cancellationToken = default)
+        ImageCategory category = ImageCategory.Original, CancellationToken cancellationToken = default)
     {
         var blobName = GetBlobName(animalId, imageId, category);
         return await UploadBlobAsync(blobName, imageStream, contentType, cancellationToken);
     }
 
-    public async Task DeleteAnimalImagesAsync(Guid animalId, CancellationToken cancellationToken = default)
+    public async Task<Result<int>> DeleteAnimalImagesAsync(Guid animalId, CancellationToken cancellationToken = default)
     {
         var pages = ContainerClient.GetBlobsAsync(prefix: $"{animalId}/", cancellationToken: cancellationToken)
             .AsPages();
 
+        var count = 0;
         await foreach (var page in pages)
         {
             foreach (var item in page.Values)
             {
-                await ContainerClient.DeleteBlobAsync(item.Name, DeleteSnapshotsOption.IncludeSnapshots,
-                    cancellationToken: cancellationToken);
+                var deleteResult = await DeleteBlobAsync(item.Name, cancellationToken);
+                if (deleteResult.IsFailed) continue;
+
                 logger.LogInformation("Deleted blob {BlobName}", item.Name);
+                count++;
             }
         }
+
+        return count;
     }
 
-    public async Task<Result> DeleteImageAsync(Guid animalId, Guid imageId, ImageCategory category,
-        CancellationToken cancellationToken = default)
+    public async Task<Result> DeleteImageAsync(Guid animalId, Guid imageId,
+        ImageCategory category = ImageCategory.Original, CancellationToken cancellationToken = default)
     {
         var blobName = GetBlobName(animalId, imageId, category);
         return await DeleteBlobAsync(blobName, cancellationToken);
