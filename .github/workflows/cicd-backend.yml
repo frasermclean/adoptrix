@@ -47,7 +47,7 @@ jobs:
 
       # Build solution
       - name: Build solution
-        run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIGURATION }} --runtime ${{ env.RUNTIME_IDENTIFIER }}
+        run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIGURATION }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Run tests
@@ -84,6 +84,7 @@ jobs:
           dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
+          --runtime ${{ env.RUNTIME_IDENTIFIER }}
           --output ${{ env.API_PUBLISH_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
@@ -94,6 +95,7 @@ jobs:
           dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Functions
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
+          --runtime ${{ env.RUNTIME_IDENTIFIER }}
           --output ${{ env.FUNCTIONS_PUBLISH_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
