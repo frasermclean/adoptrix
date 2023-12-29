@@ -4,9 +4,9 @@ namespace Adoptrix.Infrastructure.Storage.Tests.Fixtures;
 
 public class ConnectionStringBuilder
 {
-    public int BlobPort { get; set; } = 10000;
-    public int QueuePort { get; set; } = 10001;
-    public int TablePort { get; set; } = 10002;
+    public int BlobPort { get; init; } = 10000;
+    public int QueuePort { get; init; } = 10001;
+    public int TablePort { get; init; } = 10002;
 
     public string ConnectionString => BuildConnectionString();
 

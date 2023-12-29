@@ -11,7 +11,8 @@ public static class Program
             .ConfigureFunctionsWorkerDefaults()
             .ConfigureServices((context, services) =>
             {
-                services.AddInfrastructureStorage(context.Configuration, context.HostingEnvironment);
+                services.AddInfrastructureStorage(context.Configuration,
+                    context.HostingEnvironment.IsDevelopment());
             })
             .Build();
 

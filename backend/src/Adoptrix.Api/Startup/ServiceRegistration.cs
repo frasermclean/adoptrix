@@ -36,7 +36,7 @@ public static class ServiceRegistration
             .AddDomainServices()
             .AddApplicationServices(builder.Configuration)
             .AddInfrastructureData()
-            .AddInfrastructureStorage(builder.Configuration, builder.Environment)
+            .AddInfrastructureStorage(builder.Configuration, builder.Environment.IsDevelopment())
             .AddDevelopmentServices(builder.Environment)
             .AddScoped<IResponseMappingService, ResponseMappingService>()
             .AddSingleton<EventDispatcherPostProcessor>();

@@ -1,5 +1,8 @@
-﻿using Azure.Storage.Blobs;
+﻿using Adoptrix.Infrastructure.Storage.DependencyInjection;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Queues;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.Azurite;
 
@@ -14,38 +17,63 @@ public class StorageEmulatorFixture : IAsyncLifetime
         .WithPortBinding(TableContainerPort, true)
         .Build();
 
-    private readonly IServiceProvider serviceProvider;
+    private IServiceProvider? serviceProvider;
 
-    public BlobContainerClient BlobContainerClient => serviceProvider.GetRequiredService<BlobContainerClient>();
+    public BlobContainerClient? BlobContainerClient =>
+        serviceProvider?.GetRequiredKeyedService<BlobContainerClient>(BlobContainerNames.AnimalImages);
+
+    public QueueClient? AnimalDeletedQueueClient =>
+        serviceProvider?.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalDeleted);
+
+    public QueueClient? AnimalImageAddedQueueClient =>
+        serviceProvider?.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalImageAdded);
 
     private const int BlobContainerPort = 10000;
     private const int QueueContainerPort = 10001;
     private const int TableContainerPort = 10002;
-
-    public StorageEmulatorFixture()
-    {
-        serviceProvider = new ServiceCollection()
-            .AddSingleton<ConnectionStringBuilder>()
-            .AddSingleton<BlobContainerClient>(provider =>
-            {
-                var connectionStringBuilder = provider.GetRequiredService<ConnectionStringBuilder>();
-                return new BlobContainerClient(connectionStringBuilder.ConnectionString,
-                    BlobContainerNames.AnimalImages);
-            })
-            .BuildServiceProvider();
-    }
 
     public async Task InitializeAsync()
     {
         await container.StartAsync();
 
         // update connection string builder with runtime mapped ports
-        var connectionStringBuilder = serviceProvider.GetRequiredService<ConnectionStringBuilder>();
-        connectionStringBuilder.BlobPort = container.GetMappedPublicPort(BlobContainerPort);
-        connectionStringBuilder.QueuePort =  container.GetMappedPublicPort(QueueContainerPort);
-        connectionStringBuilder.TablePort = container.GetMappedPublicPort(TableContainerPort);
+        var connectionStringBuilder = new ConnectionStringBuilder
+        {
+            BlobPort = container.GetMappedPublicPort(BlobContainerPort),
+            QueuePort = container.GetMappedPublicPort(QueueContainerPort),
+            TablePort = container.GetMappedPublicPort(TableContainerPort)
+        };
 
-        await BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                { "ConnectionStrings:AzureStorage", connectionStringBuilder.ConnectionString }
+            })
+            .Build();
+
+        serviceProvider = new ServiceCollection()
+            .AddInfrastructureStorage(configuration, true)
+            .BuildServiceProvider();
+
+        await InitializeBlobContainersAsync(serviceProvider.GetRequiredService<BlobServiceClient>());
+        await InitializeQueuesAsync(serviceProvider.GetRequiredService<QueueServiceClient>());
+    }
+
+    private static async Task InitializeBlobContainersAsync(BlobServiceClient serviceClient)
+    {
+        var containerClient = serviceClient.GetBlobContainerClient(BlobContainerNames.AnimalImages);
+        await containerClient.CreateAsync(PublicAccessType.Blob);
+    }
+
+    private static async Task InitializeQueuesAsync(QueueServiceClient serviceClient)
+    {
+        var queuesToCreates = new[] { QueueNames.AnimalDeleted, QueueNames.AnimalImageAdded };
+
+        foreach (var queueName in queuesToCreates)
+        {
+            var queueClient = serviceClient.GetQueueClient(queueName);
+            await queueClient.CreateAsync();
+        }
     }
 
     public async Task DisposeAsync()

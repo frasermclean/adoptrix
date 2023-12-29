@@ -7,14 +7,13 @@ using Azure.Storage.Queues;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Adoptrix.Infrastructure.Storage.DependencyInjection;
 
 public static class ServiceRegistration
 {
     public static IServiceCollection AddInfrastructureStorage(this IServiceCollection services,
-        IConfiguration configuration, IHostEnvironment environment)
+        IConfiguration configuration, bool useConnectionString = false)
     {
         services.AddScoped<IAnimalImageManager, AnimalImageManager>();
         services.AddSingleton<IEventPublisher, EventPublisher>();
@@ -25,7 +24,8 @@ public static class ServiceRegistration
 
         services.AddAzureClients(builder =>
         {
-            if (environment.IsDevelopment())
+            // use connection string if specified
+            if (useConnectionString)
             {
                 var connectionString = configuration.GetConnectionString("AzureStorage");
                 builder.AddBlobServiceClient(connectionString);
@@ -49,7 +49,7 @@ public static class ServiceRegistration
 
     private static IServiceCollection AddBlobContainerClients(this IServiceCollection services)
     {
-        services.AddKeyedScoped<BlobContainerClient>(BlobContainerNames.AnimalImages, (provider, _)
+        services.AddKeyedSingleton<BlobContainerClient>(BlobContainerNames.AnimalImages, (provider, _)
             => provider.GetRequiredService<BlobServiceClient>()
                 .GetBlobContainerClient(BlobContainerNames.AnimalImages));
 
