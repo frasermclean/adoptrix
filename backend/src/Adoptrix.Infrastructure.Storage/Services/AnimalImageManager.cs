@@ -48,7 +48,7 @@ public sealed class AnimalImageManager(
         return await DeleteBlobAsync(blobName, cancellationToken);
     }
 
-    public Task<Stream> GetImageReadStreamAsync(Guid animalId, Guid imageId, ImageCategory category,
+    public Task<Stream> GetImageReadStreamAsync(Guid animalId, Guid imageId, ImageCategory category = ImageCategory.Original,
         CancellationToken cancellationToken = default)
     {
         var blobName = GetBlobName(animalId, imageId, category);

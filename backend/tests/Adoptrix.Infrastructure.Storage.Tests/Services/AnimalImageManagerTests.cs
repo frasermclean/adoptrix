@@ -1,6 +1,8 @@
-﻿using Adoptrix.Infrastructure.Storage.Services;
+﻿using Adoptrix.Domain;
+using Adoptrix.Infrastructure.Storage.Services;
 using Adoptrix.Infrastructure.Storage.Tests.Fixtures;
 using Microsoft.Extensions.Logging;
+using SixLabors.ImageSharp;
 
 namespace Adoptrix.Infrastructure.Storage.Tests.Services;
 
@@ -11,10 +13,10 @@ public class AnimalImageManagerTests(StorageEmulatorFixture fixture) : IClassFix
         fixture.BlobContainerClient);
 
     [Theory]
-    [InlineData("Data/lab_puppy_1.jpeg")]
-    [InlineData("Data/lab_puppy_2.jpeg")]
-    [InlineData("Data/lab_puppy_3.jpeg")]
-    public async Task UploadImageAsync_WithValidInput_Should_ReturnSuccess(string filePath)
+    [InlineData("Data/lab_puppy_1.jpeg", ImageCategory.Thumbnail)]
+    [InlineData("Data/lab_puppy_2.jpeg", ImageCategory.Preview)]
+    [InlineData("Data/lab_puppy_3.jpeg", ImageCategory.FullSize)]
+    public async Task UploadImageAsync_WithValidInput_Should_ReturnSuccess(string filePath, ImageCategory category)
     {
         // arrange
         var (animalId, imageId) = CreateAnimalAndImageIds();
@@ -22,10 +24,15 @@ public class AnimalImageManagerTests(StorageEmulatorFixture fixture) : IClassFix
         const string contentType = "image/jpeg";
 
         // act
-        var result = await animalImageManager.UploadImageAsync(animalId, imageId, imageStream, contentType);
+        var result = await animalImageManager.UploadImageAsync(animalId, imageId, imageStream, contentType, category);
+        await using var stream = await animalImageManager.GetImageReadStreamAsync(animalId, imageId, category);
+        using var image = await Image.LoadAsync(stream);
 
         // assert
         result.Should().BeSuccess();
+        image.Width.Should().Be(1024);
+        image.Height.Should().Be(1024);
+        image.Metadata.DecodedImageFormat!.DefaultMimeType.Should().Be("image/jpeg");
     }
 
     [Fact]
