@@ -8,7 +8,7 @@ namespace Adoptrix.Infrastructure.Storage.Tests.Services;
 public class AnimalImageManagerTests(StorageEmulatorFixture fixture) : IClassFixture<StorageEmulatorFixture>
 {
     private readonly AnimalImageManager animalImageManager = new(Mock.Of<ILogger<AnimalImageManager>>(),
-        fixture.BlobContainerClient!);
+        fixture.BlobContainerClient);
 
     [Theory]
     [InlineData("Data/lab_puppy_1.jpeg")]
