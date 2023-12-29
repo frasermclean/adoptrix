@@ -233,7 +233,7 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
         }
         {
           name: 'AzureStorage__BlobEndpoint'
-          value: storageaccount.properties.primaryEndpoints.blob
+          value: storageAccount.properties.primaryEndpoints.blob
         }
         {
           name: 'Sqids__Alphabet'
@@ -270,7 +270,7 @@ resource appServiceCertificate 'Microsoft.Web/certificates@2022-09-01' = {
 }
 
 // storage account
-resource storageaccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: '${workload}${category}'
   location: location
   tags: tags
@@ -328,7 +328,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (shouldAttemptRoleAssi
   params: {
     adminGroupObjectId: adminGroupObjectId
     appServiceIdentityPrincipalId: appService.identity.principalId
-    storageAccountName: storageaccount.name
+    storageAccountName: storageAccount.name
   }
 }
 
@@ -350,6 +350,16 @@ module appServiceSniEnableModule 'siteSniEnable.bicep' = {
     siteName: appService.name
     certificateThumbprint: appServiceCertificate.properties.thumbprint
     hostname: appServiceCertificate.properties.canonicalName
+  }
+}
+
+module functionsModule 'functions.bicep' = {
+  name: 'functions${deploymentSuffix}'
+  params: {
+    workload: workload
+    category: category
+    location: location
+    storageAccountName: storageAccount.name
   }
 }
 
