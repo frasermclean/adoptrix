@@ -8,7 +8,6 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 
 namespace Adoptrix.Infrastructure.Storage.DependencyInjection;
 
@@ -28,8 +27,9 @@ public static class ServiceRegistration
         {
             if (environment.IsDevelopment())
             {
-                builder.AddBlobServiceClient("UseDevelopmentStorage=true");
-                builder.AddQueueServiceClient("UseDevelopmentStorage=true")
+                var connectionString = configuration.GetConnectionString("AzureStorage");
+                builder.AddBlobServiceClient(connectionString);
+                builder.AddQueueServiceClient(connectionString)
                     .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
 
                 return;
