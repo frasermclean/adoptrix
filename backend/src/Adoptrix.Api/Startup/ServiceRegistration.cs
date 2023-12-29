@@ -34,7 +34,7 @@ public static class ServiceRegistration
             .AddAuthentication(builder.Configuration)
             .AddValidators()
             .AddDomainServices()
-            .AddApplicationServices(builder.Configuration)
+            .AddApplicationServices()
             .AddInfrastructureData()
             .AddInfrastructureStorage(builder.Configuration, builder.Environment.IsDevelopment())
             .AddDevelopmentServices(builder.Environment)

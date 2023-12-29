@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Functions.Functions;
 
-public class AnimalDeleted(ILogger<AnimalDeleted> logger, IAnimalImageManager animalImageManager)
+public class AnimalDeletedImageCleanup(ILogger<AnimalDeletedImageCleanup> logger, IAnimalImageManager animalImageManager)
 {
-    [Function(nameof(AnimalDeleted))]
+    [Function(nameof(AnimalDeletedImageCleanup))]
     public async Task Run([QueueTrigger(QueueNames.AnimalDeleted)] AnimalDeletedEvent eventData)
     {
         var result = await animalImageManager.DeleteAnimalImagesAsync(eventData.AnimalId);
