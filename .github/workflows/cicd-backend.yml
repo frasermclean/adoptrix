@@ -156,9 +156,9 @@ jobs:
           template: ${{ github.workspace }}/infra/main.bicep
           parameters: ${{ github.workspace }}/infra/main.bicepparam
 
-  # Deploy application job
-  deploy_app:
-    name: Deploy application
+  # Deploy API application job
+  deploy_api_app:
+    name: Deploy API application
     runs-on: ubuntu-latest
     needs:
       - build
@@ -191,3 +191,29 @@ jobs:
         with:
           app-name: ${{ needs.deploy_infra.outputs.appServiceName }}
           package: ${{ env.ARTIFACT_DIRECTORY }}
+
+  # Deploy Functions application
+  deploy_functions_app:
+    name: Deploy Functions application
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - deploy_infra
+    environment: demo-backend
+    env:
+      APP_PATH: ${{ github.workspace }}/app
+    steps:
+      # Download application artifact
+      - name: Download application artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.FUNCTIONS_ARTIFACT_NAME }}
+          path: ${{ env.APP_PATH }}
+
+      # Publish functions application
+      - name: Publish functions application
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ohmyword-functions
+          package: ${{ env.APP_PATH }}
+          publish-profile: ${{ secrets.AZURE_FUNCTIONS_PUBLISH_PROFILE }}
