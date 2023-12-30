@@ -88,4 +88,5 @@ resource failureAnomaliesSmartDetectorRule 'microsoft.alertsManagement/smartDete
   }
 }
 
+output name string = applicationInsights.name
 output connectionString string = applicationInsights.properties.ConnectionString

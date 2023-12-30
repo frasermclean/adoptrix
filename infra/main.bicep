@@ -313,6 +313,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (shouldAttemptRoleAssi
   params: {
     adminGroupObjectId: adminGroupObjectId
     appServiceIdentityPrincipalId: appService.identity.principalId
+    functionAppIdentityPrincipalId: functionsModule.outputs.identityPrincipalId
     storageAccountName: storageAccount.name
   }
 }
@@ -345,6 +346,7 @@ module functionsModule 'functions.bicep' = {
     category: category
     location: location
     storageAccountName: storageAccount.name
+    applicationInsightsName: appInsightsModule.outputs.name
   }
 }
 
