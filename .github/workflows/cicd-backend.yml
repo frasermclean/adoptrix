@@ -205,7 +205,7 @@ jobs:
     steps:
       # Download application artifact
       - name: Download application artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.FUNCTIONS_ARTIFACT_NAME }}
           path: ${{ env.APP_PATH }}
@@ -214,6 +214,6 @@ jobs:
       - name: Publish functions application
         uses: Azure/functions-action@v1
         with:
-          app-name: ohmyword-functions
+          app-name: ${{ vars.FUNCTIONS_APP_NAME }}
           package: ${{ env.APP_PATH }}
           publish-profile: ${{ secrets.AZURE_FUNCTIONS_PUBLISH_PROFILE }}
