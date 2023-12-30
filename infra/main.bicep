@@ -29,19 +29,12 @@ param b2cAuthAudience string
 @description('Azure AD B2C sign-up/sign-in policy ID')
 param b2cAuthSignUpSignInPolicyId string = 'B2C_1_Signup_SignIn'
 
-@description('Sqids alphabet')
-param appSettingsSqidsAlphabet string
-
-@description('Sqids minimum length')
-param appSettingsSqidsMinLength int = 8
-
 @description('First two octets of the virtual network address space')
 param vnetAddressPrefix string = '10.250'
 
 @description('Application administrator group name')
 param adminGroupName string
 
-@secure()
 @description('Application administrator group object ID')
 param adminGroupObjectId string
 
@@ -234,14 +227,6 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
         {
           name: 'AzureStorage__BlobEndpoint'
           value: storageAccount.properties.primaryEndpoints.blob
-        }
-        {
-          name: 'Sqids__Alphabet'
-          value: appSettingsSqidsAlphabet
-        }
-        {
-          name: 'Sqids__MinLength'
-          value: string(appSettingsSqidsMinLength)
         }
       ]
       connectionStrings: [
