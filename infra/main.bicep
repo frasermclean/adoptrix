@@ -228,6 +228,10 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
           name: 'AzureStorage__BlobEndpoint'
           value: storageAccount.properties.primaryEndpoints.blob
         }
+        {
+          name: 'AzureStorage__QueueEndpoint'
+          value: storageAccount.properties.primaryEndpoints.queue
+        }
       ]
       connectionStrings: [
         {
