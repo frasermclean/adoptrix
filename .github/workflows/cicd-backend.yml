@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/azure-functions
     paths:
       - backend/**
       - infra/**
