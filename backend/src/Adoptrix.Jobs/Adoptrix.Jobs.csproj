@@ -7,7 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker"/>
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Storage.Queues" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk"/>
   </ItemGroup>
@@ -22,6 +24,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Adoptrix.Infrastructure.Storage\Adoptrix.Infrastructure.Storage.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext"/>
   </ItemGroup>
 
 </Project>
