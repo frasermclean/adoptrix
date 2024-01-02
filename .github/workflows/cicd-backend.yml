@@ -119,7 +119,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.JOBS_ARTIFACT_NAME }}
-          path: ${{ env.JOBS_PUBLISH_DIRECTORY }}
+          path: ${{ env.JOBS_PUBLISH_DIRECTORY }}/*
 
   # Deploy infrastructure job
   deploy_infra:
