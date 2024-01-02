@@ -22,5 +22,3 @@ param adminGroupObjectId = '0356480d-b5dc-440f-a5d3-e7b3f2169c40'
 param allowedExternalIpAddresses = [
   '218.212.202.209'
 ]
-
-param shouldAttemptRoleAssignments = true
