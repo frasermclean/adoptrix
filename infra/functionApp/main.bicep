@@ -75,6 +75,7 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
       http20Enabled: true
       ftpsState: 'FtpsOnly'
       netFrameworkVersion: 'v8.0'
+      use32BitWorkerProcess: false
       appSettings: [
         {
           name: 'AzureWebJobsStorage'
@@ -95,6 +96,10 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
         {
           name: 'WEBSITE_CONTENTSHARE'
           value: storageAccount::fileServices::functionAppContentShare.name
+        }
+        {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: '1'
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
