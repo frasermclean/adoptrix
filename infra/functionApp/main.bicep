@@ -102,6 +102,10 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
           value: '1'
         }
         {
+          name: 'WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED' // improves cold start time: https://learn.microsoft.com/en-us/azure/azure-functions/dotnet-isolated-process-guide#placeholders
+          value: '1'
+        }
+        {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: applicationInsightsConnectionString
         }
