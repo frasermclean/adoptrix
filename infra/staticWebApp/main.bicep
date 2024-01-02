@@ -2,12 +2,18 @@
 @description('Name of the workload')
 param workload string
 
+@description('Environment of the application')
+param appEnv string
+
 @minLength(3)
-@description('Category of the workload')
-param category string
+@description('Name of the application')
+param appName string
 
 @description('Domain name')
 param domainName string
+
+@description('String to append to the end of deployment names')
+param deploymentSuffix string = ''
 
 @description('Name of the shared resource group')
 param sharedResourceGroup string
@@ -24,12 +30,13 @@ param location string
 
 var tags = {
   workload: workload
-  category: category
+  appEnv: appEnv
+  appName: appName
 }
 
 // static web app
 resource staticWebApp 'Microsoft.Web/staticSites@2022-03-01' = {
-  name: '${workload}-${category}-swa'
+  name: '${workload}-${appEnv}-${appName}-swa'
   location: location
   tags: tags
   sku: {
@@ -45,20 +52,22 @@ resource staticWebApp 'Microsoft.Web/staticSites@2022-03-01' = {
 
   // custom domain
   resource customDomain 'customDomains' = {
-    name: '${category}.${domainName}'
-    dependsOn: [ swaDnsRecordModule ]
+    name: '${appEnv}.${domainName}'
+    dependsOn: [ dnsRecordsModule ]
   }
 }
 
-module swaDnsRecordModule 'swaDnsRecord.bicep' = {
-  name: replace(deployment().name, 'staticWebApp', 'swaDnsRecord-${category}')
+module dnsRecordsModule 'dnsRecords.bicep' = {
+  name: 'dnsRecords-${appEnv}-${appName}${deploymentSuffix}'
   scope: resourceGroup(sharedResourceGroup)
   params: {
     domainName: domainName
-    hostName: category
+    hostName: appEnv
     swaDefaultHostName: staticWebApp.properties.defaultHostname
   }
 }
+
+output staticWebAppName string = staticWebApp.name
 
 output hostnames string[] = [
   staticWebApp.properties.defaultHostname

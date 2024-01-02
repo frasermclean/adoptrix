@@ -18,6 +18,7 @@ on:
 
 env:
   API_ARTIFACT_NAME: backend-api
+  JOBS_ARTIFACT_NAME: backend-jobs
 
 jobs:
   # Build, test and publish API job
@@ -27,7 +28,8 @@ jobs:
     env:
       BACKEND_DIRECTORY: ${{ github.workspace }}/backend
       BUILD_CONFIGURATION: Release
-      PUBLISH_DIRECTORY: ${{ github.workspace }}/publish
+      API_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/api
+      JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/jobs
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/test-results
     permissions:
       checks: write
@@ -68,6 +70,14 @@ jobs:
           check_name: Solution test results
           action_fail: true
 
+      # Upload test results
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ${{ env.TEST_RESULTS_DIRECTORY }}
+
       # Upload coverage reports
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3
@@ -81,7 +91,7 @@ jobs:
           dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
-          --output ${{ env.PUBLISH_DIRECTORY }}
+          --output ${{ env.API_PUBLISH_DIRECTORY }}
         working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Upload API artifact
@@ -90,15 +100,25 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.API_ARTIFACT_NAME }}
-          path: ${{ env.PUBLISH_DIRECTORY }}
+          path: ${{ env.API_PUBLISH_DIRECTORY }}
 
-      # Upload test results
-      - name: Upload test results
-        if: always()
+      # Publish jobs project
+      - name: Publish jobs project
+        if: github.event_name != 'pull_request'
+        run: >-
+          dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Jobs
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --output ${{ env.JOBS_PUBLISH_DIRECTORY }}
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
+
+      # Upload jobs artifact
+      - name: Upload jobs artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: ${{ env.TEST_RESULTS_DIRECTORY }}
+          name: ${{ env.JOBS_ARTIFACT_NAME }}
+          path: ${{ env.JOBS_PUBLISH_DIRECTORY }}/*
 
   # Deploy infrastructure job
   deploy_infra:
@@ -111,6 +131,7 @@ jobs:
       contents: read
     outputs:
       appServiceName: ${{ steps.deploy_bicep.outputs.appServiceName }}
+      functionAppName: ${{ steps.deploy_bicep.outputs.functionAppName }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -130,14 +151,14 @@ jobs:
         id: deploy_bicep
         with:
           scope: resourcegroup
-          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           deploymentName: main-cicd-backend-${{ github.run_number }}
           template: ${{ github.workspace }}/infra/main.bicep
-          parameters: ${{ github.workspace }}/infra/main.bicepparam
+          parameters: ${{ github.workspace }}/infra/main.demo.bicepparam
 
-  # Deploy application job
-  deploy_app:
-    name: Deploy application
+  # Deploy API application job
+  deploy_api_app:
+    name: Deploy API application
     runs-on: ubuntu-latest
     needs:
       - build
@@ -170,3 +191,29 @@ jobs:
         with:
           app-name: ${{ needs.deploy_infra.outputs.appServiceName }}
           package: ${{ env.ARTIFACT_DIRECTORY }}
+
+  # Deploy jobs application
+  deploy_jobs_app:
+    name: Deploy jobs application
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - deploy_infra
+    environment: demo-backend
+    env:
+      APP_PATH: ${{ github.workspace }}/app
+    steps:
+      # Download artifact
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.JOBS_ARTIFACT_NAME }}
+          path: ${{ env.APP_PATH }}
+
+      # Publish application
+      - name: Publish application
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ needs.deploy_infra.outputs.functionAppName }}
+          package: ${{ env.APP_PATH }}
+          publish-profile: ${{ secrets.AZURE_FUNCTIONS_PUBLISH_PROFILE }}

@@ -1,8 +1,7 @@
-﻿using Adoptrix.Application.Events;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
-using Adoptrix.Domain.Services;
+using Adoptrix.Domain.Events;
 using FastEndpoints;
 using FluentResults;
 using Microsoft.Extensions.Logging;
@@ -13,7 +12,7 @@ public class AddAnimalImageCommandHandler(
     ILogger<AddAnimalImageCommandHandler> logger,
     IAnimalsRepository repository,
     IAnimalImageManager imageManager,
-    IEventQueueService eventQueueService) : ICommandHandler<AddAnimalImageCommand, Result>
+    IEventPublisher eventPublisher) : ICommandHandler<AddAnimalImageCommand, Result>
 {
     public async Task<Result> ExecuteAsync(AddAnimalImageCommand command, CancellationToken cancellationToken)
     {
@@ -27,16 +26,22 @@ public class AddAnimalImageCommandHandler(
         }
 
         // upload the original image to blob storage
-        await imageManager.UploadImageAsync(command.Animal.Id, addImageResult.Value.Id, command.FileStream,
+        var uploadImageResult = await imageManager.UploadImageAsync(command.Animal.Id, addImageResult.Value.Id, command.FileStream,
             command.ContentType, ImageCategory.Original, cancellationToken);
+        if (uploadImageResult.IsFailed)
+        {
+            logger.LogWarning("Failed to upload image to blob storage: {AnimalId}", command.Animal.Id);
+            return uploadImageResult;
+        }
 
         // update animal in the database
         var updateResult = await repository.UpdateAsync(command.Animal, cancellationToken);
-        if (updateResult.IsSuccess)
-        {
-            eventQueueService.PushDomainEvent(new AnimalImageAddedEvent(command.Animal.Id, addImageResult.Value.Id));
-        }
+        if (updateResult.IsFailed) return updateResult.ToResult();
 
-        return updateResult.ToResult();
+        // publish domain event
+        var domainEvent = new AnimalImageAddedEvent(command.Animal.Id, addImageResult.Value.Id);
+        await eventPublisher.PublishDomainEventAsync(domainEvent, cancellationToken);
+
+        return Result.Ok();
     }
 }

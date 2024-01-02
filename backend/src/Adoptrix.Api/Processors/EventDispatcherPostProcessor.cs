@@ -3,7 +3,8 @@ using FastEndpoints;
 
 namespace Adoptrix.Api.Processors;
 
-public class EventDispatcherPostProcessor(ILogger<EventDispatcherPostProcessor> logger,
+public class EventDispatcherPostProcessor(
+    ILogger<EventDispatcherPostProcessor> logger,
     IEventQueueService eventQueueService) : IGlobalPostProcessor
 {
     public Task PostProcessAsync(IPostProcessorContext context, CancellationToken cancellationToken)
@@ -12,7 +13,7 @@ public class EventDispatcherPostProcessor(ILogger<EventDispatcherPostProcessor> 
         return Task.CompletedTask;
     }
 
-    private async Task OnResponseCompleted()
+    private Task OnResponseCompleted()
     {
         while (eventQueueService.HasEvents)
         {
@@ -23,8 +24,8 @@ public class EventDispatcherPostProcessor(ILogger<EventDispatcherPostProcessor> 
             }
 
             logger.LogInformation("Dispatching domain event {DomainEvent}", domainEvent.GetType().Name);
-
-            await domainEvent.PublishAsync();
         }
+
+        return Task.CompletedTask; // TODO: Potentially remove this processor
     }
 }

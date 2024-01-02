@@ -8,9 +8,9 @@ public class ImageProcessorTests
     private readonly ImageProcessor imageProcessor = new();
 
     [Theory]
-    [InlineData("Resources/lab_puppy_1.jpeg")]
-    [InlineData("Resources/lab_puppy_2.jpeg")]
-    [InlineData("Resources/lab_puppy_3.jpeg")]
+    [InlineData("Data/lab_puppy_1.jpeg")]
+    [InlineData("Data/lab_puppy_2.jpeg")]
+    [InlineData("Data/lab_puppy_3.jpeg")]
     public async Task ProcessImageAsync_WhenCalledWithValidStream_ThenCreatesThumbnail(string filePath)
     {
         // arrange
