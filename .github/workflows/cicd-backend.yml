@@ -132,6 +132,7 @@ jobs:
       contents: read
     outputs:
       appServiceName: ${{ steps.deploy_bicep.outputs.appServiceName }}
+      functionAppName: ${{ steps.deploy_bicep.outputs.functionAppName }}
     steps:
       # Check out the repository
       - name: Checkout repository
