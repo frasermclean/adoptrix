@@ -42,6 +42,10 @@ var roleAssignmentData = [
     principalId: appServiceIdentityPrincipalId
   }
   {
+    roleDefinitionId: storageQueueDataContributorRoleDefinition.id
+    principalId: appServiceIdentityPrincipalId
+  }
+  {
     roleDefinitionId: storageBlobDataOwnerRoleDefinition.id
     principalId: functionAppIdentityPrincipalId
   }

@@ -1,5 +1,5 @@
-@description('Category of the workload')
-param category string
+@description('Environment of the application')
+param appEnv string
 
 @description('Domain name')
 param domainName string
@@ -11,7 +11,7 @@ resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
   name: domainName
 
   resource apiCnameRecord 'CNAME' = {
-    name: 'api.${category}'
+    name: 'api.${appEnv}'
     properties: {
       TTL: 3600
       CNAMERecord: {
@@ -22,7 +22,7 @@ resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
 
   // API TXT verification record
   resource apiTxtRecord 'TXT' = {
-    name: 'asuid.api.${category}'
+    name: 'asuid.api.${appEnv}'
     properties: {
       TTL: 3600
       TXTRecords: [
