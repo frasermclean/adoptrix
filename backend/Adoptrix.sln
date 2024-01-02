@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Application.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Api.Tests", "tests\Adoptrix.Api.Tests\Adoptrix.Api.Tests.csproj", "{EEBDB0C2-ACD8-4F34-85DD-1A3959DE09E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Functions", "src\Adoptrix.Functions\Adoptrix.Functions.csproj", "{3B459084-AC6B-4907-A02A-F947541CBAAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Jobs", "src\Adoptrix.Jobs\Adoptrix.Jobs.csproj", "{3B459084-AC6B-4907-A02A-F947541CBAAD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Infrastructure.Storage", "src\Adoptrix.Infrastructure.Storage\Adoptrix.Infrastructure.Storage.csproj", "{3A1186A3-483B-473D-889C-179CF887B191}"
 EndProject

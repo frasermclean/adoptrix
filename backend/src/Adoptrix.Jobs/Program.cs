@@ -2,7 +2,7 @@ using Adoptrix.Application.Services;
 using Adoptrix.Infrastructure.Storage.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Adoptrix.Functions;
+namespace Adoptrix.Jobs;
 
 public static class Program
 {

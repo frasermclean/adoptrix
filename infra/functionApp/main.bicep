@@ -121,5 +121,8 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
   }
 }
 
+@description('The name of the function app')
+output functionAppName string = functionApp.name
+
 @description('The principal ID of the function app managed identity')
 output identityPrincipalId string = functionApp.identity.principalId

@@ -327,4 +327,5 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (shouldAttemptRoleAssi
 }
 
 output appServiceName string = appServiceModule.outputs.appServiceName
+output functionAppName string = jobsAppModule.outputs.functionAppName
 output staticWebAppName string = staticWebAppModule.outputs.staticWebAppName

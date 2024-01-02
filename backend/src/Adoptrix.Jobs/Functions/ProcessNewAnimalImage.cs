@@ -6,7 +6,7 @@ using Adoptrix.Infrastructure.Storage;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
-namespace Adoptrix.Functions.Functions;
+namespace Adoptrix.Jobs.Functions;
 
 public class ProcessNewAnimalImage(
     ILogger<ProcessNewAnimalImage> logger,
