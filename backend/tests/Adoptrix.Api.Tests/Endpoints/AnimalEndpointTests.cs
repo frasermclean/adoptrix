@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace Adoptrix.Api.Tests.Endpoints;
 
-public class AnimalsTests(ApiTestFixture fixture, ITestOutputHelper outputHelper)
+public class AnimalEndpointTests(ApiTestFixture fixture, ITestOutputHelper outputHelper)
     : TestClass<ApiTestFixture>(fixture, outputHelper)
 {
     private readonly HttpClient httpClient = fixture.Client;
