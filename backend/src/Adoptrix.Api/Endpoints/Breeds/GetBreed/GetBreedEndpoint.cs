@@ -1,14 +1,13 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
-using Adoptrix.Api.Services;
+using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Commands.Breeds;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds.GetBreed;
 
-public class GetBreedEndpoint(IResponseMappingService mappingService)
-    : Endpoint<GetBreedCommand, Results<Ok<BreedResponse>, NotFound<string>>>
+public class GetBreedEndpoint : Endpoint<GetBreedCommand, Results<Ok<BreedResponse>, NotFound<string>>>
 {
     public override void Configure()
     {
@@ -22,7 +21,7 @@ public class GetBreedEndpoint(IResponseMappingService mappingService)
         var result = await command.ExecuteAsync(cancellationToken);
 
         return result.IsSuccess
-            ? TypedResults.Ok(mappingService.Map(result.Value))
+            ? TypedResults.Ok(result.Value.ToResponse())
             : TypedResults.NotFound(result.GetFirstErrorMessage());
     }
 }

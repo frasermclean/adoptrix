@@ -1,14 +1,13 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
-using Adoptrix.Api.Services;
+using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Commands.Breeds;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds.AddBreed;
 
-public class AddBreedEndpoint(IResponseMappingService mappingService)
-    : Endpoint<AddBreedCommand, Results<Created<BreedResponse>, BadRequest<string>>>
+public class AddBreedEndpoint : Endpoint<AddBreedCommand, Results<Created<BreedResponse>, BadRequest<string>>>
 {
     public override void Configure()
     {
@@ -20,8 +19,12 @@ public class AddBreedEndpoint(IResponseMappingService mappingService)
     {
         var result = await command.ExecuteAsync(cancellationToken);
 
-        return result.IsSuccess
-            ? TypedResults.Created($"breeds/{result.Value.Id}", mappingService.Map(result.Value))
-            : TypedResults.BadRequest(result.GetFirstErrorMessage());
+        if (result.IsFailed)
+        {
+            return TypedResults.BadRequest(result.GetFirstErrorMessage());
+        }
+
+        var response = result.Value.ToResponse();
+        return TypedResults.Created($"breeds/{response.Id}", response);
     }
 }

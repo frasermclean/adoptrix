@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Services;
 using Adoptrix.Application.Commands.Animals;
 using FastEndpoints;
 
