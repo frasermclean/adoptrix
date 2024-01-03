@@ -1,9 +1,11 @@
-﻿using Adoptrix.Application.Commands.Species;
+﻿using Adoptrix.Api.Contracts.Responses;
+using Adoptrix.Api.Mapping;
+using Adoptrix.Application.Commands.Species;
 using FastEndpoints;
 
 namespace Adoptrix.Api.Endpoints.Species.GetAllSpecies;
 
-public class GetAllSpeciesEndpoint : Endpoint<GetAllSpeciesCommand, IEnumerable<Domain.Species>>
+public class GetAllSpeciesEndpoint : Endpoint<GetAllSpeciesCommand, IEnumerable<SpeciesResponse>>
 {
     public override void Configure()
     {
@@ -11,9 +13,10 @@ public class GetAllSpeciesEndpoint : Endpoint<GetAllSpeciesCommand, IEnumerable<
         AllowAnonymous();
     }
 
-    public override async Task<IEnumerable<Domain.Species>> ExecuteAsync(GetAllSpeciesCommand command,
+    public override async Task<IEnumerable<SpeciesResponse>> ExecuteAsync(GetAllSpeciesCommand command,
         CancellationToken cancellationToken)
     {
-        return await command.ExecuteAsync(cancellationToken);
+        var results = await command.ExecuteAsync(cancellationToken);
+        return results.Select(species => species.ToResponse());
     }
 }
