@@ -10,9 +10,10 @@ public class MockSpeciesRepository : ISpeciesRepository
 {
     public const string UnknownSpeciesName = "unknown";
 
-    public Task<IEnumerable<Species>> GetAllSpeciesAsync(CancellationToken cancellationToken = default)
+    public Task<IEnumerable<Species>> SearchSpeciesAsync(CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var species = SpeciesGenerator.Generate(3);
+        return Task.FromResult(species);
     }
 
     public Task<Result<Species>> GetByNameAsync(string name, CancellationToken cancellationToken = default)

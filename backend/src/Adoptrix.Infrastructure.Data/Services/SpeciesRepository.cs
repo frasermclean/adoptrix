@@ -6,10 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Infrastructure.Data.Services;
 
-public class SpeciesRepository(AdoptrixDbContext dbContext)
-    : ISpeciesRepository
+public class SpeciesRepository(AdoptrixDbContext dbContext) : ISpeciesRepository
 {
-    public async Task<IEnumerable<Species>> GetAllSpeciesAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Species>> SearchSpeciesAsync(CancellationToken cancellationToken = default)
     {
         return await dbContext.Species.ToListAsync(cancellationToken);
     }

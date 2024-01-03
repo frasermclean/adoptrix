@@ -3,9 +3,9 @@ using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Commands.Species;
 using FastEndpoints;
 
-namespace Adoptrix.Api.Endpoints.Species.GetAllSpecies;
+namespace Adoptrix.Api.Endpoints.Species.SearchSpecies;
 
-public class GetAllSpeciesEndpoint : Endpoint<GetAllSpeciesCommand, IEnumerable<SpeciesResponse>>
+public class SearchSpeciesEndpoint : Endpoint<SearchSpeciesCommand, IEnumerable<SpeciesResponse>>
 {
     public override void Configure()
     {
@@ -13,7 +13,7 @@ public class GetAllSpeciesEndpoint : Endpoint<GetAllSpeciesCommand, IEnumerable<
         AllowAnonymous();
     }
 
-    public override async Task<IEnumerable<SpeciesResponse>> ExecuteAsync(GetAllSpeciesCommand command,
+    public override async Task<IEnumerable<SpeciesResponse>> ExecuteAsync(SearchSpeciesCommand command,
         CancellationToken cancellationToken)
     {
         var results = await command.ExecuteAsync(cancellationToken);

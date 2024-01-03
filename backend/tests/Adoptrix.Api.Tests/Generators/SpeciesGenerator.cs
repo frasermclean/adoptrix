@@ -12,4 +12,5 @@ public static class SpeciesGenerator
         .RuleFor(species => species.CreatedBy, faker => faker.Random.Guid());
 
     public static Species Generate() => SpeciesFaker.Generate();
+    public static IEnumerable<Species> Generate(int count) => SpeciesFaker.Generate(count);
 }
