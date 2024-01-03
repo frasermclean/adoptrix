@@ -12,8 +12,8 @@ param actionGroupShortName = 'AdoptrixDemo'
 
 // Azure AD B2C
 param b2cTenantName = 'adoptrixauth'
-param b2cAuthClientId = '91556c30-ad29-4d36-a3df-29701eaba8a9'
-param b2cAuthAudience = '2cb24eb4-3363-42fb-81ca-e69ff34ac201'
+param b2cAuthClientId = 'd100dfc4-d993-4e4a-8ebb-a6a55ef72809' // front end app registration
+param b2cAuthAudience = 'a4edca74-3be8-4579-85c6-9a92819b703c' // back end app registration
 param b2cAuthSignUpSignInPolicyId = 'B2C_1_Signup_SignIn'
 
 param adminGroupName = 'Adoptrix Demo Administrators'
