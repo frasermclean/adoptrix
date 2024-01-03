@@ -119,11 +119,11 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
         }
         {
           name: 'AzureAd__Instance'
-          value: 'https://${b2cTenant.name}.b2clogin.com'
+          value: 'https://${b2cTenantName}.b2clogin.com'
         }
         {
           name: 'AzureAd__Domain'
-          value: '${b2cTenant.name}.onmicrosoft.com'
+          value: b2cTenant.name
         }
         {
           name: 'AzureAd__TenantId'
