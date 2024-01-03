@@ -9,8 +9,8 @@ public class AddAnimalCommand : ICommand<Result<Animal>>
 {
     public required string Name { get; init; }
     public string? Description { get; init; }
-    public required string Species { get; init; }
-    public string? Breed { get; init; }
+    public required string SpeciesName { get; init; }
+    public string? BreedName { get; init; }
     public Sex? Sex { get; init; }
     public required DateOnly DateOfBirth { get; init; }
 

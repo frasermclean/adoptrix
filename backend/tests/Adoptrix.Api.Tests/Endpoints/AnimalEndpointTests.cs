@@ -51,38 +51,50 @@ public class AnimalEndpointTests(ApiTestFixture fixture, ITestOutputHelper outpu
         }
     }
 
-    [Theory]
-    [InlineData("Fido", "A good boy", "dog", "Labrador", Sex.Male, 2, HttpStatusCode.Created)]
-    [InlineData("Rufus", "Another good boy", "dog", MockBreedsRepository.UnknownBreedName)]
-    [InlineData("Max", "", MockSpeciesRepository.UnknownSpeciesName, "Eastern Gray")]
-    [InlineData(null, null, null, null)]
-    public async Task AddAnimal_Should_Return_ExpectedResult(string? name, string? description, string? species,
-        string? breed, Sex? sex = default, int ageInYears = default,
-        HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest)
+    [Fact]
+    public async Task AddAnimal_WithValidCommand_Should_Return_Ok()
     {
         // arrange
-        var command = new AddAnimalCommand
-        {
-            Name = name!,
-            Description = description,
-            Species = species!,
-            Breed = breed!,
-            Sex = sex,
-            DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * ageInYears))
-        };
+        var command = CreateAddAnimalCommand("Fido", "A good boy", "dog", "Labrador", Sex.Male, 2);
 
         // act
         var (message, response) =
             await httpClient.POSTAsync<AddAnimalEndpoint, AddAnimalCommand, AnimalResponse>(command);
 
         // assert
-        message.Should().HaveStatusCode(expectedStatusCode);
-        if (expectedStatusCode == HttpStatusCode.Created)
-        {
-            message.Headers.Should().ContainKey("Location").WhoseValue.Should().Equal($"api/animals/{response.Id}");
-            ValidateAnimalResponse(response);
-        }
+        message.Should().HaveStatusCode(HttpStatusCode.Created);
+        message.Headers.Should().ContainKey("Location").WhoseValue.Should().Equal($"api/animals/{response.Id}");
+        ValidateAnimalResponse(response);
     }
+
+    [Theory]
+    [InlineData("Rufus", "Another good boy", "dog", MockBreedsRepository.UnknownBreedName)]
+    [InlineData("Max", "", MockSpeciesRepository.UnknownSpeciesName, "Eastern Gray")]
+    [InlineData(null, null, null, null)]
+    public async Task AddAnimal_WithInvalidCommand_Should_Return_BadRequest(string? name, string? description,
+        string? speciesName, string? breedName, Sex? sex = default, int ageInYears = default)
+
+    {
+        // arrange
+        var command = CreateAddAnimalCommand(name, description, speciesName, breedName, sex, ageInYears);
+
+        // act
+        var message = await httpClient.POSTAsync<AddAnimalEndpoint, AddAnimalCommand>(command);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+    }
+
+    private static AddAnimalCommand CreateAddAnimalCommand(string? name, string? description, string? speciesName,
+        string? breedName, Sex? sex, int ageInYears) => new()
+    {
+        Name = name!,
+        Description = description,
+        SpeciesName = speciesName!,
+        BreedName = breedName!,
+        Sex = sex,
+        DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * ageInYears))
+    };
 
     private static void ValidateAnimalResponse(AnimalResponse response)
     {
