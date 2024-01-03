@@ -13,7 +13,7 @@ public class MockAnimalsRepository : IAnimalsRepository
         string? speciesName = null, CancellationToken cancellationToken = default)
     {
         var animals = AnimalGenerator.Generate(3)
-            .Select(animal => new SearchAnimalsResult()
+            .Select(animal => new SearchAnimalsResult
             {
                 Id = animal.Id,
                 Name = animal.Name,

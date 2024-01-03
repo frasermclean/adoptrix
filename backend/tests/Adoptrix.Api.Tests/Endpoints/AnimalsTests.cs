@@ -88,8 +88,8 @@ public class AnimalsTests(ApiTestFixture fixture, ITestOutputHelper outputHelper
     {
         response.Id.Should().NotBeEmpty();
         response.Name.Should().NotBeEmpty();
-        response.Species.Should().NotBeEmpty();
-        response.Breed.Should().NotBeEmpty();
+        response.SpeciesName.Should().NotBeEmpty();
+        response.BreedName.Should().NotBeEmpty();
         response.Sex.Should().NotBeNull();
         response.DateOfBirth.Should().NotBe(default);
     }
