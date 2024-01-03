@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Endpoints.Animals.AddAnimal;
+using Adoptrix.Api.Endpoints.Animals.DeleteAnimal;
 using Adoptrix.Api.Endpoints.Animals.GetAnimal;
 using Adoptrix.Api.Endpoints.Animals.SearchAnimals;
 using Adoptrix.Api.Tests.Mocks;
@@ -83,6 +84,21 @@ public class AnimalEndpointTests(ApiTestFixture fixture, ITestOutputHelper outpu
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+    }
+
+    [Theory]
+    [InlineData("dc1ff27e-e14a-4f4d-af5a-2cba7f9c9749", HttpStatusCode.NoContent)]
+    [InlineData("00000000-0000-0000-0000-000000000000", HttpStatusCode.NotFound)]
+    public async Task DeleteAnimal_WithValidCommand_Should_Return_Ok(Guid animalId, HttpStatusCode expectedStatusCode)
+    {
+        // arrange
+        var command = new DeleteAnimalCommand { Id = animalId };
+
+        // act
+        var message = await httpClient.DELETEAsync<DeleteAnimalEndpoint, DeleteAnimalCommand>(command);
+
+        // assert
+        message.Should().HaveStatusCode(expectedStatusCode);
     }
 
     private static AddAnimalCommand CreateAddAnimalCommand(string? name, string? description, string? speciesName,

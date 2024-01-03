@@ -55,6 +55,6 @@ public class MockAnimalsRepository : IAnimalsRepository
 
     public Task<Result> DeleteAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(Result.Ok());
     }
 }

@@ -26,10 +26,6 @@ public class DeleteAnimalCommandHandler(
         var animal = result.Value;
         var deleteResult = await repository.DeleteAsync(animal, cancellationToken);
 
-        if (deleteResult.IsFailed) return deleteResult;
-
-        logger.LogInformation("Deleted animal with id {Id}", animal.Id);
-
         // publish domain event
         var domainEvent = new AnimalDeletedEvent(animal.Id);
         await eventPublisher.PublishDomainEventAsync(domainEvent, cancellationToken);

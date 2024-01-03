@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Api.Tests.Mocks;
+using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -18,5 +19,9 @@ public class ApiTestFixture(IMessageSink messageSink)
         services.AddScoped<IAnimalsRepository, MockAnimalsRepository>();
         services.AddScoped<IBreedsRepository, MockBreedsRepository>();
         services.AddScoped<ISpeciesRepository, MockSpeciesRepository>();
+
+        // remove the real event publisher and replace it with a mock
+        services.RemoveAll<IEventPublisher>();
+        services.AddScoped<IEventPublisher, MockEventPublisher>();
     }
 }
