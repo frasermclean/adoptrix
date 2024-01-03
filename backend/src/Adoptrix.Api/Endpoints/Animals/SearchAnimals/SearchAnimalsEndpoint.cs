@@ -1,12 +1,12 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
+using Adoptrix.Api.Mapping;
 using Adoptrix.Api.Services;
 using Adoptrix.Application.Commands.Animals;
 using FastEndpoints;
 
 namespace Adoptrix.Api.Endpoints.Animals.SearchAnimals;
 
-public class SearchAnimalsEndpoint(IResponseMappingService mappingService)
-    : Endpoint<SearchAnimalsCommand, IEnumerable<AnimalResponse>>
+public class SearchAnimalsEndpoint : Endpoint<SearchAnimalsCommand, IEnumerable<AnimalResponse>>
 {
     public override void Configure()
     {
@@ -18,6 +18,6 @@ public class SearchAnimalsEndpoint(IResponseMappingService mappingService)
         CancellationToken cancellationToken)
     {
         var results = await command.ExecuteAsync(cancellationToken);
-        return results.Select(mappingService.Map);
+        return results.Select(result => result.ToResponse());
     }
 }

@@ -19,7 +19,7 @@ public class AddAnimalCommandHandler(
         var speciesResult = await speciesRepository.GetByNameAsync(command.Species, cancellationToken);
         if (speciesResult.IsFailed)
         {
-            logger.LogError("Could not find species with name: {Species}", command.Species);
+            logger.LogError("Could not find species with name: {SpeciesName}", command.Species);
             return speciesResult.ToResult();
         }
 
@@ -29,7 +29,7 @@ public class AddAnimalCommandHandler(
             : null;
         if (breedResult?.IsFailed ?? false)
         {
-            logger.LogError("Could not find breed with name: {Breed}", command.Breed);
+            logger.LogError("Could not find breed with name: {BreedName}", command.Breed);
             return breedResult.ToResult();
         }
 

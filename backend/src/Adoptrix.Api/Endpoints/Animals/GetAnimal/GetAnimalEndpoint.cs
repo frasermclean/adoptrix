@@ -1,13 +1,12 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
-using Adoptrix.Api.Services;
+using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Commands.Animals;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals.GetAnimal;
 
-public class GetAnimalEndpoint(IResponseMappingService mappingService)
-    : Endpoint<GetAnimalCommand, Results<Ok<AnimalResponse>, NotFound>>
+public class GetAnimalEndpoint : Endpoint<GetAnimalCommand, Results<Ok<AnimalResponse>, NotFound>>
 {
     public override void Configure()
     {
@@ -21,7 +20,7 @@ public class GetAnimalEndpoint(IResponseMappingService mappingService)
         var result = await command.ExecuteAsync(cancellationToken);
 
         return result.IsSuccess
-            ? TypedResults.Ok(mappingService.Map(result.Value))
+            ? TypedResults.Ok(result.Value.ToResponse())
             : TypedResults.NotFound();
     }
 }

@@ -1,13 +1,12 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
-using Adoptrix.Api.Services;
+using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Commands.Animals;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals.AddAnimal;
 
-public class AddAnimalEndpoint(IResponseMappingService mappingService)
-    : Endpoint<AddAnimalCommand, Results<Created<AnimalResponse>, BadRequest>>
+public class AddAnimalEndpoint : Endpoint<AddAnimalCommand, Results<Created<AnimalResponse>, BadRequest>>
 {
     public override void Configure()
     {
@@ -24,7 +23,7 @@ public class AddAnimalEndpoint(IResponseMappingService mappingService)
             return TypedResults.BadRequest();
         }
 
-        var response = mappingService.Map(result.Value);
+        var response = result.Value.ToResponse();
         return TypedResults.Created($"api/animals/{response.Id}", response);
     }
 }

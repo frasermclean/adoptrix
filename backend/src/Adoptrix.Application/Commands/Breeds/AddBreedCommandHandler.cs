@@ -19,7 +19,7 @@ public class AddBreedCommandHandler(
         var speciesResult = await speciesRepository.GetByNameAsync(command.Species, cancellationToken);
         if (speciesResult.IsFailed)
         {
-            logger.LogError("Could not find species with name: {Species}", command.Species);
+            logger.LogError("Could not find species with name: {SpeciesName}", command.Species);
             return speciesResult.ToResult();
         }
 
