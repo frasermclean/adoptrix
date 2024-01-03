@@ -2,11 +2,13 @@ name: CodeQL Analysis
 
 on:
   push:
-    branches:
-      - main
+    branches: main
   pull_request:
-    branches:
-      - main
+    branches: main
+    types:
+      - opened
+      - synchronize
+      - reopened
   schedule:
     - cron: "0 0 * * 1"
 
