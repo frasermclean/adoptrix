@@ -40,6 +40,7 @@
     <PackageVersion Include="Microsoft.Identity.Web.TokenAcquisition" Version="2.16.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="Moq" Version="4.20.70" />
+    <PackageVersion Include="Riok.Mapperly" Version="3.3.0" />
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.1" />
     <PackageVersion Include="Testcontainers.Azurite" Version="3.6.0" />
     <PackageVersion Include="xunit" Version="2.6.4" />

@@ -2,4 +2,4 @@
 
 namespace Adoptrix.Application.Commands.Species;
 
-public class GetAllSpeciesCommand : ICommand<IEnumerable<Domain.Species>>;
+public class SearchSpeciesCommand : ICommand<IEnumerable<Domain.Species>>;

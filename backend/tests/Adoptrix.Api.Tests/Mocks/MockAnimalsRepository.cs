@@ -13,13 +13,13 @@ public class MockAnimalsRepository : IAnimalsRepository
         string? speciesName = null, CancellationToken cancellationToken = default)
     {
         var animals = AnimalGenerator.Generate(3)
-            .Select(animal => new SearchAnimalsResult()
+            .Select(animal => new SearchAnimalsResult
             {
                 Id = animal.Id,
                 Name = animal.Name,
                 Description = animal.Description,
-                Species = animal.Species.Name,
-                Breed = animal.Breed?.Name,
+                SpeciesName = animal.Species.Name,
+                BreedName = animal.Breed?.Name,
                 Sex = animal.Sex,
                 DateOfBirth = animal.DateOfBirth,
                 CreatedAt = animal.CreatedAt,
@@ -55,6 +55,6 @@ public class MockAnimalsRepository : IAnimalsRepository
 
     public Task<Result> DeleteAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(Result.Ok());
     }
 }

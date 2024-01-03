@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
-using Adoptrix.Api.Services;
+using Adoptrix.Api.Mapping;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Commands.Animals;
 using Adoptrix.Domain;
@@ -12,8 +12,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Adoptrix.Api.Endpoints.Animals.AddAnimalImages;
 
-public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValidator,
-        IResponseMappingService mappingService)
+public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValidator)
     : Endpoint<AddAnimalImagesRequest, Results<Ok<AnimalResponse>, NotFound, BadRequest<IEnumerable<string>>>>
 {
     public override void Configure()
@@ -50,7 +49,7 @@ public class AddAnimalImagesEndpoint(ImageContentTypeValidator contentTypeValida
         }
 
         return results.TrueForAll(result => result.IsSuccess)
-            ? TypedResults.Ok(mappingService.Map(animal))
+            ? TypedResults.Ok(animal.ToResponse())
             : TypedResults.BadRequest(results.Where(result => result.IsFailed)
                 .Select(result => result.GetFirstErrorMessage()));
     }

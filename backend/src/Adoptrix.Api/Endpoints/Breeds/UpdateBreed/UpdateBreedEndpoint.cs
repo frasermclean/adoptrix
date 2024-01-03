@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
-using Adoptrix.Api.Services;
+using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Commands.Breeds;
 using Adoptrix.Domain.Errors;
 using FastEndpoints;
@@ -8,13 +8,14 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds.UpdateBreed;
 
-public class UpdateBreedEndpoint(IResponseMappingService mappingService)
-    : Endpoint<UpdateBreedCommand, Results<Ok<BreedResponse>, BadRequest<string>, NotFound<string>>>
+public class
+    UpdateBreedEndpoint : Endpoint<UpdateBreedCommand, Results<Ok<BreedResponse>, BadRequest<string>, NotFound<string>>>
 {
     public override void Configure()
     {
         Put("admin/breeds/{id}");
     }
+
     public override async Task<Results<Ok<BreedResponse>, BadRequest<string>, NotFound<string>>> ExecuteAsync(
         UpdateBreedCommand command, CancellationToken cancellationToken)
     {
@@ -26,7 +27,7 @@ public class UpdateBreedEndpoint(IResponseMappingService mappingService)
         }
 
         return result.IsSuccess
-            ? TypedResults.Ok(mappingService.Map(result.Value))
+            ? TypedResults.Ok(result.Value.ToResponse())
             : TypedResults.BadRequest(result.GetFirstErrorMessage());
     }
 }
