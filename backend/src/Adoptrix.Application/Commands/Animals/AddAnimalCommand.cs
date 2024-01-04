@@ -1,4 +1,5 @@
-﻿using Adoptrix.Domain;
+﻿using System.Text.Json.Serialization;
+using Adoptrix.Domain;
 using FastEndpoints;
 using FluentResults;
 using Microsoft.Identity.Web;
@@ -9,8 +10,8 @@ public class AddAnimalCommand : ICommand<Result<Animal>>
 {
     public required string Name { get; init; }
     public string? Description { get; init; }
-    public required string SpeciesName { get; init; }
-    public string? BreedName { get; init; }
+    [JsonPropertyName("species")] public required string SpeciesName { get; init; }
+    [JsonPropertyName("breed")]public string? BreedName { get; init; }
     public Sex? Sex { get; init; }
     public required DateOnly DateOfBirth { get; init; }
 
