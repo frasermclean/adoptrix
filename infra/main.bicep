@@ -42,7 +42,7 @@ param adminGroupName string
 param adminGroupObjectId string
 
 @description('Whether to attempt role assignments (requires appropriate permissions)')
-param shouldAttemptRoleAssignments bool = false
+param shouldAttemptRoleAssignments bool = true
 
 @description('Array of allowed external IP addresses')
 param allowedExternalIpAddresses array = []
