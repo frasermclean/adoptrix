@@ -5,6 +5,7 @@
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <FunctionsEnableWorkerIndexing>False</FunctionsEnableWorkerIndexing> <!-- Temporary workaround for issue: https://github.com/Azure/azure-functions-dotnet-worker/issues/2070 -->
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" />
