@@ -14,9 +14,9 @@
     <PackageReference Include="FastEndpoints.Attributes"/>
     <PackageReference Include="FastEndpoints.Messaging.Core" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
-    <PackageReference Include="Microsoft.Extensions.Options"/>
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>
-    <PackageReference Include="Microsoft.Identity.Web.TokenAcquisition"/>
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Microsoft.Identity.Web" />
     <PackageReference Include="SixLabors.ImageSharp" />
   </ItemGroup>
 
