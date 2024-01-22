@@ -6,6 +6,11 @@
       "type": "PowerShell",
       "request": "launch",
       "script": "${workspaceFolder}/infra/Update-AppServiceCors.ps1",
+      "args": [
+        "-StaticWebAppName adoptrix-demo-frontend-swa",
+        "-AppServiceName adoptrix-demo-backend-app",
+        "-ResourceGroupName adoptrix-demo-rg",
+      ],
       "cwd": "${cwd}"
     },
     {
