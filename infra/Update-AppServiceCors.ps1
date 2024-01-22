@@ -16,7 +16,29 @@ function Get-StaticWebAppOrigins([string]$AppName, [string]$ResourceGroupName) {
   | Get-Unique
 }
 
-$origins = Get-StaticWebAppOrigins -AppName $StaticWebAppName -ResourceGroupName $ResourceGroupName
-Write-Host "Detected $($origins.Count) origins to enable"
+function Update-AppServiceCors([string]$AppName, [string[]]$SwaOrigins, [string]$ResourceGroupName) {
+  # Get the currently active origins on the App Service
+  $activeOrigins = (az webapp cors show --name $AppName --resource-group $ResourceGroupName | ConvertFrom-Json).allowedOrigins
+  $originsToAdd = $SwaOrigins | Where-Object { $activeOrigins -notcontains $_ }
+  $originsToRemove = $activeOrigins | Where-Object { $SwaOrigins -notcontains $_ }
+  $operationCount = 0
 
-Write-Host "Updating CORS settings for $AppServiceName"
+  $originsToAdd | ForEach-Object {
+    Write-Host "Adding CORS origin: $_"
+    az webapp cors add --name $AppName --resource-group $ResourceGroupName --allowed-origins $_ --output none
+    $operationCount++
+  }
+
+  $originsToRemove | ForEach-Object {
+    Write-Host "Removing CORS origin: $_"
+    az webapp cors remove --name $AppName --resource-group $ResourceGroupName --allowed-origins $_ --output none
+    $operationCount++
+  }
+
+  return $operationCount
+}
+
+$swaOrigins = Get-StaticWebAppOrigins -AppName $StaticWebAppName -ResourceGroupName $ResourceGroupName
+$operationCount = Update-AppServiceCors -AppName $AppServiceName -SwaOrigins $swaOrigins -ResourceGroupName $ResourceGroupName
+
+Write-Host "Completed CORS update with $operationCount operations."
