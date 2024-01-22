@@ -1,16 +1,22 @@
 param (
-  $StaticWebAppName = "adoptrix-demo-frontend-swa",
-  [Parameter(Mandatory = $false)]
-  [string]
-  $AppServiceName = "adoptrix-demo-backend-app"
+  [Parameter(Mandatory = $true)][string] $StaticWebAppName,
+  [Parameter(Mandatory = $true)][string] $AppServiceName,
+  [Parameter(Mandatory = $true)][string] $ResourceGroupName
 )
 
-# Get the allowed origins from the Static Web App
-$swaCustomDomains = az staticwebapp show --name $StaticWebAppName --query "customDomains" | ConvertFrom-Json
-$swaHostnames = az staticwebapp environment list --name $StaticWebAppName --query "[].hostname" | ConvertFrom-Json
-$swaHostnames += $swaCustomDomains
-$swaOrigins = $swaHostnames | ForEach-Object { "https://$_" }
+function Get-StaticWebAppOrigins([string]$AppName, [string]$ResourceGroupName) {
+  # Read custom domains and environment hostnames
+  [string[]]$customDomains = az staticwebapp show --name $StaticWebAppName --query "customDomains" | ConvertFrom-Json
+  [string[]]$environmentHostnames = az staticwebapp environment list --name $AppName --query "[].hostname" | ConvertFrom-Json
 
-# Update App Service CORS settings with the allowed origins
+  # Merge and return
+  return $($customDomains + $environmentHostnames)
+  | ForEach-Object { "https://$_" }
+  | Sort-Object
+  | Get-Unique
+}
+
+$origins = Get-StaticWebAppOrigins -AppName $StaticWebAppName -ResourceGroupName $ResourceGroupName
+Write-Host "Detected $($origins.Count) origins to enable"
 
 Write-Host "Updating CORS settings for $AppServiceName"
