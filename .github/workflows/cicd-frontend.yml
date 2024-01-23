@@ -78,7 +78,7 @@ jobs:
   update_cors:
     name: Update CORS
     needs: [build_deploy, close_pr]
-    if: ${{ always() }}
+    if: always()
     uses: ./.github/workflows/update-cors.yml
     secrets:
       tenant-id: ${{ secrets.AZURE_TENANT_ID }}
