@@ -76,7 +76,7 @@ jobs:
 
   # Update CORS settings
   update_cors:
-    name: Update CORS settings
+    name: Update CORS
     needs: [build_deploy, close_pr]
     if: ${{ always() }}
     uses: ./.github/workflows/update-cors.yml

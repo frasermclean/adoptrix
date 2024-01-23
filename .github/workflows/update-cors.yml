@@ -12,7 +12,7 @@ on:
 
 jobs:
   update-cors:
-    name: Update CORS settings
+    name: Execute script
     runs-on: ubuntu-latest
     steps:
       # Login to Azure
