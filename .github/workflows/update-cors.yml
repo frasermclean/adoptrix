@@ -1,0 +1,24 @@
+name: Update CORS
+
+on:
+  workflow_call:
+    secrets:
+      tenant-id:
+        required: true
+      client-id:
+        required: true
+      subscription-id:
+        required: true
+
+jobs:
+  update-cors:
+    name: Update CORS settings
+    runs-on: ubuntu-latest
+    steps:
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.tenant-id }}
+          client-id: ${{ secrets.client-id }}
+          subscription-id: ${{ secrets.subscription-id }}
