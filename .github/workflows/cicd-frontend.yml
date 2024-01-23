@@ -60,13 +60,6 @@ jobs:
           skip_app_build: true
           skip_api_build: true
 
-      - name: Update CORS settings
-        uses: ./.github/workflows/update-cors.yml
-        with:
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
   # Close the preview environment when the pull request is closed
   close_pr:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
