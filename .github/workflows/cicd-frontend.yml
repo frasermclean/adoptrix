@@ -60,7 +60,6 @@ jobs:
           skip_app_build: true
           skip_api_build: true
 
-      # Update CORS settings
       - name: Update CORS settings
         uses: ./.github/workflows/update-cors.yml
         with:
@@ -81,3 +80,14 @@ jobs:
           action: close
           azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_DEPLOYMENT_TOKEN }}
           app_location: null # Unused in close pr step
+
+  # Update CORS settings
+  update_cors:
+    name: Update CORS settings
+    needs: [build_deploy, close_pr]
+    if: ${{ always() }}
+    uses: ./.github/workflows/update-cors.yml
+    secrets:
+      tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
