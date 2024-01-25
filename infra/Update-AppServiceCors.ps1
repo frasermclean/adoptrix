@@ -1,24 +1,33 @@
 param (
-  [Parameter(Mandatory = $true)][string] $StaticWebAppName,
-  [Parameter(Mandatory = $true)][string] $AppServiceName,
   [Parameter(Mandatory = $true)][string] $ResourceGroupName
 )
 
-function Get-StaticWebAppOrigins([string]$AppName, [string]$ResourceGroupName) {
-  # Read custom domains and environment hostnames
-  [string[]]$customDomains = az staticwebapp show --name $StaticWebAppName --query "customDomains" | ConvertFrom-Json
-  [string[]]$environmentHostnames = az staticwebapp environment list --name $AppName --query "[].hostname" | ConvertFrom-Json
+function Get-StaticWebAppOrigins([string]$ResourceGroupName) {
+  # Get the Static Web App name
+  $appName = az staticwebapp list --resource-group adoptrix-demo-rg --query "[0].name" --output tsv
+  Write-Host "Detected Static Web App name: $appName"
 
-  # Merge and return
-  return $($customDomains + $environmentHostnames)
+  # Read custom domains and environment hostnames
+  [string[]]$customDomains = az staticwebapp show --name $appName --query "customDomains" | ConvertFrom-Json
+  [string[]]$environmentHostnames = az staticwebapp environment list --name $appName --query "[].hostname" | ConvertFrom-Json
+
+  $origins = $($customDomains + $environmentHostnames)
   | ForEach-Object { "https://$_" }
   | Sort-Object
   | Get-Unique
+
+  Write-Host "Currently active origins in SWA: $($origins.Length)"
+
+  return $origins
 }
 
-function Update-AppServiceCors([string]$AppName, [string[]]$SwaOrigins, [string]$ResourceGroupName) {
+function Update-AppServiceCors([string]$ResourceGroupName, [string[]]$SwaOrigins) {
+  # Get the App Service name
+  $appName = az webapp list --resource-group $ResourceGroupName --query "[0].name" --output tsv
+  Write-Host "Detected App Service name: $appName"
+
   # Get the currently active origins on the App Service
-  $activeOrigins = (az webapp cors show --name $AppName --resource-group $ResourceGroupName | ConvertFrom-Json).allowedOrigins
+  $activeOrigins = (az webapp cors show --name $appName --resource-group $ResourceGroupName | ConvertFrom-Json).allowedOrigins
   $originsToAdd = $SwaOrigins | Where-Object { $activeOrigins -notcontains $_ }
   $originsToRemove = $activeOrigins | Where-Object { $SwaOrigins -notcontains $_ }
   $operationCount = 0
@@ -38,7 +47,7 @@ function Update-AppServiceCors([string]$AppName, [string[]]$SwaOrigins, [string]
   return $operationCount
 }
 
-$swaOrigins = Get-StaticWebAppOrigins -AppName $StaticWebAppName -ResourceGroupName $ResourceGroupName
-$operationCount = Update-AppServiceCors -AppName $AppServiceName -SwaOrigins $swaOrigins -ResourceGroupName $ResourceGroupName
+$swaOrigins = Get-StaticWebAppOrigins -ResourceGroupName $ResourceGroupName
+$operationCount = Update-AppServiceCors -ResourceGroupName $ResourceGroupName -SwaOrigins $swaOrigins
 
 Write-Host "Completed CORS update with $operationCount operations."
