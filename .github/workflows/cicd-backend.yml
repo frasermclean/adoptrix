@@ -125,7 +125,7 @@ jobs:
     name: Deploy infrastructure
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
-    environment: demo-backend
+    environment: demo
     permissions:
       id-token: write
       contents: read
@@ -141,9 +141,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       # Deploy Bicep template
       - name: Deploy Bicep template
@@ -169,7 +169,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    environment: demo-backend
+    environment: demo
     env:
       ARTIFACT_DIRECTORY: ${{ github.workspace }}/artifact
     steps:
@@ -184,9 +184,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       # Deploy to App Service
       - name: Deploy to App Service
@@ -202,7 +202,7 @@ jobs:
     needs:
       - build
       - deploy_infra
-    environment: demo-backend
+    environment: demo
     env:
       APP_PATH: ${{ github.workspace }}/app
     steps:
@@ -219,4 +219,4 @@ jobs:
         with:
           app-name: ${{ needs.deploy_infra.outputs.functionAppName }}
           package: ${{ env.APP_PATH }}
-          publish-profile: ${{ secrets.AZURE_FUNCTIONS_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.JOBS_PUBLISH_PROFILE }}
