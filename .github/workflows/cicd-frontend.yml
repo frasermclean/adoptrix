@@ -84,6 +84,10 @@ jobs:
     permissions:
       id-token: write
     steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       # Login to Azure
       - name: Login to Azure
         uses: azure/login@v1
@@ -91,3 +95,13 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      # Execute script
+      - name: Execute script
+        uses: azure/CLI@v1
+        with:
+          inlineScript: >-
+            ${{ github.workspace }}/infra/Update-AppServiceCors.ps1
+            -StaticWebAppName adoptrix-demo-frontend-swa
+            -AppServiceName adoptrix-demo-backend-app
+            -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
