@@ -1,9 +1,9 @@
 ﻿using Adoptrix.Domain;
-using Adoptrix.Infrastructure.Data.ValueConverters;
+using Adoptrix.Infrastructure.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Adoptrix.Infrastructure.Data.Configuration;
+namespace Adoptrix.Infrastructure.Configuration;
 
 public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 {

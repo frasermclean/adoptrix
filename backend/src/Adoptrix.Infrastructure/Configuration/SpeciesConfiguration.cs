@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Adoptrix.Infrastructure.Data.Configuration;
+namespace Adoptrix.Infrastructure.Configuration;
 
 public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
 {

@@ -2,8 +2,8 @@
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
-using Adoptrix.Infrastructure.Data;
-using Adoptrix.Infrastructure.Data.DependencyInjection;
+using Adoptrix.Infrastructure;
+using Adoptrix.Infrastructure.DependencyInjection;
 using Adoptrix.Infrastructure.Storage.DependencyInjection;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,7 +31,7 @@ public static class ServiceRegistration
             .AddAuthentication(builder.Configuration)
             .AddValidators()
             .AddApplicationServices()
-            .AddInfrastructureData()
+            .AddInfrastructureServices()
             .AddInfrastructureStorage(builder.Configuration, builder.Environment.IsDevelopment());
 
         // local development services

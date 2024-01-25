@@ -6,8 +6,8 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Domain", "src\Adoptrix.Domain\Adoptrix.Domain.csproj", "{2839FC19-CC0E-43CA-8B83-3245A2C47EB5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Api", "src\Adoptrix.Api\Adoptrix.Api.csproj", "{E738094C-FBA8-4A83-8925-2D622504F369}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Infrastructure.Data", "src\Adoptrix.Infrastructure.Data\Adoptrix.Infrastructure.Data.csproj", "{5691F28D-9406-4FFF-9F2D-226F72A167FD}"
+
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Infrastructure", "src\Adoptrix.Infrastructure\Adoptrix.Infrastructure.csproj", "{5691F28D-9406-4FFF-9F2D-226F72A167FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Application", "src\Adoptrix.Application\Adoptrix.Application.csproj", "{E9A92DCD-34B6-4B41-A2DB-5AD9AF3E564C}"
 EndProject
