@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <RootNamespace>Adoptrix.Infrastructure.Storage.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,10 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Adoptrix.Infrastructure.Storage\Adoptrix.Infrastructure.Storage.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="..\..\..\data\images\lab_puppy_1.jpeg">
       <Link>Data\lab_puppy_1.jpeg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -46,6 +43,10 @@
       <Link>Data\lab_puppy_3.jpeg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Adoptrix.Infrastructure\Adoptrix.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

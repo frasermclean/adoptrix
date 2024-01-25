@@ -4,7 +4,7 @@ using Adoptrix.Domain.Errors;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace Adoptrix.Infrastructure.Services;
+namespace Adoptrix.Infrastructure.Services.Repositories;
 
 public class SpeciesRepository(AdoptrixDbContext dbContext) : ISpeciesRepository
 {

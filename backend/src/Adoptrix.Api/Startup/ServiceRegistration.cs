@@ -4,7 +4,6 @@ using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
 using Adoptrix.Infrastructure;
 using Adoptrix.Infrastructure.DependencyInjection;
-using Adoptrix.Infrastructure.Storage.DependencyInjection;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
@@ -31,8 +30,7 @@ public static class ServiceRegistration
             .AddAuthentication(builder.Configuration)
             .AddValidators()
             .AddApplicationServices()
-            .AddInfrastructureServices()
-            .AddInfrastructureStorage(builder.Configuration, builder.Environment.IsDevelopment());
+            .AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
 
         // local development services
         if (builder.Environment.IsDevelopment())

@@ -5,7 +5,7 @@ using Adoptrix.Domain.Errors;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace Adoptrix.Infrastructure.Services;
+namespace Adoptrix.Infrastructure.Services.Repositories;
 
 public sealed class BreedsRepository(AdoptrixDbContext dbContext) : Repository(dbContext), IBreedsRepository
 {

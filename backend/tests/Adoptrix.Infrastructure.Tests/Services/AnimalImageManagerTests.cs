@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Domain;
-using Adoptrix.Infrastructure.Storage.Services;
+using Adoptrix.Infrastructure.Services;
 using Adoptrix.Infrastructure.Storage.Tests.Fixtures;
 using Microsoft.Extensions.Logging;
 using SixLabors.ImageSharp;

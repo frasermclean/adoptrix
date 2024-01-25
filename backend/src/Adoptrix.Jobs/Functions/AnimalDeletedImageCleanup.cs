@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain.Events;
-using Adoptrix.Infrastructure.Storage;
+using Adoptrix.Infrastructure;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 

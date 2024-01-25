@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Infrastructure.Storage;
+﻿namespace Adoptrix.Infrastructure;
 
 public static class QueueNames
 {

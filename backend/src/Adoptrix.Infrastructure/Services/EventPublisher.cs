@@ -6,7 +6,7 @@ using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Adoptrix.Infrastructure.Storage.Services;
+namespace Adoptrix.Infrastructure.Services;
 
 public class EventPublisher(
     ILogger<EventPublisher> logger,

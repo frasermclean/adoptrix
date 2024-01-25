@@ -1,4 +1,4 @@
-﻿using Adoptrix.Infrastructure.Storage.DependencyInjection;
+﻿using Adoptrix.Infrastructure.DependencyInjection;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Queues;
@@ -52,7 +52,7 @@ public class StorageEmulatorFixture : IAsyncLifetime
             .Build();
 
         serviceProvider = new ServiceCollection()
-            .AddInfrastructureStorage(configuration, true)
+            .AddInfrastructureServices(configuration, true)
             .BuildServiceProvider();
 
         await InitializeBlobContainersAsync(serviceProvider.GetRequiredService<BlobServiceClient>());
