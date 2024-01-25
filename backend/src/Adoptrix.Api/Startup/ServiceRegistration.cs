@@ -1,12 +1,9 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Adoptrix.Api.Processors;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain.Services;
-using Adoptrix.Infrastructure.Data;
-using Adoptrix.Infrastructure.Data.DependencyInjection;
-using Adoptrix.Infrastructure.Storage.DependencyInjection;
+using Adoptrix.Infrastructure;
+using Adoptrix.Infrastructure.DependencyInjection;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
@@ -32,12 +29,14 @@ public static class ServiceRegistration
             .AddFastEndpoints()
             .AddAuthentication(builder.Configuration)
             .AddValidators()
-            .AddDomainServices()
             .AddApplicationServices()
-            .AddInfrastructureData()
-            .AddInfrastructureStorage(builder.Configuration, builder.Environment.IsDevelopment())
-            .AddDevelopmentServices(builder.Environment)
-            .AddSingleton<EventDispatcherPostProcessor>();
+            .AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
+
+        // local development services
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddDevelopmentServices();
+        }
 
         // health checks services
         builder.Services.AddHealthChecks()
@@ -56,21 +55,14 @@ public static class ServiceRegistration
         return services;
     }
 
-    private static IServiceCollection AddDevelopmentServices(this IServiceCollection services,
-        IHostEnvironment environment)
+    private static IServiceCollection AddDevelopmentServices(this IServiceCollection services)
     {
-        if (!environment.IsDevelopment())
-        {
-            return services;
-        }
-
         // add cors policy for local development
         services.AddCors(options => options.AddDefaultPolicy(policyBuilder =>
             policyBuilder.WithOrigins("http://localhost:4200")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
         ));
-
         return services;
     }
 

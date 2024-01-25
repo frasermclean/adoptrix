@@ -24,10 +24,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Infrastructure.Storage\Adoptrix.Infrastructure.Storage.csproj" />
+    <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext"/>
   </ItemGroup>
   <ItemGroup>
-    <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext"/>
+    <ProjectReference Include="..\Adoptrix.Infrastructure\Adoptrix.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

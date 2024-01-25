@@ -1,5 +1,5 @@
 using Adoptrix.Application.Services;
-using Adoptrix.Infrastructure.Storage.DependencyInjection;
+using Adoptrix.Infrastructure.DependencyInjection;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,15 +21,15 @@ public static class Program
 
                 // local project services
                 services.AddApplicationServices();
-                services.AddInfrastructureStorage(context.Configuration, context.HostingEnvironment.IsDevelopment());
+                services.AddInfrastructureServices(context.Configuration, context.HostingEnvironment.IsDevelopment());
             })
             .ConfigureLogging(builder =>
             {
                 builder.Services.Configure<LoggerFilterOptions>(options =>
                 {
                     // remove default rule which excludes information level logs from Application Insights
-                    var defaultRule = options.Rules.FirstOrDefault(rule => rule.ProviderName
-                        == "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider");
+                    const string appInsightsProviderName = "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider";
+                    var defaultRule = options.Rules.FirstOrDefault(rule => rule.ProviderName == appInsightsProviderName);
                     if (defaultRule is not null)
                     {
                         options.Rules.Remove(defaultRule);

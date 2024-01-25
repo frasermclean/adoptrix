@@ -1,5 +1,4 @@
-﻿using Adoptrix.Api.Processors;
-using FastEndpoints;
+﻿using FastEndpoints;
 
 namespace Adoptrix.Api.Startup;
 
@@ -32,9 +31,6 @@ public static class MiddlewareConfiguration
                 {
                     definition.AllowAnonymous();
                 }
-
-                var eventDispatcher = app.Services.GetRequiredService<EventDispatcherPostProcessor>();
-                definition.PostProcessors(Order.After, eventDispatcher);
             };
         });
 

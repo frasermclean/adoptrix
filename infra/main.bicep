@@ -42,9 +42,9 @@ param adminGroupName string
 param adminGroupObjectId string
 
 @description('Whether to attempt role assignments (requires appropriate permissions)')
-param shouldAttemptRoleAssignments bool = false
+param shouldAttemptRoleAssignments bool = true
 
-@description('Array of allowed external IP addresses')
+@description('Array of allowed external IP addresses. Needs to be an array of objects with name and ipAddress properties.')
 param allowedExternalIpAddresses array = []
 
 var tags = {
@@ -144,11 +144,11 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
   }
 
   // firewall rules
-  resource firewallRule 'firewallRules' = [for (ipAddress, i) in allowedExternalIpAddresses:{
-    name: 'external-ip-${i}-rule'
+  resource firewallRule 'firewallRules' = [for item in allowedExternalIpAddresses:{
+    name: 'external-${item.name}-rule'
     properties: {
-      startIpAddress: ipAddress
-      endIpAddress: ipAddress
+      startIpAddress: item.ipAddress
+      endIpAddress: item.ipAddress
     }
   }]
 }

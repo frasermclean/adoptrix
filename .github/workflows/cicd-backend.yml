@@ -154,7 +154,10 @@ jobs:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           deploymentName: main-cicd-backend-${{ github.run_number }}
           template: ${{ github.workspace }}/infra/main.bicep
-          parameters: ${{ github.workspace }}/infra/main.demo.bicepparam
+          parameters: >-
+            ${{ github.workspace }}/infra/main.demo.bicepparam
+            shouldAttemptRoleAssignments=false
+            allowedExternalIpAddresses=${{ secrets.ALLOWED_EXTERNAL_IP_ADDRESSES }}
 
   # Deploy API application job
   deploy_api_app:

@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain.Events;
-using Adoptrix.Infrastructure.Storage;
+using Adoptrix.Infrastructure;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
@@ -14,9 +14,7 @@ public class AnimalDeletedImageCleanup(ILogger<AnimalDeletedImageCleanup> logger
         var result = await animalImageManager.DeleteAnimalImagesAsync(eventData.AnimalId);
         if (result.IsFailed)
         {
-            logger.LogError("Failed to delete animal images for animal {AnimalId}: {Error}",
-                eventData.AnimalId, result.Errors.First().Message);
-            throw new Exception("Failed to delete animal images");
+            throw new Exception($"Failed to delete animal images for animal with ID: {eventData.AnimalId}");
         }
 
         logger.LogInformation("Deleted {Count} images for animal {AnimalId}", result.Value, eventData.AnimalId);

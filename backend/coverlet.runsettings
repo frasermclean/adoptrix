@@ -4,7 +4,7 @@
     <DataCollectors>
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
-          <ExcludeByFile>**/Adoptrix.Infrastructure.Data/Migrations/*.cs</ExcludeByFile>
+          <ExcludeByFile>**/Adoptrix.Infrastructure/Migrations/*.cs</ExcludeByFile>
         </Configuration>
       </DataCollector>
     </DataCollectors>
