@@ -76,7 +76,7 @@ jobs:
 
   # Update CORS settings
   update_cors:
-    name: Update CORS
+    name: Update CORS settings
     runs-on: ubuntu-latest
     needs: [build_deploy, close_pr]
     if: always()
@@ -98,10 +98,9 @@ jobs:
 
       # Execute script
       - name: Execute script
-        uses: azure/CLI@v1
-        with:
-          inlineScript: >-
-            ${{ github.workspace }}/infra/Update-AppServiceCors.ps1
-            -StaticWebAppName adoptrix-demo-frontend-swa
-            -AppServiceName adoptrix-demo-backend-app
-            -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
+        shell: pwsh
+        run: >-
+          ${{ github.workspace }}/infra/Update-AppServiceCors.ps1
+          -StaticWebAppName adoptrix-demo-frontend-swa
+          -AppServiceName adoptrix-demo-backend-app
+          -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
