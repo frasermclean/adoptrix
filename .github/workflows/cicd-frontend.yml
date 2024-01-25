@@ -23,7 +23,7 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     name: Build and deploy
     runs-on: ubuntu-latest
-    environment: demo-frontend
+    environment: demo
     env:
       PROJECT_DIRECTORY: ${{ github.workspace }}/frontend
       BUILD_CONFIGURATION: demo
@@ -55,7 +55,7 @@ jobs:
         with:
           action: upload
           production_branch: main
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_DEPLOYMENT_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.FRONTEND_DEPLOYMENT_TOKEN }}
           app_location: ${{ env.BUILD_DIRECTORY }}
           skip_app_build: true
           skip_api_build: true
@@ -65,24 +65,29 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close pull request
-    environment: demo-frontend
+    environment: demo
     steps:
       - name: Remove preview environment
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: close
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_DEPLOYMENT_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.FRONTEND_DEPLOYMENT_TOKEN }}
           app_location: null # Unused in close pr step
 
   # Update CORS settings
   update_cors:
     name: Update CORS
+    runs-on: ubuntu-latest
     needs: [build_deploy, close_pr]
     if: always()
-    uses: ./.github/workflows/update-cors.yml
+    environment: demo
     permissions:
       id-token: write
-    secrets:
-      tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-      client-id: ${{ secrets.AZURE_CLIENT_ID }}
-      subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    steps:
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
