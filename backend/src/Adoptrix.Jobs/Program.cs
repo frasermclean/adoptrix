@@ -28,9 +28,8 @@ public static class Program
                 builder.Services.Configure<LoggerFilterOptions>(options =>
                 {
                     // remove default rule which excludes information level logs from Application Insights
-                    var defaultRule = options.Rules.FirstOrDefault(rule => rule.ProviderName
-                                                                           ==
-                                                                           "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider");
+                    const string appInsightsProviderName = "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider";
+                    var defaultRule = options.Rules.FirstOrDefault(rule => rule.ProviderName == appInsightsProviderName);
                     if (defaultRule is not null)
                     {
                         options.Rules.Remove(defaultRule);
