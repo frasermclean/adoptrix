@@ -6,14 +6,14 @@ on:
       - main
     paths:
       - backend/**
-      - infra/**
+      - deploy/infra/**
       - .github/workflows/cicd-backend.yml
   pull_request:
     branches:
       - main
     paths:
       - backend/**
-      - infra/**
+      - deploy/infra/**
       - .github/workflows/cicd-backend.yml
 
 env:
@@ -153,9 +153,9 @@ jobs:
           scope: resourcegroup
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           deploymentName: main-cicd-backend-${{ github.run_number }}
-          template: ${{ github.workspace }}/infra/main.bicep
+          template: ${{ github.workspace }}/deploy/infra/main.bicep
           parameters: >-
-            ${{ github.workspace }}/infra/main.demo.bicepparam
+            ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
             shouldAttemptRoleAssignments=false
             allowedExternalIpAddresses=${{ secrets.ALLOWED_EXTERNAL_IP_ADDRESSES }}
 

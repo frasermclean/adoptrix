@@ -5,7 +5,7 @@
       "name": "Launch Update-AppServiceCors.ps1",
       "type": "PowerShell",
       "request": "launch",
-      "script": "${workspaceFolder}/infra/Update-AppServiceCors.ps1",
+      "script": "${workspaceFolder}/deploy/scripts/Update-AppServiceCors.ps1",
       "args": ["-ResourceGroupName adoptrix-demo-rg"],
       "cwd": "${cwd}"
     },
