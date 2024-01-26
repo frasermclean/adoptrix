@@ -42,10 +42,10 @@ param adminGroupName string
 param adminGroupObjectId string
 
 @description('Whether to attempt role assignments (requires appropriate permissions)')
-param shouldAttemptRoleAssignments bool = true
+param shouldAttemptRoleAssignments bool
 
 @description('Array of allowed external IP addresses. Needs to be an array of objects with name and ipAddress properties.')
-param allowedExternalIpAddresses array = []
+param allowedExternalIpAddresses array
 
 var tags = {
   workload: workload
