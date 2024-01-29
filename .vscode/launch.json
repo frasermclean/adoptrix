@@ -2,6 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Launch Set-DatabasePermissions.ps1",
+      "type": "PowerShell",
+      "request": "launch",
+      "script": "${workspaceFolder}/deploy/scripts/Set-DatabasePermissions.ps1",
+      "args": [
+        "-ServerName adoptrix-demo-sql",
+        "-DatabaseName adoptrix-demo-sqldb",
+        "-AppName adoptrix-demo-backend-app"
+      ],
+      "cwd": "${cwd}"
+    },
+    {
       "name": "Launch Update-AppServiceCors.ps1",
       "type": "PowerShell",
       "request": "launch",
