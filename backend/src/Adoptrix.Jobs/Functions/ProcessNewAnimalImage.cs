@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Events;
 using Adoptrix.Infrastructure;
@@ -11,22 +12,25 @@ namespace Adoptrix.Jobs.Functions;
 public class ProcessNewAnimalImage(
     ILogger<ProcessNewAnimalImage> logger,
     IAnimalImageManager animalImageManager,
-    IImageProcessor imageProcessor)
+    IImageProcessor imageProcessor,
+    IAnimalsRepository animalsRepository)
 {
     [Function(nameof(ProcessNewAnimalImage))]
     public async Task Run([QueueTrigger(QueueNames.AnimalImageAdded)] AnimalImageAddedEvent eventData)
     {
-        // resolve scoped services
         var (animalId, imageId) = eventData;
 
-        // get original image stream
-        await using var originalReadStream = await animalImageManager.GetImageReadStreamAsync(animalId, imageId);
-
         // process original image
+        await using var originalReadStream = await animalImageManager.GetImageReadStreamAsync(animalId, imageId);
         await using var bundle = await imageProcessor.ProcessOriginalAsync(originalReadStream);
 
         // upload processed images
         await UploadImagesAsync(animalId, imageId, bundle);
+
+        // update entity in database
+        await UpdateEntityAsync(animalId, imageId);
+
+        logger.LogInformation("Processed image with ID: {ImageId} for animal with ID: {AnimalId}", imageId, animalId);
     }
 
     private async Task UploadImagesAsync(Guid animalId, Guid imageId, ImageStreamBundle bundle)
@@ -42,5 +46,19 @@ public class ProcessNewAnimalImage(
         );
 
         logger.LogInformation("Uploaded processed images for animal with ID: {AnimalId}", animalId);
+    }
+
+    private async Task UpdateEntityAsync(Guid animalId, Guid imageId)
+    {
+        var getResult = await animalsRepository.GetAsync(animalId);
+
+        var animal = getResult.IsSuccess
+            ? getResult.Value
+            : throw new InvalidOperationException($"Animal with ID {animalId} not found");
+
+        var image = animal.Images.First(image => image.Id == imageId);
+        image.IsProcessed = true;
+
+        await animalsRepository.UpdateAsync(animal);
     }
 }

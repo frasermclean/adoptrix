@@ -47,12 +47,14 @@ public class StorageEmulatorFixture : IAsyncLifetime
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                { "ConnectionStrings:AzureStorage", connectionStringBuilder.ConnectionString }
+                {
+                    "ConnectionStrings:AzureStorage", connectionStringBuilder.ConnectionString
+                }
             })
             .Build();
 
         serviceProvider = new ServiceCollection()
-            .AddInfrastructureServices(configuration, true)
+            .AddInfrastructureServices(configuration)
             .BuildServiceProvider();
 
         await InitializeBlobContainersAsync(serviceProvider.GetRequiredService<BlobServiceClient>());
@@ -67,7 +69,10 @@ public class StorageEmulatorFixture : IAsyncLifetime
 
     private static async Task InitializeQueuesAsync(QueueServiceClient serviceClient)
     {
-        var queuesToCreates = new[] { QueueNames.AnimalDeleted, QueueNames.AnimalImageAdded };
+        var queuesToCreates = new[]
+        {
+            QueueNames.AnimalDeleted, QueueNames.AnimalImageAdded
+        };
 
         foreach (var queueName in queuesToCreates)
         {

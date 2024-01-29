@@ -21,7 +21,7 @@ public static class Program
 
                 // local project services
                 services.AddApplicationServices();
-                services.AddInfrastructureServices(context.Configuration, context.HostingEnvironment.IsDevelopment());
+                services.AddInfrastructureServices(context.Configuration);
             })
             .ConfigureLogging(builder =>
             {

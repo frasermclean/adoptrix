@@ -27,6 +27,12 @@ param azureStorageBlobEndpoint string
 @description('The endpoint for the Azure Storage Queue service')
 param azureStorageQueueEndpoint string
 
+@description('Name of the existing SQL server')
+param sqlServerName string
+
+@description('Name of the existing SQL database')
+param sqlDatabaseName string
+
 var tags = {
   workload: workload
   appEnv: appEnv
@@ -124,6 +130,13 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
         {
           name: 'AzureStorage__QueueEndpoint'
           value: azureStorageQueueEndpoint
+        }
+      ]
+      connectionStrings: [
+        {
+          name: 'Database'
+          connectionString: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname};Database=${sqlDatabaseName};Authentication="Active Directory Default";'
+          type: 'SQLAzure'
         }
       ]
     }
