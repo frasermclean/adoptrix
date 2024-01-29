@@ -338,3 +338,5 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (attemptRoleAssignment
 output appServiceName string = appServiceModule.outputs.appServiceName
 output functionAppName string = jobsAppModule.outputs.functionAppName
 output staticWebAppName string = staticWebAppModule.outputs.staticWebAppName
+output sqlServerName string = sqlServer.name
+output sqlDatabaseName string = sqlServer::database.name
