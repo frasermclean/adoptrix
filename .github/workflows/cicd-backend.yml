@@ -161,6 +161,10 @@ jobs:
           template: ${{ github.workspace }}/deploy/infra/main.bicep
           parameters: ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
 
+      # Install SqlServer module
+      - name: Install SqlServer module
+        run: Install-Module SqlServer
+
       # Set database permissions
       - name: Set database permissions
         uses: azure/powershell@v1
