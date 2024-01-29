@@ -145,6 +145,10 @@ jobs:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+      # Create JSON parameters file
+      - name: Create JSON parameters file
+        run: az bicep build-params --file ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
+
       # Deploy Bicep template
       - name: Deploy Bicep template
         uses: azure/arm-deploy@v1
@@ -155,7 +159,7 @@ jobs:
           deploymentName: main-cicd-backend-${{ github.run_number }}
           template: ${{ github.workspace }}/deploy/infra/main.bicep
           parameters: >-
-            ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
+            ${{ github.workspace }}/deploy/infra/main.demo.json
             shouldAttemptRoleAssignments=false
             allowedExternalIpAddresses=${{ secrets.ALLOWED_EXTERNAL_IP_ADDRESSES }}
 
