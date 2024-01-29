@@ -319,6 +319,8 @@ module jobsAppModule './functionApp/main.bicep' = {
     applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
     azureStorageBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
     azureStorageQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
+    sqlServerName: sqlServer.name
+    sqlDatabaseName: sqlServer::database.name
   }
 }
 

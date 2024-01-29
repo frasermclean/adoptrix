@@ -152,7 +152,7 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
       ]
       connectionStrings: [
         {
-          name: 'AdoptrixDb'
+          name: 'Database'
           connectionString: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname};Database=${sqlDatabaseName};Authentication="Active Directory Default";'
           type: 'SQLAzure'
         }
