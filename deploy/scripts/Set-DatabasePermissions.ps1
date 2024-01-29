@@ -4,6 +4,8 @@ param (
   [Parameter(Mandatory = $true)][string] $AppName
 )
 
+Import-Module SqlServer
+
 # Aquire an access token for the Azure SQL Server
 $accessToken = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
