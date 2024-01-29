@@ -30,7 +30,7 @@ public static class ServiceRegistration
             .AddAuthentication(builder.Configuration)
             .AddValidators()
             .AddApplicationServices()
-            .AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
+            .AddInfrastructureServices(builder.Configuration);
 
         // local development services
         if (builder.Environment.IsDevelopment())

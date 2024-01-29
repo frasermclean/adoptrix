@@ -13,22 +13,27 @@ namespace Adoptrix.Infrastructure.DependencyInjection;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration,
-        bool useConnectionString = false)
-    {
-        services.AddScoped<IAnimalImageManager, AnimalImageManager>()
-            .AddSingleton<IEventPublisher, EventPublisher>()
-            .AddDbContext<AdoptrixDbContext>()
-            .AddRepositories()
-            .AddBlobContainerClients()
-            .AddStorageQueueClients();
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration) => services
+        .AddScoped<IAnimalImageManager, AnimalImageManager>()
+        .AddSingleton<IEventPublisher, EventPublisher>()
+        .AddDatabaseServices()
+        .AddAzureStorageServices(configuration);
 
+    private static IServiceCollection AddDatabaseServices(this IServiceCollection services) => services
+        .AddDbContext<AdoptrixDbContext>()
+        .AddScoped<IAnimalsRepository, AnimalsRepository>()
+        .AddScoped<IBreedsRepository, BreedsRepository>()
+        .AddScoped<ISpeciesRepository, SpeciesRepository>();
+
+    private static IServiceCollection AddAzureStorageServices(this IServiceCollection services, IConfiguration configuration)
+    {
         services.AddAzureClients(builder =>
         {
-            // use connection string if specified
-            if (useConnectionString)
+            var connectionString = configuration.GetConnectionString("AzureStorage");
+
+            // use connection string if it is defined
+            if (connectionString is not null)
             {
-                var connectionString = configuration.GetConnectionString("AzureStorage");
                 builder.AddBlobServiceClient(connectionString);
                 builder.AddQueueServiceClient(connectionString)
                     .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
@@ -43,28 +48,11 @@ public static class ServiceRegistration
             builder.UseCredential(new DefaultAzureCredential());
         });
 
-        return services;
-    }
-
-    private static IServiceCollection AddRepositories(this IServiceCollection services)
-    {
-        return services
-            .AddScoped<IAnimalsRepository, AnimalsRepository>()
-            .AddScoped<IBreedsRepository, BreedsRepository>()
-            .AddScoped<ISpeciesRepository, SpeciesRepository>();
-    }
-
-    private static IServiceCollection AddBlobContainerClients(this IServiceCollection services)
-    {
+        // animal images blob container
         services.AddKeyedSingleton<BlobContainerClient>(BlobContainerNames.AnimalImages, (provider, _)
             => provider.GetRequiredService<BlobServiceClient>()
                 .GetBlobContainerClient(BlobContainerNames.AnimalImages));
 
-        return services;
-    }
-
-    private static IServiceCollection AddStorageQueueClients(this IServiceCollection services)
-    {
         // animal deleted queue
         services.AddKeyedSingleton<QueueClient>(QueueNames.AnimalDeleted, (provider, _)
             => provider.GetRequiredService<QueueServiceClient>()
