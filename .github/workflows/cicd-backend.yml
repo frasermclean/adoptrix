@@ -151,7 +151,7 @@ jobs:
         id: deploy_bicep
         env:
           ATTEMPT_ROLE_ASSIGNMENTS: false
-          ALLOWED_EXTERNAL_IP_ADDRESSES: ${{ secrets.ALLOWED_EXTERNAL_IP_ADDRESSES }}
+          HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
         with:
           scope: resourcegroup
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
