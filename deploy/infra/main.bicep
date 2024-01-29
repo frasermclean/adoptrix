@@ -56,6 +56,13 @@ var deploymentSuffix = startsWith(deployment().name, 'main-')
  ? replace(deployment().name, 'main-', '-')
  : ''
 
+var sqlDatabaseAllowedAzureServices = [
+  {
+    name: 'azure'
+    ipAddress: '0.0.0.0'
+  }
+]
+
 // virtual network
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
   name: '${workload}-${appEnv}-vnet'
@@ -144,8 +151,8 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
   }
 
   // firewall rules
-  resource firewallRule 'firewallRules' = [for item in allowedExternalIpAddresses:{
-    name: 'external-${item.name}-rule'
+  resource firewallRule 'firewallRules' = [for item in concat(sqlDatabaseAllowedAzureServices, allowedExternalIpAddresses): {
+    name: 'allow-${item.name}-rule'
     properties: {
       startIpAddress: item.ipAddress
       endIpAddress: item.ipAddress
