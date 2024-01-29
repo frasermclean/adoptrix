@@ -7,14 +7,14 @@ on:
       - feature/database-permissions-script
     paths:
       - backend/**
-      - deploy/infra/**
+      - deploy/**
       - .github/workflows/cicd-backend.yml
   pull_request:
     branches:
       - main
     paths:
       - backend/**
-      - deploy/infra/**
+      - deploy/**
       - .github/workflows/cicd-backend.yml
 
 env:
