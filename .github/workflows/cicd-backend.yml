@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/database-permissions-script
     paths:
       - backend/**
       - deploy/infra/**
@@ -144,6 +145,7 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
 
       # Deploy Bicep template
       - name: Deploy Bicep template
@@ -158,6 +160,17 @@ jobs:
           deploymentName: main-cicd-backend-${{ github.run_number }}
           template: ${{ github.workspace }}/deploy/infra/main.bicep
           parameters: ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
+
+      # Set database permissions
+      - name: Set database permissions
+        uses: azure/powershell@v1
+        with:
+          azPSVersion: latest
+          inlineScript: >-
+            ${{github.workspace}}/deploy/scripts/Set-DatabasePermissions.ps1
+            -ServerName ${{ steps.deploy_bicep.outputs.sqlServerName }}
+            -DatabaseName ${{ steps.deploy_bicep.outputs.sqlDatabaseName }}
+            -AppName ${{ steps.deploy_bicep.outputs.appServiceName }}
 
   # Deploy API application job
   deploy_api_app:
