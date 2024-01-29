@@ -42,7 +42,7 @@ param adminGroupName string
 param adminGroupObjectId string
 
 @description('Whether to attempt role assignments (requires appropriate permissions)')
-param shouldAttemptRoleAssignments bool
+param attemptRoleAssignments bool
 
 @description('Array of allowed external IP addresses. Needs to be an array of objects with name and ipAddress properties.')
 param allowedExternalIpAddresses array
@@ -325,7 +325,7 @@ module jobsAppModule './functionApp/main.bicep' = {
 }
 
 // role assignments
-module roleAssignmentsModule 'roleAssignments.bicep' = if (shouldAttemptRoleAssignments) {
+module roleAssignmentsModule 'roleAssignments.bicep' = if (attemptRoleAssignments) {
   name: 'roleAssignments${deploymentSuffix}'
   params: {
     adminGroupObjectId: adminGroupObjectId
