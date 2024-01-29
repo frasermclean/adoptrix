@@ -19,5 +19,5 @@ param b2cAuthSignUpSignInPolicyId = 'B2C_1_Signup_SignIn'
 param adminGroupName = 'Adoptrix Demo Administrators'
 param adminGroupObjectId = '0356480d-b5dc-440f-a5d3-e7b3f2169c40'
 
-param shouldAttemptRoleAssignments = true
-param allowedExternalIpAddresses = []
+param attemptRoleAssignments = bool(readEnvironmentVariable('ATTEMPT_ROLE_ASSIGNMENTS', 'true'))
+param allowedExternalIpAddresses = array(readEnvironmentVariable('ALLOWED_EXTERNAL_IP_ADDRESSES', '[]'))
