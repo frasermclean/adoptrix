@@ -31,3 +31,6 @@ resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
     }
   }
 }
+
+@description('Fully qualified domain name of the API')
+output apiFqdn string = '${dnsZone::apiCnameRecord.name}.${domainName}'

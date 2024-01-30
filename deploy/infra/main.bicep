@@ -151,7 +151,7 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
   }
 
   // firewall rules
-  resource firewallRule 'firewallRules' = [for item in concat(sqlDatabaseAllowedAzureServices, allowedExternalIpAddresses): {
+  resource firewallRule 'firewallRules' = [for item in concat(sqlDatabaseAllowedAzureServices, allowedExternalIpAddresses): if (!empty(item.ipAddress)) {
     name: 'allow-${item.name}-rule'
     properties: {
       startIpAddress: item.ipAddress
