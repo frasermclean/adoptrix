@@ -54,13 +54,14 @@ param virtualNetworkSubnetId string
 @description('Array of front-end hostnames allowed to access the app service')
 param corsAllowedOrigins array
 
+@description('Whether to perform a full reset of the custom hostname binding')
+param resetHostnameBinding bool = false
+
 var tags = {
   workload: workload
   appEnv: appEnv
   appName: appName
 }
-
-var customDomainName = 'api.${appEnv}.${domainName}'
 
 // existing Azure AD B2C tenant
 resource b2cTenant 'Microsoft.AzureActiveDirectory/b2cDirectories@2021-04-01' existing = {
@@ -166,8 +167,8 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
   }
 
   // custom hostname binding - disable ssl initially then enable after certificate is created
-  resource hostNameBinding 'hostNameBindings' = {
-    name: customDomainName
+  resource hostNameBinding 'hostNameBindings' = if (resetHostnameBinding) {
+    name: 'api.${appEnv}.${domainName}'
     properties: {
       sslState: 'Disabled'
     }
@@ -194,7 +195,7 @@ resource appServiceCertificate 'Microsoft.Web/certificates@2022-09-01' = {
   tags: tags
   properties: {
     serverFarmId: appServicePlan.id
-    canonicalName: customDomainName
+    canonicalName: dnsRecords.outputs.apiFqdn
   }
 }
 
@@ -204,7 +205,7 @@ module appServiceSniEnableModule '../modules/siteSniEnable.bicep' = {
   params: {
     siteName: appService.name
     certificateThumbprint: appServiceCertificate.properties.thumbprint
-    hostname: customDomainName
+    hostname: dnsRecords.outputs.apiFqdn
   }
 }
 
