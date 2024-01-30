@@ -23,6 +23,6 @@ param attemptRoleAssignments = bool(readEnvironmentVariable('ATTEMPT_ROLE_ASSIGN
 param allowedExternalIpAddresses = [
   {
     name: 'hive'
-    ipAddress: readEnvironmentVariable('HIVE_IP_ADDRESS')
+    ipAddress: readEnvironmentVariable('HIVE_IP_ADDRESS', '')
   }
 ]
