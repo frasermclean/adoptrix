@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/container-apps-refactor
     paths:
       - backend/**
       - deploy/infra/**
@@ -130,7 +131,7 @@ jobs:
       id-token: write
       contents: read
     outputs:
-      appServiceName: ${{ steps.deploy_bicep.outputs.appServiceName }}
+      apiAppName: ${{ steps.deploy_bicep.outputs.apiAppName }}
       functionAppName: ${{ steps.deploy_bicep.outputs.functionAppName }}
     steps:
       # Check out the repository
@@ -170,15 +171,10 @@ jobs:
       id-token: write
       contents: read
     environment: demo
-    env:
-      ARTIFACT_DIRECTORY: ${{ github.workspace }}/artifact
     steps:
-      # Download API artifact
-      - name: Download API artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.API_ARTIFACT_NAME }}
-          path: ${{ env.ARTIFACT_DIRECTORY }}
+      # Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       # Login to Azure
       - name: Login to Azure
@@ -188,12 +184,16 @@ jobs:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      # Deploy to App Service
-      - name: Deploy to App Service
-        uses: azure/webapps-deploy@v2
+      # Build and deploy Container App
+      - name: Build and deploy Container App
+        uses: azure/container-apps-deploy-action@v1
         with:
-          app-name: ${{ needs.deploy_infra.outputs.appServiceName }}
-          package: ${{ env.ARTIFACT_DIRECTORY }}
+          appSourcePath: ${{ github.workspace }}/backend
+          dockerfilePath: api.Dockerfile
+          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ github.sha }}
+          acrName: ${{ vars.ACR_NAME }}
+          containerAppName: ${{ needs.deploy_infra.outputs.apiAppName }}
+          resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
 
   # Deploy jobs application
   deploy_jobs_app:
