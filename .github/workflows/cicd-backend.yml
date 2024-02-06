@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/container-apps-refactor
     paths:
       - backend/**
       - deploy/infra/**
