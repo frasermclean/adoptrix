@@ -16,6 +16,9 @@ param domainName string
 @description('Prefix for the Azure AD B2C tenant name')
 param b2cTenantPrefix string
 
+@description('Name of the Azure AD B2C sign-up/sign-in policy')
+param b2cSignUpSignInPolicyName string
+
 param configurationDataOwners array = []
 
 var tags = {
@@ -77,7 +80,7 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
   resource azureAdSignUpSignInPolicyId 'keyValues' = {
     name: 'AzureAd:SignUpSignInPolicyId'
     properties: {
-      value: 'B2C_1A_SignUp_SignIn'
+      value: b2cSignUpSignInPolicyName
       contentType: 'text/plain'
     }
   }
