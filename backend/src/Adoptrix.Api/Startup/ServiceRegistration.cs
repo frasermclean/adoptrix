@@ -26,6 +26,7 @@ public static class ServiceRegistration
         });
 
         builder.Services
+            .AddApplicationInsightsTelemetry()
             .AddFastEndpoints()
             .AddAuthentication(builder.Configuration)
             .AddValidators()
