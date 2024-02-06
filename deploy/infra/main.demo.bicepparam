@@ -26,3 +26,8 @@ param allowedExternalIpAddresses = [
     ipAddress: readEnvironmentVariable('HIVE_IP_ADDRESS', '')
   }
 ]
+
+// container apps
+param containerRegistryName = 'snakebytecorecr'
+param containerResistryResourceGroup = 'snakebyte-core-rg'
+param apiImageName = 'adoptrix-api'

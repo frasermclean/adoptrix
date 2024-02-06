@@ -47,6 +47,15 @@ param attemptRoleAssignments bool
 @description('Array of allowed external IP addresses. Needs to be an array of objects with name and ipAddress properties.')
 param allowedExternalIpAddresses array
 
+@description('Container registry login server')
+param containerRegistryName string
+
+@description('Resource group that contains the Azure Container Registry')
+param containerResistryResourceGroup string
+
+@description('Name of the API container image')
+param apiImageName string
+
 var tags = {
   workload: workload
   appEnv: appEnv
@@ -284,8 +293,24 @@ module staticWebAppModule 'staticWebApp/main.bicep' = {
   }
 }
 
+// container app module
+module containerAppsModule 'containerApps.bicep' = {
+  name: 'containerApps-backend${deploymentSuffix}'
+  params: {
+    workload: workload
+    appEnv: appEnv
+    location: location
+    logAnalyticsWorkspaceName: logAnalyticsWorkspace.name
+    containerRegistryName: containerRegistryName
+    containerRegistryResourceGroup: containerResistryResourceGroup
+    apiImageName: apiImageName
+    storageAccountName: storageAccount.name
+    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
+  }
+}
+
 // back end app service
-module appServiceModule './appService/main.bicep' = {
+module appServiceModule './appService/main.bicep' = if (false) {
   name: 'appService-backend${deploymentSuffix}'
   params: {
     workload: workload
