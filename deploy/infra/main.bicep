@@ -250,6 +250,7 @@ module containerAppsModule './containerApps.bicep' = {
     apiImageName: apiImageName
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     appConfigurationEndpoint: appConfiguration.properties.endpoint
+    corsAllowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
   }
 }
 
