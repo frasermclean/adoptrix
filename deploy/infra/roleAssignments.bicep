@@ -3,8 +3,8 @@ targetScope = 'resourceGroup'
 @description('The object id of the Azure AD group that will be granted admin access')
 param adminGroupObjectId string
 
-@description('Prinicpal id of the app service managed identity')
-param appServiceIdentityPrincipalId string
+@description('Prinicpal id of the API application managed identity')
+param apiAppPrincipalId string
 
 @description('Prinicpal id of the function app managed identity')
 param functionAppIdentityPrincipalId string
@@ -39,11 +39,11 @@ var roleAssignmentData = [
   }
   {
     roleDefinitionId: storageBlobDataContributorRoleDefinition.id
-    principalId: appServiceIdentityPrincipalId
+    principalId: apiAppPrincipalId
   }
   {
     roleDefinitionId: storageQueueDataContributorRoleDefinition.id
-    principalId: appServiceIdentityPrincipalId
+    principalId: apiAppPrincipalId
   }
   {
     roleDefinitionId: storageBlobDataOwnerRoleDefinition.id

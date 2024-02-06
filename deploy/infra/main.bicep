@@ -20,20 +20,11 @@ param domainName string
 @maxLength(12)
 param actionGroupShortName string
 
-@description('Name of the Azure AD B2C tenant')
-param b2cTenantName string
-
 @description('Azure AD B2C application client ID')
 param azureAdClientId string
 
 @description('Azure AD B2C audience')
 param azureAdAudience string
-
-@description('Azure AD B2C sign-up/sign-in policy ID')
-param b2cAuthSignUpSignInPolicyId string
-
-@description('First two octets of the virtual network address space')
-param vnetAddressPrefix string = '10.250'
 
 @description('Name of the Azure App Configuration instance')
 param appConfigurationName string
@@ -78,50 +69,6 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
   scope: resourceGroup(sharedResourceGroup)
 }
 
-// virtual network
-resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
-  name: '${workload}-${appEnv}-vnet'
-  location: location
-  tags: tags
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        '${vnetAddressPrefix}.0.0/16'
-      ]
-    }
-    subnets: [
-      {
-        name: 'apps-subnet'
-        properties: {
-          addressPrefix: '${vnetAddressPrefix}.1.0/24'
-          delegations: [
-            {
-              name: 'apps-delegation'
-              properties: {
-                serviceName: 'Microsoft.Web/serverFarms'
-              }
-            }
-          ]
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Sql'
-              locations: [ location ]
-            }
-            {
-              service: 'Microsoft.Storage'
-              locations: [ location ]
-            }
-          ]
-        }
-      }
-    ]
-  }
-
-  resource appsSubnet 'subnets' existing = {
-    name: 'apps-subnet'
-  }
-}
-
 // azure sql server
 resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
   name: '${workload}-${appEnv}-sql'
@@ -153,15 +100,6 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
     }
     properties: {
       collation: 'SQL_Latin1_General_CP1_CI_AS'
-    }
-  }
-
-  // virtual network rule
-  resource vnetRule 'virtualNetworkRules' = {
-    name: 'apps-subnet-rule'
-    properties: {
-      virtualNetworkSubnetId: virtualNetwork::appsSubnet.id
-      ignoreMissingVnetServiceEndpoint: false
     }
   }
 
@@ -315,29 +253,6 @@ module containerAppsModule './containerApps.bicep' = {
   }
 }
 
-// back end app service
-module appServiceModule './appService/main.bicep' = if (false) {
-  name: 'appService-backend${deploymentSuffix}'
-  params: {
-    workload: workload
-    appEnv: appEnv
-    appName: 'backend'
-    location: location
-    deploymentSuffix: deploymentSuffix
-    domainName: domainName
-    b2cAuthAudience: azureAdAudience
-    b2cAuthClientId: azureAdClientId
-    b2cAuthSignUpSignInPolicyId: b2cAuthSignUpSignInPolicyId
-    b2cTenantName: b2cTenantName
-    sqlServerName: sqlServer.name
-    sqlDatabaseName: sqlServer::database.name
-    storageAccountName: storageAccount.name
-    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
-    virtualNetworkSubnetId: virtualNetwork::appsSubnet.id
-    corsAllowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
-  }
-}
-
 // jobs function app
 module jobsAppModule './functionApp/main.bicep' = {
   name: 'functionApp-jobs${deploymentSuffix}'
@@ -378,12 +293,17 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (attemptRoleAssignment
   name: 'roleAssignments${deploymentSuffix}'
   params: {
     adminGroupObjectId: adminGroupObjectId
-    appServiceIdentityPrincipalId: appServiceModule.outputs.identityPrincipalId
+    apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
     functionAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
     storageAccountName: storageAccount.name
   }
 }
 
-output appServiceName string = appServiceModule.outputs.appServiceName
+@description('The name of the API container app')
+output apiAppName string = containerAppsModule.outputs.apiAppName
+
+@description('Name of the jobs function app')
 output functionAppName string = jobsAppModule.outputs.functionAppName
+
+@description('Name of the static web app')
 output staticWebAppName string = staticWebAppModule.outputs.staticWebAppName
