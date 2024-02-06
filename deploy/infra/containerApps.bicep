@@ -11,6 +11,12 @@ param appEnv string
 @description('Azure region for the non-global resources')
 param location string = resourceGroup().location
 
+@description('Domain name')
+param domainName string
+
+@description('Name of the shared resource group')
+param sharedResourceGroup string
+
 @description('Resource ID of the Log Analytics workspace')
 param logAnalyticsWorkspaceId string
 
@@ -29,6 +35,7 @@ var tags = {
 }
 
 var containerRegistryLoginServer = '${containerRegistryName}${environment().suffixes.acrLoginServer}'
+var apiContainerAppName = '${workload}-${appEnv}-api-ca'
 
 // container apps environment
 resource appsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
@@ -38,6 +45,16 @@ resource appsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
   properties: {
     appLogsConfiguration: {
       destination: 'azure-monitor'
+    }
+  }
+
+  resource commentsCertificate 'managedCertificates' = {
+    name: 'api-cert'
+    location: location
+    tags: tags
+    properties: {
+      subjectName: dnsRecordsModule.outputs.apiFqdn
+      domainControlValidation: 'CNAME'
     }
   }
 }
@@ -61,9 +78,20 @@ resource appsEnvironmentDiagnosticSettings 'Microsoft.Insights/diagnosticSetting
   }
 }
 
+module dnsRecordsModule 'dnsRecords.bicep' = {
+  name: 'dnsRecords-${workload}-${appEnv}-api'
+  scope: resourceGroup(sharedResourceGroup)
+  params: {
+    appEnv: appEnv
+    domainName: domainName
+    apiDefaultHostname: '${apiContainerAppName}.${appsEnvironment.properties.defaultDomain}'
+    apiCustomDomainVerificationId: appsEnvironment.properties.customDomainConfiguration.customDomainVerificationId
+  }
+}
+
 // adoptrix api container app
 resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
-  name: '${workload}-${appEnv}-api-ca'
+  name: apiContainerAppName
   location: location
   tags: union(tags, { appName: 'api' })
   identity: {
@@ -82,6 +110,13 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
           {
             latestRevision: true
             weight: 100
+          }
+        ]
+        customDomains: [
+          {
+            name: dnsRecordsModule.outputs.apiFqdn
+            bindingType: 'SniEnabled'
+            certificateId: appsEnvironment::commentsCertificate.id
           }
         ]
       }

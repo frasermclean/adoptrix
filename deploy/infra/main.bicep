@@ -306,6 +306,8 @@ module containerAppsModule './containerApps.bicep' = {
     workload: workload
     appEnv: appEnv
     location: location
+    domainName: domainName
+    sharedResourceGroup: sharedResourceGroup
     containerRegistryName: containerRegistryName
     apiImageName: apiImageName
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
