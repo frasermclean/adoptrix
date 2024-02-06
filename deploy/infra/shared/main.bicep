@@ -16,6 +16,8 @@ param domainName string
 @description('Prefix for the Azure AD B2C tenant name')
 param b2cTenantPrefix string
 
+param configurationDataOwners array = []
+
 var tags = {
   workload: workload
   category: category
@@ -45,7 +47,7 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
     name: 'Free'
   }
   properties: {
-    disableLocalAuth: true
+    disableLocalAuth: false
   }
 
   resource azureAdInstance 'keyValues' = {
@@ -80,5 +82,17 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
     }
   }
 }
+
+var appConfigurationDataOwnerRoleId = '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
+
+// app configuration data owner role assignments
+resource configurationDataOwnerRoleAssigment 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for principalId in configurationDataOwners: {
+  name: guid(appConfiguration.id, appConfigurationDataOwnerRoleId, principalId)
+  scope: appConfiguration
+  properties: {
+    principalId: principalId
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions@2022-04-01', appConfigurationDataOwnerRoleId)
+  }
+}]
 
 output dnsZoneNameServers array = dnsZone.properties.nameServers
