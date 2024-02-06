@@ -12,7 +12,7 @@ param appEnv string
 param location string = resourceGroup().location
 
 @description('Name of the shared resource group')
-param sharedResourceGroup string = 'adoptrix-shared-rg'
+param sharedResourceGroup string
 
 @description('Domain name')
 param domainName string
@@ -34,6 +34,9 @@ param b2cAuthSignUpSignInPolicyId string
 
 @description('First two octets of the virtual network address space')
 param vnetAddressPrefix string = '10.250'
+
+@description('Name of the Azure App Configuration instance')
+param appConfigurationName string
 
 @description('Application administrator group name')
 param adminGroupName string
@@ -68,6 +71,12 @@ var sqlDatabaseAllowedAzureServices = [
     ipAddress: '0.0.0.0'
   }
 ]
+
+// app configuration (existing)
+resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
+  name: appConfigurationName
+  scope: resourceGroup(sharedResourceGroup)
+}
 
 // virtual network
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
@@ -290,25 +299,17 @@ module staticWebAppModule 'staticWebApp/main.bicep' = {
   }
 }
 
-// container app module
-module containerAppsModule './containerApps/containerApps.bicep' = {
+// container apps module
+module containerAppsModule './containerApps.bicep' = {
   name: 'containerApps-backend${deploymentSuffix}'
   params: {
     workload: workload
     appEnv: appEnv
     location: location
-    logAnalyticsWorkspaceName: logAnalyticsWorkspace.name
-    sharedResourceGroup: sharedResourceGroup
     containerRegistryName: containerRegistryName
-    appConfigurationName: '${workload}-shared-ac'
     apiImageName: apiImageName
-    azureAdClientId: azureAdClientId
-    azureAdAudience: azureAdAudience
-    storageAccountName: storageAccount.name
-    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
-    sqlServerName: sqlServer.name
-    sqlDatabaseName: sqlServer::database.name
-    attemptRoleAssignments: attemptRoleAssignments
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    appConfigurationEndpoint: appConfiguration.properties.endpoint
   }
 }
 
@@ -349,6 +350,24 @@ module jobsAppModule './functionApp/main.bicep' = {
     azureStorageQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
     sqlServerName: sqlServer.name
     sqlDatabaseName: sqlServer::database.name
+  }
+}
+
+// environment-specific app configuration
+module appConfigModule 'appConfig.bicep' = {
+  name: 'appConfig-${workload}-${appEnv}'
+  scope: resourceGroup(sharedResourceGroup)
+  params: {
+    appConfigurationName: appConfigurationName
+    appEnv: appEnv
+    azureAdClientId: azureAdClientId
+    azureAdAudience: azureAdAudience
+    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
+    storageAccountBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
+    storageAccountQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
+    databaseConnectionString: 'Server=tcp:${sqlServer.name}${environment().suffixes.sqlServerHostname};Database=${sqlServer::database.name};Authentication="Active Directory Default";'
+    containerAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
+    attemptRoleAssignments: attemptRoleAssignments
   }
 }
 
