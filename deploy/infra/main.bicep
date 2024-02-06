@@ -24,10 +24,10 @@ param actionGroupShortName string
 param b2cTenantName string
 
 @description('Azure AD B2C application client ID')
-param b2cAuthClientId string
+param azureAdClientId string
 
 @description('Azure AD B2C audience')
-param b2cAuthAudience string
+param azureAdAudience string
 
 @description('Azure AD B2C sign-up/sign-in policy ID')
 param b2cAuthSignUpSignInPolicyId string
@@ -49,9 +49,6 @@ param allowedExternalIpAddresses array
 
 @description('Container registry login server')
 param containerRegistryName string
-
-@description('Resource group that contains the Azure Container Registry')
-param containerResistryResourceGroup string
 
 @description('Name of the API container image')
 param apiImageName string
@@ -294,18 +291,24 @@ module staticWebAppModule 'staticWebApp/main.bicep' = {
 }
 
 // container app module
-module containerAppsModule 'containerApps.bicep' = {
+module containerAppsModule './containerApps/containerApps.bicep' = {
   name: 'containerApps-backend${deploymentSuffix}'
   params: {
     workload: workload
     appEnv: appEnv
     location: location
     logAnalyticsWorkspaceName: logAnalyticsWorkspace.name
+    sharedResourceGroup: sharedResourceGroup
     containerRegistryName: containerRegistryName
-    containerRegistryResourceGroup: containerResistryResourceGroup
+    appConfigurationName: '${workload}-shared-ac'
     apiImageName: apiImageName
+    azureAdClientId: azureAdClientId
+    azureAdAudience: azureAdAudience
     storageAccountName: storageAccount.name
     applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
+    sqlServerName: sqlServer.name
+    sqlDatabaseName: sqlServer::database.name
+    attemptRoleAssignments: attemptRoleAssignments
   }
 }
 
@@ -319,8 +322,8 @@ module appServiceModule './appService/main.bicep' = if (false) {
     location: location
     deploymentSuffix: deploymentSuffix
     domainName: domainName
-    b2cAuthAudience: b2cAuthAudience
-    b2cAuthClientId: b2cAuthClientId
+    b2cAuthAudience: azureAdAudience
+    b2cAuthClientId: azureAdClientId
     b2cAuthSignUpSignInPolicyId: b2cAuthSignUpSignInPolicyId
     b2cTenantName: b2cTenantName
     sqlServerName: sqlServer.name

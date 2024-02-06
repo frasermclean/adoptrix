@@ -14,14 +14,23 @@ param location string = resourceGroup().location
 @description('Log Analytics workspace to send logs to')
 param logAnalyticsWorkspaceName string
 
+@description('Name of the shared resource group')
+param sharedResourceGroup string
+
+@description('Name of the Azure App Configuration instance')
+param appConfigurationName string
+
 @description('Name of the Azure Container Registry')
 param containerRegistryName string
 
-@description('Resource group that contains the Azure Container Registry')
-param containerRegistryResourceGroup string
-
 @description('Name of the API container image')
 param apiImageName string
+
+@description('Azure AD B2C application client ID')
+param azureAdClientId string
+
+@description('Azure AD B2C audience')
+param azureAdAudience string
 
 @description('Name of the Storage Account')
 param storageAccountName string
@@ -29,15 +38,26 @@ param storageAccountName string
 @description('Application Insights connection string')
 param applicationInsightsConnectionString string
 
+@description('Name of the existing SQL server')
+param sqlServerName string
+
+@description('Name of the existing SQL database')
+param sqlDatabaseName string
+
+@description('Whether to attempt role assignments (requires appropriate permissions)')
+param attemptRoleAssignments bool
+
 var tags = {
   workload: workload
   appEnv: appEnv
 }
 
-// container registry (existing)
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
-  name: containerRegistryName
-  scope: resourceGroup(containerRegistryResourceGroup)
+var containerRegistryLoginServer = '${containerRegistryName}${environment().suffixes.acrLoginServer}'
+
+// app configuration (existing)
+resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
+  name: appConfigurationName
+  scope: resourceGroup(sharedResourceGroup)
 }
 
 // storage account (existing)
@@ -73,6 +93,10 @@ resource appsEnvironmentDiagnosticSettings 'Microsoft.Insights/diagnosticSetting
         category: 'ContainerAppSystemLogs'
         enabled: true
       }
+      {
+        category: 'ContainerAppConsoleLogs'
+        enabled: true
+      }
     ]
   }
 }
@@ -103,7 +127,7 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
       }
       registries: [
         {
-          server: containerRegistry.properties.loginServer
+          server: containerRegistryLoginServer
           identity: 'System'
         }
       ]
@@ -112,31 +136,40 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
       containers: [
         {
           name: apiImageName
-          image: '${containerRegistry.properties.loginServer}/${apiImageName}:latest'
+          image: '${containerRegistryLoginServer}/${apiImageName}:latest'
           resources: {
             cpu: json('0.5')
             memory: '1Gi'
           }
           env: [
             {
-              name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-              value: applicationInsightsConnectionString
-            }
-            {
               name: 'ASPNETCORE_ENVIRONMENT'
               value: appEnv
             }
             {
-              name: 'AzureStorage__BlobEndpoint'
-              value: storageAccount.properties.primaryEndpoints.blob
-            }
-            {
-              name: 'AzureStorage__QueueEndpoint'
-              value: storageAccount.properties.primaryEndpoints.queue
+              name: 'APP_CONFIG_ENDPOINT'
+              value: appConfiguration.properties.endpoint
             }
           ]
         }
       ]
     }
+  }
+}
+
+module appConfig 'appConfig.bicep' = {
+  name: 'appConfig-${workload}-${appEnv}'
+  scope: resourceGroup(sharedResourceGroup)
+  params: {
+    appConfigurationName: appConfigurationName
+    appEnv: appEnv
+    azureAdClientId: azureAdClientId
+    azureAdAudience: azureAdAudience
+    applicationInsightsConnectionString: applicationInsightsConnectionString
+    storageAccountBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
+    storageAccountQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
+    databaseConnectionString: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname};Database=${sqlDatabaseName};Authentication="Active Directory Default";'
+    containerAppPrincipalId: apiContainerApp.identity.principalId
+    attemptRoleAssignments: attemptRoleAssignments
   }
 }
