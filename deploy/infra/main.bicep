@@ -255,19 +255,16 @@ module containerAppsModule './containerApps.bicep' = {
 }
 
 // jobs function app
-module jobsAppModule './functionApp/main.bicep' = {
+module jobsAppModule './functionApp.bicep' = {
   name: 'functionApp-jobs${deploymentSuffix}'
   params: {
     workload: workload
     appEnv: appEnv
     appName: 'jobs'
     location: location
+    appConfigEndpoint: appConfiguration.properties.endpoint
     storageAccountName: storageAccount.name
     applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
-    azureStorageBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
-    azureStorageQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
-    sqlServerName: sqlServer.name
-    sqlDatabaseName: sqlServer::database.name
   }
 }
 
