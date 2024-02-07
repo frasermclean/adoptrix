@@ -18,7 +18,7 @@ public static class Program
             .ConfigureFunctionsWorkerDefaults()
             .ConfigureAppConfiguration((context, builder) =>
             {
-                var endpoint = context.Configuration["APP_CONFIG_ENDPOINT"];
+                var endpoint = Environment.GetEnvironmentVariable("APP_CONFIG_ENDPOINT");
                 if (string.IsNullOrEmpty(endpoint))
                 {
                     return;
