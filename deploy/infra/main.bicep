@@ -297,6 +297,19 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (attemptRoleAssignment
   }
 }
 
+// shared resource role assignments
+module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' = if (attemptRoleAssignments) {
+  name: 'roleAssignments-${appEnv}-${deploymentSuffix}'
+  scope: resourceGroup(sharedResourceGroup)
+  params: {
+    appConfigurationName: appConfigurationName
+    configurationDataReaders: [
+      containerAppsModule.outputs.apiAppPrincipalId
+      jobsAppModule.outputs.identityPrincipalId
+    ]
+  }
+}
+
 @description('The name of the API container app')
 output apiAppName string = containerAppsModule.outputs.apiAppName
 

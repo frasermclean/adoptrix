@@ -19,7 +19,11 @@ param b2cTenantPrefix string
 @description('Name of the Azure AD B2C sign-up/sign-in policy')
 param b2cSignUpSignInPolicyName string
 
+@description('Array of prinicpal IDs that have read and write access to the configuration data')
 param configurationDataOwners array = []
+
+@description('Array of prinicpal IDs that have read access to the configuration data')
+param configurationDataReaders array = []
 
 var tags = {
   workload: workload
@@ -86,16 +90,13 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
   }
 }
 
-var appConfigurationDataOwnerRoleId = '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
-
-// app configuration data owner role assignments
-resource configurationDataOwnerRoleAssigment 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for principalId in configurationDataOwners: {
-  name: guid(appConfiguration.id, appConfigurationDataOwnerRoleId, principalId)
-  scope: appConfiguration
-  properties: {
-    principalId: principalId
-    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions@2022-04-01', appConfigurationDataOwnerRoleId)
+module roleAssignments 'roleAssignments.bicep' = {
+  name: 'roleAssignments'
+  params: {
+    appConfigurationName: appConfiguration.name
+    configurationDataOwners: configurationDataOwners
+    configurationDataReaders: configurationDataReaders
   }
-}]
+}
 
 output dnsZoneNameServers array = dnsZone.properties.nameServers
