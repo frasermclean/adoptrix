@@ -2,10 +2,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Update-AppServiceCors.ps1",
+      "name": "Launch Update-ContainerAppCors.ps1",
       "type": "PowerShell",
       "request": "launch",
-      "script": "${workspaceFolder}/deploy/scripts/Update-AppServiceCors.ps1",
+      "script": "${workspaceFolder}/deploy/scripts/Update-ContainerAppCors.ps1",
       "args": ["-ResourceGroupName adoptrix-demo-rg"],
       "cwd": "${cwd}"
     },

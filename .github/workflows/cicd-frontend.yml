@@ -99,4 +99,4 @@ jobs:
       # Execute script
       - name: Execute script
         shell: pwsh
-        run: ${{ github.workspace }}/deploy/scripts/Update-AppServiceCors.ps1 -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
+        run: ${{ github.workspace }}/deploy/scripts/Update-ContainerAppCors.ps1 -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
