@@ -102,4 +102,4 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: ${{ github.workspace }}/deploy/scripts/Update-ContainerAppCors.ps1 -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
-          azPSVersion: latest
+          azPSVersion: '11.3.0'
