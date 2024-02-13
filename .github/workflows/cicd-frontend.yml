@@ -99,5 +99,7 @@ jobs:
 
       # Execute script
       - name: Execute script
-        shell: pwsh
-        run: ${{ github.workspace }}/deploy/scripts/Update-ContainerAppCors.ps1 -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ${{ github.workspace }}/deploy/scripts/Update-ContainerAppCors.ps1 -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
+          azPSVersion: latest
