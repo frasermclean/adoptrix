@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿using Adoptrix.Api.Endpoints.Animals;
+using FastEndpoints;
 
 namespace Adoptrix.Api.Startup;
 
@@ -21,6 +22,11 @@ public static class MiddlewareConfiguration
         // enable authentication and authorization
         app.UseAuthentication();
         app.UseAuthorization();
+
+        // map endpoints
+        app.MapGroup("minimal-api")
+            .MapGroup("animals")
+            .MapGet("{animalId:guid}", GetAnimalEndpoint.ExecuteAsync);
 
         app.UseFastEndpoints(config =>
         {
