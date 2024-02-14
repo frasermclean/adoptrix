@@ -24,9 +24,8 @@ public static class MiddlewareConfiguration
         app.UseAuthorization();
 
         // map endpoints
-        app.MapGroup("minimal-api")
-            .MapGroup("animals")
-            .MapGet("{animalId:guid}", GetAnimalEndpoint.ExecuteAsync);
+        app.MapGroup("/minimal-api")
+            .MapAnimalsEndpoints();
 
         app.UseFastEndpoints(config =>
         {
@@ -43,5 +42,15 @@ public static class MiddlewareConfiguration
         app.MapHealthChecks($"{ApiRoutePrefix}/health").AllowAnonymous();
 
         return app;
+    }
+
+    private static RouteGroupBuilder MapAnimalsEndpoints(this RouteGroupBuilder builder)
+    {
+        var group = builder.MapGroup("animals");
+
+        group.MapGet("", SearchAnimalsEndpoint.ExecuteAsync);
+        group.MapGet("{animalId:guid}", GetAnimalEndpoint.ExecuteAsync);
+
+        return builder;
     }
 }
