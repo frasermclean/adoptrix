@@ -12,7 +12,7 @@ param appEnv string
 param location string = resourceGroup().location
 
 @description('Name of the shared resource group')
-param sharedResourceGroup string = 'adoptrix-shared-rg'
+param sharedResourceGroup string
 
 @description('Domain name')
 param domainName string
@@ -20,20 +20,14 @@ param domainName string
 @maxLength(12)
 param actionGroupShortName string
 
-@description('Name of the Azure AD B2C tenant')
-param b2cTenantName string
-
 @description('Azure AD B2C application client ID')
-param b2cAuthClientId string
+param azureAdClientId string
 
 @description('Azure AD B2C audience')
-param b2cAuthAudience string
+param azureAdAudience string
 
-@description('Azure AD B2C sign-up/sign-in policy ID')
-param b2cAuthSignUpSignInPolicyId string
-
-@description('First two octets of the virtual network address space')
-param vnetAddressPrefix string = '10.250'
+@description('Name of the Azure App Configuration instance')
+param appConfigurationName string
 
 @description('Application administrator group name')
 param adminGroupName string
@@ -46,6 +40,12 @@ param attemptRoleAssignments bool
 
 @description('Array of allowed external IP addresses. Needs to be an array of objects with name and ipAddress properties.')
 param allowedExternalIpAddresses array
+
+@description('Container registry login server')
+param containerRegistryName string
+
+@description('Name of the API container image')
+param apiImageName string
 
 var tags = {
   workload: workload
@@ -63,48 +63,10 @@ var sqlDatabaseAllowedAzureServices = [
   }
 ]
 
-// virtual network
-resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
-  name: '${workload}-${appEnv}-vnet'
-  location: location
-  tags: tags
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        '${vnetAddressPrefix}.0.0/16'
-      ]
-    }
-    subnets: [
-      {
-        name: 'apps-subnet'
-        properties: {
-          addressPrefix: '${vnetAddressPrefix}.1.0/24'
-          delegations: [
-            {
-              name: 'apps-delegation'
-              properties: {
-                serviceName: 'Microsoft.Web/serverFarms'
-              }
-            }
-          ]
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Sql'
-              locations: [ location ]
-            }
-            {
-              service: 'Microsoft.Storage'
-              locations: [ location ]
-            }
-          ]
-        }
-      }
-    ]
-  }
-
-  resource appsSubnet 'subnets' existing = {
-    name: 'apps-subnet'
-  }
+// app configuration (existing)
+resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
+  name: appConfigurationName
+  scope: resourceGroup(sharedResourceGroup)
 }
 
 // azure sql server
@@ -138,15 +100,6 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
     }
     properties: {
       collation: 'SQL_Latin1_General_CP1_CI_AS'
-    }
-  }
-
-  // virtual network rule
-  resource vnetRule 'virtualNetworkRules' = {
-    name: 'apps-subnet-rule'
-    properties: {
-      virtualNetworkSubnetId: virtualNetwork::appsSubnet.id
-      ignoreMissingVnetServiceEndpoint: false
     }
   }
 
@@ -284,43 +237,52 @@ module staticWebAppModule 'staticWebApp/main.bicep' = {
   }
 }
 
-// back end app service
-module appServiceModule './appService/main.bicep' = {
-  name: 'appService-backend${deploymentSuffix}'
+// container apps module
+module containerAppsModule './containerApps.bicep' = {
+  name: 'containerApps-backend${deploymentSuffix}'
   params: {
     workload: workload
     appEnv: appEnv
-    appName: 'backend'
     location: location
-    deploymentSuffix: deploymentSuffix
     domainName: domainName
-    b2cAuthAudience: b2cAuthAudience
-    b2cAuthClientId: b2cAuthClientId
-    b2cAuthSignUpSignInPolicyId: b2cAuthSignUpSignInPolicyId
-    b2cTenantName: b2cTenantName
-    sqlServerName: sqlServer.name
-    sqlDatabaseName: sqlServer::database.name
-    storageAccountName: storageAccount.name
-    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
-    virtualNetworkSubnetId: virtualNetwork::appsSubnet.id
+    sharedResourceGroup: sharedResourceGroup
+    containerRegistryName: containerRegistryName
+    apiImageName: apiImageName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    appConfigurationEndpoint: appConfiguration.properties.endpoint
     corsAllowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
   }
 }
 
 // jobs function app
-module jobsAppModule './functionApp/main.bicep' = {
+module jobsAppModule './functionApp.bicep' = {
   name: 'functionApp-jobs${deploymentSuffix}'
   params: {
     workload: workload
     appEnv: appEnv
     appName: 'jobs'
     location: location
+    appConfigEndpoint: appConfiguration.properties.endpoint
     storageAccountName: storageAccount.name
     applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
-    azureStorageBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
-    azureStorageQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
-    sqlServerName: sqlServer.name
-    sqlDatabaseName: sqlServer::database.name
+  }
+}
+
+// environment-specific app configuration
+module appConfigModule 'appConfig.bicep' = {
+  name: 'appConfig-${workload}-${appEnv}'
+  scope: resourceGroup(sharedResourceGroup)
+  params: {
+    appConfigurationName: appConfigurationName
+    appEnv: appEnv
+    azureAdClientId: azureAdClientId
+    azureAdAudience: azureAdAudience
+    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
+    storageAccountBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
+    storageAccountQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
+    databaseConnectionString: 'Server=tcp:${sqlServer.name}${environment().suffixes.sqlServerHostname};Database=${sqlServer::database.name};Authentication="Active Directory Default";'
+    containerAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
+    attemptRoleAssignments: attemptRoleAssignments
   }
 }
 
@@ -329,12 +291,30 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (attemptRoleAssignment
   name: 'roleAssignments${deploymentSuffix}'
   params: {
     adminGroupObjectId: adminGroupObjectId
-    appServiceIdentityPrincipalId: appServiceModule.outputs.identityPrincipalId
+    apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
     functionAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
     storageAccountName: storageAccount.name
   }
 }
 
-output appServiceName string = appServiceModule.outputs.appServiceName
+// shared resource role assignments
+module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' = if (attemptRoleAssignments) {
+  name: 'roleAssignments-${appEnv}-${deploymentSuffix}'
+  scope: resourceGroup(sharedResourceGroup)
+  params: {
+    appConfigurationName: appConfigurationName
+    configurationDataReaders: [
+      containerAppsModule.outputs.apiAppPrincipalId
+      jobsAppModule.outputs.identityPrincipalId
+    ]
+  }
+}
+
+@description('The name of the API container app')
+output apiAppName string = containerAppsModule.outputs.apiAppName
+
+@description('Name of the jobs function app')
 output functionAppName string = jobsAppModule.outputs.functionAppName
+
+@description('Name of the static web app')
 output staticWebAppName string = staticWebAppModule.outputs.staticWebAppName

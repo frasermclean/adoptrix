@@ -29,7 +29,7 @@ public static class ServiceRegistration
     {
         services.AddAzureClients(builder =>
         {
-            var connectionString = configuration.GetConnectionString("AzureStorage");
+            var connectionString = configuration.GetValue<string>("AzureStorage:ConnectionString");
 
             // use connection string if it is defined
             if (connectionString is not null)

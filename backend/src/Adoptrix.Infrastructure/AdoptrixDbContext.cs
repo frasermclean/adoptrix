@@ -14,7 +14,7 @@ public class AdoptrixDbContext(IConfiguration configuration) : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
-        var connectionString = configuration.GetConnectionString("Database");
+        var connectionString = configuration.GetValue<string>("Database:ConnectionString");
 
         builder.LogTo(Console.WriteLine, LogLevel.Information);
         builder.UseSqlServer(connectionString);

@@ -15,23 +15,14 @@ param appName string = 'jobs'
 @description('Azure region for the non-global resources')
 param location string = resourceGroup().location
 
+@description('The endpoint for the Azure App Configuration instance')
+param appConfigEndpoint string
+
 @description('Name of the Azure Storage Account to use for the function app')
 param storageAccountName string
 
 @description('Application Insights connection string')
 param applicationInsightsConnectionString string
-
-@description('The endpoint for the Azure Storage Blob service')
-param azureStorageBlobEndpoint string
-
-@description('The endpoint for the Azure Storage Queue service')
-param azureStorageQueueEndpoint string
-
-@description('Name of the existing SQL server')
-param sqlServerName string
-
-@description('Name of the existing SQL database')
-param sqlDatabaseName string
 
 var tags = {
   workload: workload
@@ -88,6 +79,14 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
           value: storageAccountConnectionString
         }
         {
+          name: 'AZURE_FUNCTIONS_ENVIRONMENT'
+          value: appEnv
+        }
+        {
+          name: 'APP_CONFIG_ENDPOINT'
+          value: appConfigEndpoint
+        }
+        {
           name: 'FUNCTIONS_EXTENSION_VERSION'
           value: '~4'
         }
@@ -122,21 +121,6 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
         {
           name: 'XDT_MicrosoftApplicationInsights_Mode'
           value: 'Recommended'
-        }
-        {
-          name: 'AzureStorage__BlobEndpoint'
-          value: azureStorageBlobEndpoint
-        }
-        {
-          name: 'AzureStorage__QueueEndpoint'
-          value: azureStorageQueueEndpoint
-        }
-      ]
-      connectionStrings: [
-        {
-          name: 'Database'
-          connectionString: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname};Database=${sqlDatabaseName};Authentication="Active Directory Default";'
-          type: 'SQLAzure'
         }
       ]
     }

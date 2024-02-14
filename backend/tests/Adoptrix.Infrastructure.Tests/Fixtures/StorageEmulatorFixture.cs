@@ -48,7 +48,7 @@ public class StorageEmulatorFixture : IAsyncLifetime
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 {
-                    "ConnectionStrings:AzureStorage", connectionStringBuilder.ConnectionString
+                    "AzureStorage:ConnectionString", connectionStringBuilder.ConnectionString
                 }
             })
             .Build();

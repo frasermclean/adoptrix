@@ -95,8 +95,11 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
 
       # Execute script
       - name: Execute script
-        shell: pwsh
-        run: ${{ github.workspace }}/deploy/scripts/Update-AppServiceCors.ps1 -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ${{ github.workspace }}/deploy/scripts/Update-ContainerAppCors.ps1 -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
+          azPSVersion: '11.3.0'

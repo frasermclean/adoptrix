@@ -3,7 +3,11 @@
     "Adoptrix.Jobs": {
       "commandName": "Project",
       "commandLineArgs": "--port 7080",
-      "launchBrowser": false
+      "launchBrowser": false,
+      "environmentVariables": {
+        "AZURE_FUNCTIONS_ENVIRONMENT": "local",
+        "APP_CONFIG_ENDPOINT": "https://adoptrix-shared-ac.azconfig.io"
+      }
     }
   }
 }
