@@ -42,7 +42,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         HttpStatusCode expectedStatusCode)
     {
         // act
-        var message = await httpClient.GetAsync($"minimal-api/animals/{animalId}");
+        var message = await httpClient.GetAsync($"api/animals/{animalId}");
 
         // assert
         message.Should().HaveStatusCode(expectedStatusCode);
@@ -57,7 +57,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     public async Task AddAnimal_WithValidCommand_Should_Return_Ok()
     {
         // arrange
-        var uri = new Uri("minimal-api/admin/animals", UriKind.Relative);
+        var uri = new Uri("api/admin/animals", UriKind.Relative);
         var request = CreateAddAnimalRequest();
 
         // act
@@ -80,7 +80,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
     {
         // arrange
-        var uri = new Uri("minimal-api/admin/animals", UriKind.Relative);
+        var uri = new Uri("api/admin/animals", UriKind.Relative);
         var request = CreateAddAnimalRequest(name, description, speciesName, breedName, sex, ageInYears);
 
         // act
@@ -96,7 +96,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     public async Task DeleteAnimal_WithValidCommand_Should_Return_Ok(Guid animalId, HttpStatusCode expectedStatusCode)
     {
         // arrange
-        var uri = new Uri($"/minimal-api/admin/animals/{animalId}", UriKind.Relative);
+        var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
 
         // act
         var message = await httpClient.DeleteAsync(uri);

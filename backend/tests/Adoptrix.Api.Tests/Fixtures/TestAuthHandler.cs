@@ -14,9 +14,15 @@ public class TestAuthHandler(
 {
     public const string SchemeName = "TestAuthScheme";
 
+    public static readonly Guid TestUserId = Guid.NewGuid();
+
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var claims = new[] { new Claim(ClaimTypes.Name, "Test user") };
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.Name, "Test user"),
+            new Claim(ClaimTypes.NameIdentifier, TestUserId.ToString())
+        };
         var identity = new ClaimsIdentity(claims, "Test");
         var principal = new ClaimsPrincipal(identity);
         var ticket = new AuthenticationTicket(principal, SchemeName);

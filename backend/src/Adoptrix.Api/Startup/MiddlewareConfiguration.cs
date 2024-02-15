@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Api.Endpoints.Animals;
+using Adoptrix.Api.Endpoints.Users;
 using FastEndpoints;
 
 namespace Adoptrix.Api.Startup;
@@ -55,5 +56,9 @@ public static class MiddlewareConfiguration
         adminGroup.MapPost("animals", AddAnimalEndpoint.ExecuteAsync);
         adminGroup.MapDelete("animals/{animalId:guid}", DeleteAnimalEndpoint.ExecuteAsync);
         adminGroup.RequireAuthorization();
+
+        var usersGroup = apiGroup.MapGroup("users");
+        usersGroup.MapGet("me", GetCurrentUserEndpoint.Execute);
+        usersGroup.RequireAuthorization();
     }
 }
