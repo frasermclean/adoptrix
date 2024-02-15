@@ -1,18 +1,32 @@
 ﻿using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
+using Adoptrix.Domain.Events;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Application.Services;
 
 public interface IAnimalsService
 {
+    Task<Result<Animal>> GetAnimalByIdAsync(Guid animalId, CancellationToken cancellationToken);
     Task<Result<Animal>> AddAnimalAsync(string name, string? description, string speciesName, string? breedName,
         Sex? sex, DateOnly dateOfBirth, Guid createdBy, CancellationToken cancellationToken = default);
+    Task<Result> DeleteAnimalAsync(Guid animalId, CancellationToken cancellationToken);
 }
 
-public class AnimalsService(IAnimalsRepository repository, ISpeciesService speciesService, IBreedsService breedsService)
+public class AnimalsService(
+    ILogger<AnimalsService> logger,
+    IAnimalsRepository repository,
+    ISpeciesService speciesService,
+    IBreedsService breedsService,
+    IEventPublisher eventPublisher)
     : IAnimalsService
 {
+    public async Task<Result<Animal>> GetAnimalByIdAsync(Guid animalId, CancellationToken cancellationToken)
+    {
+        return await repository.GetAsync(animalId, cancellationToken);
+    }
+
     public async Task<Result<Animal>> AddAnimalAsync(string name, string? description, string speciesName,
         string? breedName, Sex? sex, DateOnly dateOfBirth, Guid createdBy, CancellationToken cancellationToken)
     {
@@ -43,6 +57,38 @@ public class AnimalsService(IAnimalsRepository repository, ISpeciesService speci
             CreatedBy = createdBy
         };
 
-        return await repository.AddAsync(animal, cancellationToken);
+        var addResult = await repository.AddAsync(animal, cancellationToken);
+
+        if (addResult.IsFailed)
+        {
+            logger.LogError("Could not add animal with name {AnimalName}", name);
+        }
+
+        return addResult;
+    }
+    public async Task<Result> DeleteAnimalAsync(Guid animalId, CancellationToken cancellationToken)
+    {
+        // find existing animal
+        var getResult = await GetAnimalByIdAsync(animalId, cancellationToken);
+        if (getResult.IsFailed)
+        {
+            logger.LogError("Could not find animal with ID: {AnimalId}", animalId);
+            return getResult.ToResult();
+        }
+
+        // delete animal from database
+        var animal = getResult.Value;
+        var deleteResult = await repository.DeleteAsync(animal, cancellationToken);
+        if (deleteResult.IsFailed)
+        {
+            logger.LogError("Could not delete animal with ID: {AnimalId}", animalId);
+            return deleteResult;
+        }
+
+        // publish domain event
+        var domainEvent = new AnimalDeletedEvent(animal.Id);
+        await eventPublisher.PublishDomainEventAsync(domainEvent, cancellationToken);
+
+        return Result.Ok();
     }
 }

@@ -53,6 +53,7 @@ public static class MiddlewareConfiguration
 
         var adminGroup = apiGroup.MapGroup("admin");
         adminGroup.MapPost("animals", AddAnimalEndpoint.ExecuteAsync);
-
+        adminGroup.MapDelete("animals/{animalId:guid}", DeleteAnimalEndpoint.ExecuteAsync);
+        adminGroup.RequireAuthorization();
     }
 }
