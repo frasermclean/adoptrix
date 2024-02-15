@@ -1,10 +1,11 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Validators;
-using Adoptrix.Application.Services;
+using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Infrastructure;
 using Adoptrix.Infrastructure.DependencyInjection;
 using FastEndpoints;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Identity.Web;
@@ -29,7 +30,7 @@ public static class ServiceRegistration
             .AddApplicationInsightsTelemetry()
             .AddFastEndpoints()
             .AddAuthentication(builder.Configuration)
-            .AddValidators()
+            .AddValidatorsFromAssemblyContaining<AddAnimalRequestValidator>()
             .AddApplicationServices()
             .AddInfrastructureServices(builder.Configuration);
 
@@ -64,14 +65,6 @@ public static class ServiceRegistration
                 .AllowAnyHeader()
                 .AllowAnyMethod()
         ));
-        return services;
-    }
-
-    private static IServiceCollection AddValidators(this IServiceCollection services)
-    {
-        services.AddSingleton<ImageContentTypeValidator>();
-        services.AddSingleton<DateOfBirthValidator>();
-
         return services;
     }
 }

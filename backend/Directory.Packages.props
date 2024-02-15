@@ -23,6 +23,7 @@
     </PackageVersion>
     <PackageVersion Include="FluentResults.Extensions.FluentAssertions" Version="2.1.1" />
     <PackageVersion Include="FluentResults" Version="3.15.2" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
     <PackageVersion Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
     <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />
     <PackageVersion Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="7.0.0" />
