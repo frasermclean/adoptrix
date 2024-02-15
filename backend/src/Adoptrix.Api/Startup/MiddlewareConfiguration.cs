@@ -1,4 +1,4 @@
-﻿using Adoptrix.Api.Endpoints.Animals;
+using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Endpoints.Users;
 using FastEndpoints;
@@ -45,24 +45,25 @@ public static class MiddlewareConfiguration
         return app;
     }
 
-    private static void MapEndpoints(this WebApplication app)
+    private static void MapEndpoints(this IEndpointRouteBuilder app)
     {
-        var apiGroup = app.MapGroup("api");
+        var apiGroup = app.MapGroup("/api");
 
-        var publicAnimalsGroup = apiGroup.MapGroup("animals");
-        publicAnimalsGroup.MapGet("", SearchAnimalsEndpoint.ExecuteAsync);
-        publicAnimalsGroup.MapGet("{animalId:guid}", GetAnimalEndpoint.ExecuteAsync);
+        var publicAnimalsGroup = apiGroup.MapGroup("/animals");
+        publicAnimalsGroup.MapGet("/", SearchAnimalsEndpoint.ExecuteAsync);
+        publicAnimalsGroup.MapGet("/{animalId:guid}", GetAnimalEndpoint.ExecuteAsync)
+            .WithName(GetAnimalEndpoint.EndpointName);
 
-        var adminGroup = apiGroup.MapGroup("admin");
-        adminGroup.MapPost("animals", AddAnimalEndpoint.ExecuteAsync);
-        adminGroup.MapDelete("animals/{animalId:guid}", DeleteAnimalEndpoint.ExecuteAsync);
+        var adminGroup = apiGroup.MapGroup("/admin");
+        adminGroup.MapPost("/animals", AddAnimalEndpoint.ExecuteAsync);
+        adminGroup.MapDelete("/animals/{animalId:guid}", DeleteAnimalEndpoint.ExecuteAsync);
         adminGroup.RequireAuthorization();
 
-        var speciesGroup = apiGroup.MapGroup("species");
+        var speciesGroup = apiGroup.MapGroup("/species");
         speciesGroup.MapGet("", SearchSpeciesEndpoint.ExecuteAsync);
 
-        var usersGroup = apiGroup.MapGroup("users");
-        usersGroup.MapGet("me", GetCurrentUserEndpoint.Execute);
+        var usersGroup = apiGroup.MapGroup("/users");
+        usersGroup.MapGet("/me", GetCurrentUserEndpoint.Execute);
         usersGroup.RequireAuthorization();
     }
 }

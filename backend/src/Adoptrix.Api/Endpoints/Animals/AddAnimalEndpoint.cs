@@ -3,7 +3,6 @@ using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using FluentValidation;
@@ -21,6 +20,7 @@ public sealed class AddAnimalEndpoint
         IAnimalsRepository animalsRepository,
         ISpeciesRepository speciesRepository,
         IBreedsRepository breedsRepository,
+        LinkGenerator linkGenerator,
         CancellationToken cancellationToken)
     {
         // validate request
@@ -37,7 +37,8 @@ public sealed class AddAnimalEndpoint
             ? (await breedsRepository.GetByNameAsync(request.BreedName, cancellationToken)).Value
             : null;
 
-        var animal = new Animal
+        // add animal to database
+        var addAnimalResult = await animalsRepository.AddAsync(new Animal
         {
             Name = request.Name,
             Description = request.Description,
@@ -46,13 +47,14 @@ public sealed class AddAnimalEndpoint
             Sex = request.Sex,
             DateOfBirth = request.DateOfBirth,
             CreatedBy = claimsPrincipal.GetUserId()
-        };
-
-        var addAnimalResult = await animalsRepository.AddAsync(animal, cancellationToken);
-
-        var response = addAnimalResult.Value.ToResponse();
+        }, cancellationToken);
 
         logger.LogInformation("Added animal with id {Id}", addAnimalResult.Value.Id);
-        return TypedResults.Created($"api/animals/{response.Id}", response);
+
+        var response = addAnimalResult.Value.ToResponse();
+        return TypedResults.Created(linkGenerator.GetPathByName(GetAnimalEndpoint.EndpointName, new
+        {
+            animalId = response.Id
+        }), response);
     }
 }

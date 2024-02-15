@@ -8,6 +8,8 @@ namespace Adoptrix.Api.Endpoints.Animals;
 
 public static class GetAnimalEndpoint
 {
+    public const string EndpointName = "GetAnimal";
+
     public static async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(Guid animalId,
         IAnimalsRepository animalsRepository, CancellationToken cancellationToken)
     {
