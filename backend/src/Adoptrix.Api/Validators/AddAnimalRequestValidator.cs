@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using FluentValidation;
 
@@ -7,8 +8,8 @@ namespace Adoptrix.Api.Validators;
 
 public sealed class AddAnimalRequestValidator : AbstractValidator<AddAnimalRequest>
 {
-    public AddAnimalRequestValidator(DateOfBirthValidator dateOfBirthValidator, ISpeciesService speciesService,
-        IBreedsService breedsService)
+    public AddAnimalRequestValidator(DateOfBirthValidator dateOfBirthValidator, ISpeciesRepository speciesRepository,
+        IBreedsRepository breedsRepository)
     {
         RuleFor(request => request.Name)
             .NotEmpty()
@@ -22,7 +23,7 @@ public sealed class AddAnimalRequestValidator : AbstractValidator<AddAnimalReque
             .MaximumLength(Species.NameMaxLength)
             .MustAsync(async (speciesName, cancellationToken) =>
             {
-                var result = await speciesService.GetByNameAsync(speciesName, cancellationToken);
+                var result = await speciesRepository.GetByNameAsync(speciesName, cancellationToken);
                 return result.IsSuccess;
             })
             .WithMessage("Could not find species with name: {PropertyValue}");
@@ -36,7 +37,7 @@ public sealed class AddAnimalRequestValidator : AbstractValidator<AddAnimalReque
                     return true;
                 }
 
-                var result = await breedsService.GetByNameAsync(breedName, cancellationToken);
+                var result = await breedsRepository.GetByNameAsync(breedName, cancellationToken);
                 return result.IsSuccess;
             })
             .WithMessage("Could not find breed with name: {PropertyValue}");

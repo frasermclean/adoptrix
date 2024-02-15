@@ -8,10 +8,10 @@ namespace Adoptrix.Api.Endpoints.Animals;
 
 public static class GetAnimalEndpoint
 {
-    public static async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(Guid animalId, IAnimalsService animalsService,
-        CancellationToken cancellationToken)
+    public static async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(Guid animalId,
+        IAnimalsRepository animalsRepository, CancellationToken cancellationToken)
     {
-        var result = await animalsService.GetAnimalByIdAsync(animalId, cancellationToken);
+        var result = await animalsRepository.GetAsync(animalId, cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.Ok(result.Value.ToResponse())

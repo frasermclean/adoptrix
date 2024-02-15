@@ -1,8 +1,11 @@
-﻿using Adoptrix.Api.Contracts.Requests;
+﻿using System.Security.Claims;
+using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Domain;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -12,10 +15,12 @@ public sealed class AddAnimalEndpoint
 {
     public static async Task<Results<Created<AnimalResponse>, BadRequest<ValidationFailedResponse>>> ExecuteAsync(
         AddAnimalRequest request,
-        HttpContext context,
+        ClaimsPrincipal claimsPrincipal,
         IValidator<AddAnimalRequest> validator,
         ILogger<AddAnimalEndpoint> logger,
-        IAnimalsService animalsService,
+        IAnimalsRepository animalsRepository,
+        ISpeciesRepository speciesRepository,
+        IBreedsRepository breedsRepository,
         CancellationToken cancellationToken)
     {
         // validate request
@@ -26,14 +31,24 @@ public sealed class AddAnimalEndpoint
             return TypedResults.BadRequest(new ValidationFailedResponse());
         }
 
-        var addAnimalResult = await animalsService.AddAnimalAsync(request.Name, request.Description, request.SpeciesName, request.BreedName,
-            request.Sex, request.DateOfBirth, context.User.GetUserId(), cancellationToken);
+        // get species and breed (should be validated by validator)
+        var species = (await speciesRepository.GetByNameAsync(request.SpeciesName, cancellationToken)).Value;
+        var breed = request.BreedName is not null
+            ? (await breedsRepository.GetByNameAsync(request.BreedName, cancellationToken)).Value
+            : null;
 
-        if (addAnimalResult.IsFailed)
+        var animal = new Animal
         {
-            logger.LogError("Could not add animal with name {Name}", request.Name);
-            throw new InvalidOperationException(addAnimalResult.GetFirstErrorMessage());
-        }
+            Name = request.Name,
+            Description = request.Description,
+            Species = species,
+            Breed = breed,
+            Sex = request.Sex,
+            DateOfBirth = request.DateOfBirth,
+            CreatedBy = claimsPrincipal.GetUserId()
+        };
+
+        var addAnimalResult = await animalsRepository.AddAsync(animal, cancellationToken);
 
         var response = addAnimalResult.Value.ToResponse();
 

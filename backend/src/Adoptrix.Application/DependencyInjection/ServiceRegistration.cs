@@ -10,10 +10,6 @@ public static class ServiceRegistration
         services.AddSingleton<IHashGenerator, HashGenerator>();
         services.AddSingleton<IImageProcessor, ImageProcessor>();
 
-        services.AddScoped<IAnimalsService, AnimalsService>();
-        services.AddScoped<IBreedsService, BreedsService>();
-        services.AddScoped<ISpeciesService, SpeciesService>();
-
         return services;
     }
 }

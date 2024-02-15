@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Validators;
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
 using FluentValidation.TestHelper;
@@ -16,8 +16,8 @@ public class AddAnimalRequestValidatorTests
 
     public AddAnimalRequestValidatorTests()
     {
-        var speciesServiceMock = new Mock<ISpeciesService>();
-        speciesServiceMock.Setup(service =>
+        var speciesRepositoryMock = new Mock<ISpeciesRepository>();
+        speciesRepositoryMock.Setup(service =>
                 service.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string speciesName, CancellationToken _) => speciesName == UnknownSpeciesName
                 ? new SpeciesNotFoundError(speciesName)
@@ -26,8 +26,8 @@ public class AddAnimalRequestValidatorTests
                     Name = speciesName
                 });
 
-        var breedsServiceMock = new Mock<IBreedsService>();
-        breedsServiceMock.Setup(service =>
+        var breedsRepositoryMock = new Mock<IBreedsRepository>();
+        breedsRepositoryMock.Setup(service =>
                 service.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string breedName, CancellationToken _) => breedName == UnknownBreedName
                 ? new BreedNotFoundError(breedName)
@@ -38,8 +38,8 @@ public class AddAnimalRequestValidatorTests
                 });
 
 
-        validator = new AddAnimalRequestValidator(new DateOfBirthValidator(), speciesServiceMock.Object,
-            breedsServiceMock.Object);
+        validator = new AddAnimalRequestValidator(new DateOfBirthValidator(), speciesRepositoryMock.Object,
+            breedsRepositoryMock.Object);
     }
 
     [Fact]
