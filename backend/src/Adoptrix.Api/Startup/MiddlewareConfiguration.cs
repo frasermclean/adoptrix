@@ -45,7 +45,7 @@ public static class MiddlewareConfiguration
 
     private static void MapEndpoints(this WebApplication app)
     {
-        var apiGroup = app.MapGroup("minimal-api");
+        var apiGroup = app.MapGroup("api");
 
         var publicAnimalsGroup = apiGroup.MapGroup("animals");
         publicAnimalsGroup.MapGet("", SearchAnimalsEndpoint.ExecuteAsync);

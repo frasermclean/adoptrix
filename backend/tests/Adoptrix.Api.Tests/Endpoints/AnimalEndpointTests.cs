@@ -1,30 +1,34 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
-using Adoptrix.Api.Endpoints.Animals.AddAnimal;
-using Adoptrix.Api.Endpoints.Animals.DeleteAnimal;
-using Adoptrix.Api.Endpoints.Animals.GetAnimal;
-using Adoptrix.Api.Endpoints.Animals.SearchAnimals;
+using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Api.Tests.Mocks;
-using Adoptrix.Application.Commands.Animals;
 using Adoptrix.Domain;
-using Xunit.Abstractions;
 
 namespace Adoptrix.Api.Tests.Endpoints;
 
-public class AnimalEndpointTests(ApiTestFixture fixture, ITestOutputHelper outputHelper)
-    : TestClass<ApiTestFixture>(fixture, outputHelper)
+public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.Client;
+    private readonly HttpClient httpClient = fixture.CreateClient();
+
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        Converters =
+        {
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+        }
+    };
 
     [Fact]
     public async Task SearchAnimals_WithValidRequest_Should_ReturnOk()
     {
-        var command = new SearchAnimalsCommand();
-
         // act
-        var (message, responses) =
-            await httpClient
-                .GETAsync<SearchAnimalsEndpoint, SearchAnimalsCommand, IEnumerable<AnimalResponse>>(command);
+        var message = await httpClient.GetAsync("api/animals");
+        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<AnimalResponse>>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -37,18 +41,15 @@ public class AnimalEndpointTests(ApiTestFixture fixture, ITestOutputHelper outpu
     public async Task GetAnimal_WithValidRequest_Should_ExpectedStatusCode(Guid animalId,
         HttpStatusCode expectedStatusCode)
     {
-        // arrange
-        var command = new GetAnimalCommand { Id = animalId };
-
         // act
-        var (message, response) =
-            await httpClient.GETAsync<GetAnimalEndpoint, GetAnimalCommand, AnimalResponse>(command);
+        var message = await httpClient.GetAsync($"minimal-api/animals/{animalId}");
 
         // assert
         message.Should().HaveStatusCode(expectedStatusCode);
         if (expectedStatusCode == HttpStatusCode.OK)
         {
-            ValidateAnimalResponse(response);
+            var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
+            ValidateAnimalResponse(response!);
         }
     }
 
@@ -56,15 +57,17 @@ public class AnimalEndpointTests(ApiTestFixture fixture, ITestOutputHelper outpu
     public async Task AddAnimal_WithValidCommand_Should_Return_Ok()
     {
         // arrange
-        var command = CreateAddAnimalCommand("Fido", "A good boy", "dog", "Labrador", Sex.Male, 2);
+        var uri = new Uri("minimal-api/admin/animals", UriKind.Relative);
+        var request = CreateAddAnimalRequest();
 
         // act
-        var (message, response) =
-            await httpClient.POSTAsync<AddAnimalEndpoint, AddAnimalCommand, AnimalResponse>(command);
+        var message = await httpClient.PostAsJsonAsync(uri, request);
+        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
-        message.Headers.Should().ContainKey("Location").WhoseValue.Should().Equal($"api/animals/{response.Id}");
+        response.Should().NotBeNull();
+        message.Headers.Should().ContainKey("Location").WhoseValue.Should().Equal($"api/animals/{response!.Id}");
         ValidateAnimalResponse(response);
     }
 
@@ -77,10 +80,11 @@ public class AnimalEndpointTests(ApiTestFixture fixture, ITestOutputHelper outpu
 
     {
         // arrange
-        var command = CreateAddAnimalCommand(name, description, speciesName, breedName, sex, ageInYears);
+        var uri = new Uri("minimal-api/admin/animals", UriKind.Relative);
+        var request = CreateAddAnimalRequest(name, description, speciesName, breedName, sex, ageInYears);
 
         // act
-        var message = await httpClient.POSTAsync<AddAnimalEndpoint, AddAnimalCommand>(command);
+        var message = await httpClient.PostAsJsonAsync(uri, request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -92,17 +96,17 @@ public class AnimalEndpointTests(ApiTestFixture fixture, ITestOutputHelper outpu
     public async Task DeleteAnimal_WithValidCommand_Should_Return_Ok(Guid animalId, HttpStatusCode expectedStatusCode)
     {
         // arrange
-        var command = new DeleteAnimalCommand { Id = animalId };
+        var uri = new Uri($"/minimal-api/admin/animals/{animalId}", UriKind.Relative);
 
         // act
-        var message = await httpClient.DELETEAsync<DeleteAnimalEndpoint, DeleteAnimalCommand>(command);
+        var message = await httpClient.DeleteAsync(uri);
 
         // assert
         message.Should().HaveStatusCode(expectedStatusCode);
     }
 
-    private static AddAnimalCommand CreateAddAnimalCommand(string? name, string? description, string? speciesName,
-        string? breedName, Sex? sex, int ageInYears) => new()
+    private static AddAnimalRequest CreateAddAnimalRequest(string? name = "Max", string? description = "A good boy",
+        string? speciesName = "dog", string? breedName = "Labrador", Sex? sex = Sex.Male, int ageInYears = 2) => new()
     {
         Name = name!,
         Description = description,

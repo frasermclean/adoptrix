@@ -5,7 +5,6 @@ using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
-using InvalidOperationException = System.InvalidOperationException;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
