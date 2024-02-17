@@ -28,7 +28,7 @@ public sealed class AddAnimalEndpoint
         if (!validationResult.IsValid)
         {
             logger.LogWarning("Validation failed for request: {Request}", request);
-            return TypedResults.BadRequest(new ValidationFailedResponse());
+            return TypedResults.BadRequest(new ValidationFailedResponse { Message = "Invalid request" });
         }
 
         // get species and breed (should be validated by validator)

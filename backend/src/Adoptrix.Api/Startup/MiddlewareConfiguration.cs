@@ -1,4 +1,4 @@
-using Adoptrix.Api.Endpoints.Animals;
+﻿using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Endpoints.Users;
 using FastEndpoints;
@@ -57,6 +57,8 @@ public static class MiddlewareConfiguration
         var adminGroup = apiGroup.MapGroup("/admin");
         adminGroup.MapPost("/animals", AddAnimalEndpoint.ExecuteAsync);
         adminGroup.MapDelete("/animals/{animalId:guid}", DeleteAnimalEndpoint.ExecuteAsync);
+        adminGroup.MapPost("/animals/{animalId:guid}/images", AddAnimalImagesEndpoint.ExecuteAsync)
+            .DisableAntiforgery(); // TODO: Learn more about anti-forgery and remove this line
         adminGroup.RequireAuthorization();
 
         var speciesGroup = apiGroup.MapGroup("/species");
