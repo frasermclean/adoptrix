@@ -67,7 +67,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         response.Should().NotBeNull();
-        message.Headers.Should().ContainKey("Location").WhoseValue.Should().Equal($"api/animals/{response!.Id}");
+        message.Headers.Should().ContainKey("Location").WhoseValue.Should().Equal($"/api/animals/{response!.Id}");
         ValidateAnimalResponse(response);
     }
 
