@@ -7,6 +7,7 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Api.Tests.Mocks;
 using Adoptrix.Domain;
+using System.Net.Http.Headers;
 
 namespace Adoptrix.Api.Tests.Endpoints;
 
@@ -103,6 +104,32 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(expectedStatusCode);
+    }
+
+    [Theory]
+    [InlineData]
+    public async Task AddAnimalImages_WithValidCommand_Should_Return_Ok(string fileName = "lab_puppy_1.jpeg")
+    {
+        // arrange
+        var animalId = Guid.NewGuid();
+        var uri = new Uri($"api/admin/animals/{animalId}/images", UriKind.Relative);
+
+        using var fileContent = new StreamContent(File.OpenRead("Data/lab_puppy_1.jpeg"));
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+
+        var content = new MultipartFormDataContent
+        {
+            { fileContent, "First image", fileName }
+        };
+
+        // act
+        var message = await httpClient.PostAsync(uri, content);
+        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.OK);
+        response.Should().NotBeNull();
+        ValidateAnimalResponse(response!);
     }
 
     private static AddAnimalRequest CreateAddAnimalRequest(string? name = "Max", string? description = "A good boy",
