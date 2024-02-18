@@ -1,4 +1,4 @@
-using Adoptrix.Application.Services;
+using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Infrastructure.DependencyInjection;
 using Azure.Identity;
 using Microsoft.Azure.Functions.Worker;

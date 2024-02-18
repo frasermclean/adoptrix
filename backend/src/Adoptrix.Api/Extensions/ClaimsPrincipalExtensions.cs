@@ -11,6 +11,6 @@ public static class ClaimsPrincipalExtensions
 
         return Guid.TryParse(claimValue, out var userId)
             ? userId
-            : Guid.Empty;
+            : throw new InvalidDataException("User ID claim is missing or invalid");
     }
 }

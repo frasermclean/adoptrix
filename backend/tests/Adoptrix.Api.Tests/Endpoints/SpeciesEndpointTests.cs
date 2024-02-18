@@ -1,28 +1,25 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
 using Adoptrix.Api.Contracts.Responses;
-using Adoptrix.Api.Endpoints.Species.SearchSpecies;
-using Adoptrix.Application.Commands.Species;
-using Xunit.Abstractions;
+using Adoptrix.Api.Tests.Fixtures;
 
 namespace Adoptrix.Api.Tests.Endpoints;
 
-public class SpeciesEndpointTests(ApiTestFixture fixture, ITestOutputHelper outputHelper)
-    : TestClass<ApiTestFixture>(fixture, outputHelper)
+public class SpeciesEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.Client;
+    private readonly HttpClient httpClient = fixture.CreateClient();
 
     [Fact]
     public async Task SearchSpecies_WithValidRequest_Should_ReturnOk()
     {
-        // arrange
-        var command = new SearchSpeciesCommand();
-
         // act
-        var (message, responses) = await httpClient
-            .GETAsync<SearchSpeciesEndpoint, SearchSpeciesCommand, IEnumerable<SpeciesResponse>>(command);
+        var message = await httpClient.GetAsync("api/species");
+        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<SpeciesResponse>>();
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
+        fixture.SpeciesRepository.Verify(repository => repository.SearchSpeciesAsync(It.IsAny<CancellationToken>()),
+            Times.Once);
         responses.Should().HaveCount(3).And.AllSatisfy(response =>
         {
             response.Id.Should().NotBeEmpty();

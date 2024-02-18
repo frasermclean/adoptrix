@@ -9,13 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FastEndpoints.Testing"/>
+    <PackageReference Include="Bogus" />
     <PackageReference Include="FluentAssertions"/>
     <PackageReference Include="FluentAssertions.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="Moq" />
     <PackageReference Include="xunit"/>
     <PackageReference Include="xunit.runner.visualstudio">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -29,6 +31,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Adoptrix.Api\Adoptrix.Api.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\..\data\images\lab_puppy_1.jpeg">
+      <Link>Data\lab_puppy_1.jpeg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\data\images\lab_puppy_2.jpeg">
+      <Link>Data\lab_puppy_2.jpeg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\data\images\lab_puppy_3.jpeg">
+      <Link>Data\lab_puppy_3.jpeg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

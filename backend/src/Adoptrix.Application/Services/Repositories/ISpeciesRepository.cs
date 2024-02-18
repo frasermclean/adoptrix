@@ -6,5 +6,6 @@ namespace Adoptrix.Application.Services.Repositories;
 public interface ISpeciesRepository
 {
     Task<IEnumerable<Species>> SearchSpeciesAsync(CancellationToken cancellationToken = default);
+    Task<Result<Species>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Result<Species>> GetByNameAsync(string name, CancellationToken cancellationToken = default);
 }

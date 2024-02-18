@@ -5,10 +5,11 @@ namespace Adoptrix.Api.Tests.Generators;
 
 public static class BreedGenerator
 {
-    private static readonly Faker<Breed> BreedFaker = new Faker<Breed>()
-        .RuleFor(breed => breed.Name, faker => faker.Name.FirstName())
-        .RuleFor(breed => breed.Species, SpeciesGenerator.Generate);
-        //.RuleFor(breed => breed.Animals, AnimalGenerator.Generate(3));
+    public static Breed Generate(Guid? breedId = null, string? breedName = null) =>
+        CreateFaker(breedId, breedName).Generate();
 
-    public static Breed Generate() => BreedFaker.Generate();
+    private static Faker<Breed> CreateFaker(Guid? breedId = null, string? breedName = null) => new Faker<Breed>()
+        .RuleFor(breed => breed.Id, faker => breedId ?? faker.Random.Guid())
+        .RuleFor(breed => breed.Name, faker => breedName ?? faker.Name.FirstName())
+        .RuleFor(breed => breed.Species, SpeciesGenerator.Generate);
 }
