@@ -2,14 +2,11 @@
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Endpoints.Users;
-using FastEndpoints;
 
 namespace Adoptrix.Api.Startup;
 
 public static class MiddlewareConfiguration
 {
-    private const string ApiRoutePrefix = "api";
-
     /// <summary>
     /// Adds middleware to the application pipeline.
     /// </summary>
@@ -28,20 +25,7 @@ public static class MiddlewareConfiguration
 
         // map endpoints
         app.MapEndpoints();
-
-        app.UseFastEndpoints(config =>
-        {
-            config.Endpoints.RoutePrefix = ApiRoutePrefix;
-            config.Endpoints.Configurator = definition =>
-            {
-                if (app.Configuration.GetValue<bool>("FastEndpoints:DisableAuthorization"))
-                {
-                    definition.AllowAnonymous();
-                }
-            };
-        });
-
-        app.MapHealthChecks($"{ApiRoutePrefix}/health").AllowAnonymous();
+        app.MapHealthChecks("/health").AllowAnonymous();
 
         return app;
     }
@@ -64,11 +48,12 @@ public static class MiddlewareConfiguration
         adminGroup.RequireAuthorization();
 
         var breedsGroup = apiGroup.MapGroup("/breeds");
-        breedsGroup.MapGet("{breedIdOrName}", GetBreedEndpoint.ExecuteAsync)
+        breedsGroup.MapGet("/", SearchBreedsEndpoint.ExecuteAsync);
+        breedsGroup.MapGet("/{breedIdOrName}", GetBreedEndpoint.ExecuteAsync)
             .WithName(GetBreedEndpoint.EndpointName);
         breedsGroup.MapPost("/", AddBreedEndpoint.ExecuteAsync);
-        breedsGroup.MapPut("{breedId:guid}", UpdateBreedEndpoint.ExecuteAsync);
-        breedsGroup.MapDelete("{breedId:guid}", DeleteBreedEndpoint.ExecuteAsync);
+        breedsGroup.MapPut("/{breedId:guid}", UpdateBreedEndpoint.ExecuteAsync);
+        breedsGroup.MapDelete("/{breedId:guid}", DeleteBreedEndpoint.ExecuteAsync);
 
         var speciesGroup = apiGroup.MapGroup("/species");
         speciesGroup.MapGet("", SearchSpeciesEndpoint.ExecuteAsync);

@@ -51,6 +51,18 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Fact]
+    public async Task SearchBreeds_WithValidRequest_Returns_Ok()
+    {
+        // act
+        var message = await httpClient.GetAsync("api/breeds");
+        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<BreedResponse>>(SerializerOptions);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.OK);
+        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllSatisfy(ValidateBreedResponse);
+    }
+
+    [Fact]
     public async Task AddBreed_WithValidRequest_Returns_Created()
     {
         // arrange

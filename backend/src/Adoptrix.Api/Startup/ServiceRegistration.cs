@@ -4,7 +4,6 @@ using Adoptrix.Api.Validators;
 using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Infrastructure;
 using Adoptrix.Infrastructure.DependencyInjection;
-using FastEndpoints;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
@@ -28,7 +27,6 @@ public static class ServiceRegistration
 
         builder.Services
             .AddApplicationInsightsTelemetry()
-            .AddFastEndpoints()
             .AddAuthentication(builder.Configuration)
             .AddValidatorsFromAssemblyContaining<SetAnimalRequestValidator>()
             .AddApplicationServices()
