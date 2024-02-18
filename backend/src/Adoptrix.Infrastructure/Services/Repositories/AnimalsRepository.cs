@@ -52,10 +52,9 @@ public class AnimalsRepository(AdoptrixDbContext dbContext) : Repository(dbConte
         return entry.Entity;
     }
 
-    public async Task<Result<Animal>> UpdateAsync(Animal animal, CancellationToken cancellationToken = default)
+    public async Task<Result> UpdateAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        await SaveChangesAsync(cancellationToken);
-        return animal;
+        return await SaveChangesAsync(cancellationToken);
     }
 
     public async Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default)

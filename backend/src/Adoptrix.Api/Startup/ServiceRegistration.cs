@@ -57,7 +57,7 @@ public static class ServiceRegistration
         return services;
     }
 
-    private static IServiceCollection AddDevelopmentServices(this IServiceCollection services)
+    private static void AddDevelopmentServices(this IServiceCollection services)
     {
         // add cors policy for local development
         services.AddCors(options => options.AddDefaultPolicy(policyBuilder =>
@@ -65,6 +65,5 @@ public static class ServiceRegistration
                 .AllowAnyHeader()
                 .AllowAnyMethod()
         ));
-        return services;
     }
 }

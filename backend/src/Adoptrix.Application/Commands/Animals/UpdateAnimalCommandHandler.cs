@@ -35,7 +35,7 @@ public class UpdateAnimalCommandHandler(
             return updateResult;
         }
 
-        logger.LogInformation("Updated animal with id {AnimalId}", updateResult.Value.Id);
+        logger.LogInformation("Updated animal with id {AnimalId}", command.Id);
         return updateResult;
     }
 }

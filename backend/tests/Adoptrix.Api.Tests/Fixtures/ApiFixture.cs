@@ -89,8 +89,8 @@ public class ApiFixture : WebApplicationFactory<Program>
 
         mock.Setup(repository => repository.UpdateAsync(It.IsAny<Animal>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Animal animal, CancellationToken _) => animal.Id == Guid.Empty
-                ? new Result<Animal>().WithError(new AnimalNotFoundError(Guid.Empty))
-                : Result.Ok(animal));
+                ? new AnimalNotFoundError(Guid.Empty)
+                : Result.Ok());
 
         mock.Setup(repository => repository.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid animalId, CancellationToken _) => animalId == Guid.Empty

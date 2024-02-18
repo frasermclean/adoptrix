@@ -27,7 +27,7 @@ public sealed class AddAnimalEndpoint
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
-            logger.LogWarning("Validation failed for request: {Request}", request);
+            logger.LogWarning("Validation failed for request: {@Request}", request);
             return TypedResults.BadRequest(new ValidationFailedResponse { Message = "Invalid request" });
         }
 

@@ -101,7 +101,7 @@ public static class AddAnimalImagesEndpoint
         var updateDatabaseResult = await animalsRepository.UpdateAsync(animal, cancellationToken);
         if (updateDatabaseResult.IsFailed)
         {
-            return updateDatabaseResult.ToResult();
+            return updateDatabaseResult;
         }
 
         // publish domain event
