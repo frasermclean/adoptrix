@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace Adoptrix.Api.Validators;
 
-public sealed class AddAnimalRequestValidator : AbstractValidator<AddAnimalRequest>
+public sealed class AddAnimalRequestValidator : AbstractValidator<SetAnimalRequest>
 {
     public AddAnimalRequestValidator(DateOfBirthValidator dateOfBirthValidator, ISpeciesRepository speciesRepository,
         IBreedsRepository breedsRepository)

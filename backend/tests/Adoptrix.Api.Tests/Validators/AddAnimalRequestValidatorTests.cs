@@ -114,7 +114,7 @@ public class AddAnimalRequestValidatorTests
             .WithErrorMessage($"Could not find breed with name: {UnknownBreedName}");
     }
 
-    private static AddAnimalRequest CreateRequest(string name = "Max", string description = "A good boy", int age = 2,
+    private static SetAnimalRequest CreateRequest(string name = "Max", string description = "A good boy", int age = 2,
         string speciesName = "dog", string breedName = "Labrador", Sex sex = Sex.Male) => new()
     {
         Name = name,

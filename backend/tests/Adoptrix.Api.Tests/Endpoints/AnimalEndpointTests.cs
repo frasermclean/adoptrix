@@ -61,7 +61,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var uri = new Uri("api/admin/animals", UriKind.Relative);
-        var request = CreateAddAnimalRequest();
+        var request = CreateSetAnimalRequest();
 
         // act
         var message = await httpClient.PostAsJsonAsync(uri, request);
@@ -84,13 +84,31 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var uri = new Uri("api/admin/animals", UriKind.Relative);
-        var request = CreateAddAnimalRequest(name, description, speciesName, breedName, sex, ageInYears);
+        var request = CreateSetAnimalRequest(name, description, speciesName, breedName, sex, ageInYears);
 
         // act
         var message = await httpClient.PostAsJsonAsync(uri, request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task UpdateAnimal_WithValidRequest_Should_Return_Ok()
+    {
+        // arrange
+        var animalId = Guid.NewGuid();
+        var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
+        var request = CreateSetAnimalRequest();
+
+        // act
+        var message = await httpClient.PutAsJsonAsync(uri, request);
+        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.OK);
+        response.Should().NotBeNull();
+        ValidateAnimalResponse(response!);
     }
 
     [Theory]
@@ -136,7 +154,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         ValidateAnimalResponse(response!);
     }
 
-    private static AddAnimalRequest CreateAddAnimalRequest(string? name = "Max", string? description = "A good boy",
+    private static SetAnimalRequest CreateSetAnimalRequest(string? name = "Max", string? description = "A good boy",
         string? speciesName = "dog", string? breedName = "Labrador", Sex? sex = Sex.Male, int ageInYears = 2) => new()
     {
         Name = name!,

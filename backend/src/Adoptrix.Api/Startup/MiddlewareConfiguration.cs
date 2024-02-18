@@ -56,6 +56,7 @@ public static class MiddlewareConfiguration
 
         var adminGroup = apiGroup.MapGroup("/admin");
         adminGroup.MapPost("/animals", AddAnimalEndpoint.ExecuteAsync);
+        adminGroup.MapPut("/animals/{animalId:guid}", UpdateAnimalEndpoint.ExecuteAsync);
         adminGroup.MapDelete("/animals/{animalId:guid}", DeleteAnimalEndpoint.ExecuteAsync);
         adminGroup.MapPost("/animals/{animalId:guid}/images", AddAnimalImagesEndpoint.ExecuteAsync)
             .DisableAntiforgery(); // TODO: Learn more about anti-forgery and remove this line

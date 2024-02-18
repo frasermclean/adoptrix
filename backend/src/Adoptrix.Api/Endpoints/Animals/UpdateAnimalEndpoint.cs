@@ -1,26 +1,23 @@
-﻿using System.Security.Claims;
-using Adoptrix.Api.Contracts.Requests;
+﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Domain;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-public sealed class AddAnimalEndpoint
+public class UpdateAnimalEndpoint
 {
-    public static async Task<Results<Created<AnimalResponse>, BadRequest<ValidationFailedResponse>>> ExecuteAsync(
+    public static async Task<Results<Ok<AnimalResponse>, BadRequest<ValidationFailedResponse>, NotFound>> ExecuteAsync(
+        Guid animalId,
         SetAnimalRequest request,
-        ClaimsPrincipal claimsPrincipal,
         IValidator<SetAnimalRequest> validator,
-        ILogger<AddAnimalEndpoint> logger,
+        ILogger<UpdateAnimalEndpoint> logger,
         IAnimalsRepository animalsRepository,
         ISpeciesRepository speciesRepository,
         IBreedsRepository breedsRepository,
-        LinkGenerator linkGenerator,
         CancellationToken cancellationToken)
     {
         // validate request
@@ -31,30 +28,37 @@ public sealed class AddAnimalEndpoint
             return TypedResults.BadRequest(new ValidationFailedResponse { Message = "Invalid request" });
         }
 
+        // get animal from database
+        var getResult = await animalsRepository.GetAsync(animalId, cancellationToken);
+        if (getResult.IsFailed)
+        {
+            logger.LogError("Could not find animal with Id {AnimalId} to update", animalId);
+            TypedResults.NotFound();
+        }
+
         // get species and breed (should be validated by validator)
         var species = (await speciesRepository.GetByNameAsync(request.SpeciesName, cancellationToken)).Value;
         var breed = request.BreedName is not null
             ? (await breedsRepository.GetByNameAsync(request.BreedName, cancellationToken)).Value
             : null;
 
-        // add animal to database
-        var addAnimalResult = await animalsRepository.AddAsync(new Animal
-        {
-            Name = request.Name,
-            Description = request.Description,
-            Species = species,
-            Breed = breed,
-            Sex = request.Sex,
-            DateOfBirth = request.DateOfBirth,
-            CreatedBy = claimsPrincipal.GetUserId()
-        }, cancellationToken);
+        var animal = getResult.Value;
 
-        logger.LogInformation("Added animal with id {Id}", addAnimalResult.Value.Id);
+        // update properties on the animal
+        animal.Name = request.Name;
+        animal.Description = request.Description;
+        animal.Species = species;
+        animal.Breed = breed;
+        animal.Sex = request.Sex;
+        animal.DateOfBirth = request.DateOfBirth;
 
-        var response = addAnimalResult.Value.ToResponse();
-        return TypedResults.Created(linkGenerator.GetPathByName(GetAnimalEndpoint.EndpointName, new
+        var updateResult = await animalsRepository.UpdateAsync(animal, cancellationToken);
+        if (updateResult.IsFailed)
         {
-            animalId = response.Id
-        }), response);
+            logger.LogWarning("Failed to update animal with Id {AnimalId} - Error: {Error}", animalId,
+                updateResult.GetFirstErrorMessage());
+        }
+
+        return TypedResults.Ok(animal.ToResponse());
     }
 }
