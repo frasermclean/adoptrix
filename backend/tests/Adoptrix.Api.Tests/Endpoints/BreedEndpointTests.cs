@@ -2,8 +2,11 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Domain;
+using Adoptrix.Domain.Errors;
 
 namespace Adoptrix.Api.Tests.Endpoints;
 
@@ -46,6 +49,43 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
         response.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task AddBreed_WithValidRequest_Returns_Created()
+    {
+        // arrange
+        const string breedName = "Sausage Dog";
+        fixture.BreedsRepository
+            .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new BreedNotFoundError(breedName));
+        var request = new SetBreedRequest
+        {
+            Name = breedName, SpeciesId = Guid.NewGuid()
+        };
+
+        // act
+        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(request));
+        var response = await message.Content.ReadFromJsonAsync<BreedResponse>(SerializerOptions);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.Created);
+        ValidateBreedResponse(response!);
+    }
+
+    [Fact]
+    public async Task AddBreed_WithDuplicateBreedName_Returns_BadRequest()
+    {
+        var request = new SetBreedRequest
+        {
+            Name = "Corgi", SpeciesId = Guid.NewGuid()
+        };
+
+        // act
+        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(request));
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
     }
 
     private static void ValidateBreedResponse(BreedResponse response)

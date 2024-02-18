@@ -120,6 +120,11 @@ public class ApiFixture : WebApplicationFactory<Program>
         mock.Setup(repository => repository.SearchSpeciesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(SpeciesGenerator.Generate(SearchResultsCount));
 
+        mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == Guid.Empty
+                ? new SpeciesNotFoundError(Guid.Empty)
+                : SpeciesGenerator.Generate());
+
         mock.Setup(repository => repository.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string speciesName, CancellationToken _) => speciesName == UnknownSpeciesName
                 ? new SpeciesNotFoundError(speciesName)
