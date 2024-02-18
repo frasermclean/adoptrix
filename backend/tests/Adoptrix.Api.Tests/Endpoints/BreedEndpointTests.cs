@@ -5,7 +5,6 @@ using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
 
 namespace Adoptrix.Api.Tests.Endpoints;
@@ -86,6 +85,29 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task DeleteBreed_WithValidBreedId_Returns_NoContent()
+    {
+        // arrange
+        var breedId = Guid.NewGuid();
+
+        // act
+        var message = await httpClient.DeleteAsync($"/api/breeds/{breedId}");
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task DeleteBreed_WithUnknownBreedId_Returns_NotFound()
+    {
+        // act
+        var message = await httpClient.DeleteAsync($"/api/breeds/{Guid.Empty}");
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
     private static void ValidateBreedResponse(BreedResponse response)

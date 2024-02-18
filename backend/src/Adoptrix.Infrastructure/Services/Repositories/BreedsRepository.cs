@@ -64,15 +64,13 @@ public sealed class BreedsRepository(AdoptrixDbContext dbContext) : Repository(d
 
     public async Task<Result> DeleteAsync(Guid breedId, CancellationToken cancellationToken = default)
     {
-        var breed = await DbContext.Breeds.FindAsync([breedId], cancellationToken: cancellationToken);
-        if (breed is null)
+        var getResult = await GetByIdAsync(breedId, cancellationToken);
+        if (getResult.IsFailed)
         {
-            return new BreedNotFoundError(breedId);
+            return getResult.ToResult();
         }
 
-        DbContext.Breeds.Remove(breed);
-        await SaveChangesAsync(cancellationToken);
-
-        return Result.Ok();
+        DbContext.Breeds.Remove(getResult.Value);
+        return await SaveChangesAsync(cancellationToken);
     }
 }
