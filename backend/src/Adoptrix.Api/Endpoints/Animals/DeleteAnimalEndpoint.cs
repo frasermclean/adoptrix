@@ -10,21 +10,16 @@ public sealed class DeleteAnimalEndpoint
     public static async Task<Results<NoContent, NotFound>> ExecuteAsync(Guid animalId, IAnimalsRepository repository,
         ILogger<DeleteAnimalEndpoint> logger, IEventPublisher eventPublisher, CancellationToken cancellationToken)
     {
-        // find existing animal
-        var getResult = await repository.GetAsync(animalId, cancellationToken);
-        if (getResult.IsFailed)
+        // delete animal from database
+        var result = await repository.DeleteAsync(animalId, cancellationToken);
+        if (result.IsFailed)
         {
             logger.LogError("Could not find animal with ID: {AnimalId}", animalId);
             return TypedResults.NotFound();
         }
 
-        // delete animal from database
-        var animal = getResult.Value;
-        await repository.DeleteAsync(animal, cancellationToken);
-
         // publish domain event
-        var domainEvent = new AnimalDeletedEvent(animal.Id);
-        await eventPublisher.PublishDomainEventAsync(domainEvent, cancellationToken);
+        await eventPublisher.PublishDomainEventAsync( new AnimalDeletedEvent(animalId), cancellationToken);
 
         return TypedResults.NoContent();
     }

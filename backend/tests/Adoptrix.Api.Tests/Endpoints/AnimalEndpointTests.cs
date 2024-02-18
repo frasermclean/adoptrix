@@ -33,7 +33,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        responses.Should().HaveCount(3).And.AllSatisfy(ValidateAnimalResponse);
+        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllSatisfy(ValidateAnimalResponse);
     }
 
     [Theory]
@@ -47,6 +47,8 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(expectedStatusCode);
+        fixture.AnimalsRepository.Verify(repository => repository.GetAsync(animalId, It.IsAny<CancellationToken>()),
+            Times.Once);
         if (expectedStatusCode == HttpStatusCode.OK)
         {
             var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
@@ -119,7 +121,9 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         var content = new MultipartFormDataContent
         {
-            { fileContent, "First image", fileName }
+            {
+                fileContent, "First image", fileName
+            }
         };
 
         // act
