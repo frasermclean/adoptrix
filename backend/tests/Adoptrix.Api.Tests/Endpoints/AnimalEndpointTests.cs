@@ -75,8 +75,8 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Theory]
-    [InlineData("Rufus", "Another good boy", "dog", MockBreedsRepository.UnknownBreedName)]
-    [InlineData("Max", "", MockSpeciesRepository.UnknownSpeciesName, "Eastern Gray")]
+    [InlineData("Rufus", "Another good boy", "dog", ApiFixture.UnknownBreedName)]
+    [InlineData("Max", "", ApiFixture.UnknownSpeciesName, "Eastern Gray")]
     [InlineData(null, null, null, null)]
     public async Task AddAnimal_WithInvalidCommand_Should_Return_BadRequest(string? name, string? description,
         string? speciesName, string? breedName, Sex? sex = default, int ageInYears = default)

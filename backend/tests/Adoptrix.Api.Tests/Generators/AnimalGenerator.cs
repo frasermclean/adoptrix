@@ -13,7 +13,7 @@ public static class AnimalGenerator
         .RuleFor(animal => animal.Name, faker => faker.Name.FirstName())
         .RuleFor(animal => animal.Description, faker => faker.Lorem.Paragraph())
         .RuleFor(animal => animal.Species, SpeciesGenerator.Generate)
-        .RuleFor(animal => animal.Breed, BreedGenerator.Generate)
+        .RuleFor(animal => animal.Breed, BreedGenerator.Generate())
         .RuleFor(animal => animal.Sex, faker => faker.Random.Enum<Sex>())
         .RuleFor(animal => animal.DateOfBirth, faker => faker.Date.PastDateOnly(10))
         .RuleFor(animal => animal.CreatedAt, faker => faker.Date.Past())

@@ -38,16 +38,16 @@ public sealed class BreedsRepository(AdoptrixDbContext dbContext) : Repository(d
             : new BreedNotFoundError(breedId);
     }
 
-    public async Task<Result<Breed>> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+    public async Task<Result<Breed>> GetByNameAsync(string breedName, CancellationToken cancellationToken = default)
     {
         var breed = await DbContext.Breeds
             .Include(breed => breed.Species)
             .Include(breed => breed.Animals)
-            .FirstOrDefaultAsync(breed => breed.Name == name, cancellationToken);
+            .FirstOrDefaultAsync(breed => breed.Name == breedName, cancellationToken);
 
         return breed is not null
             ? breed
-            : new BreedNotFoundError(name);
+            : new BreedNotFoundError(breedName);
     }
 
     public async Task<Result<Breed>> AddAsync(Breed breed, CancellationToken cancellationToken = default)
