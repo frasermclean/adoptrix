@@ -5,7 +5,6 @@ using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Api.Tests.Mocks;
 using Adoptrix.Domain;
 using System.Net.Http.Headers;
 

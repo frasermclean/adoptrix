@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Api.Endpoints.Animals;
+using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Endpoints.Users;
 using FastEndpoints;
@@ -61,6 +62,9 @@ public static class MiddlewareConfiguration
         adminGroup.MapPost("/animals/{animalId:guid}/images", AddAnimalImagesEndpoint.ExecuteAsync)
             .DisableAntiforgery(); // TODO: Learn more about anti-forgery and remove this line
         adminGroup.RequireAuthorization();
+
+        var breedsGroup = apiGroup.MapGroup("/breeds");
+        breedsGroup.MapGet("{breedIdOrName}", GetBreedEndpoint.ExecuteAsync);
 
         var speciesGroup = apiGroup.MapGroup("/species");
         speciesGroup.MapGet("", SearchSpeciesEndpoint.ExecuteAsync);

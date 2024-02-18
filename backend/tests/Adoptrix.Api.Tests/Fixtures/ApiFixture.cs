@@ -104,10 +104,15 @@ public class ApiFixture : WebApplicationFactory<Program>
 
     private static void SetupBreedsRepositoryMock(Mock<IBreedsRepository> mock)
     {
+        mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid breedId, CancellationToken _) => breedId == Guid.Empty
+                ? new BreedNotFoundError(Guid.Empty)
+                : BreedGenerator.Generate(breedId));
+
         mock.Setup(repository => repository.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string breedName, CancellationToken _) => breedName == UnknownBreedName
                 ? new BreedNotFoundError(UnknownBreedName)
-                : BreedGenerator.Generate(breedName));
+                : BreedGenerator.Generate(breedName: breedName));
     }
 
     private static void SetupSpeciesRepositoryMock(Mock<ISpeciesRepository> mock)
