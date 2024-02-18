@@ -43,7 +43,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // act
         var message = await httpClient.GetAsync($"/api/breeds/{breedIdOrName}");
-        var response = await message.Content.ReadFromJsonAsync<NotFoundResponse>(SerializerOptions);
+        var response = await message.Content.ReadFromJsonAsync<MessageResponse>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
@@ -85,6 +85,29 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task UpdateBreed_WithValidRequest_Should_Return_Ok()
+    {
+        // arrange
+        var breedId = Guid.NewGuid();
+        const string breedName = "Golden Retriever";
+        fixture.BreedsRepository
+            .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new BreedNotFoundError(breedName));
+        var request = new SetBreedRequest
+        {
+            Name = breedName, SpeciesId = Guid.NewGuid()
+        };
+
+        // act
+        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
+        var response = await message.Content.ReadFromJsonAsync<BreedResponse>(SerializerOptions);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.OK);
+        ValidateBreedResponse(response!);
     }
 
     [Fact]

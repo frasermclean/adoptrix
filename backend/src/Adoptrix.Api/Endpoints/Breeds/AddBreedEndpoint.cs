@@ -27,7 +27,7 @@ public class AddBreedEndpoint
         if (!validationResult.IsValid)
         {
             logger.LogWarning("Validation failed for request: {Request}", request);
-            return TypedResults.BadRequest(new ValidationFailedResponse { Message = "Invalid request" });
+            return TypedResults.BadRequest(new ValidationFailedResponse());
         }
 
         // create new breed and add to database

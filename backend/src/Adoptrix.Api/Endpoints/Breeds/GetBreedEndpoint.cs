@@ -10,7 +10,7 @@ public static class GetBreedEndpoint
 {
     public const string EndpointName = "GetBreed";
 
-    public static async Task<Results<Ok<BreedResponse>, NotFound<NotFoundResponse>>> ExecuteAsync(
+    public static async Task<Results<Ok<BreedResponse>, NotFound<MessageResponse>>> ExecuteAsync(
         string breedIdOrName,
         IBreedsRepository breedsRepository,
         CancellationToken cancellationToken)
@@ -21,6 +21,6 @@ public static class GetBreedEndpoint
 
         return result.IsSuccess
             ? TypedResults.Ok(result.Value.ToResponse())
-            : TypedResults.NotFound(NotFoundResponse.Create(result.GetFirstErrorMessage()));
+            : TypedResults.NotFound(new MessageResponse(result.GetFirstErrorMessage()));
     }
 }
