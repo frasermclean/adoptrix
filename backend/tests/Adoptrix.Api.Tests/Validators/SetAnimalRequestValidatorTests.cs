@@ -7,14 +7,14 @@ using FluentValidation.TestHelper;
 
 namespace Adoptrix.Api.Tests.Validators;
 
-public class AddAnimalRequestValidatorTests
+public class SetAnimalRequestValidatorTests
 {
-    private readonly AddAnimalRequestValidator validator;
+    private readonly SetAnimalRequestValidator validator;
 
     private const string UnknownSpeciesName = "unknown-species";
     private const string UnknownBreedName = "unknown-breed";
 
-    public AddAnimalRequestValidatorTests()
+    public SetAnimalRequestValidatorTests()
     {
         var speciesRepositoryMock = new Mock<ISpeciesRepository>();
         speciesRepositoryMock.Setup(service =>
@@ -38,7 +38,7 @@ public class AddAnimalRequestValidatorTests
                 });
 
 
-        validator = new AddAnimalRequestValidator(new DateOfBirthValidator(), speciesRepositoryMock.Object,
+        validator = new SetAnimalRequestValidator(new DateOfBirthValidator(), speciesRepositoryMock.Object,
             breedsRepositoryMock.Object);
     }
 

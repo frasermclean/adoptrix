@@ -64,7 +64,9 @@ public static class MiddlewareConfiguration
         adminGroup.RequireAuthorization();
 
         var breedsGroup = apiGroup.MapGroup("/breeds");
-        breedsGroup.MapGet("{breedIdOrName}", GetBreedEndpoint.ExecuteAsync);
+        breedsGroup.MapGet("{breedIdOrName}", GetBreedEndpoint.ExecuteAsync)
+            .WithName(GetBreedEndpoint.EndpointName);
+        breedsGroup.MapPost("/", AddBreedEndpoint.ExecuteAsync);
 
         var speciesGroup = apiGroup.MapGroup("/species");
         speciesGroup.MapGet("", SearchSpeciesEndpoint.ExecuteAsync);

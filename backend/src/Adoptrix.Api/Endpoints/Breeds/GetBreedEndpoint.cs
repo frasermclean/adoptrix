@@ -8,6 +8,8 @@ namespace Adoptrix.Api.Endpoints.Breeds;
 
 public static class GetBreedEndpoint
 {
+    public const string EndpointName = "GetBreed";
+
     public static async Task<Results<Ok<BreedResponse>, NotFound<NotFoundResponse>>> ExecuteAsync(
         string breedIdOrName,
         IBreedsRepository breedsRepository,

@@ -30,7 +30,7 @@ public static class ServiceRegistration
             .AddApplicationInsightsTelemetry()
             .AddFastEndpoints()
             .AddAuthentication(builder.Configuration)
-            .AddValidatorsFromAssemblyContaining<AddAnimalRequestValidator>()
+            .AddValidatorsFromAssemblyContaining<SetAnimalRequestValidator>()
             .AddApplicationServices()
             .AddInfrastructureServices(builder.Configuration);
 

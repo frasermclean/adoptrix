@@ -11,7 +11,7 @@ public interface IBreedsRepository
 
     Task<Result<Breed>> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default);
     Task<Result<Breed>> GetByNameAsync(string breedName, CancellationToken cancellationToken = default);
-    Task<Result<Breed>> AddAsync(Breed breed, CancellationToken cancellationToken = default);
+    Task<Result> AddAsync(Breed breed, CancellationToken cancellationToken = default);
     Task<Result<Breed>> UpdateAsync(Breed breed, CancellationToken cancellationToken = default);
     Task<Result> DeleteAsync(Guid breedId, CancellationToken cancellationToken = default);
 }

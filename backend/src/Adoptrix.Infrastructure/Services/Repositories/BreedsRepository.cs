@@ -50,12 +50,10 @@ public sealed class BreedsRepository(AdoptrixDbContext dbContext) : Repository(d
             : new BreedNotFoundError(breedName);
     }
 
-    public async Task<Result<Breed>> AddAsync(Breed breed, CancellationToken cancellationToken = default)
+    public async Task<Result> AddAsync(Breed breed, CancellationToken cancellationToken = default)
     {
-        var entry = DbContext.Breeds.Add(breed);
-        await SaveChangesAsync(cancellationToken);
-
-        return entry.Entity;
+        DbContext.Breeds.Add(breed);
+        return await SaveChangesAsync(cancellationToken);
     }
 
     public async Task<Result<Breed>> UpdateAsync(Breed breed, CancellationToken cancellationToken = default)
