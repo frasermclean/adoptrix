@@ -111,6 +111,44 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Fact]
+    public async Task UpdateBreed_WithDuplicateBreedName_Returns_BadRequest()
+    {
+        // arrange
+        var breedId = Guid.NewGuid();
+        var request = new SetBreedRequest
+        {
+            Name = "Corgi", SpeciesId = Guid.NewGuid()
+        };
+
+        // act
+        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
+        var response = await message.Content.ReadFromJsonAsync<ValidationFailedResponse>(SerializerOptions);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+        response.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task UpdateBreed_WithUnknownBreedId_Returns_NotFound()
+    {
+        // arrange
+        var breedId = Guid.Empty;
+        var request = new SetBreedRequest
+        {
+            Name = "Corgi", SpeciesId = Guid.NewGuid()
+        };
+
+        // act
+        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
+        var response = await message.Content.ReadFromJsonAsync<MessageResponse>(SerializerOptions);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.NotFound);
+        response.Should().NotBeNull();
+    }
+
+    [Fact]
     public async Task DeleteBreed_WithValidBreedId_Returns_NoContent()
     {
         // arrange

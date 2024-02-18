@@ -20,19 +20,19 @@ public class UpdateBreedEndpoint
             ISpeciesRepository speciesRepository,
             CancellationToken cancellationToken)
     {
+        // find the breed by id
+        var getResult = await breedsRepository.GetByIdAsync(breedId, cancellationToken);
+        if (getResult.IsFailed)
+        {
+            return TypedResults.NotFound(new MessageResponse(getResult.GetFirstErrorMessage()));
+        }
+
         // validate request
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
             logger.LogWarning("Validation failed for request: {Request}", request);
             return TypedResults.BadRequest(new ValidationFailedResponse { Message = "Invalid request" });
-        }
-
-        // find the breed by id
-        var getResult = await breedsRepository.GetByIdAsync(breedId, cancellationToken);
-        if (getResult.IsFailed)
-        {
-            return TypedResults.NotFound(new MessageResponse(getResult.GetFirstErrorMessage()));
         }
 
         var speciesResult = await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken);
