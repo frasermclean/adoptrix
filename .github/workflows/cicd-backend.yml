@@ -18,8 +18,8 @@ on:
       - .github/workflows/cicd-backend.yml
 
 env:
-  API_ARTIFACT_NAME: adoptrix-api-${{ github.sha }}
-  JOBS_ARTIFACT_NAME: jobs-${{ github.sha }}
+  API_ARTIFACT_NAME: adoptrix-api-container-image
+  JOBS_ARTIFACT_NAME: jobs-published-functions-app
 
 jobs:
   # Build, test and publish API job
@@ -94,19 +94,15 @@ jobs:
           --output publish
         working-directory: ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
 
-      # Build API Docker image
-      - name: Build API Docker image
-        run: >-
-          docker build
-          --tag ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ github.sha }}
-          ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
-
-      # Save Docker image
-      - name: Save Docker image
-        run: >-
-          docker save
-          --output ${{ github.workspace }}/${{ env.API_ARTIFACT_NAME }}.tar
-          ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ github.sha }}
+      # Build and save API image
+      - name: Build and save API image
+        env:
+          IMAGE_TAG: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ github.sha }}
+          OUTPUT_PATH: ${{ github.workspace }}/${{ env.API_ARTIFACT_NAME }}.tar
+        run: |
+          docker build --tag ${{ env.IMAGE_TAG }} .
+          docker save --output ${{ env.OUTPUT_PATH }} ${{ env.IMAGE_TAG }}
+        working-directory: ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
 
       # Upload API artifact
       - name: Upload API artifact
