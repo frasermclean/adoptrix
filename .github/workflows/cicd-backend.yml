@@ -29,7 +29,6 @@ jobs:
     env:
       BACKEND_DIRECTORY: ${{ github.workspace }}/backend
       BUILD_CONFIGURATION: Release
-      API_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/api
       JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/jobs
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/test-results
     permissions:
@@ -85,24 +84,22 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-      # Build API Docker image
-      - name: Build API Docker image
-        run: >-
-          docker build
-          --file ${{ env.BACKEND_DIRECTORY }}/api.Dockerfile
-          --tag ${{ vars.CONTAINER_REGISTRY }}.azurecr.io/adoptrix-api:${{ github.sha }}
-          ${{ env.BACKEND_DIRECTORY }}
-        working-directory: ${{ env.BACKEND_DIRECTORY }}
-
       # Publish API project
       - name: Publish API project
         if: github.event_name != 'pull_request'
         run: >-
-          dotnet publish ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
+          dotnet publish
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
-          --output ${{ env.API_PUBLISH_DIRECTORY }}
-        working-directory: ${{ env.BACKEND_DIRECTORY }}
+          --output publish
+        working-directory: ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
+
+      # Build API Docker image
+      - name: Build API Docker image
+        run: >-
+          docker build
+          --tag ${{ vars.CONTAINER_REGISTRY }}.azurecr.io/adoptrix-api:${{ github.sha }}
+          ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
 
       # Upload API artifact
       - name: Upload API artifact
@@ -110,7 +107,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.API_ARTIFACT_NAME }}
-          path: ${{ env.API_PUBLISH_DIRECTORY }}
+          path: ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api/publish
 
       # Publish jobs project
       - name: Publish jobs project
@@ -134,7 +131,7 @@ jobs:
   deploy_infra:
     name: Deploy infrastructure
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     environment: demo
     permissions:
       id-token: write
