@@ -29,7 +29,7 @@ jobs:
     env:
       BACKEND_DIRECTORY: ${{ github.workspace }}/backend
       BUILD_CONFIGURATION: Release
-      API_IMAGE_PATH: ${{ github.workspace }}/adoptrix-api-${{ github.sha }}.tar
+      API_IMAGE_PATH: ${{ github.workspace }}/adoptrix-api.tar
       JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/jobs
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
     permissions:
@@ -143,7 +143,7 @@ jobs:
   deploy_infra:
     name: Deploy infrastructure
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request'
     environment: demo
     permissions:
       id-token: write
@@ -156,6 +156,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Download API artifact
+      - name: Download API artifact
+        uses: actions/download-artifact@v4
+        id: download_artifact
+        with:
+          name: ${{ env.API_ARTIFACT_NAME }}
+
       # Login to Azure
       - name: Login to Azure
         uses: azure/login@v1
@@ -163,6 +170,13 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Push image to Azure Container Registry
+        env:
+          IMAGE_PATH: ${{ steps.download_artifact.outputs.download-path }}/adoptrix-api.tar
+        run: |
+          az acr login --name ${{ vars.ACR_NAME }}
+          docker load --input ${{ env.IMAGE_PATH }}
 
       # Deploy Bicep template
       - name: Deploy Bicep template
