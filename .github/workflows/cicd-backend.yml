@@ -18,8 +18,8 @@ on:
       - .github/workflows/cicd-backend.yml
 
 env:
-  API_ARTIFACT_NAME: backend-api
-  JOBS_ARTIFACT_NAME: backend-jobs
+  API_ARTIFACT_NAME: adoptrix-api-${{ github.sha }}
+  JOBS_ARTIFACT_NAME: jobs-${{ github.sha }}
 
 jobs:
   # Build, test and publish API job
@@ -29,8 +29,8 @@ jobs:
     env:
       BACKEND_DIRECTORY: ${{ github.workspace }}/backend
       BUILD_CONFIGURATION: Release
-      JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/publish/jobs
-      TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/test-results
+      JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/jobs
+      TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
     permissions:
       checks: write
       pull-requests: write
@@ -98,8 +98,15 @@ jobs:
       - name: Build API Docker image
         run: >-
           docker build
-          --tag ${{ vars.CONTAINER_REGISTRY }}.azurecr.io/adoptrix-api:${{ github.sha }}
+          --tag ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ github.sha }}
           ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
+
+      # Save Docker image
+      - name: Save Docker image
+        run: >-
+          docker save
+          --output ${{ github.workspace }}/${{ env.API_ARTIFACT_NAME }}.tar
+          ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ github.sha }}
 
       # Upload API artifact
       - name: Upload API artifact
@@ -107,7 +114,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.API_ARTIFACT_NAME }}
-          path: ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api/publish
+          path: ${{ github.workspace }}/${{ env.API_ARTIFACT_NAME }}.tar
 
       # Publish jobs project
       - name: Publish jobs project
