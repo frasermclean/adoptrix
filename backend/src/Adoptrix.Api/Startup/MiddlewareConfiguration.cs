@@ -1,4 +1,5 @@
-﻿using Adoptrix.Api.Endpoints.Animals;
+﻿using Adoptrix.Api.Endpoints;
+using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Endpoints.Users;
@@ -33,6 +34,10 @@ public static class MiddlewareConfiguration
     private static void MapEndpoints(this IEndpointRouteBuilder app)
     {
         var apiGroup = app.MapGroup("/api");
+
+        apiGroup.MapGet("/about", AboutEndpoint.Execute)
+            .AllowAnonymous()
+            .WithName("About");
 
         var publicAnimalsGroup = apiGroup.MapGroup("/animals");
         publicAnimalsGroup.MapGet("/", SearchAnimalsEndpoint.ExecuteAsync);
