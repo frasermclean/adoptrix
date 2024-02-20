@@ -24,10 +24,10 @@ public static class AboutEndpoint
     {
         // get version string from custom attribute
         var versionString = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-            ?.InformationalVersion;
+            !.InformationalVersion;
 
         // split the version string to get the date part
-        var versionParts = versionString!.Split("+build");
+        var versionParts = versionString.Split("+build");
 
         var version = versionParts[0];
         var buildDate = DateTime.ParseExact(versionParts[1], "yyyyMMddHHmmss", CultureInfo.InvariantCulture,
