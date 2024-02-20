@@ -11,7 +11,9 @@ public class AboutEndpointTests
         var response = AboutEndpoint.Execute();
 
         // assert
-        response.Version.Should().NotBeNullOrEmpty();
-        response.Environment.Should().NotBeNullOrEmpty();
+        response.Version.Should().NotBeEmpty();
+        response.Environment.Should().NotBeEmpty();
+        response.BuildDate.Should().BeWithin(TimeSpan.FromMinutes(5));
+        response.BuildDate.Kind.Should().Be(DateTimeKind.Utc);
     }
 }
