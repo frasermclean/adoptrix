@@ -33,13 +33,12 @@ jobs:
       # Deploy Bicep template
       - name: Deploy Bicep template
         uses: azure/arm-deploy@v1
-        id: deploy_bicep
         env:
           ATTEMPT_ROLE_ASSIGNMENTS: false
           HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
         with:
           scope: resourcegroup
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
-          deploymentName: main-deploy-infra-${{ github.run_number }}-${{ github.run_id }}
+          deploymentName: main-deploy-${{ github.run_number }}
           template: ${{ github.workspace }}/deploy/infra/main.bicep
           parameters: ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
