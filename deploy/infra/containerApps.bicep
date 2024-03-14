@@ -29,6 +29,9 @@ param containerRegistryName string
 @description('Name of the API container image')
 param apiImageName string
 
+@description('Tag of the API container image')
+param apiImageTag string
+
 @description('Array of front-end origins that are allowed to access the app service')
 param corsAllowedOrigins array
 
@@ -137,7 +140,7 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
       containers: [
         {
           name: apiImageName
-          image: '${containerRegistryLoginServer}/${apiImageName}:latest'
+          image: '${containerRegistryLoginServer}/${apiImageName}:${apiImageTag}'
           resources: {
             cpu: json('0.5')
             memory: '1Gi'

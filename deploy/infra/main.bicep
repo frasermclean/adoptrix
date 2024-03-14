@@ -47,6 +47,9 @@ param containerRegistryName string
 @description('Name of the API container image')
 param apiImageName string
 
+@description('Tag of the API container image')
+param apiImageTag string
+
 var tags = {
   workload: workload
   appEnv: appEnv
@@ -248,6 +251,7 @@ module containerAppsModule './containerApps.bicep' = {
     sharedResourceGroup: sharedResourceGroup
     containerRegistryName: containerRegistryName
     apiImageName: apiImageName
+    apiImageTag: apiImageTag
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     appConfigurationEndpoint: appConfiguration.properties.endpoint
     corsAllowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
