@@ -33,9 +33,9 @@ jobs:
       # Set image tag
       - name: Set image tag
         run: |
-          $API_IMAGE_TAG = az acr repository show-tags --name ${{ vars.ACR_NAME }} --repository adoptrix-api --orderby time_desc --top 1 --output tsv
-          echo "Latest image tag: $API_IMAGE_TAG"
-          echo "API_IMAGE_TAG=$API_IMAGE_TAG" >> $GITHUB_ENV
+          IMAGE_TAG = $(az acr repository show-tags --name ${{ vars.ACR_NAME }} --repository adoptrix-api --orderby time_desc --top 1 --output tsv)
+          echo "Latest image tag: $IMAGE_TAG"
+          echo "API_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       # Deploy Bicep template
       - name: Deploy Bicep template
