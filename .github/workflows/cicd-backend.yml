@@ -177,19 +177,20 @@ jobs:
       - name: Load Docker image
         run: docker load --input ${{ steps.download-artifact.outputs.download-path }}/adoptrix-api.tar
 
-      # Push Docker image to ACR
-      - name: Push Docker image to ACR
-        run: docker push ${{ needs.build.outputs.imageTag }}
+      # Push images to ACR
+      - name: Push images to ACR
+        env:
+          LATEST_IMAGE_TAG: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_IMAGE_NAME }}:latest
+        run: |
+          docker tag ${{ needs.build.outputs.imageTag }} ${{ env.LATEST_IMAGE_TAG }}
+          docker push --all-tags ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_IMAGE_NAME }}
 
-      # Build and deploy Container App
-      - name: Build and deploy Container App
-        if: false
+      # Deploy Container App
+      - name: Deploy Container App
         uses: azure/container-apps-deploy-action@v1
         with:
-          appSourcePath: ${{ github.workspace }}/backend
-          dockerfilePath: api.Dockerfile
-          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_IMAGE_NAME }}:${{ needs.build.outputs.imageTag }}
           acrName: ${{ vars.ACR_NAME }}
+          imageToDeploy: ${{ needs.build.outputs.imageTag }}
           containerAppName: adoptrix-demo-api-ca
           resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
 
