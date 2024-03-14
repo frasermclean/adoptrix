@@ -105,7 +105,7 @@ jobs:
       # Build and save API image
       - name: Build and save API image
         env:
-          IMAGE_TAG: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ steps.calculate_version.outputs.new_tag }}
+          IMAGE_TAG: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_IMAGE_NAME }}:${{ steps.calculate_version.outputs.new_tag }}
         run: |
           docker build --tag ${{ env.IMAGE_TAG }} .
           docker save --output ${{ env.API_IMAGE_PATH }} ${{ env.IMAGE_TAG }}
@@ -220,7 +220,7 @@ jobs:
         with:
           appSourcePath: ${{ github.workspace }}/backend
           dockerfilePath: api.Dockerfile
-          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ github.sha }}
+          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_IMAGE_NAME }}:${{ github.sha }}
           acrName: ${{ vars.ACR_NAME }}
           containerAppName: ${{ needs.deploy_infra.outputs.apiAppName }}
           resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
