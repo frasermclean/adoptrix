@@ -9,12 +9,12 @@ on:
       - .github/workflows/cicd-backend.yml
       - backend/**
 
-  pull_request:
-    branches:
-      - main
-    paths:
-      - .github/workflows/cicd-backend.yml
-      - backend/**
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - .github/workflows/cicd-backend.yml
+  #     - backend/**
 
 env:
   API_ARTIFACT_NAME: adoptrix-api
@@ -106,11 +106,13 @@ jobs:
       # Build and save API image
       - name: Build and save API image
         if: github.event_name != 'pull_request'
+        id: build-api-image
         env:
           IMAGE_TAG: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_IMAGE_NAME }}:${{ steps.calculate_version.outputs.new_tag }}
         run: |
           docker build --tag ${{ env.IMAGE_TAG }} .
           docker save --output ${{ env.API_IMAGE_PATH }} ${{ env.IMAGE_TAG }}
+          echo "imageTag=${{ env.IMAGE_TAG }}" >> "$GITHUB_OUTPUT"
         working-directory: ${{ env.BACKEND_DIRECTORY }}/src/Adoptrix.Api
 
       # Upload API artifact
@@ -139,7 +141,7 @@ jobs:
           name: ${{ env.JOBS_ARTIFACT_NAME }}
           path: ${{ env.JOBS_PUBLISH_DIRECTORY }}/*
     outputs:
-      imageTag: ${{ steps.calculate_version.outputs.new_tag }}
+      imageTag: ${{ steps.build-api-image.outputs.imageTag }}
 
   # Deploy API application job
   deploy_api_app:
@@ -160,6 +162,10 @@ jobs:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+      # Authenticate with Azure Container Registry
+      - name: Authenticate with ACR
+        run: az acr login --name ${{ vars.ACR_NAME }}
+
       # Download artifact
       - name: Download artifact
         id: download-artifact
@@ -170,6 +176,10 @@ jobs:
       # Load Docker image
       - name: Load Docker image
         run: docker load --input ${{ steps.download-artifact.outputs.download-path }}/adoptrix-api.tar
+
+      # Push Docker image to ACR
+      - name: Push Docker image to ACR
+        run: docker push ${{ needs.build.outputs.imageTag }}
 
       # Build and deploy Container App
       - name: Build and deploy Container App
