@@ -4,17 +4,15 @@ on:
   push:
     branches:
       - main
-      - feature/container-apps-deploy-refactor # // TODO: Remove this line after testing
     paths:
       - .github/workflows/cicd-backend.yml
       - backend/**
-
-  # pull_request:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - .github/workflows/cicd-backend.yml
-  #     - backend/**
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/cicd-backend.yml
+      - backend/**
 
 env:
   API_ARTIFACT_NAME: adoptrix-api
@@ -193,6 +191,14 @@ jobs:
           imageToDeploy: ${{ needs.build.outputs.imageTag }}
           containerAppName: adoptrix-demo-api-ca
           resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
+
+      # Tag main branch
+      - name: Tag main branch
+        uses: anothrNick/github-tag-action@1.67.0
+        if: github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
 
   # Deploy jobs application
   deploy_jobs_app:
