@@ -7,6 +7,7 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Domain;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Endpoints;
 
@@ -56,7 +57,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Fact]
-    public async Task AddAnimal_WithValidCommand_Should_Return_Ok()
+    public async Task AddAnimal_WithValidRequest_Should_Return_Ok()
     {
         // arrange
         var uri = new Uri("api/admin/animals", UriKind.Relative);
@@ -77,7 +78,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     [InlineData("Rufus", "Another good boy", "dog", ApiFixture.UnknownBreedName)]
     [InlineData("Max", "", ApiFixture.UnknownSpeciesName, "Eastern Gray")]
     [InlineData(null, null, null, null)]
-    public async Task AddAnimal_WithInvalidCommand_Should_Return_BadRequest(string? name, string? description,
+    public async Task AddAnimal_WithInvalidRequest_Should_Return_ProblemDetails(string? name, string? description,
         string? speciesName, string? breedName, Sex? sex = default, int ageInYears = default)
 
     {
@@ -87,9 +88,11 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // act
         var message = await httpClient.PostAsJsonAsync(uri, request);
+        var problemDetails = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+        problemDetails!.Errors.Should().NotBeEmpty();
     }
 
     [Fact]

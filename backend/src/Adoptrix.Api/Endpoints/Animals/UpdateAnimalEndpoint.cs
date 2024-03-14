@@ -10,7 +10,7 @@ namespace Adoptrix.Api.Endpoints.Animals;
 
 public class UpdateAnimalEndpoint
 {
-    public static async Task<Results<Ok<AnimalResponse>, BadRequest<ValidationFailedResponse>, NotFound>> ExecuteAsync(
+    public static async Task<Results<Ok<AnimalResponse>, ValidationProblem, NotFound>> ExecuteAsync(
         Guid animalId,
         SetAnimalRequest request,
         IValidator<SetAnimalRequest> validator,
@@ -25,7 +25,7 @@ public class UpdateAnimalEndpoint
         if (!validationResult.IsValid)
         {
             logger.LogWarning("Validation failed for request: {Request}", request);
-            return TypedResults.BadRequest(new ValidationFailedResponse { Message = "Invalid request" });
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
         // get animal from database

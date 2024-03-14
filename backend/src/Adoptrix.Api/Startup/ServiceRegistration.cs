@@ -29,6 +29,7 @@ public static class ServiceRegistration
             .AddApplicationInsightsTelemetry()
             .AddAuthentication(builder.Configuration)
             .AddValidatorsFromAssemblyContaining<SetAnimalRequestValidator>()
+            .AddProblemDetails()
             .AddApplicationServices()
             .AddInfrastructureServices(builder.Configuration);
 

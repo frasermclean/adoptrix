@@ -12,7 +12,7 @@ namespace Adoptrix.Api.Endpoints.Animals;
 
 public sealed class AddAnimalEndpoint
 {
-    public static async Task<Results<Created<AnimalResponse>, BadRequest<ValidationFailedResponse>>> ExecuteAsync(
+    public static async Task<Results<Created<AnimalResponse>, ValidationProblem>> ExecuteAsync(
         SetAnimalRequest request,
         ClaimsPrincipal claimsPrincipal,
         IValidator<SetAnimalRequest> validator,
@@ -28,7 +28,7 @@ public sealed class AddAnimalEndpoint
         if (!validationResult.IsValid)
         {
             logger.LogWarning("Validation failed for request: {Request}", request);
-            return TypedResults.BadRequest(new ValidationFailedResponse { Message = "Invalid request" });
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
         // get species and breed (should be validated by validator)
