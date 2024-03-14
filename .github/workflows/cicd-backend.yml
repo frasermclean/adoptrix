@@ -104,6 +104,7 @@ jobs:
 
       # Build and save API image
       - name: Build and save API image
+        if: github.event_name != 'pull_request'
         env:
           IMAGE_TAG: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_IMAGE_NAME }}:${{ steps.calculate_version.outputs.new_tag }}
         run: |
@@ -136,67 +137,15 @@ jobs:
         with:
           name: ${{ env.JOBS_ARTIFACT_NAME }}
           path: ${{ env.JOBS_PUBLISH_DIRECTORY }}/*
-
-  # Deploy infrastructure job
-  deploy_infra:
-    name: Deploy infrastructure
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    environment: demo
-    permissions:
-      id-token: write
-      contents: read
     outputs:
-      apiAppName: ${{ steps.deploy_bicep.outputs.apiAppName }}
-      functionAppName: ${{ steps.deploy_bicep.outputs.functionAppName }}
-    steps:
-      # Check out the repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Download API artifact
-      - name: Download API artifact
-        uses: actions/download-artifact@v4
-        id: download_artifact
-        with:
-          name: ${{ env.API_ARTIFACT_NAME }}
-
-      # Login to Azure
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Push image to Azure Container Registry
-        env:
-          IMAGE_PATH: ${{ steps.download_artifact.outputs.download-path }}/adoptrix-api.tar
-        run: |
-          az acr login --name ${{ vars.ACR_NAME }}
-          docker load --input ${{ env.IMAGE_PATH }}
-
-      # Deploy Bicep template
-      - name: Deploy Bicep template
-        uses: azure/arm-deploy@v1
-        id: deploy_bicep
-        env:
-          ATTEMPT_ROLE_ASSIGNMENTS: false
-          HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
-        with:
-          scope: resourcegroup
-          resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
-          deploymentName: main-cicd-backend-${{ github.run_number }}
-          template: ${{ github.workspace }}/deploy/infra/main.bicep
-          parameters: ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
+      imageTag: ${{ steps.calculate_version.outputs.new_tag }}
 
   # Deploy API application job
   deploy_api_app:
     name: Deploy API application
     runs-on: ubuntu-latest
-    needs:
-      - build
-      - deploy_infra
+    needs: build
+    if: github.event_name != 'pull_request'
     permissions:
       id-token: write
       contents: read
@@ -220,18 +169,17 @@ jobs:
         with:
           appSourcePath: ${{ github.workspace }}/backend
           dockerfilePath: api.Dockerfile
-          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_IMAGE_NAME }}:${{ github.sha }}
+          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_IMAGE_NAME }}:${{ needs.build.outputs.imageTag }}
           acrName: ${{ vars.ACR_NAME }}
-          containerAppName: ${{ needs.deploy_infra.outputs.apiAppName }}
+          containerAppName: adoptrix-demo-api-ca
           resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
 
   # Deploy jobs application
   deploy_jobs_app:
     name: Deploy jobs application
     runs-on: ubuntu-latest
-    needs:
-      - build
-      - deploy_infra
+    needs: build
+    if: github.event_name != 'pull_request'
     environment: demo
     env:
       APP_PATH: ${{ github.workspace }}/app
@@ -247,6 +195,6 @@ jobs:
       - name: Publish application
         uses: Azure/functions-action@v1
         with:
-          app-name: ${{ needs.deploy_infra.outputs.functionAppName }}
+          app-name: adoptrix-demo-jobs-func
           package: ${{ env.APP_PATH }}
           publish-profile: ${{ secrets.JOBS_PUBLISH_PROFILE }}
