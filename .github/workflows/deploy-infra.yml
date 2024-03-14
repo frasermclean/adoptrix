@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/container-apps-deploy-refactor
     paths:
       - .github/workflows/deploy-infra.yml
       - deploy/infra/**
