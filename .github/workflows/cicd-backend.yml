@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/container-apps-deploy-refactor # // TODO: Remove this line after testing
     paths:
       - .github/workflows/cicd-backend.yml
       - backend/**
@@ -151,10 +152,6 @@ jobs:
       contents: read
     environment: demo
     steps:
-      # Check out the repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       # Login to Azure
       - name: Login to Azure
         uses: azure/login@v1
@@ -163,8 +160,20 @@ jobs:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+      # Download artifact
+      - name: Download artifact
+        id: download-artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.API_ARTIFACT_NAME }}
+
+      # Load Docker image
+      - name: Load Docker image
+        run: docker load --input ${{ steps.download-artifact.outputs.download-path }}/adoptrix-api.tar
+
       # Build and deploy Container App
       - name: Build and deploy Container App
+        if: false
         uses: azure/container-apps-deploy-action@v1
         with:
           appSourcePath: ${{ github.workspace }}/backend
@@ -181,20 +190,18 @@ jobs:
     needs: build
     if: github.event_name != 'pull_request'
     environment: demo
-    env:
-      APP_PATH: ${{ github.workspace }}/app
     steps:
       # Download artifact
       - name: Download artifact
+        id: download-artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.JOBS_ARTIFACT_NAME }}
-          path: ${{ env.APP_PATH }}
 
       # Publish application
       - name: Publish application
         uses: Azure/functions-action@v1
         with:
           app-name: adoptrix-demo-jobs-func
-          package: ${{ env.APP_PATH }}
+          package: ${{ steps.download-artifact.outputs.download-path }}
           publish-profile: ${{ secrets.JOBS_PUBLISH_PROFILE }}
