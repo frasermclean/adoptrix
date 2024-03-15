@@ -14,7 +14,9 @@ public class AnimalTests
 
         // assert
         fido.Should().Be(felix);
-        fido.Equals(new { }).Should().BeFalse();
+        fido.Equals(new
+        {
+        }).Should().BeFalse();
         fido.GetHashCode().Should().Be(felix.GetHashCode());
         fido.Id.Should().Be(id);
         fido.Name.Should().Be("Fido");
@@ -30,16 +32,20 @@ public class AnimalTests
         var animal = CreateAnimal();
         const string fileName = "DSC0001.jpg";
         const string contentType = "image/jpeg";
+        const string description = "Fido in the park";
+        var userId = Guid.NewGuid();
 
         // act
-        var result1 = animal.AddImage(fileName, contentType);
-        var result2 = animal.AddImage(fileName, contentType);
+        var image = animal.AddImage(fileName, contentType, description, userId);
+        var action = () => animal.AddImage(fileName, contentType);
 
         // assert
-        result1.Should().BeSuccess().Which.Value.OriginalFileName.Should().Be(fileName);
+        image.OriginalFileName.Should().Be(fileName);
+        image.OriginalContentType.Should().Be(contentType);
+        image.Description.Should().Be(description);
+        image.UploadedBy.Should().Be(userId);
         animal.Images.Should().ContainSingle().Which.OriginalFileName.Should().Be(fileName);
-        result2.Should().BeFailure().Which.Should()
-            .HaveReason<DuplicateImageError>($"Image with original filename {fileName} already exists");
+        action.Should().Throw<ArgumentException>().WithMessage("Image with the same name already exists*");
     }
 
     private static Animal CreateAnimal(Guid? id = null, string name = "Fido", string? description = null,
@@ -48,7 +54,10 @@ public class AnimalTests
         Id = id ?? Guid.NewGuid(),
         Name = name,
         Description = description,
-        Species = species ?? new Species { Id = Guid.NewGuid(), Name = "Dog" },
+        Species = species ?? new Species
+        {
+            Id = Guid.NewGuid(), Name = "Dog"
+        },
         DateOfBirth = dateOfBirth ?? new DateOnly(2019, 1, 1)
     };
 }

@@ -159,23 +159,13 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         message.Should().HaveStatusCode(expectedStatusCode);
     }
 
-    [Theory]
-    [InlineData]
-    public async Task AddAnimalImages_WithValidCommand_Should_Return_Ok(string fileName = "lab_puppy_1.jpeg")
+    [Fact]
+    public async Task AddAnimalImages_WithValidCommand_Should_Return_Ok()
     {
         // arrange
         var animalId = Guid.NewGuid();
         var uri = new Uri($"api/admin/animals/{animalId}/images", UriKind.Relative);
-
-        using var fileContent = new StreamContent(File.OpenRead("Data/lab_puppy_1.jpeg"));
-        fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-
-        var content = new MultipartFormDataContent
-        {
-            {
-                fileContent, "First image", fileName
-            }
-        };
+        using var content = CreateMultipartFormDataContent();
 
         // act
         var message = await httpClient.PostAsync(uri, content);
@@ -185,6 +175,38 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         message.Should().HaveStatusCode(HttpStatusCode.OK);
         response.Should().NotBeNull();
         ValidateAnimalResponse(response!);
+    }
+
+    [Fact]
+    public async Task AddAnimalImages_WithInvalidContent_Should_Return_ProblemDetails()
+    {
+        // arrange
+        var animalId = Guid.NewGuid();
+        var uri = new Uri($"api/admin/animals/{animalId}/images", UriKind.Relative);
+        using var content = CreateMultipartFormDataContent(contentType: "application/json");
+
+        // act
+        var message = await httpClient.PostAsync(uri, content);
+        var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+        details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task AddAnimalImages_WithUnknownAnimalId_Should_Return_NotFound()
+    {
+        // arrange
+        var animalId = Guid.Empty;
+        var uri = new Uri($"api/admin/animals/{animalId}/images", UriKind.Relative);
+        using var content = CreateMultipartFormDataContent();
+
+        // act
+        var message = await httpClient.PostAsync(uri, content);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
     private static SetAnimalRequest CreateSetAnimalRequest(string? name = "Max", string? description = "A good boy",
@@ -206,5 +228,19 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         response.BreedName.Should().NotBeEmpty();
         response.Sex.Should().NotBeNull();
         response.DateOfBirth.Should().NotBe(default);
+    }
+
+    private static MultipartFormDataContent CreateMultipartFormDataContent(string fileName = "lab_puppy_1.jpeg",
+        string contentName = "First image", string contentType = "image/jpeg")
+    {
+        var content = new StreamContent(File.OpenRead($"Data/{fileName}"));
+        content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+
+        return new MultipartFormDataContent
+        {
+            {
+                content, contentName, fileName
+            }
+        };
     }
 }
