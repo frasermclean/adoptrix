@@ -33,7 +33,7 @@ public class UpdateAnimalEndpoint
         if (getResult.IsFailed)
         {
             logger.LogError("Could not find animal with Id {AnimalId} to update", animalId);
-            TypedResults.NotFound();
+            return TypedResults.NotFound();
         }
 
         // get species and breed (should be validated by validator)
@@ -52,12 +52,7 @@ public class UpdateAnimalEndpoint
         animal.Sex = request.Sex;
         animal.DateOfBirth = request.DateOfBirth;
 
-        var updateResult = await animalsRepository.UpdateAsync(animal, cancellationToken);
-        if (updateResult.IsFailed)
-        {
-            logger.LogWarning("Failed to update animal with Id {AnimalId} - Error: {Error}", animalId,
-                updateResult.GetFirstErrorMessage());
-        }
+        await animalsRepository.UpdateAsync(animal, cancellationToken);
 
         return TypedResults.Ok(animal.ToResponse());
     }

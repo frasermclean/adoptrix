@@ -88,11 +88,11 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // act
         var message = await httpClient.PostAsJsonAsync(uri, request);
-        var problemDetails = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
+        var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        problemDetails!.Errors.Should().NotBeEmpty();
+        details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -111,6 +111,37 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         message.Should().HaveStatusCode(HttpStatusCode.OK);
         response.Should().NotBeNull();
         ValidateAnimalResponse(response!);
+    }
+
+    [Fact]
+    public async Task UpdateAnimal_WithInvalidRequest_Should_Return_ProblemDetails()
+    {
+        // arrange
+        var animalId = Guid.NewGuid();
+        var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
+        var request = CreateSetAnimalRequest(name: null);
+
+        // act
+        var message = await httpClient.PutAsJsonAsync(uri, request);
+        var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+        details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task UpdateAnimal_WithUnknownAnimalId_Should_Return_NotFound()
+    {
+        // arrange
+        var uri = new Uri($"api/admin/animals/{Guid.Empty}", UriKind.Relative);
+        var request = CreateSetAnimalRequest();
+
+        // act
+        var message = await httpClient.PutAsJsonAsync(uri, request);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
     [Theory]
