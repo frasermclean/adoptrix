@@ -13,6 +13,9 @@ public static class MiddlewareConfiguration
     /// </summary>
     public static WebApplication ConfigureMiddleware(this WebApplication app)
     {
+        app.UseExceptionHandler();
+        app.UseStatusCodePages();
+
         // local development middleware
         if (app.Environment.IsDevelopment())
         {
