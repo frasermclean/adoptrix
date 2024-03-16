@@ -11,7 +11,7 @@ namespace Adoptrix.Api.Endpoints.Breeds;
 public class UpdateBreedEndpoint
 {
     public static async
-        Task<Results<Ok<BreedResponse>, BadRequest<ValidationFailedResponse>, NotFound<MessageResponse>>> ExecuteAsync(
+        Task<Results<Ok<BreedResponse>, NotFound, ValidationProblem>> ExecuteAsync(
             Guid breedId,
             SetBreedRequest request,
             IValidator<SetBreedRequest> validator,
@@ -24,7 +24,7 @@ public class UpdateBreedEndpoint
         var getResult = await breedsRepository.GetByIdAsync(breedId, cancellationToken);
         if (getResult.IsFailed)
         {
-            return TypedResults.NotFound(new MessageResponse(getResult.GetFirstErrorMessage()));
+            return TypedResults.NotFound();
         }
 
         // validate request
@@ -32,7 +32,7 @@ public class UpdateBreedEndpoint
         if (!validationResult.IsValid)
         {
             logger.LogWarning("Validation failed for request: {Request}", request);
-            return TypedResults.BadRequest(new ValidationFailedResponse { Message = "Invalid request" });
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
         var speciesResult = await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken);
