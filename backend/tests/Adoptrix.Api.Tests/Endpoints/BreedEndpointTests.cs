@@ -6,6 +6,7 @@ using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Domain.Errors;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Endpoints;
 
@@ -43,11 +44,11 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // act
         var message = await httpClient.GetAsync($"/api/breeds/{breedIdOrName}");
-        var response = await message.Content.ReadFromJsonAsync<MessageResponse>(SerializerOptions);
+        var details = await message.Content.ReadFromJsonAsync<ProblemDetails>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
-        response.Should().NotBeNull();
+        details.Should().BeOfType<ProblemDetails>().Which.Title.Should().Be("Not Found");
     }
 
     [Fact]
@@ -85,7 +86,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Fact]
-    public async Task AddBreed_WithDuplicateBreedName_Returns_BadRequest()
+    public async Task AddBreed_WithDuplicateBreedName_Returns_ProblemDetails()
     {
         var request = new SetBreedRequest
         {
@@ -94,9 +95,11 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // act
         var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(request));
+        var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+        details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -123,7 +126,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Fact]
-    public async Task UpdateBreed_WithDuplicateBreedName_Returns_BadRequest()
+    public async Task UpdateBreed_WithDuplicateBreedName_Returns_ProblemDetails()
     {
         // arrange
         var breedId = Guid.NewGuid();
@@ -134,11 +137,13 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // act
         var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
-        var response = await message.Content.ReadFromJsonAsync<ValidationFailedResponse>(SerializerOptions);
+        var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        response.Should().NotBeNull();
+        details.Should().BeOfType<ValidationProblemDetails>()
+            .Which.Errors.Should().ContainKey("Name")
+            .WhoseValue.Should().Contain("Breed with name: 'Corgi' already exists");
     }
 
     [Fact]
@@ -153,11 +158,11 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // act
         var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
-        var response = await message.Content.ReadFromJsonAsync<MessageResponse>(SerializerOptions);
+        var details = await message.Content.ReadFromJsonAsync<ProblemDetails>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
-        response.Should().NotBeNull();
+        details.Should().BeOfType<ProblemDetails>().Which.Title.Should().Be("Not Found");
     }
 
     [Fact]

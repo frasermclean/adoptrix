@@ -10,7 +10,7 @@ namespace Adoptrix.Api.Endpoints.Animals;
 
 public class UpdateAnimalEndpoint
 {
-    public static async Task<Results<Ok<AnimalResponse>, BadRequest<ValidationFailedResponse>, NotFound>> ExecuteAsync(
+    public static async Task<Results<Ok<AnimalResponse>, ValidationProblem, NotFound>> ExecuteAsync(
         Guid animalId,
         SetAnimalRequest request,
         IValidator<SetAnimalRequest> validator,
@@ -25,7 +25,7 @@ public class UpdateAnimalEndpoint
         if (!validationResult.IsValid)
         {
             logger.LogWarning("Validation failed for request: {Request}", request);
-            return TypedResults.BadRequest(new ValidationFailedResponse { Message = "Invalid request" });
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
         // get animal from database
@@ -33,7 +33,7 @@ public class UpdateAnimalEndpoint
         if (getResult.IsFailed)
         {
             logger.LogError("Could not find animal with Id {AnimalId} to update", animalId);
-            TypedResults.NotFound();
+            return TypedResults.NotFound();
         }
 
         // get species and breed (should be validated by validator)
@@ -52,12 +52,7 @@ public class UpdateAnimalEndpoint
         animal.Sex = request.Sex;
         animal.DateOfBirth = request.DateOfBirth;
 
-        var updateResult = await animalsRepository.UpdateAsync(animal, cancellationToken);
-        if (updateResult.IsFailed)
-        {
-            logger.LogWarning("Failed to update animal with Id {AnimalId} - Error: {Error}", animalId,
-                updateResult.GetFirstErrorMessage());
-        }
+        await animalsRepository.UpdateAsync(animal, cancellationToken);
 
         return TypedResults.Ok(animal.ToResponse());
     }

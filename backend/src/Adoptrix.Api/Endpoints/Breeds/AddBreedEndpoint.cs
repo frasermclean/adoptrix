@@ -7,12 +7,13 @@ using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
 public class AddBreedEndpoint
 {
-    public static async Task<Results<Created<BreedResponse>, BadRequest<ValidationFailedResponse>>> ExecuteAsync(
+    public static async Task<Results<Created<BreedResponse>, ValidationProblem>> ExecuteAsync(
         SetBreedRequest request,
         ClaimsPrincipal claimsPrincipal,
         ILogger<AddBreedEndpoint> logger,
@@ -27,7 +28,7 @@ public class AddBreedEndpoint
         if (!validationResult.IsValid)
         {
             logger.LogWarning("Validation failed for request: {Request}", request);
-            return TypedResults.BadRequest(new ValidationFailedResponse());
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
         // create new breed and add to database
@@ -44,6 +45,5 @@ public class AddBreedEndpoint
         {
             breedIdOrName = response.Id
         }), response);
-
     }
 }

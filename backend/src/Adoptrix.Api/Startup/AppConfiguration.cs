@@ -21,7 +21,5 @@ public static class AppConfiguration
         });
 
         return builder;
-
     }
-
 }

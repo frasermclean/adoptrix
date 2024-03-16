@@ -16,6 +16,6 @@ public class ImageFormFileValidator : AbstractValidator<IFormFile>
         RuleFor(formFile => formFile.FileName)
             .Must(fileName => ValidFileExtensions.Contains(Path.GetExtension(fileName)))
             .WithMessage(
-                $"Invalid file extension: {{PropertyName}}. Valid file extensions are: {string.Join(", ", ValidFileExtensions)}");
+                $"Invalid file extension: {{PropertyValue}}. Valid file extensions are: {string.Join(", ", ValidFileExtensions)}");
     }
 }

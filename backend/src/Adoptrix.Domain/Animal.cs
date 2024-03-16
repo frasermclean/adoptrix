@@ -1,7 +1,4 @@
-﻿using Adoptrix.Domain.Errors;
-using FluentResults;
-
-namespace Adoptrix.Domain;
+﻿namespace Adoptrix.Domain;
 
 public class Animal : Aggregate
 {
@@ -17,12 +14,12 @@ public class Animal : Aggregate
 
     public ICollection<ImageInformation> Images { get; init; } = new List<ImageInformation>();
 
-    public Result<ImageInformation> AddImage(string originalFileName, string originalContentType,
+    public ImageInformation AddImage(string originalFileName, string originalContentType,
         string? description = null, Guid? uploadedBy = null)
     {
         if (Images.Any(image => image.OriginalFileName == originalFileName))
         {
-            return new DuplicateImageError(originalFileName);
+            throw new ArgumentException("Image with the same name already exists", nameof(originalFileName));
         }
 
         var image = new ImageInformation
@@ -34,7 +31,6 @@ public class Animal : Aggregate
         };
 
         Images.Add(image);
-
         return image;
     }
 }
