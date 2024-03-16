@@ -43,6 +43,19 @@ resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' = {
   properties: {
     zoneType: 'Public'
   }
+
+  // entra tenant verification
+  resource dnsRecord 'TXT' = {
+    name: '@'
+    properties: {
+      TTL: 3600
+      TXTRecords: [
+        {
+          value: ['MS=ms14036913']
+        }
+      ]
+    }
+  }
 }
 
 // app configuration
