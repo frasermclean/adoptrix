@@ -21,10 +21,10 @@ param domainName string
 param actionGroupShortName string
 
 @description('Azure AD B2C application client ID')
-param azureAdClientId string
+param authenticationClientId string
 
 @description('Azure AD B2C audience')
-param azureAdAudience string
+param authenticationAudience string
 
 @description('Name of the Azure App Configuration instance')
 param appConfigurationName string
@@ -279,8 +279,8 @@ module appConfigModule 'appConfig.bicep' = {
   params: {
     appConfigurationName: appConfigurationName
     appEnv: appEnv
-    azureAdClientId: azureAdClientId
-    azureAdAudience: azureAdAudience
+    authenticationClientId: authenticationClientId
+    authenticationAudience: authenticationAudience
     applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
     storageAccountBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
     storageAccountQueueEndpoint: storageAccount.properties.primaryEndpoints.queue

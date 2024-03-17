@@ -5,8 +5,8 @@ export const environment: Environment = {
   apiBaseUrl: 'https://api.demo.adoptrix.com/api',
   blobStorageBaseUrl: 'https://adoptrixdemo.blob.core.windows.net/animal-images',
   auth: {
-    clientId: 'd100dfc4-d993-4e4a-8ebb-a6a55ef72809',
+    clientId: '05ff30c5-ebb0-49cd-a127-13ace1478c9f',
     redirectUri: 'https://demo.adoptrix.com',
-    scopes: ['https://adoptrixauth.onmicrosoft.com/demo-api/access'],
+    scopes: ['api://1daf5539-1932-4c47-a9a1-a1f52a2db804/access'],
   },
 };
