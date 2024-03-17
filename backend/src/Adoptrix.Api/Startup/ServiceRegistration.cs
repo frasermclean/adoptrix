@@ -54,7 +54,7 @@ public static class ServiceRegistration
             .AddMicrosoftIdentityWebApi(jwtBearerOptions =>
             {
                 configuration.Bind("Authentication", jwtBearerOptions);
-                jwtBearerOptions.TokenValidationParameters.NameClaimType = "name";
+                jwtBearerOptions.TokenValidationParameters.NameClaimType = ClaimConstants.Name;
             }, microsoftIdentityOptions =>
             {
                 configuration.Bind("Authentication", microsoftIdentityOptions);
