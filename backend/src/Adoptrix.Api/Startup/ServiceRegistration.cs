@@ -51,7 +51,20 @@ public static class ServiceRegistration
     private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApi(configuration);
+            .AddMicrosoftIdentityWebApi(jwtBearerOptions =>
+            {
+                configuration.Bind("Authentication", jwtBearerOptions);
+                jwtBearerOptions.TokenValidationParameters.NameClaimType = "name";
+            }, microsoftIdentityOptions =>
+            {
+                configuration.Bind("Authentication", microsoftIdentityOptions);
+            });
+
+        services.AddAuthorizationBuilder()
+            .AddDefaultPolicy("DefaultPolicy", builder =>
+            {
+                builder.RequireScope("access");
+            });
 
         return services;
     }
