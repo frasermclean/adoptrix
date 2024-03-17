@@ -9,8 +9,8 @@ import { MsalGuardConfiguration, MsalInterceptorConfiguration } from '@azure/msa
 
 import { environment } from '../../environments/environment';
 
-const tenantName = 'adoptrixauth';
-const b2cPolicyName = 'B2C_1_Signup_SignIn';
+const instance = 'adoptrix.ciamlogin.com';
+const tenantId = 'adoptrix.com';
 
 /**
  * MSAL Instance Factory
@@ -19,8 +19,8 @@ export function msalInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
       clientId: environment.auth.clientId,
-      authority: `https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com/${b2cPolicyName}`,
-      knownAuthorities: [`https://${tenantName}.b2clogin.com`],
+      authority: `https://${instance}/${tenantId}`,
+      knownAuthorities: [`https://${instance}`],
       redirectUri: environment.auth.redirectUri,
       postLogoutRedirectUri: '/',
     },
