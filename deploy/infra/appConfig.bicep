@@ -7,11 +7,11 @@ param appConfigurationName string
 @description('Environment of the application')
 param appEnv string
 
-@description('Azure AD B2C application client ID')
-param azureAdClientId string
+@description('Authentication client ID')
+param authenticationClientId string
 
-@description('Azure AD B2C audience')
-param azureAdAudience string
+@description('Authentication audience')
+param authenticationAudience string
 
 @description('Application Insights connection string to be stored in App Configuration.')
 param applicationInsightsConnectionString string
@@ -34,18 +34,18 @@ param attemptRoleAssignments bool
 resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
   name: appConfigurationName
 
-  resource azureAdClientIdKeyValue 'keyValues' = {
-    name: 'AzureAd:ClientId$${appEnv}'
+  resource authenticationClientIdKeyValue 'keyValues' = {
+    name: 'Authentication:ClientId$${appEnv}'
     properties: {
-      value: azureAdClientId
+      value: authenticationClientId
       contentType: 'text/plain'
     }
   }
 
-  resource azureAdAudienceKeyValue 'keyValues' = {
-    name: 'AzureAd:Audience$${appEnv}'
+  resource authenticationAudienceKeyValue 'keyValues' = {
+    name: 'Authentication:Audience$${appEnv}'
     properties: {
-      value: azureAdAudience
+      value: authenticationAudience
       contentType: 'text/plain'
     }
   }

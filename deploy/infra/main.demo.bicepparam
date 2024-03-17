@@ -11,8 +11,8 @@ param domainName = 'adoptrix.com'
 param actionGroupShortName = 'AdoptrixDemo'
 
 // authentication
-param azureAdClientId = 'd100dfc4-d993-4e4a-8ebb-a6a55ef72809' // front end app registration
-param azureAdAudience = 'a4edca74-3be8-4579-85c6-9a92819b703c' // back end app registration
+param authenticationClientId = '05ff30c5-ebb0-49cd-a127-13ace1478c9f' // front end app registration
+param authenticationAudience = '1daf5539-1932-4c47-a9a1-a1f52a2db804' // back end app registration
 
 param adminGroupName = 'Adoptrix Demo Administrators'
 param adminGroupObjectId = '0356480d-b5dc-440f-a5d3-e7b3f2169c40'

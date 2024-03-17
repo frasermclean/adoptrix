@@ -13,11 +13,11 @@ param location string = resourceGroup().location
 @description('Domain name')
 param domainName string
 
-@description('Prefix for the Azure AD B2C tenant name')
-param b2cTenantPrefix string
+@description('Microsoft Entra instance')
+param authenticationInstance string
 
-@description('Name of the Azure AD B2C sign-up/sign-in policy')
-param b2cSignUpSignInPolicyName string
+@description('Microsoft Entra tenant ID')
+param authenticationTenantId string
 
 @description('Array of prinicpal IDs that have read and write access to the configuration data')
 param configurationDataOwners array = []
@@ -28,11 +28,6 @@ param configurationDataReaders array = []
 var tags = {
   workload: workload
   category: category
-}
-
-// existing Azure AD B2C tenant
-resource b2cTenant 'Microsoft.AzureActiveDirectory/b2cDirectories@2021-04-01' existing = {
-  name: '${b2cTenantPrefix}.onmicrosoft.com'
 }
 
 // dns zone
@@ -70,34 +65,18 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
     disableLocalAuth: false
   }
 
-  resource azureAdInstance 'keyValues' = {
-    name: 'AzureAd:Instance'
+  resource authenticationInstanceKeyValue 'keyValues' = {
+    name: 'Authentication:Instance'
     properties: {
-      value: 'https://${b2cTenantPrefix}.b2clogin.com'
+      value: authenticationInstance
       contentType: 'text/plain'
     }
   }
 
-  resource azureAdDomain 'keyValues' = {
-    name: 'AzureAd:Domain'
+  resource authenticationTenantIdKeyValue 'keyValues' = {
+    name: 'Authentication:TenantId'
     properties: {
-      value: b2cTenant.name
-      contentType: 'text/plain'
-    }
-  }
-
-  resource azureAdTenantId 'keyValues' = {
-    name: 'AzureAd:TenantId'
-    properties: {
-      value: b2cTenant.properties.tenantId
-      contentType: 'text/plain'
-    }
-  }
-
-  resource azureAdSignUpSignInPolicyId 'keyValues' = {
-    name: 'AzureAd:SignUpSignInPolicyId'
-    properties: {
-      value: b2cSignUpSignInPolicyName
+      value: authenticationTenantId
       contentType: 'text/plain'
     }
   }
