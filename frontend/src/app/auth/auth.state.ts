@@ -7,12 +7,16 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
 export interface AuthStateModel {
   status: 'initial' | 'busy' | 'logged-out' | 'logged-in';
+  name: string;
+  email: string;
 }
 
 @State<AuthStateModel>({
   name: AUTH_STATE_TOKEN,
   defaults: {
     status: 'initial',
+    name: '',
+    email: '',
   },
 })
 @Injectable()
@@ -39,7 +43,9 @@ export class AuthState {
   @Action(Completed)
   onCompleted(context: StateContext<AuthStateModel>, action: Completed) {
     context.patchState({
-      status: action.accountInfo ? 'logged-in' : 'logged-out',
+      status: action.data.isLoggedIn ? 'logged-in' : 'logged-out',
+      name: action.data.name || '',
+      email: action.data.email || '',
     });
   }
 

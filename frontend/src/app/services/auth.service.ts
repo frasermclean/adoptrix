@@ -23,7 +23,13 @@ export class AuthService {
           break;
         case InteractionStatus.None:
           const activeAccount = this.getActiveAccount();
-          this.store.dispatch(new Completed(activeAccount));
+          this.store.dispatch(
+            new Completed({
+              isLoggedIn: activeAccount !== null,
+              name: activeAccount?.name,
+              email: activeAccount?.username,
+            })
+          );
           break;
       }
     });
