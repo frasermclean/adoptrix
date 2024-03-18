@@ -9,13 +9,13 @@ namespace Adoptrix.Infrastructure.Services.Repositories;
 
 public class AnimalsRepository(AdoptrixDbContext dbContext) : Repository(dbContext), IAnimalsRepository
 {
-    public async Task<IEnumerable<SearchAnimalsResult>> SearchAnimalsAsync(string? animalName = null,
-        string? speciesName = null, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(string? animalName = null,
+        Guid? speciesId = null, CancellationToken cancellationToken = default)
     {
         return await DbContext.Animals
             .AsNoTracking()
             .Where(animal => (animalName == null || animal.Name.Contains(animalName)) &&
-                             (speciesName == null || animal.Species.Name == speciesName))
+                             (speciesId == null || animal.Species.Id == speciesId))
             .Select(animal => new SearchAnimalsResult
             {
                 Id = animal.Id,

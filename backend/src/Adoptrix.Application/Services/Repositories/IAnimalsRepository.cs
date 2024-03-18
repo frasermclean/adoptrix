@@ -6,7 +6,7 @@ namespace Adoptrix.Application.Services.Repositories;
 
 public interface IAnimalsRepository
 {
-    Task<IEnumerable<SearchAnimalsResult>> SearchAnimalsAsync(string? animalName = null, string? speciesName = null,
+    Task<IEnumerable<SearchAnimalsResult>> SearchAsync(string? animalName = null, Guid? speciesId = null,
         CancellationToken cancellationToken = default);
 
     Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
