@@ -1,7 +1,7 @@
 @switch (status$ | async) { @case ('logged-out') {
 <button mat-raised-button (click)="login()">LOG IN</button>
 } @case ('logged-in') { @if (email$ | async; as email) {
-<button mat-button [matMenuTriggerFor]="userMenu" aria-label="Toggle user menu button">
+<button mat-button [matMenuTriggerFor]="userMenu" matTooltip="Show user menu" aria-label="Toggle user menu button">
   <app-avatar [email]="email" [size]="32"></app-avatar>
   <mat-icon>more_vert</mat-icon>
 </button>

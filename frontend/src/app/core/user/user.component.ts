@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Store } from '@ngxs/store';
 import { AuthState } from '../../auth/auth.state';
 import { Login, Logout } from '../../auth/auth.actions';
@@ -12,7 +13,15 @@ import { AvatarComponent } from './avatar/avatar.component';
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, AvatarComponent],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    AvatarComponent,
+  ],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
 })
