@@ -53,4 +53,9 @@ export class AuthState {
   static status(state: AuthStateModel) {
     return state.status;
   }
+
+  @Selector()
+  static email(state: AuthStateModel) {
+    return state.email;
+  }
 }
