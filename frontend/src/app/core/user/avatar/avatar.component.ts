@@ -16,6 +16,6 @@ export class AvatarComponent implements OnInit {
 
   ngOnInit() {
     const hash = sha256(this.email.trim().toLowerCase());
-    this.gravatarUrl = `https://www.gravatar.com/avatar/${hash}`;
+    this.gravatarUrl = `https://www.gravatar.com/avatar/${hash}?s=${this.size}&d=identicon`;
   }
 }
