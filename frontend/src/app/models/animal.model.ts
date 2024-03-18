@@ -5,9 +5,14 @@ export interface Animal {
   id: string;
   name: string;
   description?: string;
-  species: Species;
-  breed?: string;
-  sex?: string;
+  speciesId: Species;
+  breedId: string;
+  sex: Sex;
   dateOfBirth: string;
   images: ImageInformation[];
+}
+
+export enum Sex {
+  Male = 'male',
+  Female = 'female',
 }

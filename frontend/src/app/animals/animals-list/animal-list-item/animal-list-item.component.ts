@@ -10,13 +10,7 @@ import { ImageUrlService } from '@services/image-url.service';
 @Component({
   selector: 'app-animal-list-item',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatCardModule,
-    MatButtonModule,
-    MatDividerModule,
-  ],
+  imports: [CommonModule, RouterModule, MatCardModule, MatButtonModule, MatDividerModule],
   templateUrl: './animal-list-item.component.html',
   styleUrl: './animal-list-item.component.scss',
 })
@@ -32,12 +26,10 @@ export class AnimalListItemComponent {
   get imageUrl() {
     return this.hasImages
       ? this.imageUrlService.getPreviewUrl(this.animal.id, this.animal.images[0])
-      : `images/${this.animal.species.toLowerCase()}.png`;
+      : this.imageUrlService.getSpeciesDefaultImageUrl(this.animal.speciesId);
   }
 
   get imageAltText() {
-    return this.hasImages
-      ? this.animal.images[0].description
-      : `Placeholder image of a ${this.animal.species}`;
+    return this.hasImages ? this.animal.images[0].description : 'Placeholder image';
   }
 }
