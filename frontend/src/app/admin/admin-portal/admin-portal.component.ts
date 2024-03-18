@@ -1,20 +1,19 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AnimalEditComponent } from '../animal-edit/animal-edit.component';
 
 @Component({
   selector: 'app-admin-portal',
   standalone: true,
-  imports: [],
+  imports: [MatButtonModule, MatDialogModule],
   templateUrl: './admin-portal.component.html',
   styleUrl: './admin-portal.component.scss',
 })
-export class AdminPortalComponent implements OnInit {
-  constructor(private httpClient: HttpClient) {}
+export class AdminPortalComponent {
+  constructor(private dialogService: MatDialog) {}
 
-  ngOnInit(): void {
-    this.httpClient.get(`${environment.apiBaseUrl}/admin/users/me`).subscribe((result) => {
-      console.log(result);
-    });
+  addAnimal() {
+    this.dialogService.open(AnimalEditComponent);
   }
 }
