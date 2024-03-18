@@ -192,6 +192,6 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         response.Id.Should().NotBeEmpty();
         response.Name.Should().NotBeNullOrWhiteSpace();
-        response.SpeciesName.Should().NotBeEmpty();
+        response.SpeciesId.Should().NotBeEmpty();
     }
 }

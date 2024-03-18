@@ -19,7 +19,7 @@ public sealed class BreedsRepository(AdoptrixDbContext dbContext) : Repository(d
             {
                 Id = breed.Id,
                 Name = breed.Name,
-                SpeciesName = breed.Species.Name,
+                SpeciesId = breed.Species.Id,
                 AnimalIds = breed.Animals.Select(animal => animal.Id)
             })
             .OrderBy(result => result.Name)

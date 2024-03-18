@@ -75,8 +75,8 @@ public class ApiFixture : WebApplicationFactory<Program>
                     Id = animal.Id,
                     Name = animal.Name,
                     Description = animal.Description,
-                    SpeciesName = animal.Species.Name,
-                    BreedName = animal.Breed?.Name,
+                    SpeciesId = animal.Species.Id,
+                    BreedId = animal.Breed.Id,
                     Sex = animal.Sex,
                     DateOfBirth = animal.DateOfBirth,
                     CreatedAt = animal.CreatedAt,
@@ -111,7 +111,7 @@ public class ApiFixture : WebApplicationFactory<Program>
                 {
                     Id = animal.Id,
                     Name = animal.Name,
-                    SpeciesName = animal.Species.Name,
+                    SpeciesId = animal.Species.Id,
                     AnimalIds = Enumerable.Empty<Guid>()
                 }));
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
