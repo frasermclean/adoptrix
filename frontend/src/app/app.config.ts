@@ -28,6 +28,7 @@ import {
 import { AuthState } from './auth/auth.state';
 import { GALLERY_CONFIG } from 'ng-gallery';
 import { galleryConfigFactory } from '@shared/gallery.config';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -61,6 +62,14 @@ export const appConfig: ApplicationConfig = {
     {
       provide: GALLERY_CONFIG,
       useFactory: galleryConfigFactory,
+    },
+    {
+      provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
+      useValue: {
+        showDelay: 500,
+        hideDelay: 100,
+        touchendHideDelay: 1000,
+      },
     },
   ],
 };

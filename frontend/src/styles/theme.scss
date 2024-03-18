@@ -9,7 +9,7 @@ $warn: mat.define-palette(mat.$red-palette);
 
 // typograph config
 $typography-config: mat.define-typography-config(
-  $font-family: 'Quicksand, sans-serif',
+  $font-family: "Quicksand, sans-serif",
 );
 
 // define light theme
@@ -33,7 +33,8 @@ $light-theme: mat.define-light-theme(
 @include mat.form-field-theme($light-theme);
 @include mat.icon-theme($light-theme);
 @include mat.list-theme($light-theme);
+@include mat.menu-theme($light-theme);
 @include mat.progress-spinner-theme($light-theme);
 @include mat.sidenav-theme($light-theme);
 @include mat.toolbar-theme($light-theme);
-
+@include mat.tooltip-theme($light-theme);
