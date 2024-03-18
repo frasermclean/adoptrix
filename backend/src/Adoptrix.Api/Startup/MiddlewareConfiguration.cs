@@ -65,6 +65,8 @@ public static class MiddlewareConfiguration
 
         var speciesGroup = apiGroup.MapGroup("/species");
         speciesGroup.MapGet("", SearchSpeciesEndpoint.ExecuteAsync);
+        speciesGroup.MapGet("/{speciesIdOrName}", GetSpeciesEndpoint.ExecuteAsync)
+            .WithName(GetSpeciesEndpoint.EndpointName);
 
         var usersGroup = apiGroup.MapGroup("/users");
         usersGroup.MapGet("/me", GetCurrentUserEndpoint.Execute);
