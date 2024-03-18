@@ -11,32 +11,27 @@ public class SetAnimalRequestValidatorTests
 {
     private readonly SetAnimalRequestValidator validator;
 
-    private const string UnknownSpeciesName = "unknown-species";
-    private const string UnknownBreedName = "unknown-breed";
-
     public SetAnimalRequestValidatorTests()
     {
         var speciesRepositoryMock = new Mock<ISpeciesRepository>();
         speciesRepositoryMock.Setup(service =>
-                service.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string speciesName, CancellationToken _) => speciesName == UnknownSpeciesName
-                ? new SpeciesNotFoundError(speciesName)
+                service.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == Guid.Empty
+                ? new SpeciesNotFoundError(speciesId)
                 : new Species
                 {
-                    Name = speciesName
+                    Id = speciesId, Name = speciesId.ToString()
                 });
 
         var breedsRepositoryMock = new Mock<IBreedsRepository>();
         breedsRepositoryMock.Setup(service =>
-                service.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string breedName, CancellationToken _) => breedName == UnknownBreedName
-                ? new BreedNotFoundError(breedName)
+                service.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid breedId, CancellationToken _) => breedId == Guid.Empty
+                ? new BreedNotFoundError(breedId)
                 : new Breed
                 {
-                    Name = breedName,
-                    Species = new Species()
+                    Id = breedId, Name = breedId.ToString(), Species = new Species()
                 });
-
 
         validator = new SetAnimalRequestValidator(new DateOfBirthValidator(), speciesRepositoryMock.Object,
             breedsRepositoryMock.Object);
@@ -89,39 +84,39 @@ public class SetAnimalRequestValidatorTests
     public async Task WhenSpeciesName_IsInvalid_Should_HaveError()
     {
         // arrange
-        var request = CreateRequest(speciesName: UnknownSpeciesName);
+        var request = CreateRequest(speciesId: Guid.Empty);
 
 
         // act
         var result = await validator.TestValidateAsync(request);
 
         // assert
-        result.ShouldHaveValidationErrorFor(r => r.SpeciesName)
-            .WithErrorMessage($"Could not find species with name: {UnknownSpeciesName}");
+        result.ShouldHaveValidationErrorFor(r => r.SpeciesId)
+            .WithErrorMessage($"Could not find species with ID: {Guid.Empty}");
     }
 
     [Fact]
-    public async Task WhenBreedName_IsInvalid_Should_HaveError()
+    public async Task WhenBreedId_IsInvalid_Should_HaveError()
     {
         // arrange
-        var request = CreateRequest(breedName: UnknownBreedName);
+        var request = CreateRequest(breedId: Guid.Empty);
 
         // act
         var result = await validator.TestValidateAsync(request);
 
         // assert
-        result.ShouldHaveValidationErrorFor(r => r.BreedName)
-            .WithErrorMessage($"Could not find breed with name: {UnknownBreedName}");
+        result.ShouldHaveValidationErrorFor(r => r.BreedId)
+            .WithErrorMessage($"Could not find breed with ID: {Guid.Empty}");
     }
 
     private static SetAnimalRequest CreateRequest(string name = "Max", string description = "A good boy", int age = 2,
-        string speciesName = "dog", string breedName = "Labrador", Sex sex = Sex.Male) => new()
+        Guid? speciesId = null, Guid? breedId = null, Sex sex = Sex.Male) => new()
     {
         Name = name,
         Description = description,
         DateOfBirth = DateOnly.FromDateTime(DateTime.Now - TimeSpan.FromDays(365 * age)),
-        SpeciesName = speciesName,
-        BreedName = breedName,
+        SpeciesId = speciesId ?? Guid.NewGuid(),
+        BreedId = breedId ?? Guid.NewGuid(),
         Sex = sex
     };
 }

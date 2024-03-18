@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
-using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Services.Repositories;
 using FluentValidation;
@@ -37,10 +36,8 @@ public class UpdateAnimalEndpoint
         }
 
         // get species and breed (should be validated by validator)
-        var species = (await speciesRepository.GetByNameAsync(request.SpeciesName, cancellationToken)).Value;
-        var breed = request.BreedName is not null
-            ? (await breedsRepository.GetByNameAsync(request.BreedName, cancellationToken)).Value
-            : null;
+        var species = (await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken)).Value;
+        var breed = (await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken)).Value;
 
         var animal = getResult.Value;
 

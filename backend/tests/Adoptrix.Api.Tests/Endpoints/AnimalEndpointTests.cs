@@ -75,16 +75,15 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Theory]
-    [InlineData("Rufus", "Another good boy", "dog", ApiFixture.UnknownBreedName)]
-    [InlineData("Max", "", ApiFixture.UnknownSpeciesName, "Eastern Gray")]
-    [InlineData(null, null, null, null)]
+    [InlineData("Rufus", "Another good boy")]
+    [InlineData("Max", "")]
+    [InlineData(null, null)]
     public async Task AddAnimal_WithInvalidRequest_Should_Return_ProblemDetails(string? name, string? description,
-        string? speciesName, string? breedName, Sex? sex = default, int ageInYears = default)
-
+        Guid speciesId = default, Guid breedId = default, Sex sex = default, int ageInYears = default)
     {
         // arrange
         var uri = new Uri("api/admin/animals", UriKind.Relative);
-        var request = CreateSetAnimalRequest(name, description, speciesName, breedName, sex, ageInYears);
+        var request = CreateSetAnimalRequest(name, description, speciesId, breedId, sex, ageInYears);
 
         // act
         var message = await httpClient.PostAsJsonAsync(uri, request);
@@ -210,12 +209,12 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     private static SetAnimalRequest CreateSetAnimalRequest(string? name = "Max", string? description = "A good boy",
-        string? speciesName = "dog", string? breedName = "Labrador", Sex? sex = Sex.Male, int ageInYears = 2) => new()
+        Guid? speciesId = null, Guid? breedId = null, Sex sex = Sex.Male, int ageInYears = 2) => new()
     {
         Name = name!,
         Description = description,
-        SpeciesName = speciesName!,
-        BreedName = breedName!,
+        SpeciesId = speciesId ?? Guid.NewGuid(),
+        BreedId = breedId ?? Guid.NewGuid(),
         Sex = sex,
         DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * ageInYears))
     };

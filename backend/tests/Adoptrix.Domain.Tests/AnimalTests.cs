@@ -1,5 +1,3 @@
-using Adoptrix.Domain.Errors;
-
 namespace Adoptrix.Domain.Tests;
 
 public class AnimalTests
