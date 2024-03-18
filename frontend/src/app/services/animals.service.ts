@@ -4,7 +4,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { Animal } from '@models/animal.model';
-import { Species } from '@models/species.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -16,8 +15,8 @@ export class AnimalsService {
 
   public searchAnimals(params: SearchAnimalsParams = {}): Observable<Animal[]> {
     let httpParams = new HttpParams();
-    if (params.species) {
-      httpParams = httpParams.set('species', params.species);
+    if (params.speciesId) {
+      httpParams = httpParams.set('speciesId', params.speciesId);
     }
     if (params.name) {
       httpParams = httpParams.set('name', params.name);
@@ -32,6 +31,6 @@ export class AnimalsService {
 }
 
 export interface SearchAnimalsParams {
-  species?: Species;
+  speciesId?: string;
   name?: string;
 }
