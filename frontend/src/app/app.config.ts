@@ -2,6 +2,7 @@ import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding, withEnabledBlockingInitialNavigation } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 
 // MSAL dependencies
 import {
@@ -13,22 +14,24 @@ import {
   MsalInterceptor,
   MsalService,
 } from '@azure/msal-angular';
-
-// NGXS modules
-import { NgxsModule } from '@ngxs/store';
-import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
-
-import { routes } from './app.routes';
-import { environment } from '../environments/environment';
 import {
   msalGuardConfigurationFactory,
   msalInstanceFactory,
   msalInterceptorConfigurationFactory,
 } from './auth/auth.config';
+
+// NGXS modules
+import { NgxsModule } from '@ngxs/store';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { AuthState } from './auth/auth.state';
+import { ngxsConfig } from './ngxs.config';
+
+// gallery
 import { GALLERY_CONFIG } from 'ng-gallery';
 import { galleryConfigFactory } from '@shared/gallery.config';
-import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
+
+import { routes } from './app.routes';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,7 +39,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom([
-      NgxsModule.forRoot([AuthState], { developmentMode: environment.isDevelopment }),
+      NgxsModule.forRoot([AuthState], ngxsConfig),
       NgxsLoggerPluginModule.forRoot({ disabled: !environment.isDevelopment }),
     ]),
     MsalService,
