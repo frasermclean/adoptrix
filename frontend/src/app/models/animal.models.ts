@@ -26,3 +26,12 @@ export interface SearchAnimalsResult {
   dateOfBirth: string;
   image?: ImageResponse;
 }
+
+export interface SetAnimalRequest {
+  name: string;
+  description: string | null;
+  speciesId: string;
+  breedId: string;
+  sex: Sex;
+  dateOfBirth: string;
+}

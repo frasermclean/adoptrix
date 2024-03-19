@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext, StateToken, Store, createSelector } from '@ngxs/store';
+import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { catchError, tap } from 'rxjs';
 
 import { AnimalsService } from '@services/animals.service';
@@ -26,7 +26,7 @@ const ANIMALS_STATE_TOKEN = new StateToken<AnimalsStateModel>('animals');
 })
 @Injectable()
 export class AnimalsState {
-  constructor(private animalsService: AnimalsService, private store: Store) {}
+  constructor(private animalsService: AnimalsService) {}
 
   @Action(AnimalsActions.Search)
   searchAnimals(context: StateContext<AnimalsStateModel>, action: AnimalsActions.Search) {
@@ -44,6 +44,20 @@ export class AnimalsState {
   getAnimal(context: StateContext<AnimalsStateModel>, action: AnimalsActions.Get) {
     context.patchState({ state: 'busy', currentAnimal: null });
     return this.animalsService.getAnimal(action.animalId).pipe(
+      tap((animal) => {
+        context.patchState({ state: 'ready', currentAnimal: animal });
+      }),
+      catchError((error) => {
+        context.patchState({ state: 'error', error });
+        throw error;
+      })
+    );
+  }
+
+  @Action(AnimalsActions.Add)
+  addAnimal(context: StateContext<AnimalsStateModel>, action: AnimalsActions.Add) {
+    context.patchState({ state: 'busy' });
+    return this.animalsService.addAnimal(action.request).pipe(
       tap((animal) => {
         context.patchState({ state: 'ready', currentAnimal: animal });
       }),

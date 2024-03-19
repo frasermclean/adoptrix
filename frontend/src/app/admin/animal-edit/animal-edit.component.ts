@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -13,6 +13,8 @@ import { SpeciesState } from '@state/species.state';
 import { BreedsActions } from '@state/breeds.actions';
 import { BreedsState } from '@state/breeds.state';
 import { SpeciesActions } from '@state/species.actions';
+import { AnimalsActions } from '@state/animals.actions';
+import { Sex } from '@models/sex.enum';
 
 @Component({
   selector: 'app-animal-edit',
@@ -36,15 +38,15 @@ export class AnimalEditComponent implements OnInit {
     name: ['', Validators.required],
     speciesId: ['', Validators.required],
     breedId: ['', Validators.required],
-    sex: ['', Validators.required],
-    dateOfBirth: ['', Validators.required],
-    description: [''],
+    sex: [Sex.Male, Validators.required],
+    dateOfBirth: [new Date(), Validators.required],
+    description: this.formBuilder.control<string | null>(null),
   });
 
   allSpecies = this.store.select(SpeciesState.allSpecies);
   breedsSearchResults = this.store.select(BreedsState.searchResults);
 
-  constructor(private formBuilder: FormBuilder, private store: Store) {}
+  constructor(private formBuilder: NonNullableFormBuilder, private store: Store) {}
 
   ngOnInit(): void {
     this.store.dispatch(new SpeciesActions.GetAll());
@@ -56,6 +58,12 @@ export class AnimalEditComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.formGroup.value);
+    const value = this.formGroup.getRawValue();
+    this.store.dispatch(
+      new AnimalsActions.Add({
+        ...value,
+        dateOfBirth: value.dateOfBirth.toISOString().split('T')[0],
+      })
+    );
   }
 }

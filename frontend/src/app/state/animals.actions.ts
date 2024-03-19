@@ -1,4 +1,4 @@
-import { SearchAnimalsParams } from '@models/animal.models';
+import { SearchAnimalsParams, SetAnimalRequest } from '@models/animal.models';
 
 export namespace AnimalsActions {
   export class Search {
@@ -9,5 +9,10 @@ export namespace AnimalsActions {
   export class Get {
     static readonly type = '[Animal View Component] Get Animal';
     constructor(public animalId: string) {}
+  }
+
+  export class Add {
+    static readonly type = '[Animal Edit Component] Add Animal';
+    constructor(public request: SetAnimalRequest) {}
   }
 }

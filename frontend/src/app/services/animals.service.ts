@@ -3,13 +3,13 @@ import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { Animal, SearchAnimalsParams, SearchAnimalsResult } from '@models/animal.models';
+import { Animal, SearchAnimalsParams, SearchAnimalsResult, SetAnimalRequest } from '@models/animal.models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AnimalsService {
-  private readonly baseUrl = `${environment.apiBaseUrl}/animals`;
+  private readonly baseUrl = environment.apiBaseUrl;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -22,10 +22,14 @@ export class AnimalsService {
       httpParams = httpParams.set('name', params.name);
     }
 
-    return this.httpClient.get<SearchAnimalsResult[]>(this.baseUrl, { params: httpParams });
+    return this.httpClient.get<SearchAnimalsResult[]>(`${this.baseUrl}/animals`, { params: httpParams });
   }
 
   public getAnimal(animalId: string): Observable<Animal> {
-    return this.httpClient.get<Animal>(`${this.baseUrl}/${animalId}`);
+    return this.httpClient.get<Animal>(`${this.baseUrl}/animals/${animalId}`);
+  }
+
+  public addAnimal(request: SetAnimalRequest): Observable<Animal> {
+    return this.httpClient.post<Animal>(`${this.baseUrl}/admin/animals`, request);
   }
 }
