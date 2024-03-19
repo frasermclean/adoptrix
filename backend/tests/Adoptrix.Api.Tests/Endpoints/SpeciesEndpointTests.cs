@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using System.Runtime.InteropServices;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 

@@ -20,13 +20,16 @@ public class AnimalsRepository(AdoptrixDbContext dbContext) : Repository(dbConte
             {
                 Id = animal.Id,
                 Name = animal.Name,
-                Description = animal.Description,
-                SpeciesId = animal.Species.Id,
-                BreedId = animal.Breed.Id,
+                SpeciesName = animal.Species.Name,
+                BreedName = animal.Breed.Name,
                 Sex = animal.Sex,
                 DateOfBirth = animal.DateOfBirth,
                 CreatedAt = animal.CreatedAt,
-                Images = animal.Images,
+                Image = animal.Images.Select(image => new ImageResult
+                    {
+                        Id = image.Id, Description = image.Description, IsProcessed = image.IsProcessed
+                    })
+                    .FirstOrDefault(),
             })
             .OrderBy(animal => animal.Name)
             .ToListAsync(cancellationToken);

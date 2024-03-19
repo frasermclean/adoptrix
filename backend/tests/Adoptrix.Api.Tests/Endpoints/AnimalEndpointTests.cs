@@ -7,6 +7,7 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Domain;
 using System.Net.Http.Headers;
+using Adoptrix.Application.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Endpoints;
@@ -29,11 +30,11 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // act
         var message = await httpClient.GetAsync("api/animals");
-        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<AnimalResponse>>(SerializerOptions);
+        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<SearchAnimalsResult>>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllSatisfy(ValidateAnimalResponse);
+        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllBeOfType<SearchAnimalsResult>();
     }
 
     [Theory]
@@ -223,9 +224,9 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         response.Id.Should().NotBeEmpty();
         response.Name.Should().NotBeEmpty();
-        response.SpeciesId.Should().NotBeEmpty();
-        response.BreedId.Should().NotBeEmpty();
-        response.Sex.Should().NotBeNull();
+        response.SpeciesName.Should().NotBeEmpty();
+        response.BreedName.Should().NotBeEmpty();
+        response.Sex.Should().BeDefined();
         response.DateOfBirth.Should().NotBe(default);
     }
 

@@ -74,13 +74,16 @@ public class ApiFixture : WebApplicationFactory<Program>
                 {
                     Id = animal.Id,
                     Name = animal.Name,
-                    Description = animal.Description,
-                    SpeciesId = animal.Species.Id,
-                    BreedId = animal.Breed.Id,
+                    SpeciesName = animal.Species.Name,
+                    BreedName = animal.Breed.Name,
                     Sex = animal.Sex,
                     DateOfBirth = animal.DateOfBirth,
                     CreatedAt = animal.CreatedAt,
-                    Images = animal.Images
+                    Image = animal.Images.Select(image => new ImageResult
+                        {
+                            Id = image.Id, Description = image.Description, IsProcessed = image.IsProcessed
+                        })
+                        .FirstOrDefault(),
                 }));
 
         mock.Setup(repository => repository.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
