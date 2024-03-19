@@ -28,7 +28,7 @@ import { GetAnimal } from '../animals.actions';
 export class AnimalViewComponent implements OnInit {
   @Input({ required: true }) animalId!: string;
   readonly state$ = this.store.select(AnimalsState.state);
-  readonly animal$ = this.store.select(AnimalsState.animal).pipe(map((filterFn) => filterFn(this.animalId)));
+  readonly animal$ = this.store.select(AnimalsState.currentAnimal);
 
   constructor(private store: Store) {}
 

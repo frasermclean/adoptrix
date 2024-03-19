@@ -3,21 +3,19 @@
     <mat-card-header>
       <mat-card-title>{{ animal.name }}</mat-card-title>
       <mat-card-subtitle>
-        <span class="species">{{ animal.speciesId | titlecase }}</span>
-        <span class="breed">{{ animal.breedId || 'Unspecified breed' | titlecase }}</span>
+        <span class="species">{{ animal.speciesName | titlecase }}</span>
+        <span class="breed">{{ animal.breedName || 'Unspecified breed' | titlecase }}</span>
       </mat-card-subtitle>
     </mat-card-header>
 
     <img
       class="image"
-      [ngClass]="hasImages ? 'image-custom' : 'image-default'"
+      [ngClass]="animal.image ? 'image-custom' : 'image-default'"
       mat-card-image
       [src]="imageUrl"
       [alt]="imageAltText"
     />
     <mat-card-content>
-      <p class="description">{{ animal.description }}</p>
-      <mat-divider></mat-divider>
     </mat-card-content>
 
     <mat-card-actions>

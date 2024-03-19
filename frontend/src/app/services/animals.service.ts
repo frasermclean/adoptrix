@@ -3,17 +3,17 @@ import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { Animal } from '@models/animal.model';
+import { Animal, SearchAnimalsParams, SearchAnimalsResult } from '@models/animal.models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AnimalsService {
-  private readonly baseUrl = environment.apiBaseUrl;
+  private readonly baseUrl = `${environment.apiBaseUrl}/animals`;
 
   constructor(private httpClient: HttpClient) {}
 
-  public searchAnimals(params: SearchAnimalsParams = {}): Observable<Animal[]> {
+  public searchAnimals(params: SearchAnimalsParams = {}): Observable<SearchAnimalsResult[]> {
     let httpParams = new HttpParams();
     if (params.speciesId) {
       httpParams = httpParams.set('speciesId', params.speciesId);
@@ -22,15 +22,10 @@ export class AnimalsService {
       httpParams = httpParams.set('name', params.name);
     }
 
-    return this.httpClient.get<Animal[]>(`${this.baseUrl}/animals`, { params: httpParams });
+    return this.httpClient.get<SearchAnimalsResult[]>(this.baseUrl, { params: httpParams });
   }
 
   public getAnimal(animalId: string): Observable<Animal> {
-    return this.httpClient.get<Animal>(`${this.baseUrl}/animals/${animalId}`);
+    return this.httpClient.get<Animal>(`${this.baseUrl}/${animalId}`);
   }
-}
-
-export interface SearchAnimalsParams {
-  speciesId?: string;
-  name?: string;
 }

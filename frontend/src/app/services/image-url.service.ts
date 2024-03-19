@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ImageInformation } from '@models/image-information.model';
+import { ImageResponse } from '@models/image.response';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -8,35 +8,28 @@ import { environment } from '../../environments/environment';
 export class ImageUrlService {
   constructor() {}
 
-  public getFullSizeUrl(animalId: string, image: ImageInformation): string {
+  public getFullSizeUrl(animalId: string, image: ImageResponse): string {
     return this.getImageUrl(animalId, image, 'full');
   }
 
-  public getPreviewUrl(animalId: string, image: ImageInformation): string {
+  public getPreviewUrl(animalId: string, image: ImageResponse): string {
     return this.getImageUrl(animalId, image, 'preview');
   }
 
-  public getThumbnailUrl(animalId: string, image: ImageInformation): string {
+  public getThumbnailUrl(animalId: string, image: ImageResponse): string {
     return this.getImageUrl(animalId, image, 'thumb');
   }
 
   /**
    * Get the default image URL for a species
-   * @param speciesId The species ID to lookup
+   * @param speciesName The species name to lookup
    * @returns The URL of the default image for the species
    */
-  public getSpeciesDefaultImageUrl(speciesId: string): string {
-    switch (speciesId) {
-      case 'c9c1836b-1051-45c3-a2c4-0d841e69e6d3':
-        return 'images/cat.png';
-      case 'e6d11a53-bacb-4a8b-a171-beea7e935467':
-        return 'images/horse.png';
-      default:
-        return 'images/dog.png';
-    }
+  public getSpeciesDefaultImageUrl(speciesName: string): string {
+    return `images/${speciesName.toLowerCase()}.png`
   }
 
-  private getImageUrl(animalId: string, image: ImageInformation, category: 'full' | 'thumb' | 'preview'): string {
+  private getImageUrl(animalId: string, image: ImageResponse, category: 'full' | 'thumb' | 'preview'): string {
     const suffix = (image.isProcessed && category) || 'original';
     return `${environment.blobStorageBaseUrl}/${animalId}/${image.id}/${suffix}`;
   }

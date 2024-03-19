@@ -17,7 +17,7 @@ import { LoadingSpinnerComponent } from '@shared/loading-spinner/loading-spinner
 })
 export class AnimalsListComponent implements OnInit {
   readonly state$ = this.store.select(AnimalsState.state);
-  readonly animals$ = this.store.select(AnimalsState.animals);
+  readonly animals$ = this.store.select(AnimalsState.searchResults);
 
   constructor(private store: Store) {}
 

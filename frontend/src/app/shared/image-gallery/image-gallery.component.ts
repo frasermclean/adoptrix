@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ImageInformation } from '@models/image-information.model';
+import { ImageResponse } from '@models/image.response';
 import { ImageUrlService } from '@services/image-url.service';
 import { Gallery, GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
@@ -13,7 +13,7 @@ import { LightboxModule } from 'ng-gallery/lightbox';
 })
 export class ImageGalleryComponent implements OnInit {
   @Input({ required: true }) animalId!: string;
-  @Input({ required: true }) images!: ImageInformation[];
+  @Input({ required: true }) images!: ImageResponse[];
 
   readonly galleryId = 'gallery';
   galleryItems: GalleryItem[] = [];

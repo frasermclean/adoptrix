@@ -1,4 +1,4 @@
-import { SearchAnimalsParams } from '@services/animals.service';
+import { SearchAnimalsParams } from '@models/animal.models';
 
 export class SearchAnimals {
   static readonly type = '[Animals List Component] Search Animals';
@@ -7,5 +7,5 @@ export class SearchAnimals {
 
 export class GetAnimal {
   static readonly type = '[Animal View Component] Get Animal';
-  constructor(public id: string) {}
+  constructor(public animalId: string) {}
 }

@@ -1,39 +1,40 @@
 import { Injectable } from '@angular/core';
-import { Animal } from '@models/animal.model';
-import { Action, Selector, State, StateContext, StateToken, createSelector } from '@ngxs/store';
-import { catchError, of, tap } from 'rxjs';
+import { Action, Selector, State, StateContext, StateToken, Store, createSelector } from '@ngxs/store';
+import { catchError, tap } from 'rxjs';
 
-import { GetAnimal, SearchAnimals } from './animals.actions';
 import { AnimalsService } from '@services/animals.service';
+import { GetAnimal, SearchAnimals } from './animals.actions';
+import { Animal, SearchAnimalsResult } from '@models/animal.models';
 
-const ANIMALS_STATE_TOKEN = new StateToken<AnimalsStateModel>('animals');
 interface AnimalsStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
-  animals: Animal[];
-  lastUpdate: Date | null;
+  searchResults: SearchAnimalsResult[];
+  currentAnimal: Animal | null;
 }
+
+const ANIMALS_STATE_TOKEN = new StateToken<AnimalsStateModel>('animals');
 
 @State<AnimalsStateModel>({
   name: ANIMALS_STATE_TOKEN,
   defaults: {
     state: 'initial',
     error: null,
-    animals: [],
-    lastUpdate: null,
+    searchResults: [],
+    currentAnimal: null,
   },
 })
 @Injectable()
 export class AnimalsState {
-  constructor(private animalsService: AnimalsService) {}
+  constructor(private animalsService: AnimalsService, private store: Store) {}
 
   @Action(SearchAnimals)
   searchAnimals(context: StateContext<AnimalsStateModel>, action: SearchAnimals) {
     context.patchState({ state: 'busy' });
     return this.animalsService.searchAnimals(action.params).pipe(
-      tap((animals) => context.patchState({ state: 'ready', lastUpdate: new Date(), animals })),
+      tap((searchResults) => context.patchState({ state: 'ready', searchResults })),
       catchError((error) => {
-        context.patchState({ state: 'error', animals: [], error });
+        context.patchState({ state: 'error', searchResults: [], error });
         throw error;
       })
     );
@@ -41,16 +42,11 @@ export class AnimalsState {
 
   @Action(GetAnimal)
   getAnimal(context: StateContext<AnimalsStateModel>, action: GetAnimal) {
-    // if the animal is already in the store, don't make a request
-    const animal = context.getState().animals.find((animal) => animal.id === action.id);
-    if (animal) {
-      return of(animal);
-    }
-
-    // look up the animal
-    context.patchState({ state: 'busy' });
-    return this.animalsService.getAnimal(action.id).pipe(
-      tap((animal) => context.patchState({ state: 'ready', animals: [animal] })),
+    context.patchState({ state: 'busy', currentAnimal: null });
+    return this.animalsService.getAnimal(action.animalId).pipe(
+      tap((animal) => {
+        context.patchState({ state: 'ready', currentAnimal: animal });
+      }),
       catchError((error) => {
         context.patchState({ state: 'error', error });
         throw error;
@@ -64,12 +60,12 @@ export class AnimalsState {
   }
 
   @Selector()
-  static animals(state: AnimalsStateModel) {
-    return state.animals;
+  static searchResults(state: AnimalsStateModel) {
+    return state.searchResults;
   }
 
   @Selector()
-  static animal(state: AnimalsStateModel) {
-    return (id: string) => state.animals.find((animal) => animal.id === id);
+  static currentAnimal(state: AnimalsStateModel) {
+    return state.currentAnimal;
   }
 }

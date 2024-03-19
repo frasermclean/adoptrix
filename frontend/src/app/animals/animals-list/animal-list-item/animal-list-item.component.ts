@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { Animal } from '@models/animal.model';
+import { SearchAnimalsResult  } from '@models/animal.models';
 import { ImageUrlService } from '@services/image-url.service';
 
 @Component({
@@ -15,21 +15,17 @@ import { ImageUrlService } from '@services/image-url.service';
   styleUrl: './animal-list-item.component.scss',
 })
 export class AnimalListItemComponent {
-  @Input({ required: true }) animal!: Animal;
+  @Input({ required: true }) animal!: SearchAnimalsResult;
 
   constructor(private imageUrlService: ImageUrlService) {}
 
-  get hasImages() {
-    return this.animal.images.length > 0;
-  }
-
   get imageUrl() {
-    return this.hasImages
-      ? this.imageUrlService.getPreviewUrl(this.animal.id, this.animal.images[0])
-      : this.imageUrlService.getSpeciesDefaultImageUrl(this.animal.speciesId);
+    return this.animal.image
+      ? this.imageUrlService.getPreviewUrl(this.animal.id, this.animal.image)
+      : this.imageUrlService.getSpeciesDefaultImageUrl(this.animal.speciesName);
   }
 
   get imageAltText() {
-    return this.hasImages ? this.animal.images[0].description : 'Placeholder image';
+    return this.animal.image ? this.animal.image.description : 'Placeholder image';
   }
 }
