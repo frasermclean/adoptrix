@@ -6,11 +6,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { Select, Store } from '@ngxs/store';
-import { SpeciesState } from '../../animals/species.state';
-import { GetAllSpecies } from '../../animals/species.actions';
+import { Store } from '@ngxs/store';
+import { SpeciesState } from '@state/species.state';
 import { BreedsActions } from '@state/breeds.actions';
 import { BreedsState } from '@state/breeds.state';
+import { SpeciesActions } from '@state/species.actions';
 
 @Component({
   selector: 'app-animal-edit',
@@ -40,7 +40,7 @@ export class AnimalEditComponent implements OnInit {
   constructor(private formBuilder: FormBuilder, private store: Store) {}
 
   ngOnInit(): void {
-    this.store.dispatch(new GetAllSpecies());
+    this.store.dispatch(new SpeciesActions.GetAll());
     this.store.dispatch(new BreedsActions.ClearSearchResults());
   }
 

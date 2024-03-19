@@ -3,13 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { Store } from '@ngxs/store';
-import { map } from 'rxjs';
 
 import { LoadingSpinnerComponent } from '@shared/loading-spinner/loading-spinner.component';
 import { ImageGalleryComponent } from '@shared/image-gallery/image-gallery.component';
 import { AnimalDetailsComponent } from './animal-details/animal-details.component';
-import { AnimalsState } from '../animals.state';
-import { GetAnimal } from '../animals.actions';
+import { AnimalsState } from '@state/animals.state';
+import { AnimalsActions } from '@state/animals.actions';
 
 @Component({
   selector: 'app-animal-view',
@@ -33,6 +32,6 @@ export class AnimalViewComponent implements OnInit {
   constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.store.dispatch(new GetAnimal(this.animalId));
+    this.store.dispatch(new AnimalsActions.Get(this.animalId));
   }
 }

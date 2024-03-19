@@ -4,8 +4,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { Store } from '@ngxs/store';
 import { AnimalListItemComponent } from './animal-list-item/animal-list-item.component';
 import { SearchControlsComponent } from './search-controls/search-controls.component';
-import { AnimalsState } from '../animals.state';
-import { SearchAnimals } from '../animals.actions';
+import { AnimalsState } from '@state/animals.state';
+import { AnimalsActions } from '@state/animals.actions';
 import { LoadingSpinnerComponent } from '@shared/loading-spinner/loading-spinner.component';
 
 @Component({
@@ -22,6 +22,6 @@ export class AnimalsListComponent implements OnInit {
   constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.store.dispatch(new SearchAnimals());
+    this.store.dispatch(new AnimalsActions.Search());
   }
 }

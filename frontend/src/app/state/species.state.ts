@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Species } from '@models/species.model';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
-import { SpeciesService } from '@services/species.service';
-import { GetAllSpecies } from './species.actions';
 import { catchError, tap } from 'rxjs';
-
-const SPECIES_STATE_TOKEN = new StateToken<SpeciesStateModel>('species');
+import { SpeciesService } from '@services/species.service';
+import { SpeciesActions } from './species.actions';
 
 interface SpeciesStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
   allSpecies: Species[];
 }
+
+const SPECIES_STATE_TOKEN = new StateToken<SpeciesStateModel>('species');
 
 @State<SpeciesStateModel>({
   name: SPECIES_STATE_TOKEN,
@@ -25,7 +25,7 @@ interface SpeciesStateModel {
 export class SpeciesState {
   constructor(private speciesService: SpeciesService) {}
 
-  @Action(GetAllSpecies)
+  @Action(SpeciesActions.GetAll)
   getAllSpecies(context: StateContext<SpeciesStateModel>) {
     context.patchState({ state: 'busy' });
     return this.speciesService.getAllSpecies().pipe(

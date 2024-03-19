@@ -3,7 +3,7 @@ import { Action, Selector, State, StateContext, StateToken, Store, createSelecto
 import { catchError, tap } from 'rxjs';
 
 import { AnimalsService } from '@services/animals.service';
-import { GetAnimal, SearchAnimals } from './animals.actions';
+import { AnimalsActions } from './animals.actions';
 import { Animal, SearchAnimalsResult } from '@models/animal.models';
 
 interface AnimalsStateModel {
@@ -28,8 +28,8 @@ const ANIMALS_STATE_TOKEN = new StateToken<AnimalsStateModel>('animals');
 export class AnimalsState {
   constructor(private animalsService: AnimalsService, private store: Store) {}
 
-  @Action(SearchAnimals)
-  searchAnimals(context: StateContext<AnimalsStateModel>, action: SearchAnimals) {
+  @Action(AnimalsActions.Search)
+  searchAnimals(context: StateContext<AnimalsStateModel>, action: AnimalsActions.Search) {
     context.patchState({ state: 'busy' });
     return this.animalsService.searchAnimals(action.params).pipe(
       tap((searchResults) => context.patchState({ state: 'ready', searchResults })),
@@ -40,8 +40,8 @@ export class AnimalsState {
     );
   }
 
-  @Action(GetAnimal)
-  getAnimal(context: StateContext<AnimalsStateModel>, action: GetAnimal) {
+  @Action(AnimalsActions.Get)
+  getAnimal(context: StateContext<AnimalsStateModel>, action: AnimalsActions.Get) {
     context.patchState({ state: 'busy', currentAnimal: null });
     return this.animalsService.getAnimal(action.animalId).pipe(
       tap((animal) => {
