@@ -5,7 +5,7 @@ using Riok.Mapperly.Abstractions;
 namespace Adoptrix.Api.Mapping;
 
 [Mapper]
-[UseStaticMapper(typeof(ImageInformationMapper))]
+[UseStaticMapper(typeof(ImageResponseMapper))]
 public static partial class AnimalMapper
 {
     public static partial AnimalResponse ToResponse(this Animal animal);

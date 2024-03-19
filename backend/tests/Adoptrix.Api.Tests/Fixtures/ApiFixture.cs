@@ -79,7 +79,7 @@ public class ApiFixture : WebApplicationFactory<Program>
                     Sex = animal.Sex,
                     DateOfBirth = animal.DateOfBirth,
                     CreatedAt = animal.CreatedAt,
-                    Image = animal.Images.Select(image => new ImageResult
+                    Image = animal.Images.Select(image => new ImageResponse
                         {
                             Id = image.Id, Description = image.Description, IsProcessed = image.IsProcessed
                         })
