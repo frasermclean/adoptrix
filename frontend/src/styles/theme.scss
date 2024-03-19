@@ -36,6 +36,7 @@ $light-theme: mat.define-light-theme(
 @include mat.list-theme($light-theme);
 @include mat.menu-theme($light-theme);
 @include mat.progress-spinner-theme($light-theme);
+@include mat.radio-theme($light-theme);
 @include mat.sidenav-theme($light-theme);
 @include mat.select-theme($light-theme);
 @include mat.toolbar-theme($light-theme);

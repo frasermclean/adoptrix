@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { Store } from '@ngxs/store';
 import { SpeciesState } from '@state/species.state';
@@ -22,6 +23,7 @@ import { SpeciesActions } from '@state/species.actions';
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
+    MatRadioModule,
     MatSelectModule,
   ],
   templateUrl: './animal-edit.component.html',
@@ -32,6 +34,7 @@ export class AnimalEditComponent implements OnInit {
     name: ['', Validators.required],
     speciesId: ['', Validators.required],
     breedId: ['', Validators.required],
+    sex: ['', Validators.required],
   });
 
   allSpecies = this.store.select(SpeciesState.allSpecies);
