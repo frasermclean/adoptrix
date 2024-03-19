@@ -12,7 +12,7 @@ export class SpeciesService {
 
   constructor(private httpClient: HttpClient) {}
 
-  searchSpecies(): Observable<Species[]> {
+  getAllSpecies(): Observable<Species[]> {
     return this.httpClient.get<Species[]>(this.baseUrl);
   }
 

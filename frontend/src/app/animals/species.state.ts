@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { Species } from '@models/species.model';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { SpeciesService } from '@services/species.service';
-import { GetSpecies } from './species.actions';
-import { catchError, of, tap } from 'rxjs';
+import { GetAllSpecies } from './species.actions';
+import { catchError, tap } from 'rxjs';
 
 const SPECIES_STATE_TOKEN = new StateToken<SpeciesStateModel>('species');
 
 interface SpeciesStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
-  species: Species[];
+  allSpecies: Species[];
 }
 
 @State<SpeciesStateModel>({
@@ -18,25 +18,18 @@ interface SpeciesStateModel {
   defaults: {
     state: 'initial',
     error: null,
-    species: [],
+    allSpecies: [],
   },
 })
 @Injectable()
 export class SpeciesState {
   constructor(private speciesService: SpeciesService) {}
 
-  @Action(GetSpecies)
-  getSpecies(context: StateContext<SpeciesStateModel>, action: GetSpecies) {
-    // if the species is already in the store, don't make a request
-    const species = context.getState().species.find((s) => s.id === action.speciesId);
-    if (species) {
-      return of(species);
-    }
-
-    // look up the species
+  @Action(GetAllSpecies)
+  getAllSpecies(context: StateContext<SpeciesStateModel>) {
     context.patchState({ state: 'busy' });
-    return this.speciesService.getSpecies(action.speciesId).pipe(
-      tap((species) => context.patchState({ state: 'ready', species: [species] })),
+    return this.speciesService.getAllSpecies().pipe(
+      tap((allSpecies) => context.patchState({ state: 'ready', allSpecies })),
       catchError((error) => {
         context.patchState({ state: 'error', error });
         throw error;
@@ -45,7 +38,7 @@ export class SpeciesState {
   }
 
   @Selector()
-  static species(state: SpeciesStateModel) {
-    return (speciesId: string) => state.species.find((s) => s.id === speciesId);
+  static allSpecies(state: SpeciesStateModel) {
+    return state.allSpecies;
   }
 }
