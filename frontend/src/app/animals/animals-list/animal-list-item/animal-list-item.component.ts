@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { SearchAnimalsResult  } from '@models/animal.models';
+import { SearchAnimalsResult } from '@models/animal.models';
 import { ImageUrlService } from '@services/image-url.service';
 
 @Component({
