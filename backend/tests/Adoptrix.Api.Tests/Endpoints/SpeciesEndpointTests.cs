@@ -18,7 +18,7 @@ public class SpeciesEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        fixture.SpeciesRepository.Verify(repository => repository.SearchSpeciesAsync(It.IsAny<CancellationToken>()),
+        fixture.SpeciesRepository.Verify(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()),
             Times.Once);
         responses.Should().HaveCount(3).And.AllSatisfy(response =>
         {

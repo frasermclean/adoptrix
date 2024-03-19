@@ -135,7 +135,7 @@ public class ApiFixture : WebApplicationFactory<Program>
 
     private static void SetupSpeciesRepositoryMock(Mock<ISpeciesRepository> mock)
     {
-        mock.Setup(repository => repository.SearchSpeciesAsync(It.IsAny<CancellationToken>()))
+        mock.Setup(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(SpeciesGenerator.Generate(SearchResultsCount));
 
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
