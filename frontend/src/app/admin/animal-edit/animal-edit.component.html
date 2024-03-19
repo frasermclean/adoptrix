@@ -33,6 +33,14 @@
       <mat-radio-button value="female">Female</mat-radio-button>
       <mat-radio-button value="unknown">Unknown</mat-radio-button>
     </mat-radio-group>
+    <!-- Date of birth -->
+    <mat-form-field class="full-width">
+      <mat-label>Date of birth</mat-label>
+      <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth" />
+      <mat-hint>DD/MM/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="dobPicker"></mat-datepicker-toggle>
+      <mat-datepicker #dobPicker></mat-datepicker>
+    </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button color="primary" type="submit" [disabled]="!formGroup.valid">SAVE</button>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -20,6 +21,7 @@ import { SpeciesActions } from '@state/species.actions';
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
+    MatDatepickerModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
@@ -35,6 +37,7 @@ export class AnimalEditComponent implements OnInit {
     speciesId: ['', Validators.required],
     breedId: ['', Validators.required],
     sex: ['', Validators.required],
+    dateOfBirth: ['', Validators.required],
   });
 
   allSpecies = this.store.select(SpeciesState.allSpecies);

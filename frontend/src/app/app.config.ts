@@ -1,4 +1,5 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding, withEnabledBlockingInitialNavigation } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -38,6 +39,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding(), withEnabledBlockingInitialNavigation()),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
+    provideNativeDateAdapter(),
     importProvidersFrom([
       NgxsModule.forRoot([AuthState], ngxsConfig),
       NgxsLoggerPluginModule.forRoot({ disabled: !environment.isDevelopment }),
@@ -65,6 +67,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: GALLERY_CONFIG,
       useFactory: galleryConfigFactory,
+    },
+    {
+      provide: MAT_DATE_LOCALE,
+      useValue: 'en-GB', // TODO: Look into using the user's locale
     },
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
