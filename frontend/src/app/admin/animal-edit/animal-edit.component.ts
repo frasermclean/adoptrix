@@ -38,6 +38,7 @@ export class AnimalEditComponent implements OnInit {
     breedId: ['', Validators.required],
     sex: ['', Validators.required],
     dateOfBirth: ['', Validators.required],
+    description: [''],
   });
 
   allSpecies = this.store.select(SpeciesState.allSpecies);

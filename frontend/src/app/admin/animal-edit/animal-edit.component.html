@@ -41,6 +41,11 @@
       <mat-datepicker-toggle matIconSuffix [for]="dobPicker"></mat-datepicker-toggle>
       <mat-datepicker #dobPicker></mat-datepicker>
     </mat-form-field>
+    <!-- Description -->
+    <mat-form-field class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" placeholder="Friendly description of the animal"></textarea>
+    </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button color="primary" type="submit" [disabled]="!formGroup.valid">SAVE</button>
