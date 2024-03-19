@@ -9,12 +9,12 @@ namespace Adoptrix.Infrastructure.Services.Repositories;
 
 public sealed class BreedsRepository(AdoptrixDbContext dbContext) : Repository(dbContext), IBreedsRepository
 {
-    public async Task<IEnumerable<SearchBreedsResult>> SearchAsync(Species? species, bool withAnimals,
+    public async Task<IEnumerable<SearchBreedsResult>> SearchAsync(Guid? speciesId, bool? withAnimals,
         CancellationToken cancellationToken)
     {
         return await DbContext.Breeds
-            .Where(breed => (species != null && breed.Species == species || species == null) &&
-                            (withAnimals && breed.Animals.Count > 0 || !withAnimals))
+            .Where(breed => (speciesId == null || breed.Species.Id == speciesId) &&
+                            (withAnimals == null || withAnimals.Value && breed.Animals.Count > 0))
             .Select(breed => new SearchBreedsResult
             {
                 Id = breed.Id,

@@ -108,8 +108,8 @@ public class ApiFixture : WebApplicationFactory<Program>
     private static void SetupBreedsRepositoryMock(Mock<IBreedsRepository> mock)
     {
         mock.Setup(repository =>
-                repository.SearchAsync(It.IsAny<Species>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string _, bool _, CancellationToken _) => AnimalGenerator.Generate(SearchResultsCount)
+                repository.SearchAsync(It.IsAny<Guid?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid? _, bool? _, CancellationToken _) => AnimalGenerator.Generate(SearchResultsCount)
                 .Select(animal => new SearchBreedsResult
                 {
                     Id = animal.Id,
