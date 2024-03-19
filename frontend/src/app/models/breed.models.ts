@@ -4,3 +4,8 @@ export interface Breed {
   speciesId: string;
   animalIds: string[];
 }
+
+export interface SearchBreedsRequest {
+  speciesId?: string;
+  withAnimals?: boolean;
+}

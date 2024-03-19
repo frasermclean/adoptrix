@@ -4,12 +4,13 @@ import { importProvidersFrom } from '@angular/core';
 import { NgxsModule } from '@ngxs/store';
 import { AnimalsState } from '../animals/animals.state';
 import { SpeciesState } from '../animals/species.state';
+import { BreedsState } from '@state/breeds.state';
 
 export default [
   {
     path: '',
     pathMatch: 'prefix',
     children: [{ path: '', component: AdminPortalComponent }],
-    providers: [importProvidersFrom([NgxsModule.forFeature([AnimalsState, SpeciesState])])],
+    providers: [importProvidersFrom([NgxsModule.forFeature([AnimalsState, BreedsState, SpeciesState])])],
   },
 ] satisfies Route[];
