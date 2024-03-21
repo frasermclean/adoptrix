@@ -9,6 +9,7 @@ export interface AuthStateModel {
   status: 'initial' | 'busy' | 'logged-out' | 'logged-in';
   name: string;
   email: string;
+  role: 'guest' | 'user' | 'admin';
 }
 
 @State<AuthStateModel>({
@@ -17,6 +18,7 @@ export interface AuthStateModel {
     status: 'initial',
     name: '',
     email: '',
+    role: 'guest',
   },
 })
 @Injectable()
@@ -57,5 +59,10 @@ export class AuthState {
   @Selector()
   static email(state: AuthStateModel) {
     return state.email;
+  }
+
+  @Selector()
+  static role(state: AuthStateModel) {
+    return state.role;
   }
 }
