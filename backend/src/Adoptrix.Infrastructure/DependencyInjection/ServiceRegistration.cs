@@ -19,7 +19,7 @@ public static class ServiceRegistration
         .AddDatabaseServices()
         .AddAzureStorageServices(configuration);
 
-    private static IServiceCollection AddDatabaseServices(this IServiceCollection services) => services
+    internal static IServiceCollection AddDatabaseServices(this IServiceCollection services) => services
         .AddDbContext<AdoptrixDbContext>()
         .AddScoped<IAnimalsRepository, AnimalsRepository>()
         .AddScoped<IBreedsRepository, BreedsRepository>()
