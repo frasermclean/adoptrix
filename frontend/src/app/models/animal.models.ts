@@ -1,12 +1,14 @@
+import { Breed } from './breed.models';
 import { ImageResponse } from './image.response';
 import { Sex } from './sex.enum';
+import { Species } from './species.model';
 
 export interface Animal {
   id: string;
   name: string;
   description: string | null;
-  speciesName: string;
-  breedName: string;
+  species: Species;
+  breed: Breed;
   sex: Sex;
   dateOfBirth: string;
   images: ImageResponse[];

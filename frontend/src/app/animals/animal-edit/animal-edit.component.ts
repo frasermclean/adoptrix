@@ -48,9 +48,13 @@ interface AnimalEditForm {
 })
 export class AnimalEditComponent implements OnInit {
   readonly formGroup: FormGroup<AnimalEditForm>;
-  readonly isEditing: boolean;
+  private readonly animal: Animal | undefined;
   readonly allSpecies = this.store.select(SpeciesState.allSpecies);
   readonly breedsSearchResults = this.store.select(BreedsState.searchResults);
+
+  get isEditing() {
+    return this.animal !== undefined;
+  }
 
   constructor(
     private store: Store,
@@ -58,11 +62,11 @@ export class AnimalEditComponent implements OnInit {
     formBuilder: NonNullableFormBuilder,
     @Inject(MAT_DIALOG_DATA) data?: AnimalEditData
   ) {
-    this.isEditing = !!data?.animal;
+    this.animal = data?.animal;
     this.formGroup = formBuilder.group({
       name: [data?.animal.name || '', Validators.required],
-      speciesId: ['', Validators.required],
-      breedId: ['', Validators.required],
+      speciesId: [data?.animal ? data.animal.species.id : '', Validators.required],
+      breedId: [data?.animal ? data.animal.breed.id : '', Validators.required],
       sex: [data?.animal ? data.animal.sex : Sex.Male, Validators.required],
       dateOfBirth: [data?.animal ? new Date(data.animal.dateOfBirth) : new Date(), Validators.required],
       description: [data?.animal ? data.animal.description : null],
@@ -71,15 +75,21 @@ export class AnimalEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(new SpeciesActions.GetAll());
-    this.store.dispatch(new BreedsActions.ClearSearchResults());
+    if (this.animal?.species.id) {
+      this.searchBreeds(this.animal.species.id);
+    }
   }
 
   onSpeciesChanged(speciesId: string) {
-    this.store.dispatch(new BreedsActions.Search({ speciesId }));
+    this.searchBreeds(speciesId);
   }
 
   onSubmit() {
     const value = this.formGroup.getRawValue();
     this.dialogRef.close({ ...value, dateOfBirth: value.dateOfBirth.toISOString().split('T')[0] });
+  }
+
+  private searchBreeds(speciesId: string) {
+    this.store.dispatch(new BreedsActions.Search({ speciesId }));
   }
 }

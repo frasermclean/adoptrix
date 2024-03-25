@@ -5,8 +5,4 @@ export namespace BreedsActions {
     static readonly type = 'SearchBreeds';
     constructor(public request: SearchBreedsRequest) {}
   }
-
-  export class ClearSearchResults {
-    static readonly type = 'ClearSearchResults';
-  }
 }

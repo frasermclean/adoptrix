@@ -27,7 +27,7 @@ export class BreedsState {
 
   @Action(BreedsActions.Search)
   getBreed(context: StateContext<BreedStateModel>, action: BreedsActions.Search) {
-    context.patchState({ state: 'busy' });
+    context.patchState({ state: 'busy', searchResults: [] });
     return this.breedsService.searchBreeds(action.request).pipe(
       tap((searchResults) => context.patchState({ state: 'ready', searchResults })),
       catchError((error) => {
@@ -35,11 +35,6 @@ export class BreedsState {
         throw error;
       })
     );
-  }
-
-  @Action(BreedsActions.ClearSearchResults)
-  clearSearchResults(context: StateContext<BreedStateModel>) {
-    context.patchState({ searchResults: [] });
   }
 
   @Selector()
