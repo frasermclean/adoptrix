@@ -3,6 +3,7 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Store } from '@ngxs/store';
 import { Subject, filter, firstValueFrom, takeUntil } from 'rxjs';
 
@@ -18,7 +19,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-animal-admin-controls',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatSnackBarModule],
   templateUrl: './animal-admin-controls.component.html',
   styleUrl: './animal-admin-controls.component.scss',
 })
@@ -27,7 +28,7 @@ export class AnimalAdminControlsComponent implements OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
 
-  constructor(private dialog: MatDialog, private store: Store, private router: Router) {}
+  constructor(private store: Store, private router: Router, private dialog: MatDialog, private snackbar: MatSnackBar) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -57,6 +58,7 @@ export class AnimalAdminControlsComponent implements OnDestroy {
       )
       .subscribe(async () => {
         await firstValueFrom(this.store.dispatch(new AnimalsActions.Delete(this.animal.id)));
+        this.snackbar.open(`${this.animal.name} has been successfully deleted.`);
         this.router.navigate(['/animals']);
       });
   }
