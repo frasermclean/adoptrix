@@ -68,6 +68,20 @@ export class AnimalsState {
     );
   }
 
+  @Action(AnimalsActions.Delete)
+  deleteAnimal(context: StateContext<AnimalsStateModel>, action: AnimalsActions.Delete) {
+    context.patchState({ state: 'busy' });
+    return this.animalsService.deleteAnimal(action.animalId).pipe(
+      tap(() => {
+        context.patchState({ state: 'ready', currentAnimal: null });
+      }),
+      catchError((error) => {
+        context.patchState({ state: 'error', error });
+        throw error;
+      })
+    );
+  }
+
   @Selector()
   static state(state: AnimalsStateModel) {
     return state.state;

@@ -9,6 +9,7 @@ import { Animal, SearchAnimalsParams, SearchAnimalsResult, SetAnimalRequest } fr
   providedIn: 'root',
 })
 export class AnimalsService {
+
   private readonly baseUrl = environment.apiBaseUrl;
 
   constructor(private httpClient: HttpClient) {}
@@ -31,5 +32,9 @@ export class AnimalsService {
 
   public addAnimal(request: SetAnimalRequest): Observable<Animal> {
     return this.httpClient.post<Animal>(`${this.baseUrl}/admin/animals`, request);
+  }
+
+  public deleteAnimal(animalId: string) {
+    return this.httpClient.delete(`${this.baseUrl}/admin/animals/${animalId}`);
   }
 }
