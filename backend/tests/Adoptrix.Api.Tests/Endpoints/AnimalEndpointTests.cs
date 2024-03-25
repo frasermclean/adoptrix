@@ -224,8 +224,10 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         response.Id.Should().NotBeEmpty();
         response.Name.Should().NotBeEmpty();
-        response.SpeciesName.Should().NotBeEmpty();
-        response.BreedName.Should().NotBeEmpty();
+        response.Species.Id.Should().NotBeEmpty();
+        response.Species.Name.Should().NotBeEmpty();
+        response.Breed.Id.Should().NotBeEmpty();
+        response.Breed.Name.Should().NotBeEmpty();
         response.Sex.Should().BeDefined();
         response.DateOfBirth.Should().NotBe(default);
     }
