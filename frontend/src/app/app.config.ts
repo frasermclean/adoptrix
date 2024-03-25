@@ -1,9 +1,7 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding, withEnabledBlockingInitialNavigation } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 
 // MSAL dependencies
 import {
@@ -33,13 +31,14 @@ import { galleryConfigFactory } from '@shared/gallery.config';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
+import { provideMaterialConfig } from '@config/material.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withComponentInputBinding(), withEnabledBlockingInitialNavigation()),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
-    provideNativeDateAdapter(),
+    provideMaterialConfig(),
     importProvidersFrom([
       NgxsModule.forRoot([AuthState], ngxsConfig),
       NgxsLoggerPluginModule.forRoot({ disabled: !environment.isDevelopment }),
@@ -67,18 +66,6 @@ export const appConfig: ApplicationConfig = {
     {
       provide: GALLERY_CONFIG,
       useFactory: galleryConfigFactory,
-    },
-    {
-      provide: MAT_DATE_LOCALE,
-      useValue: 'en-GB', // TODO: Look into using the user's locale
-    },
-    {
-      provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
-      useValue: {
-        showDelay: 500,
-        hideDelay: 100,
-        touchendHideDelay: 1000,
-      },
     },
   ],
 };

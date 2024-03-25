@@ -19,6 +19,7 @@
     "module": "ES2022",
     "useDefineForClassFields": false,
     "paths": {
+      "@config/*": ["./src/app/config/*"],
       "@models/*": ["./src/app/models/*"],
       "@pipes/*": ["./src/app/pipes/*"],
       "@services/*": ["./src/app/services/*"],
