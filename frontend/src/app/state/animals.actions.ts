@@ -16,6 +16,11 @@ export namespace AnimalsActions {
     constructor(public request: SetAnimalRequest) {}
   }
 
+  export class Update {
+    static readonly type = '[Animal Admin Controls Component] Update Animal';
+    constructor(public animalId: string, public request: SetAnimalRequest) {}
+  }
+
   export class Delete {
     static readonly type = '[Animal Admin Controls Component] Delete Animal';
     constructor(public animalId: string) {}

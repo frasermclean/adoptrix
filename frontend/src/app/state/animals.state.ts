@@ -68,6 +68,20 @@ export class AnimalsState {
     );
   }
 
+  @Action(AnimalsActions.Update)
+  updateAnimal(context: StateContext<AnimalsStateModel>, action: AnimalsActions.Update) {
+    context.patchState({ state: 'busy' });
+    return this.animalsService.updateAnimal(action.animalId, action.request).pipe(
+      tap((animal) => {
+        context.patchState({ state: 'ready', currentAnimal: animal });
+      }),
+      catchError((error) => {
+        context.patchState({ state: 'error', error });
+        throw error;
+      })
+    );
+  }
+
   @Action(AnimalsActions.Delete)
   deleteAnimal(context: StateContext<AnimalsStateModel>, action: AnimalsActions.Delete) {
     context.patchState({ state: 'busy' });

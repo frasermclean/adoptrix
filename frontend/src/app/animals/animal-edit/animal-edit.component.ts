@@ -82,6 +82,7 @@ export class AnimalEditComponent implements OnInit {
 
   onSpeciesChanged(speciesId: string) {
     this.searchBreeds(speciesId);
+    this.formGroup.controls.breedId.setValue('');
   }
 
   onSubmit() {

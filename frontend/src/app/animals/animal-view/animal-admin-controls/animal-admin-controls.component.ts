@@ -8,7 +8,7 @@ import { Store } from '@ngxs/store';
 import { Subject, filter, firstValueFrom, takeUntil } from 'rxjs';
 
 import { AnimalEditComponent, AnimalEditData } from '../../animal-edit/animal-edit.component';
-import { Animal } from '@models/animal.models';
+import { Animal, SetAnimalRequest } from '@models/animal.models';
 import {
   ConfirmationPromptComponent,
   ConfirmationPromptData,
@@ -36,9 +36,19 @@ export class AnimalAdminControlsComponent implements OnDestroy {
   }
 
   onEdit() {
-    this.dialog.open<AnimalEditComponent, AnimalEditData>(AnimalEditComponent, {
-      data: { animal: this.animal },
-    });
+    this.dialog
+      .open<AnimalEditComponent, AnimalEditData, SetAnimalRequest>(AnimalEditComponent, {
+        data: { animal: this.animal },
+      })
+      .afterClosed()
+      .pipe(
+        filter((request) => !!request),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(async (request) => {
+        await firstValueFrom(this.store.dispatch(new AnimalsActions.Update(this.animal.id, request!)));
+        this.snackbar.open(`${this.animal.name} has been successfully updated.`);
+      });
   }
 
   onDelete() {
