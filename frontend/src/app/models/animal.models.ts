@@ -4,7 +4,7 @@ import { Sex } from './sex.enum';
 export interface Animal {
   id: string;
   name: string;
-  description?: string;
+  description: string | null;
   speciesName: string;
   breedName: string;
   sex: Sex;

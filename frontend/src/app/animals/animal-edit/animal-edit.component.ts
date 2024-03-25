@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
@@ -13,8 +13,21 @@ import { SpeciesState } from '@state/species.state';
 import { BreedsActions } from '@state/breeds.actions';
 import { BreedsState } from '@state/breeds.state';
 import { SpeciesActions } from '@state/species.actions';
-import { AnimalsActions } from '@state/animals.actions';
 import { Sex } from '@models/sex.enum';
+import { Animal, SetAnimalRequest } from '@models/animal.models';
+
+export interface AnimalEditData {
+  animal: Animal;
+}
+
+interface AnimalEditForm {
+  name: FormControl<string>;
+  speciesId: FormControl<string>;
+  breedId: FormControl<string>;
+  sex: FormControl<Sex>;
+  dateOfBirth: FormControl<Date>;
+  description: FormControl<string | null>;
+}
 
 @Component({
   selector: 'app-animal-edit',
@@ -34,19 +47,27 @@ import { Sex } from '@models/sex.enum';
   styleUrl: './animal-edit.component.scss',
 })
 export class AnimalEditComponent implements OnInit {
-  formGroup = this.formBuilder.group({
-    name: ['', Validators.required],
-    speciesId: ['', Validators.required],
-    breedId: ['', Validators.required],
-    sex: [Sex.Male, Validators.required],
-    dateOfBirth: [new Date(), Validators.required],
-    description: this.formBuilder.control<string | null>(null),
-  });
+  readonly formGroup: FormGroup<AnimalEditForm>;
+  readonly isEditing: boolean;
+  readonly allSpecies = this.store.select(SpeciesState.allSpecies);
+  readonly breedsSearchResults = this.store.select(BreedsState.searchResults);
 
-  allSpecies = this.store.select(SpeciesState.allSpecies);
-  breedsSearchResults = this.store.select(BreedsState.searchResults);
-
-  constructor(private formBuilder: NonNullableFormBuilder, private store: Store) {}
+  constructor(
+    private store: Store,
+    private dialogRef: MatDialogRef<AnimalEditComponent, SetAnimalRequest>,
+    formBuilder: NonNullableFormBuilder,
+    @Inject(MAT_DIALOG_DATA) data?: AnimalEditData
+  ) {
+    this.isEditing = !!data?.animal;
+    this.formGroup = formBuilder.group({
+      name: [data?.animal.name || '', Validators.required],
+      speciesId: ['', Validators.required],
+      breedId: ['', Validators.required],
+      sex: [data?.animal ? data.animal.sex : Sex.Male, Validators.required],
+      dateOfBirth: [data?.animal ? new Date(data.animal.dateOfBirth) : new Date(), Validators.required],
+      description: [data?.animal ? data.animal.description : null],
+    });
+  }
 
   ngOnInit(): void {
     this.store.dispatch(new SpeciesActions.GetAll());
@@ -59,11 +80,6 @@ export class AnimalEditComponent implements OnInit {
 
   onSubmit() {
     const value = this.formGroup.getRawValue();
-    this.store.dispatch(
-      new AnimalsActions.Add({
-        ...value,
-        dateOfBirth: value.dateOfBirth.toISOString().split('T')[0],
-      })
-    );
+    this.dialogRef.close({ ...value, dateOfBirth: value.dateOfBirth.toISOString().split('T')[0] });
   }
 }

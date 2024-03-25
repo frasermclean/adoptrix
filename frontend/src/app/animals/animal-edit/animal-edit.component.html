@@ -1,5 +1,5 @@
 <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-  <h2 mat-dialog-title>Add new animal</h2>
+  <h2 mat-dialog-title>{{ isEditing ? "Edit animal" : "Add new animal" }}</h2>
   <mat-dialog-content>
     <!-- Name -->
     <mat-form-field class="full-width">
