@@ -65,8 +65,8 @@ export class AnimalEditComponent implements OnInit {
     this.animal = data?.animal;
     this.formGroup = formBuilder.group({
       name: [data?.animal.name || '', Validators.required],
-      speciesId: [data?.animal ? data.animal.species.id : '', Validators.required],
-      breedId: [data?.animal ? data.animal.breed.id : '', Validators.required],
+      speciesId: [data?.animal ? data.animal.speciesId : '', Validators.required],
+      breedId: [data?.animal ? data.animal.breedId : '', Validators.required],
       sex: [data?.animal ? data.animal.sex : Sex.Male, Validators.required],
       dateOfBirth: [data?.animal ? new Date(data.animal.dateOfBirth) : new Date(), Validators.required],
       description: [data?.animal ? data.animal.description : null],
@@ -75,8 +75,8 @@ export class AnimalEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(new SpeciesActions.GetAll());
-    if (this.animal?.species.id) {
-      this.searchBreeds(this.animal.species.id);
+    if (this.animal) {
+      this.searchBreeds(this.animal.speciesId);
     }
   }
 

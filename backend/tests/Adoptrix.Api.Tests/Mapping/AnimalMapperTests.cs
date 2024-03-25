@@ -18,10 +18,10 @@ public class AnimalMapperTests
         response.Id.Should().Be(animal.Id);
         response.Name.Should().Be(animal.Name);
         response.Description.Should().Be(animal.Description);
-        response.Species.Id.Should().Be(animal.Species.Id);
-        response.Species.Name.Should().Be(animal.Species.Name);
-        response.Breed.Id.Should().Be(animal.Breed.Id);
-        response.Breed.Name.Should().Be(animal.Breed.Name);
+        response.SpeciesId.Should().Be(animal.Species.Id);
+        response.SpeciesName.Should().Be(animal.Species.Name);
+        response.BreedId.Should().Be(animal.Breed.Id);
+        response.BreedName.Should().Be(animal.Breed.Name);
         response.Sex.Should().Be(animal.Sex);
         response.DateOfBirth.Should().Be(animal.DateOfBirth);
         response.CreatedAt.Should().Be(animal.CreatedAt.ToUniversalTime());
