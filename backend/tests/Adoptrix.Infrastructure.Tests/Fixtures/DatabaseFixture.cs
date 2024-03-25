@@ -13,6 +13,8 @@ public class DatabaseFixture : IAsyncLifetime
         .Build();
 
     public ISpeciesRepository? SpeciesRepository { get; private set; }
+    public IBreedsRepository? BreedsRepository { get; private set; }
+
     public async Task InitializeAsync()
     {
         await container.StartAsync();
@@ -30,6 +32,7 @@ public class DatabaseFixture : IAsyncLifetime
             .EnsureCreatedAsync();
 
         SpeciesRepository = serviceProvider.GetRequiredService<ISpeciesRepository>();
+        BreedsRepository = serviceProvider.GetRequiredService<IBreedsRepository>();
     }
 
     public async Task DisposeAsync()
