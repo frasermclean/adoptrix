@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { AnimalEditComponent } from '../animal-edit/animal-edit.component';
+import { AnimalEditComponent } from '../../animals/animal-edit/animal-edit.component';
 
 @Component({
   selector: 'app-admin-portal',
