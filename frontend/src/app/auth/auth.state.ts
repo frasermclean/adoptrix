@@ -48,6 +48,7 @@ export class AuthState {
       status: action.data.isLoggedIn ? 'logged-in' : 'logged-out',
       name: action.data.name || '',
       email: action.data.email || '',
+      role: action.data.isLoggedIn ? (adminUserIds.includes(action.data.userId || '') ? 'admin' : 'user') : 'guest',
     });
   }
 
@@ -66,3 +67,8 @@ export class AuthState {
     return state.role;
   }
 }
+
+const adminUserIds = [
+  // TODO: Replace with proper authentication logic
+  '6a63381f-4477-4899-8a37-bfb2c109c62d',
+];

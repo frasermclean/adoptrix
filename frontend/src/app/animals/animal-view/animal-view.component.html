@@ -19,6 +19,12 @@
     <p class="no-images">No images available</p>
     }
   </div>
+
+  @if ((userRole$ | async) === 'admin') {
+  <div id="admin-container" class="component">
+    <app-animal-admin-controls [animalId]="animal.id"></app-animal-admin-controls>
+  </div>
+  }
 </div>
 } } }
 
