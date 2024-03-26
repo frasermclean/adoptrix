@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, ENVIRONMENT_INITIALIZER, importProvidersFrom, inject } from '@angular/core';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding, withEnabledBlockingInitialNavigation } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -32,6 +32,7 @@ import { galleryConfigFactory } from '@shared/gallery.config';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
 import { provideMaterialConfig } from '@config/material.config';
+import { RouteHandler } from './route.handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -46,6 +47,11 @@ export const appConfig: ApplicationConfig = {
     MsalService,
     MsalGuard,
     MsalBroadcastService,
+    {
+      provide: ENVIRONMENT_INITIALIZER,
+      multi: true,
+      useValue: () => inject(RouteHandler)
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,
