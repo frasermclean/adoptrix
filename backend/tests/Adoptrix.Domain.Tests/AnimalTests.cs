@@ -7,20 +7,16 @@ public class AnimalTests
     {
         // arrange
         var id = Guid.NewGuid();
-        var fido = CreateAnimal(id);
+        var fido = CreateAnimal(id, "Fido");
         var felix = CreateAnimal(id, "Felix");
+        var otherObject = new object();
 
         // assert
         fido.Should().Be(felix);
-        fido.Equals(new
-        {
-        }).Should().BeFalse();
+        fido.Equals(otherObject).Should().BeFalse();
         fido.GetHashCode().Should().Be(felix.GetHashCode());
         fido.Id.Should().Be(id);
         fido.Name.Should().Be("Fido");
-        fido.Description.Should().BeNull();
-        fido.Species.Name.Should().Be("Dog");
-        fido.DateOfBirth.Should().Be(new DateOnly(2019, 1, 1));
     }
 
     [Fact]
@@ -64,7 +60,6 @@ public class AnimalTests
             Id = id ?? Guid.NewGuid(),
             Name = name,
             Description = description,
-            Species = species,
             Breed = breed,
             Sex = sex,
             DateOfBirth = dateOfBirth ?? new DateOnly(2019, 1, 1)

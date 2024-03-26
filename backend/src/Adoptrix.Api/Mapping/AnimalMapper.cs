@@ -8,6 +8,8 @@ namespace Adoptrix.Api.Mapping;
 [UseStaticMapper(typeof(ImageResponseMapper))]
 public static partial class AnimalMapper
 {
+    [MapProperty("Breed.Species.Id", "SpeciesId")]
+    [MapProperty("Breed.Species.Name", "SpeciesName")]
     public static partial AnimalResponse ToResponse(this Animal animal);
 
     private static DateTime ConvertToUtc(DateTime dateTime) => dateTime.ToUniversalTime();

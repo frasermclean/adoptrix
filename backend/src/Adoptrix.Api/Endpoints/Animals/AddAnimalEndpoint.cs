@@ -32,7 +32,6 @@ public sealed class AddAnimalEndpoint
         }
 
         // get species and breed (should be validated by validator)
-        var species = (await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken)).Value;
         var breed = (await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken)).Value;
 
         // add animal to database
@@ -40,7 +39,6 @@ public sealed class AddAnimalEndpoint
         {
             Name = request.Name,
             Description = request.Description,
-            Species = species,
             Breed = breed,
             Sex = request.Sex,
             DateOfBirth = request.DateOfBirth,

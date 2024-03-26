@@ -10,17 +10,17 @@ namespace Adoptrix.Infrastructure.Services.Repositories;
 public class AnimalsRepository(AdoptrixDbContext dbContext) : Repository(dbContext), IAnimalsRepository
 {
     public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(string? animalName = null,
-        Guid? speciesId = null, CancellationToken cancellationToken = default)
+        Guid? breedId = null, CancellationToken cancellationToken = default)
     {
         return await DbContext.Animals
             .AsNoTracking()
             .Where(animal => (animalName == null || animal.Name.Contains(animalName)) &&
-                             (speciesId == null || animal.Species.Id == speciesId))
+                             (breedId == null || animal.Breed.Id == breedId))
             .Select(animal => new SearchAnimalsResult
             {
                 Id = animal.Id,
                 Name = animal.Name,
-                SpeciesName = animal.Species.Name,
+                SpeciesName = animal.Breed.Species.Name,
                 BreedName = animal.Breed.Name,
                 Sex = animal.Sex,
                 DateOfBirth = animal.DateOfBirth,
@@ -38,7 +38,6 @@ public class AnimalsRepository(AdoptrixDbContext dbContext) : Repository(dbConte
     public async Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default)
     {
         var animal = await DbContext.Animals.Where(animal => animal.Id == animalId)
-            .Include(animal => animal.Species)
             .Include(animal => animal.Breed)
             .FirstOrDefaultAsync(cancellationToken);
 
