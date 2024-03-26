@@ -1,3 +1,6 @@
+import { Provider } from '@angular/core';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+
 import {
   BrowserCacheLocation,
   IPublicClientApplication,
@@ -5,9 +8,44 @@ import {
   LogLevel,
   PublicClientApplication,
 } from '@azure/msal-browser';
-import { MsalGuardConfiguration, MsalInterceptorConfiguration } from '@azure/msal-angular';
+import {
+  MSAL_GUARD_CONFIG,
+  MSAL_INSTANCE,
+  MSAL_INTERCEPTOR_CONFIG,
+  MsalBroadcastService,
+  MsalGuard,
+  MsalGuardConfiguration,
+  MsalInterceptor,
+  MsalInterceptorConfiguration,
+  MsalService,
+} from '@azure/msal-angular';
 
 import { environment } from '../../environments/environment';
+
+export function provideMsal(): Provider[] {
+  return [
+    MsalService,
+    MsalGuard,
+    MsalBroadcastService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: MsalInterceptor,
+      multi: true,
+    },
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: instanceFactory,
+    },
+    {
+      provide: MSAL_GUARD_CONFIG,
+      useFactory: guardConfigurationFactory,
+    },
+    {
+      provide: MSAL_INTERCEPTOR_CONFIG,
+      useFactory: interceptorConfigurationFactory,
+    },
+  ];
+}
 
 const instance = 'adoptrix.ciamlogin.com';
 const tenantId = 'adoptrix.com';
@@ -15,7 +53,7 @@ const tenantId = 'adoptrix.com';
 /**
  * MSAL Instance Factory
  */
-export function msalInstanceFactory(): IPublicClientApplication {
+function instanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
       clientId: environment.auth.clientId,
@@ -41,7 +79,7 @@ export function msalInstanceFactory(): IPublicClientApplication {
 /**
  * MSAL guard configuration factory
  */
-export function msalGuardConfigurationFactory(): MsalGuardConfiguration {
+function guardConfigurationFactory(): MsalGuardConfiguration {
   return {
     interactionType: InteractionType.Redirect,
     authRequest: {
@@ -54,7 +92,7 @@ export function msalGuardConfigurationFactory(): MsalGuardConfiguration {
 /**
  * MSAL interceptor configuration factory
  */
-export function msalInterceptorConfigurationFactory(): MsalInterceptorConfiguration {
+function interceptorConfigurationFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
   protectedResourceMap.set(`${environment.apiBaseUrl}/admin`, environment.auth.scopes);
 

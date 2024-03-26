@@ -1,26 +1,11 @@
 import { ApplicationConfig } from '@angular/core';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding, withEnabledBlockingInitialNavigation } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
-// MSAL dependencies
-import {
-  MSAL_GUARD_CONFIG,
-  MSAL_INSTANCE,
-  MSAL_INTERCEPTOR_CONFIG,
-  MsalBroadcastService,
-  MsalGuard,
-  MsalInterceptor,
-  MsalService,
-} from '@azure/msal-angular';
-import {
-  msalGuardConfigurationFactory,
-  msalInstanceFactory,
-  msalInterceptorConfigurationFactory,
-} from './auth/auth.config';
-
 // app configuration providers
 import { provideMaterialConfig } from '@config/material.config';
+import { provideMsal } from '@config/msal.config';
 import { provideNgxsModules } from '@config/ngxs.config';
 
 // gallery
@@ -35,27 +20,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     provideMaterialConfig(),
+    provideMsal(),
     provideNgxsModules(),
-    MsalService,
-    MsalGuard,
-    MsalBroadcastService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: MsalInterceptor,
-      multi: true,
-    },
-    {
-      provide: MSAL_INSTANCE,
-      useFactory: msalInstanceFactory,
-    },
-    {
-      provide: MSAL_GUARD_CONFIG,
-      useFactory: msalGuardConfigurationFactory,
-    },
-    {
-      provide: MSAL_INTERCEPTOR_CONFIG,
-      useFactory: msalInterceptorConfigurationFactory,
-    },
     {
       provide: GALLERY_CONFIG,
       useFactory: galleryConfigFactory,
