@@ -17,7 +17,7 @@ namespace Adoptrix.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -28,7 +28,7 @@ namespace Adoptrix.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("BreedId")
+                    b.Property<Guid>("BreedId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -51,7 +51,7 @@ namespace Adoptrix.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar");
 
-                    b.Property<char?>("Sex")
+                    b.Property<char>("Sex")
                         .HasMaxLength(1)
                         .HasColumnType("char");
 
@@ -175,7 +175,9 @@ namespace Adoptrix.Infrastructure.Migrations
                 {
                     b.HasOne("Adoptrix.Domain.Breed", "Breed")
                         .WithMany("Animals")
-                        .HasForeignKey("BreedId");
+                        .HasForeignKey("BreedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Adoptrix.Domain.Species", "Species")
                         .WithMany()

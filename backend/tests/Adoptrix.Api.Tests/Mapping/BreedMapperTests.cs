@@ -17,7 +17,7 @@ public class BreedMapperTests
         // assert
         response.Id.Should().Be(breed.Id);
         response.Name.Should().Be(breed.Name);
-        response.SpeciesName.Should().Be(breed.Species.Name);
+        response.SpeciesId.Should().Be(breed.Species.Id);
         response.AnimalIds.Should().HaveCount(breed.Animals.Count).And.Contain(breed.Animals.Select(animal => animal.Id));
     }
 }

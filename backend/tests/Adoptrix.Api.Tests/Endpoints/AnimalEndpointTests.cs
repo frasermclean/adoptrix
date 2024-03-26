@@ -7,6 +7,7 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Domain;
 using System.Net.Http.Headers;
+using Adoptrix.Application.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Endpoints;
@@ -29,11 +30,11 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // act
         var message = await httpClient.GetAsync("api/animals");
-        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<AnimalResponse>>(SerializerOptions);
+        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<SearchAnimalsResult>>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllSatisfy(ValidateAnimalResponse);
+        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllBeOfType<SearchAnimalsResult>();
     }
 
     [Theory]
@@ -75,16 +76,15 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Theory]
-    [InlineData("Rufus", "Another good boy", "dog", ApiFixture.UnknownBreedName)]
-    [InlineData("Max", "", ApiFixture.UnknownSpeciesName, "Eastern Gray")]
-    [InlineData(null, null, null, null)]
+    [InlineData("Rufus", "Another good boy")]
+    [InlineData("Max", "")]
+    [InlineData(null, null)]
     public async Task AddAnimal_WithInvalidRequest_Should_Return_ProblemDetails(string? name, string? description,
-        string? speciesName, string? breedName, Sex? sex = default, int ageInYears = default)
-
+        Guid speciesId = default, Guid breedId = default, Sex sex = default, int ageInYears = default)
     {
         // arrange
         var uri = new Uri("api/admin/animals", UriKind.Relative);
-        var request = CreateSetAnimalRequest(name, description, speciesName, breedName, sex, ageInYears);
+        var request = CreateSetAnimalRequest(name, description, speciesId, breedId, sex, ageInYears);
 
         // act
         var message = await httpClient.PostAsJsonAsync(uri, request);
@@ -210,12 +210,12 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     private static SetAnimalRequest CreateSetAnimalRequest(string? name = "Max", string? description = "A good boy",
-        string? speciesName = "dog", string? breedName = "Labrador", Sex? sex = Sex.Male, int ageInYears = 2) => new()
+        Guid? speciesId = null, Guid? breedId = null, Sex sex = Sex.Male, int ageInYears = 2) => new()
     {
         Name = name!,
         Description = description,
-        SpeciesName = speciesName!,
-        BreedName = breedName!,
+        SpeciesId = speciesId ?? Guid.NewGuid(),
+        BreedId = breedId ?? Guid.NewGuid(),
         Sex = sex,
         DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * ageInYears))
     };
@@ -224,9 +224,11 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         response.Id.Should().NotBeEmpty();
         response.Name.Should().NotBeEmpty();
+        response.SpeciesId.Should().NotBeEmpty();
         response.SpeciesName.Should().NotBeEmpty();
+        response.BreedId.Should().NotBeEmpty();
         response.BreedName.Should().NotBeEmpty();
-        response.Sex.Should().NotBeNull();
+        response.Sex.Should().BeDefined();
         response.DateOfBirth.Should().NotBe(default);
     }
 

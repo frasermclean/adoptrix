@@ -17,29 +17,22 @@ public sealed class SetAnimalRequestValidator : AbstractValidator<SetAnimalReque
         RuleFor(request => request.Description)
             .MaximumLength(Animal.DescriptionMaxLength);
 
-        RuleFor(request => request.SpeciesName)
+        RuleFor(request => request.SpeciesId)
             .NotEmpty()
-            .MaximumLength(Species.NameMaxLength)
-            .MustAsync(async (speciesName, cancellationToken) =>
+            .MustAsync(async (speciesId, cancellationToken) =>
             {
-                var result = await speciesRepository.GetByNameAsync(speciesName, cancellationToken);
+                var result = await speciesRepository.GetByIdAsync(speciesId, cancellationToken);
                 return result.IsSuccess;
             })
-            .WithMessage("Could not find species with name: {PropertyValue}");
+            .WithMessage("Could not find species with ID: {PropertyValue}");
 
-        RuleFor(request => request.BreedName)
-            .MaximumLength(Breed.NameMaxLength)
-            .MustAsync(async (breedName, cancellationToken) =>
+        RuleFor(request => request.BreedId)
+            .MustAsync(async (breedId, cancellationToken) =>
             {
-                if (string.IsNullOrWhiteSpace(breedName))
-                {
-                    return true;
-                }
-
-                var result = await breedsRepository.GetByNameAsync(breedName, cancellationToken);
+                var result = await breedsRepository.GetByIdAsync(breedId, cancellationToken);
                 return result.IsSuccess;
             })
-            .WithMessage("Could not find breed with name: {PropertyValue}");
+            .WithMessage("Could not find breed with ID: {PropertyValue}");
 
         RuleFor(request => request.DateOfBirth)
             .SetValidator(dateOfBirthValidator);

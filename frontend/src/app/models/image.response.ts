@@ -1,4 +1,4 @@
-export interface ImageInformation {
+export interface ImageResponse {
   id: number;
   description?: string;
   isProcessed: boolean;

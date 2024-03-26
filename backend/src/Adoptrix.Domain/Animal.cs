@@ -8,8 +8,8 @@ public class Animal : Aggregate
     public required string Name { get; set; }
     public string? Description { get; set; }
     public required Species Species { get; set; }
-    public Breed? Breed { get; set; }
-    public Sex? Sex { get; set; }
+    public required Breed Breed { get; set; }
+    public required Sex Sex { get; set; }
     public required DateOnly DateOfBirth { get; set; }
 
     public ICollection<ImageInformation> Images { get; init; } = new List<ImageInformation>();

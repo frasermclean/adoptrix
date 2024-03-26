@@ -68,19 +68,22 @@ public class ApiFixture : WebApplicationFactory<Program>
         int searchResultsCount = SearchResultsCount)
     {
         mock.Setup(repository =>
-                repository.SearchAnimalsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string _, string _, CancellationToken _) => AnimalGenerator.Generate(searchResultsCount)
+                repository.SearchAsync(It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string _, Guid? _, CancellationToken _) => AnimalGenerator.Generate(searchResultsCount)
                 .Select(animal => new SearchAnimalsResult
                 {
                     Id = animal.Id,
                     Name = animal.Name,
-                    Description = animal.Description,
                     SpeciesName = animal.Species.Name,
-                    BreedName = animal.Breed?.Name,
+                    BreedName = animal.Breed.Name,
                     Sex = animal.Sex,
                     DateOfBirth = animal.DateOfBirth,
                     CreatedAt = animal.CreatedAt,
-                    Images = animal.Images
+                    Image = animal.Images.Select(image => new ImageResponse
+                        {
+                            Id = image.Id, Description = image.Description, IsProcessed = image.IsProcessed
+                        })
+                        .FirstOrDefault(),
                 }));
 
         mock.Setup(repository => repository.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -105,13 +108,13 @@ public class ApiFixture : WebApplicationFactory<Program>
     private static void SetupBreedsRepositoryMock(Mock<IBreedsRepository> mock)
     {
         mock.Setup(repository =>
-                repository.SearchAsync(It.IsAny<Species>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string _, bool _, CancellationToken _) => AnimalGenerator.Generate(SearchResultsCount)
+                repository.SearchAsync(It.IsAny<Guid?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid? _, bool? _, CancellationToken _) => AnimalGenerator.Generate(SearchResultsCount)
                 .Select(animal => new SearchBreedsResult
                 {
                     Id = animal.Id,
                     Name = animal.Name,
-                    SpeciesName = animal.Species.Name,
+                    SpeciesId = animal.Species.Id,
                     AnimalIds = Enumerable.Empty<Guid>()
                 }));
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -132,7 +135,7 @@ public class ApiFixture : WebApplicationFactory<Program>
 
     private static void SetupSpeciesRepositoryMock(Mock<ISpeciesRepository> mock)
     {
-        mock.Setup(repository => repository.SearchSpeciesAsync(It.IsAny<CancellationToken>()))
+        mock.Setup(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(SpeciesGenerator.Generate(SearchResultsCount));
 
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))

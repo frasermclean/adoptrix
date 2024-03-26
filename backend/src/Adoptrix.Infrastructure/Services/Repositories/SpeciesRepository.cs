@@ -8,10 +8,13 @@ namespace Adoptrix.Infrastructure.Services.Repositories;
 
 public class SpeciesRepository(AdoptrixDbContext dbContext) : Repository(dbContext), ISpeciesRepository
 {
-    public async Task<IEnumerable<Species>> SearchSpeciesAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Species>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await DbContext.Species.ToListAsync(cancellationToken);
+        return await DbContext.Species
+            .OrderBy(species => species.Name)
+            .ToListAsync(cancellationToken);
     }
+
     public async Task<Result<Species>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var species = await DbContext.Species.FirstOrDefaultAsync(species => species.Id == id, cancellationToken);

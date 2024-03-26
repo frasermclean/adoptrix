@@ -19,10 +19,12 @@
     "module": "ES2022",
     "useDefineForClassFields": false,
     "paths": {
+      "@config/*": ["./src/app/config/*"],
       "@models/*": ["./src/app/models/*"],
       "@pipes/*": ["./src/app/pipes/*"],
       "@services/*": ["./src/app/services/*"],
       "@shared/*": ["./src/app/shared/*"],
+      "@state/*": ["./src/app/state/*"]
     },
     "lib": ["ES2022", "dom"]
   },

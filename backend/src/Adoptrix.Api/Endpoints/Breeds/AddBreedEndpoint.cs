@@ -7,7 +7,6 @@ using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 

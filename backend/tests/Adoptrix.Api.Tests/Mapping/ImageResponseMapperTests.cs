@@ -3,10 +3,10 @@ using Adoptrix.Api.Tests.Generators;
 
 namespace Adoptrix.Api.Tests.Mapping;
 
-public class ImageInformationMapperTests
+public class ImageResponseMapperTests
 {
     [Fact]
-    public void MappingImageInformationToAnimalImageResponse_Should_ReturnExpectedValues()
+    public void Mapping_ImageInformation_To_ImageResponse_Should_Return_ExpectedValues()
     {
         // arrange
         var imageInformation = ImageInformationGenerator.Generate();

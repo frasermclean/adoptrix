@@ -9,6 +9,7 @@ export interface AuthStateModel {
   status: 'initial' | 'busy' | 'logged-out' | 'logged-in';
   name: string;
   email: string;
+  role: 'guest' | 'user' | 'admin';
 }
 
 @State<AuthStateModel>({
@@ -17,6 +18,7 @@ export interface AuthStateModel {
     status: 'initial',
     name: '',
     email: '',
+    role: 'guest',
   },
 })
 @Injectable()
@@ -46,6 +48,7 @@ export class AuthState {
       status: action.data.isLoggedIn ? 'logged-in' : 'logged-out',
       name: action.data.name || '',
       email: action.data.email || '',
+      role: action.data.isLoggedIn ? (adminUserIds.includes(action.data.userId || '') ? 'admin' : 'user') : 'guest',
     });
   }
 
@@ -58,4 +61,14 @@ export class AuthState {
   static email(state: AuthStateModel) {
     return state.email;
   }
+
+  @Selector()
+  static role(state: AuthStateModel) {
+    return state.role;
+  }
 }
+
+const adminUserIds = [
+  // TODO: Replace with proper authentication logic
+  '6a63381f-4477-4899-8a37-bfb2c109c62d',
+];

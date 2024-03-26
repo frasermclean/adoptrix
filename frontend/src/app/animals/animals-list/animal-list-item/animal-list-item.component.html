@@ -1,27 +1,19 @@
 <div id="container">
-  <mat-card>
+  <mat-card [routerLink]="animal.id">
     <mat-card-header>
       <mat-card-title>{{ animal.name }}</mat-card-title>
-      <mat-card-subtitle>
-        <span class="species">{{ animal.species | titlecase }}</span>
-        <span class="breed">{{ animal.breed || 'Unspecified breed' | titlecase }}</span>
+      <mat-card-subtitle class="subtitle">
+        <span class="species">{{ animal.speciesName | titlecase }}</span>
+        <span class="breed">{{ animal.breedName || "Unspecified breed" | titlecase }}</span>
       </mat-card-subtitle>
     </mat-card-header>
 
     <img
       class="image"
-      [ngClass]="hasImages ? 'image-custom' : 'image-default'"
+      [ngClass]="animal.image ? 'image-custom' : 'image-default'"
       mat-card-image
       [src]="imageUrl"
       [alt]="imageAltText"
     />
-    <mat-card-content>
-      <p class="description">{{ animal.description }}</p>
-      <mat-divider></mat-divider>
-    </mat-card-content>
-
-    <mat-card-actions>
-      <a mat-button [routerLink]="animal.id">VIEW DETAILS</a>
-    </mat-card-actions>
   </mat-card>
 </div>
