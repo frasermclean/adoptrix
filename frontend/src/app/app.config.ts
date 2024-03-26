@@ -22,6 +22,7 @@ import {
 // NGXS modules
 import { NgxsModule } from '@ngxs/store';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { AuthState } from './auth/auth.state';
 import { ngxsConfig } from './ngxs.config';
 
@@ -32,7 +33,6 @@ import { galleryConfigFactory } from '@shared/gallery.config';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
 import { provideMaterialConfig } from '@config/material.config';
-import { RouteHandler } from './route.handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -43,15 +43,11 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom([
       NgxsModule.forRoot([AuthState], ngxsConfig),
       NgxsLoggerPluginModule.forRoot({ disabled: !environment.isDevelopment }),
+      NgxsRouterPluginModule.forRoot(),
     ]),
     MsalService,
     MsalGuard,
     MsalBroadcastService,
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue: () => inject(RouteHandler)
-    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,

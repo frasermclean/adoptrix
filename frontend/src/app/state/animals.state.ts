@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { catchError, tap } from 'rxjs';
+import { Navigate } from '@ngxs/router-plugin';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AnimalsService } from '@services/animals.service';
-import { NotificationService } from '@services/notification.service';
 import { AnimalsActions } from './animals.actions';
 import { Animal, SearchAnimalsResult } from '@models/animal.models';
-import { RouterActions } from './router.actions';
+
 
 interface AnimalsStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
@@ -28,7 +29,7 @@ const ANIMALS_STATE_TOKEN = new StateToken<AnimalsStateModel>('animals');
 })
 @Injectable()
 export class AnimalsState {
-  constructor(private animalsService: AnimalsService, private notificationService: NotificationService) {}
+  constructor(private animalsService: AnimalsService, private snackbar: MatSnackBar) {}
 
   @Action(AnimalsActions.Search)
   searchAnimals(context: StateContext<AnimalsStateModel>, action: AnimalsActions.Search) {
@@ -36,7 +37,6 @@ export class AnimalsState {
     return this.animalsService.searchAnimals(action.params).pipe(
       tap((searchResults) => {
         context.patchState({ state: 'ready', searchResults });
-        this.notificationService.showNotification(`Found ${searchResults.length} animals`);
       }),
       catchError((error) => {
         context.patchState({ state: 'error', searchResults: [], error });
@@ -65,8 +65,8 @@ export class AnimalsState {
     return this.animalsService.addAnimal(action.request).pipe(
       tap((animal) => {
         context.patchState({ state: 'ready', currentAnimal: animal });
-        context.dispatch(new RouterActions.Navigate(['/animals', animal.id]));
-        this.notificationService.showNotification('Animal added successfully');
+        context.dispatch(new Navigate(['/animals', animal.id]));
+        this.snackbar.open(`${animal.name} was added successfully`);
       }),
       catchError((error) => {
         context.patchState({ state: 'error', error });
@@ -81,7 +81,7 @@ export class AnimalsState {
     return this.animalsService.updateAnimal(action.animalId, action.request).pipe(
       tap((animal) => {
         context.patchState({ state: 'ready', currentAnimal: animal });
-        this.notificationService.showNotification('Animal updated successfully');
+        this.snackbar.open(`${animal.name} was updated successfully`);
       }),
       catchError((error) => {
         context.patchState({ state: 'error', error });
@@ -96,8 +96,8 @@ export class AnimalsState {
     return this.animalsService.deleteAnimal(action.animalId).pipe(
       tap(() => {
         context.patchState({ state: 'ready', currentAnimal: null });
-        context.dispatch(new RouterActions.Navigate(['/animals']));
-        this.notificationService.showNotification('Animal deleted successfully');
+        context.dispatch(new Navigate(['/animals']));
+        this.snackbar.open('Animal was deleted successfully');
       }),
       catchError((error) => {
         context.patchState({ state: 'error', error });
