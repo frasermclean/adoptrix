@@ -1,4 +1,4 @@
-import { ApplicationConfig, ENVIRONMENT_INITIALIZER, importProvidersFrom, inject } from '@angular/core';
+import { ApplicationConfig } from '@angular/core';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding, withEnabledBlockingInitialNavigation } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -19,20 +19,15 @@ import {
   msalInterceptorConfigurationFactory,
 } from './auth/auth.config';
 
-// NGXS modules
-import { NgxsModule } from '@ngxs/store';
-import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
-import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
-import { AuthState } from './auth/auth.state';
-import { ngxsConfig } from './ngxs.config';
+// app configuration providers
+import { provideMaterialConfig } from '@config/material.config';
+import { provideNgxsModules } from '@config/ngxs.config';
 
 // gallery
 import { GALLERY_CONFIG } from 'ng-gallery';
 import { galleryConfigFactory } from '@shared/gallery.config';
 
 import { routes } from './app.routes';
-import { environment } from '../environments/environment';
-import { provideMaterialConfig } from '@config/material.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -40,11 +35,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     provideMaterialConfig(),
-    importProvidersFrom([
-      NgxsModule.forRoot([AuthState], ngxsConfig),
-      NgxsLoggerPluginModule.forRoot({ disabled: !environment.isDevelopment }),
-      NgxsRouterPluginModule.forRoot(),
-    ]),
+    provideNgxsModules(),
     MsalService,
     MsalGuard,
     MsalBroadcastService,
