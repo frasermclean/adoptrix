@@ -12,7 +12,7 @@ export namespace AnimalsActions {
   }
 
   export class Add {
-    static readonly type = '[Animal Edit Component] Add Animal';
+    static readonly type = '[Animal List Component] Add Animal';
     constructor(public request: SetAnimalRequest) {}
   }
 

@@ -8,6 +8,12 @@
   <app-animal-list-item [animal]="animal"></app-animal-list-item>
   }
 </div>
-} @case ('error') {
+@if ((userRole$ | async) === 'admin') {
+<div id="fab-container">
+  <button mat-fab aria-label="Add a new animal" matTooltip="Add a new animal" (click)="onAddAnimal()">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
+} } @case ('error') {
 <h2>An error occurred while trying to search for animals.</h2>
 }}
