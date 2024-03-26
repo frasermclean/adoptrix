@@ -8,3 +8,9 @@
   justify-content: center;
   gap: 24px;
 }
+
+#fab-container {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: row-reverse;
+}

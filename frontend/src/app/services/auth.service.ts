@@ -26,6 +26,7 @@ export class AuthService {
           this.store.dispatch(
             new Completed({
               isLoggedIn: activeAccount !== null,
+              userId: activeAccount?.localAccountId,
               name: activeAccount?.name,
               email: activeAccount?.username,
             })

@@ -1,5 +1,6 @@
 #container {
   width: 320px;
+  cursor: pointer;
 }
 
 .image {
@@ -14,8 +15,8 @@
   }
 }
 
-.description {
-  margin-top: 8px;
+.subtitle {
+  margin-bottom: 8px;
 }
 
 .breed {

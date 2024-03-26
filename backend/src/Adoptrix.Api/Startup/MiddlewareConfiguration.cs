@@ -64,7 +64,9 @@ public static class MiddlewareConfiguration
         breedsGroup.MapDelete("/{breedId:guid}", DeleteBreedEndpoint.ExecuteAsync);
 
         var speciesGroup = apiGroup.MapGroup("/species");
-        speciesGroup.MapGet("", SearchSpeciesEndpoint.ExecuteAsync);
+        speciesGroup.MapGet("", GetAllSpeciesEndpoint.ExecuteAsync);
+        speciesGroup.MapGet("/{speciesIdOrName}", GetSpeciesEndpoint.ExecuteAsync)
+            .WithName(GetSpeciesEndpoint.EndpointName);
 
         var usersGroup = apiGroup.MapGroup("/users");
         usersGroup.MapGet("/me", GetCurrentUserEndpoint.Execute);

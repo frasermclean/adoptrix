@@ -6,7 +6,7 @@ export class Processing {
 
 export class Completed {
   static readonly type = '[Auth Service] Completed';
-  constructor(public data: { isLoggedIn: boolean; name?: string; email?: string }) {}
+  constructor(public data: { isLoggedIn: boolean; userId?: string; name?: string; email?: string }) {}
 }
 
 export class Login {

@@ -1,25 +1,26 @@
 ﻿using Adoptrix.Domain;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Adoptrix.Infrastructure.ValueConverters;
+namespace Adoptrix.Infrastructure.Converters;
 
 public class SexConverter()
-    : ValueConverter<Sex?, char?>(sex => SexToChar(sex), c => CharToSex(c))
+    : ValueConverter<Sex, char>(sex => SexToChar(sex), c => CharToSex(c))
 {
+    private const char UnknownChar = 'X';
     private const char MaleChar = 'M';
     private const char FemaleChar = 'F';
 
-    private static char? SexToChar(Sex? sex) => sex switch
+    private static char SexToChar(Sex sex) => sex switch
     {
         Sex.Male => MaleChar,
         Sex.Female => FemaleChar,
-        _ => null
+        _ => UnknownChar
     };
 
-    private static Sex? CharToSex(char? c) => c switch
+    private static Sex CharToSex(char c) => c switch
     {
         MaleChar => Sex.Male,
         FemaleChar => Sex.Female,
-        _ => null
+        _ => Sex.Unknown
     };
 }

@@ -1,5 +1,3 @@
-using Adoptrix.Domain.Errors;
-
 namespace Adoptrix.Domain.Tests;
 
 public class AnimalTests
@@ -49,15 +47,27 @@ public class AnimalTests
     }
 
     private static Animal CreateAnimal(Guid? id = null, string name = "Fido", string? description = null,
-        Species? species = null, DateOnly? dateOfBirth = null) => new()
+        Species? species = null, Breed? breed = null, Sex sex = default, DateOnly? dateOfBirth = null)
     {
-        Id = id ?? Guid.NewGuid(),
-        Name = name,
-        Description = description,
-        Species = species ?? new Species
+        species ??= new Species
         {
             Id = Guid.NewGuid(), Name = "Dog"
-        },
-        DateOfBirth = dateOfBirth ?? new DateOnly(2019, 1, 1)
-    };
+        };
+
+        breed ??= new Breed
+        {
+            Id = Guid.NewGuid(), Name = "Golden Retriever", Species = species
+        };
+
+        return new Animal
+        {
+            Id = id ?? Guid.NewGuid(),
+            Name = name,
+            Description = description,
+            Species = species,
+            Breed = breed,
+            Sex = sex,
+            DateOfBirth = dateOfBirth ?? new DateOnly(2019, 1, 1)
+        };
+    }
 }

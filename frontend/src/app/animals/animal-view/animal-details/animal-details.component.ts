@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
-import { Animal } from '@models/animal.model';
+import { Animal } from '@models/animal.models';
 import { AgePipe } from '@pipes/age.pipe';
 
 @Component({
