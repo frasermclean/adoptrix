@@ -39,6 +39,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext) : Repository(dbConte
     {
         var animal = await DbContext.Animals.Where(animal => animal.Id == animalId)
             .Include(animal => animal.Breed)
+            .Include(animal => animal.Breed.Species)
             .FirstOrDefaultAsync(cancellationToken);
 
         return animal is null
