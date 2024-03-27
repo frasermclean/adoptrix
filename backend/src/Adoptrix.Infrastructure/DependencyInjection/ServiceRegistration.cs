@@ -27,9 +27,7 @@ public static class ServiceRegistration
         .AddDbContext<AdoptrixDbContext>(builder =>
         {
             var connectionString = configuration.GetValue<string>("Database:ConnectionString");
-            builder
-                .UseSqlServer(connectionString)
-                .LogTo(Console.WriteLine, LogLevel.Information);
+            builder.UseSqlServer(connectionString);
         }, optionsLifetime: ServiceLifetime.Singleton)
         .AddScoped<IAnimalsRepository, AnimalsRepository>()
         .AddScoped<IBreedsRepository, BreedsRepository>()
