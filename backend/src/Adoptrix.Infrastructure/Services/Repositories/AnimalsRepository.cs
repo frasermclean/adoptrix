@@ -1,4 +1,4 @@
-using Adoptrix.Application.Models;
+﻿using Adoptrix.Application.Models;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
@@ -40,7 +40,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
     {
         var animal = await DbContext.Animals.Where(animal => animal.Id == animalId)
             .Include(animal => animal.Breed)
-            .Include(animal => animal.Breed.Species)
+            .ThenInclude(breed => breed.Species)
             .FirstOrDefaultAsync(cancellationToken);
 
         return animal is null
