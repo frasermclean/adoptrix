@@ -23,7 +23,7 @@ public class DatabaseFixture : IAsyncLifetime
 
         var serviceProvider = new ServiceCollection()
             .AddSingleton(configuration)
-            .AddDatabaseServices()
+            .AddDatabaseServices(configuration)
             .BuildServiceProvider();
 
         // ensure the database is created

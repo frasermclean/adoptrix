@@ -5,27 +5,38 @@ using Adoptrix.Infrastructure.Services.Repositories;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Infrastructure.DependencyInjection;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration) => services
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
+        IConfiguration configuration) => services
         .AddScoped<IAnimalImageManager, AnimalImageManager>()
         .AddSingleton<IEventPublisher, EventPublisher>()
-        .AddDatabaseServices()
+        .AddDatabaseServices(configuration)
         .AddAzureStorageServices(configuration);
 
-    internal static IServiceCollection AddDatabaseServices(this IServiceCollection services) => services
-        .AddDbContext<AdoptrixDbContext>()
+    internal static IServiceCollection AddDatabaseServices(this IServiceCollection services,
+        IConfiguration configuration) => services
+        .AddDbContext<AdoptrixDbContext>(builder =>
+        {
+            var connectionString = configuration.GetValue<string>("Database:ConnectionString");
+            builder
+                .UseSqlServer(connectionString)
+                .LogTo(Console.WriteLine, LogLevel.Information);
+        }, optionsLifetime: ServiceLifetime.Singleton)
         .AddScoped<IAnimalsRepository, AnimalsRepository>()
         .AddScoped<IBreedsRepository, BreedsRepository>()
         .AddScoped<ISpeciesRepository, SpeciesRepository>();
 
-    private static IServiceCollection AddAzureStorageServices(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddAzureStorageServices(this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddAzureClients(builder =>
         {
