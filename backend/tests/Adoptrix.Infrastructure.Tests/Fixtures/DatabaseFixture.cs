@@ -22,8 +22,8 @@ public class DatabaseFixture : IAsyncLifetime
         var configuration = CreateConfiguration(connectionString);
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton(configuration)
             .AddDatabaseServices(configuration)
+            .AddLogging()
             .BuildServiceProvider();
 
         // ensure the database is created
