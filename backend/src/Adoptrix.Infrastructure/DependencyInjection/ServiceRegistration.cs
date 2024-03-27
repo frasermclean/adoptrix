@@ -31,7 +31,8 @@ public static class ServiceRegistration
         }, optionsLifetime: ServiceLifetime.Singleton)
         .AddScoped<IAnimalsRepository, AnimalsRepository>()
         .AddScoped<IBreedsRepository, BreedsRepository>()
-        .AddScoped<ISpeciesRepository, SpeciesRepository>();
+        .AddScoped<ISpeciesRepository, SpeciesRepository>()
+        .AddScoped<IBatchManager, BatchManager>();
 
     private static IServiceCollection AddAzureStorageServices(this IServiceCollection services,
         IConfiguration configuration)

@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Infrastructure.Services.Repositories;
 
-public class AnimalsRepository(AdoptrixDbContext dbContext) : Repository(dbContext), IAnimalsRepository
+public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
+    : Repository<AdoptrixDbContext>(dbContext, batchManager), IAnimalsRepository
 {
     public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(string? animalName = null,
         Guid? breedId = null, CancellationToken cancellationToken = default)
@@ -57,6 +58,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext) : Repository(dbConte
 
     public async Task<Result> UpdateAsync(Animal animal, CancellationToken cancellationToken = default)
     {
+        DbContext.Animals.Update(animal);
         return await SaveChangesAsync(cancellationToken);
     }
 

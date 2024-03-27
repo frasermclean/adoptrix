@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Infrastructure.Services.Repositories;
 
-public class SpeciesRepository(AdoptrixDbContext dbContext) : Repository(dbContext), ISpeciesRepository
+public class SpeciesRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
+    : Repository<AdoptrixDbContext>(dbContext, batchManager), ISpeciesRepository
 {
     public async Task<IEnumerable<Species>> GetAllAsync(CancellationToken cancellationToken = default)
     {
