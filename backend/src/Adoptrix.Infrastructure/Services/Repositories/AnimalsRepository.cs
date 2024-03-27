@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Models;
+using Adoptrix.Application.Models;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Errors;
@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Adoptrix.Infrastructure.Services.Repositories;
 
 public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
-    : Repository<AdoptrixDbContext>(dbContext, batchManager), IAnimalsRepository
+    : Repository(dbContext, batchManager), IAnimalsRepository
 {
     public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(string? animalName = null,
         Guid? breedId = null, CancellationToken cancellationToken = default)

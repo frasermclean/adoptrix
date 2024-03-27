@@ -1,9 +1,8 @@
 ﻿using FluentResults;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Infrastructure.Services.Repositories;
 
-public abstract class Repository<T>(AdoptrixDbContext dbContext, IBatchManager batchManager) where T : DbContext
+public abstract class Repository(AdoptrixDbContext dbContext, IBatchManager batchManager)
 {
     protected AdoptrixDbContext DbContext { get; } = dbContext;
 
