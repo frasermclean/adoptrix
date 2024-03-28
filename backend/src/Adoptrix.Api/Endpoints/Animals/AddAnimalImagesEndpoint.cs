@@ -5,7 +5,6 @@ using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Events;
 using Microsoft.AspNetCore.Http.HttpResults;

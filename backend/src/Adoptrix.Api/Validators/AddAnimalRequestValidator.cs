@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
-using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Application.Services;
 using FluentValidation;
 
 namespace Adoptrix.Api.Validators;

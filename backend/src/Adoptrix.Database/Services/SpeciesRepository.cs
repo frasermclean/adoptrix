@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Application.Services;
 using Adoptrix.Domain;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;

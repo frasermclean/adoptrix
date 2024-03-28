@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Events;
 using Adoptrix.Jobs.Functions;

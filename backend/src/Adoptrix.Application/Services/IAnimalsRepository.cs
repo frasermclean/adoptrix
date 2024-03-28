@@ -2,7 +2,7 @@
 using Adoptrix.Domain;
 using FluentResults;
 
-namespace Adoptrix.Application.Services.Repositories;
+namespace Adoptrix.Application.Services;
 
 public interface IAnimalsRepository
 {

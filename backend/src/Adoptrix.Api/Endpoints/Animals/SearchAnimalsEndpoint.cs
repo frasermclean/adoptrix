@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Application.Models;
-using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Application.Services;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 

@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services.Repositories;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
 using Microsoft.Extensions.Configuration;
