@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
-using Adoptrix.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.MsSql;

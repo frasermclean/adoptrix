@@ -1,11 +1,11 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Api.Tests.Generators;
 using Adoptrix.Api.Tests.Mocks;
+using Adoptrix.Application.Errors;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
-using Adoptrix.Domain.Errors;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;

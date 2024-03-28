@@ -4,7 +4,6 @@ using Adoptrix.Api.Validators;
 using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
-using Adoptrix.Infrastructure;
 using Adoptrix.Storage.DependencyInjection;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

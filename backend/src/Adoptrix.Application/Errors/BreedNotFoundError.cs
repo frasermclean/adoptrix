@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace Adoptrix.Domain.Errors;
+namespace Adoptrix.Application.Errors;
 
 public class BreedNotFoundError : Error
 {
