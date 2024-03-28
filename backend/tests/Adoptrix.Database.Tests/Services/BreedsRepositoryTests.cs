@@ -5,7 +5,8 @@ using Adoptrix.Database.Tests.Fixtures;
 namespace Adoptrix.Database.Tests.Services;
 
 [Trait("Category", "Integration")]
-public class BreedsRepositoryTests(DatabaseFixture fixture) : IClassFixture<DatabaseFixture>
+[Collection(nameof(DatabaseCollection))]
+public class BreedsRepositoryTests(DatabaseFixture fixture)
 {
     private readonly IBreedsRepository repository = fixture.BreedsRepository!;
 
@@ -27,8 +28,7 @@ public class BreedsRepositoryTests(DatabaseFixture fixture) : IClassFixture<Data
         var result = await repository.GetByIdAsync(breedId);
 
         // assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Name.Should().Be(expectedName);
+        result.Should().BeSuccess().Which.Value.Name.Should().Be(expectedName);
     }
 
     [Fact]
@@ -42,6 +42,17 @@ public class BreedsRepositoryTests(DatabaseFixture fixture) : IClassFixture<Data
 
         // assert
         result.Should().BeFailure().Which.HasError<BreedNotFoundError>();
+    }
+
+    [Theory]
+    [MemberData(nameof(GetKnownBreeds))]
+    public async Task GetByNameAsync_WithKnownName_ShouldReturnExpectedResult(Guid expectedId, string breedName)
+    {
+        // act
+        var result = await repository.GetByNameAsync(breedName);
+
+        // assert
+        result.Should().BeSuccess().Which.Value.Id.Should().Be(expectedId);
     }
 
     public static TheoryData<Guid, string> GetKnownBreeds() => new()

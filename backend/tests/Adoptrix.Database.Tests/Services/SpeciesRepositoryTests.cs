@@ -4,7 +4,8 @@ using Adoptrix.Database.Tests.Fixtures;
 namespace Adoptrix.Database.Tests.Services;
 
 [Trait("Category", "Integration")]
-public class SpeciesRepositoryTests(DatabaseFixture fixture) : IClassFixture<DatabaseFixture>
+[Collection(nameof(DatabaseCollection))]
+public class SpeciesRepositoryTests(DatabaseFixture fixture)
 {
     private readonly ISpeciesRepository repository = fixture.SpeciesRepository!;
 
