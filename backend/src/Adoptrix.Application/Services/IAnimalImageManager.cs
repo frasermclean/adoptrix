@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain;
+﻿using Adoptrix.Application.Models;
 using FluentResults;
 
 namespace Adoptrix.Application.Services;

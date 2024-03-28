@@ -1,11 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Api.Tests.Generators;
 using Adoptrix.Api.Tests.Mocks;
+using Adoptrix.Application.Errors;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
-using Adoptrix.Domain.Errors;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -74,12 +73,12 @@ public class ApiFixture : WebApplicationFactory<Program>
                 {
                     Id = animal.Id,
                     Name = animal.Name,
-                    SpeciesName = animal.Species.Name,
+                    SpeciesName = animal.Breed.Species.Name,
                     BreedName = animal.Breed.Name,
                     Sex = animal.Sex,
                     DateOfBirth = animal.DateOfBirth,
                     CreatedAt = animal.CreatedAt,
-                    Image = animal.Images.Select(image => new ImageResponse
+                    Image = animal.Images.Select(image => new AnimalImageResponse
                         {
                             Id = image.Id, Description = image.Description, IsProcessed = image.IsProcessed
                         })
@@ -114,7 +113,7 @@ public class ApiFixture : WebApplicationFactory<Program>
                 {
                     Id = animal.Id,
                     Name = animal.Name,
-                    SpeciesId = animal.Species.Id,
+                    SpeciesId = animal.Breed.Species.Id,
                     AnimalIds = Enumerable.Empty<Guid>()
                 }));
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))

@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Application.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -36,7 +36,6 @@ public class UpdateAnimalEndpoint
         }
 
         // get species and breed (should be validated by validator)
-        var species = (await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken)).Value;
         var breed = (await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken)).Value;
 
         var animal = getResult.Value;
@@ -44,7 +43,6 @@ public class UpdateAnimalEndpoint
         // update properties on the animal
         animal.Name = request.Name;
         animal.Description = request.Description;
-        animal.Species = species;
         animal.Breed = breed;
         animal.Sex = request.Sex;
         animal.DateOfBirth = request.DateOfBirth;

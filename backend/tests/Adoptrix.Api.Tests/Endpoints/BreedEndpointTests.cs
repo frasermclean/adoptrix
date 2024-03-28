@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Domain.Errors;
+using Adoptrix.Application.Errors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Endpoints;

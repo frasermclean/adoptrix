@@ -7,15 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Domain\Adoptrix.Domain.csproj"/>
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="FluentResults"/>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="Microsoft.Identity.Web" />
     <PackageReference Include="SixLabors.ImageSharp" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Adoptrix.Domain\Adoptrix.Domain.csproj"/>
+  </ItemGroup>  
 
 </Project>

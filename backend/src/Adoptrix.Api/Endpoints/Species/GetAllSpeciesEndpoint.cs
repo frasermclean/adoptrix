@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Application.Services;
 
 namespace Adoptrix.Api.Endpoints.Species;
 

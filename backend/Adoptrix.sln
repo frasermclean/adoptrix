@@ -8,7 +8,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Api", "src\Adoptrix.Api\Adoptrix.Api.csproj", "{E738094C-FBA8-4A83-8925-2D622504F369}"
 
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Infrastructure", "src\Adoptrix.Infrastructure\Adoptrix.Infrastructure.csproj", "{5691F28D-9406-4FFF-9F2D-226F72A167FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Database", "src\Adoptrix.Database\Adoptrix.Database.csproj", "{5691F28D-9406-4FFF-9F2D-226F72A167FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Application", "src\Adoptrix.Application\Adoptrix.Application.csproj", "{E9A92DCD-34B6-4B41-A2DB-5AD9AF3E564C}"
 EndProject
@@ -22,9 +22,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Api.Tests", "tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Jobs", "src\Adoptrix.Jobs\Adoptrix.Jobs.csproj", "{3B459084-AC6B-4907-A02A-F947541CBAAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Infrastructure.Tests", "tests\Adoptrix.Infrastructure.Tests\Adoptrix.Infrastructure.Tests.csproj", "{080F1E84-3700-4B9D-B929-B686447C36AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Database.Tests", "tests\Adoptrix.Database.Tests\Adoptrix.Database.Tests.csproj", "{080F1E84-3700-4B9D-B929-B686447C36AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Jobs.Tests", "tests\Adoptrix.Jobs.Tests\Adoptrix.Jobs.Tests.csproj", "{780D9ED8-AF1B-4C78-819F-E2D7130204A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Storage", "src\Adoptrix.Storage\Adoptrix.Storage.csproj", "{059CB34E-D7AD-4DF3-B46F-FEA711029A8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Storage.Tests", "tests\Adoptrix.Storage.Tests\Adoptrix.Storage.Tests.csproj", "{68593B6B-7E51-4140-89DE-3B748EBEC4A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +79,14 @@ Global
 		{780D9ED8-AF1B-4C78-819F-E2D7130204A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{780D9ED8-AF1B-4C78-819F-E2D7130204A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{780D9ED8-AF1B-4C78-819F-E2D7130204A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{059CB34E-D7AD-4DF3-B46F-FEA711029A8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{059CB34E-D7AD-4DF3-B46F-FEA711029A8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{059CB34E-D7AD-4DF3-B46F-FEA711029A8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{059CB34E-D7AD-4DF3-B46F-FEA711029A8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68593B6B-7E51-4140-89DE-3B748EBEC4A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68593B6B-7E51-4140-89DE-3B748EBEC4A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68593B6B-7E51-4140-89DE-3B748EBEC4A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68593B6B-7E51-4140-89DE-3B748EBEC4A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CF65350A-8D80-4AF2-B369-8C71A5BFB620} = {4958F816-17AA-4833-819B-5D666C416361}
@@ -82,5 +94,6 @@ Global
 		{EEBDB0C2-ACD8-4F34-85DD-1A3959DE09E4} = {4958F816-17AA-4833-819B-5D666C416361}
 		{080F1E84-3700-4B9D-B929-B686447C36AF} = {4958F816-17AA-4833-819B-5D666C416361}
 		{780D9ED8-AF1B-4C78-819F-E2D7130204A7} = {4958F816-17AA-4833-819B-5D666C416361}
+		{68593B6B-7E51-4140-89DE-3B748EBEC4A0} = {4958F816-17AA-4833-819B-5D666C416361}
 	EndGlobalSection
 EndGlobal

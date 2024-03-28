@@ -2,8 +2,9 @@
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.DependencyInjection;
-using Adoptrix.Infrastructure;
-using Adoptrix.Infrastructure.DependencyInjection;
+using Adoptrix.Database.DependencyInjection;
+using Adoptrix.Database.Services;
+using Adoptrix.Storage.DependencyInjection;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
@@ -31,7 +32,8 @@ public static class ServiceRegistration
             .AddValidatorsFromAssemblyContaining<SetAnimalRequestValidator>()
             .AddProblemDetails()
             .AddApplicationServices()
-            .AddInfrastructureServices(builder.Configuration);
+            .AddDatabaseServices()
+            .AddStorageServices(builder.Configuration);
 
         // local development services
         if (builder.Environment.IsDevelopment())
@@ -55,16 +57,10 @@ public static class ServiceRegistration
             {
                 configuration.Bind("Authentication", jwtBearerOptions);
                 jwtBearerOptions.TokenValidationParameters.NameClaimType = ClaimConstants.Name;
-            }, microsoftIdentityOptions =>
-            {
-                configuration.Bind("Authentication", microsoftIdentityOptions);
-            });
+            }, microsoftIdentityOptions => { configuration.Bind("Authentication", microsoftIdentityOptions); });
 
         services.AddAuthorizationBuilder()
-            .AddDefaultPolicy("DefaultPolicy", builder =>
-            {
-                builder.RequireScope("access");
-            });
+            .AddDefaultPolicy("DefaultPolicy", builder => { builder.RequireScope("access"); });
 
         return services;
     }

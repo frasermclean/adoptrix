@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain;
 using Adoptrix.Domain.Events;
 using Adoptrix.Jobs.Functions;
@@ -65,7 +64,7 @@ public class ProcessNewAnimalImageTests
         fixture.Customize<Animal>(composer => composer
             .With(animal => animal.Id, animalId)
             .With(animal => animal.DateOfBirth, new DateOnly(DateTime.Now.Year - 2, 1, 1))
-            .With(animal => animal.Images, new List<ImageInformation>
+            .With(animal => animal.Images, new List<AnimalImage>
             {
                 new()
                 {
