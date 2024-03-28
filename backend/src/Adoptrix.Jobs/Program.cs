@@ -1,5 +1,6 @@
 using Adoptrix.Application.DependencyInjection;
-using Adoptrix.Infrastructure.DependencyInjection;
+using Adoptrix.Database.DependencyInjection;
+using Adoptrix.Storage.DependencyInjection;
 using Azure.Identity;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -39,7 +40,8 @@ public static class Program
 
                 // local project services
                 services.AddApplicationServices();
-                services.AddInfrastructureServices(context.Configuration);
+                services.AddDatabaseServices();
+                services.AddStorageServices(context.Configuration);
             })
             .ConfigureLogging(builder =>
             {

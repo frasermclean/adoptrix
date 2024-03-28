@@ -7,16 +7,16 @@ public class AnimalTests
     {
         // arrange
         var id = Guid.NewGuid();
-        var fido = CreateAnimal(id, "Fido");
+        var max = CreateAnimal(id, "Max");
         var felix = CreateAnimal(id, "Felix");
         var otherObject = new object();
 
         // assert
-        fido.Should().Be(felix);
-        fido.Equals(otherObject).Should().BeFalse();
-        fido.GetHashCode().Should().Be(felix.GetHashCode());
-        fido.Id.Should().Be(id);
-        fido.Name.Should().Be("Fido");
+        max.Should().Be(felix);
+        max.Equals(otherObject).Should().BeFalse();
+        max.GetHashCode().Should().Be(felix.GetHashCode());
+        max.Id.Should().Be(id);
+        max.Name.Should().Be("Max");
     }
 
     [Fact]
@@ -43,26 +43,21 @@ public class AnimalTests
     }
 
     private static Animal CreateAnimal(Guid? id = null, string name = "Fido", string? description = null,
-        Species? species = null, Breed? breed = null, Sex sex = default, DateOnly? dateOfBirth = null)
+        Species? species = null, Breed? breed = null, Sex sex = default, DateOnly? dateOfBirth = null) => new()
     {
-        species ??= new Species
+        Id = id ?? Guid.NewGuid(),
+        Name = name,
+        Description = description,
+        Breed = breed ?? new Breed
         {
-            Id = Guid.NewGuid(), Name = "Dog"
-        };
-
-        breed ??= new Breed
-        {
-            Id = Guid.NewGuid(), Name = "Golden Retriever", Species = species
-        };
-
-        return new Animal
-        {
-            Id = id ?? Guid.NewGuid(),
-            Name = name,
-            Description = description,
-            Breed = breed,
-            Sex = sex,
-            DateOfBirth = dateOfBirth ?? new DateOnly(2019, 1, 1)
-        };
-    }
+            Id = Guid.NewGuid(),
+            Name = "Golden Retriever",
+            Species = species ?? new Species
+            {
+                Id = Guid.NewGuid(), Name = "Dog"
+            }
+        },
+        Sex = sex,
+        DateOfBirth = dateOfBirth ?? new DateOnly(2019, 1, 1)
+    };
 }
