@@ -23,23 +23,23 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
         builder.HasData(
             new
             {
-                Id = Guid.Parse("e719fea1-14d5-45a3-845d-404c88c4549f"),
+                Id = BreedIds.LabradorRetriever,
                 Name = "Labrador Retriever",
-                SpeciesId = Species.DogSpeciesId,
+                SpeciesId = SpeciesIds.DogSpeciesId,
                 CreatedBy = Guid.Empty
             },
             new
             {
-                Id = Guid.Parse("9b2ace0b-fb18-4da4-86a5-c7404cfbf145"),
+                Id = BreedIds.GermanShepherd,
                 Name = "German Shepherd",
-                SpeciesId = Species.DogSpeciesId,
+                SpeciesId = SpeciesIds.DogSpeciesId,
                 CreatedBy = Guid.Empty
             },
             new
             {
-                Id = Guid.Parse("4fb1e168-bf13-4702-9b61-0b8df2ef0c7d"),
+                Id = BreedIds.GoldenRetriever,
                 Name = "Golden Retriever",
-                SpeciesId = Species.DogSpeciesId,
+                SpeciesId = SpeciesIds.DogSpeciesId,
                 CreatedBy = Guid.Empty
             }
         );
