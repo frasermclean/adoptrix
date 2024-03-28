@@ -10,9 +10,7 @@ public class SpeciesRepositoryTests(DatabaseFixture fixture)
     private readonly ISpeciesRepository repository = fixture.SpeciesRepository!;
 
     [Theory]
-    [InlineData("c9c1836b-1051-45c3-a2c4-0d841e69e6d3", "Cat")]
-    [InlineData("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a", "Dog")]
-    [InlineData("e6d11a53-bacb-4a8b-a171-beea7e935467", "Horse")]
+    [ClassData(typeof(SpeciesData))]
     public async Task GetByIdAsync_WithValidId_Should_Return_ExpectedResult(Guid speciesId, string expectedName)
     {
         // act
@@ -24,13 +22,11 @@ public class SpeciesRepositoryTests(DatabaseFixture fixture)
     }
 
     [Theory]
-    [InlineData("Cat", "c9c1836b-1051-45c3-a2c4-0d841e69e6d3")]
-    [InlineData("Dog", "f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a")]
-    [InlineData("Horse", "e6d11a53-bacb-4a8b-a171-beea7e935467")]
-    public async Task GetByNameAsync_WithValidName_Should_Return_ExpectedResult(string name, Guid expectedId)
+    [ClassData(typeof(SpeciesData))]
+    public async Task GetByNameAsync_WithValidName_Should_Return_ExpectedResult(Guid expectedId, string speciesName)
     {
         // act
-        var result = await repository.GetByNameAsync(name);
+        var result = await repository.GetByNameAsync(speciesName);
 
         // assert
         result.Should().BeSuccess();

@@ -25,21 +25,21 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
             {
                 Id = BreedIds.LabradorRetriever,
                 Name = "Labrador Retriever",
-                SpeciesId = SpeciesIds.DogSpeciesId,
+                SpeciesId = SpeciesIds.Dog,
                 CreatedBy = Guid.Empty
             },
             new
             {
                 Id = BreedIds.GermanShepherd,
                 Name = "German Shepherd",
-                SpeciesId = SpeciesIds.DogSpeciesId,
+                SpeciesId = SpeciesIds.Dog,
                 CreatedBy = Guid.Empty
             },
             new
             {
                 Id = BreedIds.GoldenRetriever,
                 Name = "Golden Retriever",
-                SpeciesId = SpeciesIds.DogSpeciesId,
+                SpeciesId = SpeciesIds.Dog,
                 CreatedBy = Guid.Empty
             }
         );
