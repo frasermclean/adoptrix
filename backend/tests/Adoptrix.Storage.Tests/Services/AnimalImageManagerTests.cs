@@ -1,4 +1,5 @@
-﻿using Adoptrix.Domain;
+﻿using Adoptrix.Application.Models;
+using Adoptrix.Domain;
 using Adoptrix.Storage.Services;
 using Adoptrix.Storage.Tests.Fixtures;
 using Microsoft.Extensions.Logging;

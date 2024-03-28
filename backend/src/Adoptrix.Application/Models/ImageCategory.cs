@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Domain;
+﻿namespace Adoptrix.Application.Models;
 
 public enum ImageCategory
 {

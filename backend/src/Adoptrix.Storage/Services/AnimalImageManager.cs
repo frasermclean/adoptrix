@@ -1,4 +1,5 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Models;
+using Adoptrix.Application.Services;
 using Adoptrix.Domain;
 using Azure.Storage.Blobs;
 using FluentResults;
