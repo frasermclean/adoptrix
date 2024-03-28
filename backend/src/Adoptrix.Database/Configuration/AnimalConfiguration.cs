@@ -29,7 +29,7 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
         ConfigureAnimalImagesTable(animalImagesBuilder);
     }
 
-    private static void ConfigureAnimalImagesTable(OwnedNavigationBuilder<Animal, ImageInformation> builder)
+    private static void ConfigureAnimalImagesTable(OwnedNavigationBuilder<Animal, AnimalImage> builder)
     {
         builder.Property(imageInformation => imageInformation.UploadedAt)
             .HasPrecision(2)
@@ -41,6 +41,6 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 
         builder.Property(imageInformation => imageInformation.OriginalContentType)
             .HasColumnType("varchar")
-            .HasMaxLength(ImageInformation.ContentTypeMaxLength);
+            .HasMaxLength(AnimalImage.ContentTypeMaxLength);
     }
 }

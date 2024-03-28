@@ -11,9 +11,9 @@ public class Animal : Aggregate
     public required Sex Sex { get; set; }
     public required DateOnly DateOfBirth { get; set; }
 
-    public ICollection<ImageInformation> Images { get; init; } = new List<ImageInformation>();
+    public ICollection<AnimalImage> Images { get; init; } = new List<AnimalImage>();
 
-    public ImageInformation AddImage(string originalFileName, string originalContentType,
+    public AnimalImage AddImage(string originalFileName, string originalContentType,
         string? description = null, Guid? uploadedBy = null)
     {
         if (Images.Any(image => image.OriginalFileName == originalFileName))
@@ -21,7 +21,7 @@ public class Animal : Aggregate
             throw new ArgumentException("Image with the same name already exists", nameof(originalFileName));
         }
 
-        var image = new ImageInformation
+        var image = new AnimalImage
         {
             Description = description,
             OriginalFileName = originalFileName,

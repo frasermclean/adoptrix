@@ -17,5 +17,5 @@ public static class AnimalGenerator
         .RuleFor(animal => animal.DateOfBirth, faker => faker.Date.PastDateOnly(10))
         .RuleFor(animal => animal.CreatedAt, faker => faker.Date.Past())
         .RuleFor(animal => animal.CreatedBy, Guid.NewGuid)
-        .RuleFor(animal => animal.Images, ImageInformationGenerator.Generate(3));
+        .RuleFor(animal => animal.Images, AnimalImageGenerator.Generate(3));
 }

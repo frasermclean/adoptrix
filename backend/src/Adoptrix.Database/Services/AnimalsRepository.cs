@@ -26,7 +26,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
                 Sex = animal.Sex,
                 DateOfBirth = animal.DateOfBirth,
                 CreatedAt = animal.CreatedAt,
-                Image = animal.Images.Select(image => new ImageResponse
+                Image = animal.Images.Select(image => new AnimalImageResponse
                     {
                         Id = image.Id, Description = image.Description, IsProcessed = image.IsProcessed
                     })

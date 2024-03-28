@@ -1,6 +1,6 @@
 ﻿namespace Adoptrix.Domain;
 
-public class ImageInformation : Entity
+public class AnimalImage : Entity
 {
     public const int ContentTypeMaxLength = 50;
 
