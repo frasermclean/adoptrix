@@ -38,10 +38,12 @@ public class ApiFixture : WebApplicationFactory<Program>
     {
         builder.ConfigureAppConfiguration(configuration =>
         {
-            const string connectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://xxxx.applicationinsights.azure.com/";
             configuration.AddInMemoryCollection(new[]
             {
-                new KeyValuePair<string, string?>("APPLICATIONINSIGHTS_CONNECTION_STRING", connectionString)
+                new KeyValuePair<string, string?>(
+                    "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                    "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://xxxx.applicationinsights.azure.com/"
+                )
             });
         });
 
