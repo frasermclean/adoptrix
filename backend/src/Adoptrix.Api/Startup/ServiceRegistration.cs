@@ -5,6 +5,8 @@ using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
 using Adoptrix.Storage.DependencyInjection;
+using Azure.Identity;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
