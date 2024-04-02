@@ -1,14 +1,39 @@
+using Adoptrix.Domain.Tests.Factories;
+
 namespace Adoptrix.Domain.Tests;
 
 public class AnimalTests
 {
     [Fact]
+    public void CreateAnimal_WithSpecifiedValues_ShouldReturnExpectedResult()
+    {
+        // arrange
+        var id = Guid.NewGuid();
+        const string name = "Susie";
+        var breed = BreedFactory.CreateBreed();
+        const Sex sex = Sex.Female;
+        var userId = Guid.NewGuid();
+        const int imageCount = 3;
+
+        // act
+        var animal = AnimalFactory.CreateAnimal(id, name, breed, sex, imageCount: imageCount, createdBy: userId);
+
+        // assert
+        animal.Id.Should().Be(id);
+        animal.Name.Should().Be(name);
+        animal.Breed.Should().NotBeNull();
+        animal.Sex.Should().Be(sex);
+        animal.Images.Should().HaveCount(imageCount);
+        animal.CreatedBy.Should().Be(userId);
+    }
+
+    [Fact]
     public void TwoEntities_WithSameIds_Should_BeEqual()
     {
         // arrange
         var id = Guid.NewGuid();
-        var max = CreateAnimal(id, "Max");
-        var felix = CreateAnimal(id, "Felix");
+        var max = AnimalFactory.CreateAnimal(id, "Max");
+        var felix = AnimalFactory.CreateAnimal(id, "Felix");
         var otherObject = new object();
 
         // assert
@@ -23,7 +48,7 @@ public class AnimalTests
     public void AddImage_Should_AddImage()
     {
         // arrange
-        var animal = CreateAnimal();
+        var animal = AnimalFactory.CreateAnimal(name: "Fido");
         const string fileName = "DSC0001.jpg";
         const string contentType = "image/jpeg";
         const string description = "Fido in the park";
@@ -41,23 +66,4 @@ public class AnimalTests
         animal.Images.Should().ContainSingle().Which.OriginalFileName.Should().Be(fileName);
         action.Should().Throw<ArgumentException>().WithMessage("Image with the same name already exists*");
     }
-
-    private static Animal CreateAnimal(Guid? id = null, string name = "Fido", string? description = null,
-        Species? species = null, Breed? breed = null, Sex sex = default, DateOnly? dateOfBirth = null) => new()
-    {
-        Id = id ?? Guid.NewGuid(),
-        Name = name,
-        Description = description,
-        Breed = breed ?? new Breed
-        {
-            Id = Guid.NewGuid(),
-            Name = "Golden Retriever",
-            Species = species ?? new Species
-            {
-                Id = Guid.NewGuid(), Name = "Dog"
-            }
-        },
-        Sex = sex,
-        DateOfBirth = dateOfBirth ?? new DateOnly(2019, 1, 1)
-    };
 }
