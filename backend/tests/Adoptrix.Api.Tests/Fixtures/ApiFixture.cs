@@ -39,9 +39,10 @@ public class ApiFixture : WebApplicationFactory<Program>
     {
         builder.ConfigureAppConfiguration(configuration =>
         {
+            const string connectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://xxxx.applicationinsights.azure.com/";
             configuration.AddInMemoryCollection(new[]
             {
-                new KeyValuePair<string, string?>("AzureMonitor:ConnectionString", "InstrumentationKey=19115a76-4a34-4c66-b339-31b90e69de57;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/")
+                new KeyValuePair<string, string?>("AzureMonitor:ConnectionString", connectionString)
             });
         });
 
