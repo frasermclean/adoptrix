@@ -13,9 +13,6 @@ param authenticationClientId string
 @description('Authentication audience')
 param authenticationAudience string
 
-@description('Application Insights connection string to be stored in App Configuration.')
-param applicationInsightsConnectionString string
-
 @description('Storage account blob endpoint to be stored in App Configuration.')
 param storageAccountBlobEndpoint string
 
@@ -46,14 +43,6 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
     name: 'Authentication:Audience$${appEnv}'
     properties: {
       value: authenticationAudience
-      contentType: 'text/plain'
-    }
-  }
-
-  resource applicationInsightsConnectionStringKeyValue 'keyValues' = {
-    name: 'ApplicationInsights:ConnectionString$${appEnv}'
-    properties: {
-      value: applicationInsightsConnectionString
       contentType: 'text/plain'
     }
   }
