@@ -17,6 +17,9 @@ param domainName string
 @description('Name of the shared resource group')
 param sharedResourceGroup string
 
+@description('Application Insights connection string')
+param applicationInsightsConnectionString string
+
 @description('Resource ID of the Log Analytics workspace')
 param logAnalyticsWorkspaceId string
 
@@ -153,6 +156,14 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
             {
               name: 'APP_CONFIG_ENDPOINT'
               value: appConfigurationEndpoint
+            }
+            {
+              name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+              value: applicationInsightsConnectionString
+            }
+            {
+              name: 'OTEL_SERVICE_NAME'
+              value: apiContainerAppName
             }
           ]
         }

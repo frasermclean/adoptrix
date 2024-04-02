@@ -252,6 +252,7 @@ module containerAppsModule './containerApps.bicep' = {
     containerRegistryName: containerRegistryName
     apiImageName: apiImageName
     apiImageTag: apiImageTag
+    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     appConfigurationEndpoint: appConfiguration.properties.endpoint
     corsAllowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
@@ -281,7 +282,6 @@ module appConfigModule 'appConfig.bicep' = {
     appEnv: appEnv
     authenticationClientId: authenticationClientId
     authenticationAudience: authenticationAudience
-    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
     storageAccountBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
     storageAccountQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
     databaseConnectionString: 'Server=tcp:${sqlServer.name}${environment().suffixes.sqlServerHostname};Database=${sqlServer::database.name};Authentication="Active Directory Default";'
@@ -298,6 +298,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (attemptRoleAssignment
     apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
     functionAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
     storageAccountName: storageAccount.name
+    applicationInsightsName: applicationInsights.name
   }
 }
 

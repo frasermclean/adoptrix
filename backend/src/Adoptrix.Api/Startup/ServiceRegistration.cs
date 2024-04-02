@@ -4,6 +4,8 @@ using Adoptrix.Api.Validators;
 using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Infrastructure;
 using Adoptrix.Infrastructure.DependencyInjection;
+using Azure.Identity;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
@@ -25,8 +27,15 @@ public static class ServiceRegistration
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         });
 
+        // open telemetry services
+        builder.Services.AddOpenTelemetry()
+            .UseAzureMonitor(options =>
+            {
+                options.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+                options.Credential = new DefaultAzureCredential();
+            });
+
         builder.Services
-            .AddApplicationInsightsTelemetry()
             .AddAuthentication(builder.Configuration)
             .AddValidatorsFromAssemblyContaining<SetAnimalRequestValidator>()
             .AddProblemDetails()
@@ -55,16 +64,10 @@ public static class ServiceRegistration
             {
                 configuration.Bind("Authentication", jwtBearerOptions);
                 jwtBearerOptions.TokenValidationParameters.NameClaimType = ClaimConstants.Name;
-            }, microsoftIdentityOptions =>
-            {
-                configuration.Bind("Authentication", microsoftIdentityOptions);
-            });
+            }, microsoftIdentityOptions => { configuration.Bind("Authentication", microsoftIdentityOptions); });
 
         services.AddAuthorizationBuilder()
-            .AddDefaultPolicy("DefaultPolicy", builder =>
-            {
-                builder.RequireScope("access");
-            });
+            .AddDefaultPolicy("DefaultPolicy", builder => { builder.RequireScope("access"); });
 
         return services;
     }
