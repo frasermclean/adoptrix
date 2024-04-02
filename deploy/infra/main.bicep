@@ -298,6 +298,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' = if (attemptRoleAssignment
     apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
     functionAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
     storageAccountName: storageAccount.name
+    applicationInsightsName: applicationInsights.name
   }
 }
 
