@@ -9,6 +9,7 @@ using FluentResults;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -35,6 +36,15 @@ public class ApiFixture : WebApplicationFactory<Program>
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureAppConfiguration(configuration =>
+        {
+            const string connectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://xxxx.applicationinsights.azure.com/";
+            configuration.AddInMemoryCollection(new[]
+            {
+                new KeyValuePair<string, string?>("APPLICATIONINSIGHTS_CONNECTION_STRING", connectionString)
+            });
+        });
+
         builder.ConfigureServices(services =>
         {
             // remove infrastructure services and replace them with mocks

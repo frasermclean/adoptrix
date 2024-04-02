@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.DependencyInjection;
@@ -26,8 +26,15 @@ public static class ServiceRegistration
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         });
 
+        // open telemetry services
+        builder.Services.AddOpenTelemetry()
+            .UseAzureMonitor(options =>
+            {
+                options.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+                options.Credential = new DefaultAzureCredential();
+            });
+
         builder.Services
-            .AddApplicationInsightsTelemetry()
             .AddAuthentication(builder.Configuration)
             .AddValidatorsFromAssemblyContaining<SetAnimalRequestValidator>()
             .AddProblemDetails()
