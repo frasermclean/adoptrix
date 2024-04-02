@@ -12,7 +12,6 @@
     <PackageReference Include="AspNetCore.HealthChecks.Azure.Storage.Queues" />
     <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
     <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
