@@ -14,16 +14,19 @@ public class AnimalTests
         const Sex sex = Sex.Female;
         var userId = Guid.NewGuid();
         const int imageCount = 3;
+        var dateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 2));
 
         // act
-        var animal = AnimalFactory.CreateAnimal(id, name, breed, sex, imageCount: imageCount, createdBy: userId);
+        var animal = AnimalFactory.CreateAnimal(id, name, breed, sex, dateOfBirth, imageCount, userId);
 
         // assert
         animal.Id.Should().Be(id);
         animal.Name.Should().Be(name);
-        animal.Breed.Should().NotBeNull();
+        animal.Breed.Should().Be(breed);
         animal.Sex.Should().Be(sex);
-        animal.Images.Should().HaveCount(imageCount);
+        animal.DateOfBirth.Should().Be(dateOfBirth);
+        animal.Images.Should().HaveCount(imageCount).And
+            .AllSatisfy(image => image.OriginalFileName.Should().StartWith("image"));
         animal.CreatedBy.Should().Be(userId);
     }
 
