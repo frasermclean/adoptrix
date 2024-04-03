@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Adoptrix.Database\Adoptrix.Database.csproj" />
+    <ProjectReference Include="..\Adoptrix.Domain.Tests\Adoptrix.Domain.Tests.csproj" />
   </ItemGroup>
 
 </Project>

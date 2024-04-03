@@ -13,8 +13,9 @@ public class DatabaseFixture : IAsyncLifetime
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
         .Build();
 
-    public ISpeciesRepository? SpeciesRepository { get; private set; }
+    public IAnimalsRepository? AnimalsRepository { get; private set; }
     public IBreedsRepository? BreedsRepository { get; private set; }
+    public ISpeciesRepository? SpeciesRepository { get; private set; }
 
     public async Task InitializeAsync()
     {
@@ -32,8 +33,9 @@ public class DatabaseFixture : IAsyncLifetime
             .Database
             .EnsureCreatedAsync();
 
-        SpeciesRepository = serviceProvider.GetRequiredService<ISpeciesRepository>();
+        AnimalsRepository = serviceProvider.GetRequiredService<IAnimalsRepository>();
         BreedsRepository = serviceProvider.GetRequiredService<IBreedsRepository>();
+        SpeciesRepository = serviceProvider.GetRequiredService<ISpeciesRepository>();
     }
 
     public async Task DisposeAsync()
