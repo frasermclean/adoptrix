@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Tests.Generators;
+using Adoptrix.Domain.Models.Factories;
 
 namespace Adoptrix.Api.Tests.Mapping;
 
@@ -9,7 +9,7 @@ public class BreedMapperTests
     public void MappingBreedToBreedResponse_Should_ReturnExpectedValues()
     {
         // arrange
-        var breed = BreedGenerator.Generate();
+        var breed = BreedFactory.Create();
 
         // act
         var response = breed.ToResponse();

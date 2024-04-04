@@ -14,4 +14,6 @@ public static class AnimalImageFactory
         UploadedBy = uploadedBy ?? Guid.NewGuid(),
         UploadedAt = uploadedAt ?? DateTime.UtcNow
     };
+
+    public static IEnumerable<AnimalImage> CreateMany(int count) => Enumerable.Range(0, count).Select(_ => Create());
 }

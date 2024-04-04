@@ -9,16 +9,13 @@ public static class AnimalFactory
     {
         Id = id ?? Guid.NewGuid(),
         Name = name ?? Names[Random.Shared.Next(Names.Length)],
-        Breed = breed ?? BreedFactory.CreateBreed(),
+        Breed = breed ?? BreedFactory.Create(),
         Sex = sex,
         DateOfBirth = dateOfBirth ?? DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 2)),
-        Images = Enumerable.Range(0, imageCount)
-            .Select(num => AnimalImageFactory.Create(originalFileName: $"image{num}.jpg"))
-            .ToList(),
+        Images = AnimalImageFactory.CreateMany(imageCount).ToList(),
         CreatedBy = createdBy ?? Guid.NewGuid()
     };
 
-    public static IEnumerable<Animal> CreateRange(int count, Guid? createdBy = null)
-        => Enumerable.Range(0, count)
-            .Select(_ => Create(createdBy: createdBy));
+    public static IEnumerable<Animal> CreateMany(int count)
+        => Enumerable.Range(0, count).Select(_ => Create());
 }

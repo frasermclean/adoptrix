@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Tests.Generators;
 using Adoptrix.Domain.Models.Factories;
 
 namespace Adoptrix.Api.Tests.Mapping;

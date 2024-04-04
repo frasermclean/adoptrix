@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using Adoptrix.Api.Tests.Generators;
 using Adoptrix.Api.Tests.Mocks;
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Models;
@@ -81,7 +80,7 @@ public class ApiFixture : WebApplicationFactory<Program>
     {
         mock.Setup(repository =>
                 repository.SearchAsync(It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string _, Guid? _, CancellationToken _) => AnimalFactory.CreateRange(searchResultsCount)
+            .ReturnsAsync((string _, Guid? _, CancellationToken _) => AnimalFactory.CreateMany(searchResultsCount)
                 .Select(animal => new SearchAnimalsResult
                 {
                     Id = animal.Id,
@@ -121,23 +120,24 @@ public class ApiFixture : WebApplicationFactory<Program>
     {
         mock.Setup(repository =>
                 repository.SearchAsync(It.IsAny<Guid?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid? _, bool? _, CancellationToken _) => AnimalFactory.CreateRange(SearchResultsCount)
-                .Select(animal => new SearchBreedsResult
+            .ReturnsAsync((Guid? _, bool? _, CancellationToken _) => BreedFactory.CreateMany(SearchResultsCount)
+                .Select(breed => new SearchBreedsResult
                 {
-                    Id = animal.Id,
-                    Name = animal.Name,
-                    SpeciesId = animal.Breed.Species.Id,
+                    Id = breed.Id,
+                    Name = breed.Name,
+                    SpeciesId = breed.Species.Id,
                     AnimalIds = Enumerable.Empty<Guid>()
                 }));
+
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid breedId, CancellationToken _) => breedId == Guid.Empty
                 ? new BreedNotFoundError(Guid.Empty)
-                : BreedGenerator.Generate(breedId));
+                : BreedFactory.Create(breedId));
 
         mock.Setup(repository => repository.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string breedName, CancellationToken _) => breedName == UnknownBreedName
                 ? new BreedNotFoundError(UnknownBreedName)
-                : BreedGenerator.Generate(breedName: breedName));
+                : BreedFactory.Create(name: breedName));
 
         mock.Setup(repository => repository.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid breedId, CancellationToken _) => breedId == Guid.Empty
@@ -148,17 +148,17 @@ public class ApiFixture : WebApplicationFactory<Program>
     private static void SetupSpeciesRepositoryMock(Mock<ISpeciesRepository> mock)
     {
         mock.Setup(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(SpeciesGenerator.Generate(SearchResultsCount));
+            .ReturnsAsync(SpeciesFactory.CreateMany(SearchResultsCount));
 
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == Guid.Empty
                 ? new SpeciesNotFoundError(Guid.Empty)
-                : SpeciesGenerator.Generate());
+                : SpeciesFactory.Create());
 
         mock.Setup(repository => repository.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string speciesName, CancellationToken _) => speciesName == UnknownSpeciesName
                 ? new SpeciesNotFoundError(speciesName)
-                : SpeciesGenerator.Generate());
+                : SpeciesFactory.Create());
     }
 
     private static void SetupAnimalImageManagerMock(Mock<IAnimalImageManager> mock)

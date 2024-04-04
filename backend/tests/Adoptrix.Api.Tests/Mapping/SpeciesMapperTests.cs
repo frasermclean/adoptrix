@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Tests.Generators;
+using Adoptrix.Domain.Models.Factories;
 
 namespace Adoptrix.Api.Tests.Mapping;
 
@@ -9,7 +9,7 @@ public class SpeciesMapperTests
     public void MappingSpeciesToSpeciesResponse_Should_ReturnExpectedValues()
     {
         // arrange
-        var species = SpeciesGenerator.Generate();
+        var species = SpeciesFactory.Create();
 
         // act
         var response = species.ToResponse();

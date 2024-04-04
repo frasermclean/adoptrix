@@ -11,7 +11,7 @@ public class AnimalTests
         // arrange
         var id = Guid.NewGuid();
         const string name = "Susie";
-        var breed = BreedFactory.CreateBreed();
+        var breed = BreedFactory.Create();
         const Sex sex = Sex.Female;
         var userId = Guid.NewGuid();
         const int imageCount = 3;
@@ -26,8 +26,7 @@ public class AnimalTests
         animal.Breed.Should().Be(breed);
         animal.Sex.Should().Be(sex);
         animal.DateOfBirth.Should().Be(dateOfBirth);
-        animal.Images.Should().HaveCount(imageCount).And
-            .AllSatisfy(image => image.OriginalFileName.Should().StartWith("image"));
+        animal.Images.Should().HaveCount(imageCount);
         animal.CreatedBy.Should().Be(userId);
     }
 
