@@ -18,7 +18,7 @@ public class AnimalTests
         var dateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 2));
 
         // act
-        var animal = AnimalFactory.CreateAnimal(id, name, breed, sex, dateOfBirth, imageCount, userId);
+        var animal = AnimalFactory.Create(id, name, breed, sex, dateOfBirth, imageCount, userId);
 
         // assert
         animal.Id.Should().Be(id);
@@ -36,8 +36,8 @@ public class AnimalTests
     {
         // arrange
         var id = Guid.NewGuid();
-        var max = AnimalFactory.CreateAnimal(id, "Max");
-        var felix = AnimalFactory.CreateAnimal(id, "Felix");
+        var max = AnimalFactory.Create(id, "Max");
+        var felix = AnimalFactory.Create(id, "Felix");
         var otherObject = new object();
 
         // assert
@@ -52,7 +52,7 @@ public class AnimalTests
     public void AddImage_Should_AddImage()
     {
         // arrange
-        var animal = AnimalFactory.CreateAnimal(name: "Fido");
+        var animal = AnimalFactory.Create(name: "Fido");
         const string fileName = "DSC0001.jpg";
         const string contentType = "image/jpeg";
         const string description = "Fido in the park";

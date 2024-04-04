@@ -31,7 +31,7 @@ public class AnimalsRepositoryTests(DatabaseFixture fixture)
     {
         // arrange
         var breedResult = await breedsRepository.GetByIdAsync(BreedIds.GermanShepherd);
-        var animal = AnimalFactory.CreateAnimal(breed: breedResult.Value);
+        var animal = AnimalFactory.Create(breed: breedResult.Value);
 
         // act
         var addResult = await animalsRepository.AddAsync(animal);

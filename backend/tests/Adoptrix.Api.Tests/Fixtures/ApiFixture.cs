@@ -5,6 +5,7 @@ using Adoptrix.Application.Errors;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Factories;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -80,7 +81,7 @@ public class ApiFixture : WebApplicationFactory<Program>
     {
         mock.Setup(repository =>
                 repository.SearchAsync(It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string _, Guid? _, CancellationToken _) => AnimalGenerator.Generate(searchResultsCount)
+            .ReturnsAsync((string _, Guid? _, CancellationToken _) => AnimalFactory.CreateRange(searchResultsCount)
                 .Select(animal => new SearchAnimalsResult
                 {
                     Id = animal.Id,
@@ -100,7 +101,7 @@ public class ApiFixture : WebApplicationFactory<Program>
         mock.Setup(repository => repository.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid animalId, CancellationToken _) => animalId == Guid.Empty
                 ? new Result<Animal>().WithError(new AnimalNotFoundError(Guid.Empty))
-                : AnimalGenerator.Generate(animalId));
+                : AnimalFactory.Create(animalId));
 
         mock.Setup(repository => repository.AddAsync(It.IsAny<Animal>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Animal animal, CancellationToken _) => Result.Ok(animal));
@@ -120,7 +121,7 @@ public class ApiFixture : WebApplicationFactory<Program>
     {
         mock.Setup(repository =>
                 repository.SearchAsync(It.IsAny<Guid?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid? _, bool? _, CancellationToken _) => AnimalGenerator.Generate(SearchResultsCount)
+            .ReturnsAsync((Guid? _, bool? _, CancellationToken _) => AnimalFactory.CreateRange(SearchResultsCount)
                 .Select(animal => new SearchBreedsResult
                 {
                     Id = animal.Id,
