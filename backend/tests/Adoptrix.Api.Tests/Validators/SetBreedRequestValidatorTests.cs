@@ -1,8 +1,8 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Validators;
-using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Domain;
-using Adoptrix.Domain.Errors;
+using Adoptrix.Application.Errors;
+using Adoptrix.Application.Services;
+using Adoptrix.Domain.Models;
 using FluentResults;
 using FluentValidation.TestHelper;
 

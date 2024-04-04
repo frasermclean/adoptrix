@@ -3,8 +3,8 @@ using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Domain;
+using Adoptrix.Application.Services;
+using Adoptrix.Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 

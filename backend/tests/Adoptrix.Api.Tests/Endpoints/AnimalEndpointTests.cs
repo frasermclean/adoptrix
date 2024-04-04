@@ -5,9 +5,9 @@ using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Domain;
 using System.Net.Http.Headers;
 using Adoptrix.Application.Models;
+using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Endpoints;

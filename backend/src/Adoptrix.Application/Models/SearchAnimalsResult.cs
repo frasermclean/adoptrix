@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain;
+﻿using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Application.Models;
 
@@ -11,5 +11,5 @@ public class SearchAnimalsResult
     public required Sex Sex { get; init; }
     public required DateOnly DateOfBirth { get; init; }
     public required DateTime CreatedAt { get; init; }
-    public required ImageResponse? Image { get; init; }
+    public required AnimalImageResponse? Image { get; init; }
 }

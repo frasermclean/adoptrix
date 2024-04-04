@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
-using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Domain;
+using Adoptrix.Application.Services;
+using Adoptrix.Domain.Models;
 using FluentValidation;
 
 namespace Adoptrix.Api.Validators;

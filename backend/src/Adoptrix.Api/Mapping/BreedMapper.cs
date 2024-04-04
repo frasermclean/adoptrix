@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Application.Models;
-using Adoptrix.Domain;
+using Adoptrix.Domain.Models;
 using Riok.Mapperly.Abstractions;
 
 namespace Adoptrix.Api.Mapping;

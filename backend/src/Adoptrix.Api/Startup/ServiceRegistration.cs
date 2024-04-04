@@ -1,9 +1,10 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.DependencyInjection;
-using Adoptrix.Infrastructure;
-using Adoptrix.Infrastructure.DependencyInjection;
+using Adoptrix.Database.DependencyInjection;
+using Adoptrix.Database.Services;
+using Adoptrix.Storage.DependencyInjection;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FluentValidation;
@@ -40,7 +41,8 @@ public static class ServiceRegistration
             .AddValidatorsFromAssemblyContaining<SetAnimalRequestValidator>()
             .AddProblemDetails()
             .AddApplicationServices()
-            .AddInfrastructureServices(builder.Configuration);
+            .AddDatabaseServices()
+            .AddStorageServices(builder.Configuration);
 
         // local development services
         if (builder.Environment.IsDevelopment())
