@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Api.Mapping;
 using Adoptrix.Api.Tests.Generators;
+using Adoptrix.Domain.Models.Factories;
 
 namespace Adoptrix.Api.Tests.Mapping;
 
@@ -9,7 +10,7 @@ public class AnimalImageMapperTests
     public void Mapping_ImageInformation_To_ImageResponse_Should_Return_ExpectedValues()
     {
         // arrange
-        var animalImage = AnimalImageGenerator.Generate();
+        var animalImage = AnimalImageFactory.Create();
 
         // act
         var response = animalImage.ToResponse();
