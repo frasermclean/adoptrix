@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Errors;
 using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
-using Adoptrix.Domain.Tests.Factories;
+using Adoptrix.Domain.Factories;
 
 namespace Adoptrix.Database.Tests.Services;
 

@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Domain.Tests.Factories;
+﻿namespace Adoptrix.Domain.Factories;
 
 public static class AnimalImageFactory
 {
