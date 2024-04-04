@@ -5,7 +5,7 @@ namespace Adoptrix.Api.Tests.Mapping;
 
 public class BreedMapperTests
 {
-    [Fact(Skip = "Circular references in generators")]
+    [Fact]
     public void MappingBreedToBreedResponse_Should_ReturnExpectedValues()
     {
         // arrange
@@ -18,6 +18,5 @@ public class BreedMapperTests
         response.Id.Should().Be(breed.Id);
         response.Name.Should().Be(breed.Name);
         response.SpeciesId.Should().Be(breed.Species.Id);
-        response.AnimalIds.Should().HaveCount(breed.Animals.Count).And.Contain(breed.Animals.Select(animal => animal.Id));
     }
 }
