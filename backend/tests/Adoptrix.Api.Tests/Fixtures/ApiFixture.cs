@@ -4,7 +4,7 @@ using Adoptrix.Api.Tests.Mocks;
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain;
+using Adoptrix.Domain.Models;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;

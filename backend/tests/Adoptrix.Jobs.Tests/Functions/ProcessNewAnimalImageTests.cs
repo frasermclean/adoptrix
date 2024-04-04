@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain;
 using Adoptrix.Domain.Events;
+using Adoptrix.Domain.Models;
 using Adoptrix.Jobs.Functions;
 using Adoptrix.Jobs.Tests.Extensions;
 using AutoFixture;

@@ -2,7 +2,7 @@
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain;
+using Adoptrix.Domain.Models;
 using FluentValidation.TestHelper;
 
 namespace Adoptrix.Api.Tests.Validators;

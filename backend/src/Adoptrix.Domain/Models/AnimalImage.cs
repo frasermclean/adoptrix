@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Domain;
+﻿namespace Adoptrix.Domain.Models;
 
 public class AnimalImage : Entity
 {

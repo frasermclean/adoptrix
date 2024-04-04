@@ -5,8 +5,8 @@ using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain;
 using Adoptrix.Domain.Events;
+using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;

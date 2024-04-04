@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Database.Configuration;
-using Adoptrix.Domain;
+using Adoptrix.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;

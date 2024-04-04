@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Domain.Factories;
+﻿namespace Adoptrix.Domain.Models.Factories;
 
 public static class AnimalImageFactory
 {

@@ -4,7 +4,7 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain;
+using Adoptrix.Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 

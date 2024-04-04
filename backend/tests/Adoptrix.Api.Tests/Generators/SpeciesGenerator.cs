@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain;
+﻿using Adoptrix.Domain.Models;
 using Bogus;
 
 namespace Adoptrix.Api.Tests.Generators;

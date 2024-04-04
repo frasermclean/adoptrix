@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain;
+﻿using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Api.Contracts.Requests;
 
