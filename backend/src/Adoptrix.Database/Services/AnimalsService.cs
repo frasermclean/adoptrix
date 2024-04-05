@@ -7,8 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
 
-public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
-    : Repository(dbContext, batchManager), IAnimalsRepository
+public class AnimalsService(AdoptrixDbContext dbContext, IBatchManager batchManager)
+    : Repository(dbContext, batchManager), IAnimalsService
 {
     public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(string? animalName = null,
         Guid? breedId = null, CancellationToken cancellationToken = default)

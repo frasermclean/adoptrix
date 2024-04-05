@@ -6,8 +6,8 @@ namespace Adoptrix.Api.Endpoints.Animals;
 public static class SearchAnimalsEndpoint
 {
     public static async Task<IEnumerable<SearchAnimalsResult>> ExecuteAsync(string? name, Guid? speciesId,
-        IAnimalsRepository repository, CancellationToken cancellationToken)
+        IAnimalsService animalsService, CancellationToken cancellationToken)
     {
-        return await repository.SearchAsync(name, speciesId, cancellationToken);
+        return await animalsService.SearchAsync(name, speciesId, cancellationToken);
     }
 }

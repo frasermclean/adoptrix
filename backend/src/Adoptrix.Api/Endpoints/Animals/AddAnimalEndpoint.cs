@@ -17,7 +17,7 @@ public sealed class AddAnimalEndpoint
         ClaimsPrincipal claimsPrincipal,
         IValidator<SetAnimalRequest> validator,
         ILogger<AddAnimalEndpoint> logger,
-        IAnimalsRepository animalsRepository,
+        IAnimalsService animalsService,
         ISpeciesRepository speciesRepository,
         IBreedsRepository breedsRepository,
         LinkGenerator linkGenerator,
@@ -35,7 +35,7 @@ public sealed class AddAnimalEndpoint
         var breed = (await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken)).Value;
 
         // add animal to database
-        var addAnimalResult = await animalsRepository.AddAsync(new Animal
+        var addAnimalResult = await animalsService.AddAsync(new Animal
         {
             Name = request.Name,
             Description = request.Description,

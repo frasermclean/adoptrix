@@ -17,13 +17,13 @@ public static class AddAnimalImagesEndpoint
         [AsParameters] AddAnimalImagesRequest request,
         AddAnimalRequestValidator validator,
         ClaimsPrincipal claimsPrincipal,
-        IAnimalsRepository animalsRepository,
+        IAnimalsService animalsService,
         IAnimalImageManager imageManager,
         IEventPublisher eventPublisher,
         CancellationToken cancellationToken)
     {
         // ensure animal exists
-        var getResult = await animalsRepository.GetAsync(request.AnimalId, cancellationToken);
+        var getResult = await animalsService.GetAsync(request.AnimalId, cancellationToken);
         if (getResult.IsFailed)
         {
             return TypedResults.NotFound();
@@ -43,7 +43,7 @@ public static class AddAnimalImagesEndpoint
         foreach (var formFile in request.FormFileCollection)
         {
             var image = animal.AddImage(formFile.FileName, formFile.ContentType, formFile.Name, userId);
-            await ProcessImageAsync(formFile, imageManager, animalsRepository, eventPublisher, animal, image.Id,
+            await ProcessImageAsync(formFile, imageManager, animalsService, eventPublisher, animal, image.Id,
                 cancellationToken);
         }
 
@@ -51,7 +51,7 @@ public static class AddAnimalImagesEndpoint
     }
 
     private static async Task ProcessImageAsync(IFormFile formFile, IAnimalImageManager imageManager,
-        IAnimalsRepository animalsRepository, IEventPublisher eventPublisher, Animal animal, Guid imageId,
+        IAnimalsService animalsService, IEventPublisher eventPublisher, Animal animal, Guid imageId,
         CancellationToken cancellationToken)
     {
         await using var fileStream = formFile.OpenReadStream();
@@ -61,7 +61,7 @@ public static class AddAnimalImagesEndpoint
             cancellationToken: cancellationToken);
 
         // update animal in the database
-        await animalsRepository.UpdateAsync(animal, cancellationToken);
+        await animalsService.UpdateAsync(animal, cancellationToken);
 
         // publish domain event
         var domainEvent = new AnimalImageAddedEvent(animal.Id, imageId);

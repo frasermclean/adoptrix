@@ -11,7 +11,7 @@ public class ProcessNewAnimalImage(
     ILogger<ProcessNewAnimalImage> logger,
     IAnimalImageManager animalImageManager,
     IImageProcessor imageProcessor,
-    IAnimalsRepository animalsRepository)
+    IAnimalsService animalsService)
 {
     [Function(nameof(ProcessNewAnimalImage))]
     public async Task Run([QueueTrigger(QueueNames.AnimalImageAdded)] AnimalImageAddedEvent eventData)
@@ -48,7 +48,7 @@ public class ProcessNewAnimalImage(
 
     private async Task UpdateEntityAsync(Guid animalId, Guid imageId)
     {
-        var getResult = await animalsRepository.GetAsync(animalId);
+        var getResult = await animalsService.GetAsync(animalId);
 
         var animal = getResult.IsSuccess
             ? getResult.Value
@@ -57,6 +57,6 @@ public class ProcessNewAnimalImage(
         var image = animal.Images.First(image => image.Id == imageId);
         image.IsProcessed = true;
 
-        await animalsRepository.UpdateAsync(animal);
+        await animalsService.UpdateAsync(animal);
     }
 }

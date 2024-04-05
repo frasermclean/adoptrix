@@ -7,9 +7,9 @@ namespace Adoptrix.Database.Tests.Services;
 
 [Trait("Category", "Integration")]
 [Collection(nameof(DatabaseCollection))]
-public class AnimalsRepositoryTests(DatabaseFixture fixture)
+public class AnimalsServiceTests(DatabaseFixture fixture)
 {
-    private readonly IAnimalsRepository animalsRepository = fixture.AnimalsRepository!;
+    private readonly IAnimalsService animalsService = fixture.AnimalsRepository!;
     private readonly IBreedsRepository breedsRepository = fixture.BreedsRepository!;
 
     [Fact]
@@ -19,7 +19,7 @@ public class AnimalsRepositoryTests(DatabaseFixture fixture)
         var animalId = Guid.Empty;
 
         // act
-        var result = await animalsRepository.GetAsync(animalId);
+        var result = await animalsService.GetAsync(animalId);
 
         // assert
         result.Should().BeFailure().Which
@@ -34,8 +34,8 @@ public class AnimalsRepositoryTests(DatabaseFixture fixture)
         var animal = AnimalFactory.Create(breed: breedResult.Value);
 
         // act
-        var addResult = await animalsRepository.AddAsync(animal);
-        var getResult = await animalsRepository.GetAsync(animal.Id);
+        var addResult = await animalsService.AddAsync(animal);
+        var getResult = await animalsService.GetAsync(animal.Id);
 
         // assert
         addResult.Should().BeSuccess().Which.Should().HaveValue(animal);

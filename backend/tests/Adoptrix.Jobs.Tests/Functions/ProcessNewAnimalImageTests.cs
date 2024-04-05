@@ -15,7 +15,7 @@ public class ProcessNewAnimalImageTests
     private readonly Mock<ILogger<ProcessNewAnimalImage>> loggerMock = new();
     private readonly Mock<IAnimalImageManager> animalImageManagerMock = new();
     private readonly Mock<IImageProcessor> imageProcessorMock = new();
-    private readonly Mock<IAnimalsRepository> animalsRepositoryMock = new();
+    private readonly Mock<IAnimalsService> animalsRepositoryMock = new();
     private readonly ProcessNewAnimalImage sut;
 
     public ProcessNewAnimalImageTests()

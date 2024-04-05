@@ -7,7 +7,7 @@ namespace Adoptrix.Api.Validators;
 public class AddAnimalRequestValidator : AbstractValidator<AddAnimalImagesRequest>
 {
     public AddAnimalRequestValidator(ImageFormFileValidator imageFormFileValidator,
-        IAnimalsRepository animalsRepository)
+        IAnimalsService animalsService)
     {
         RuleFor(request => request.FormFileCollection)
             .NotEmpty()
@@ -19,7 +19,7 @@ public class AddAnimalRequestValidator : AbstractValidator<AddAnimalImagesReques
         RuleForEach(request => request.FormFileCollection)
             .MustAsync(async (request, formFile, cancellationToken) =>
             {
-                var animal = (await animalsRepository.GetAsync(request.AnimalId, cancellationToken)).Value;
+                var animal = (await animalsService.GetAsync(request.AnimalId, cancellationToken)).Value;
                 return animal.Images.All(image => image.OriginalFileName != formFile.FileName);
             })
             .WithMessage((_, formFile) => $"Image with file name {formFile.FileName} already exists");

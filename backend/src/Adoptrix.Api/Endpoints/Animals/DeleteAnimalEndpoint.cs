@@ -6,11 +6,11 @@ namespace Adoptrix.Api.Endpoints.Animals;
 
 public sealed class DeleteAnimalEndpoint
 {
-    public static async Task<Results<NoContent, NotFound>> ExecuteAsync(Guid animalId, IAnimalsRepository repository,
+    public static async Task<Results<NoContent, NotFound>> ExecuteAsync(Guid animalId, IAnimalsService animalsService,
         ILogger<DeleteAnimalEndpoint> logger, IEventPublisher eventPublisher, CancellationToken cancellationToken)
     {
         // delete animal from database
-        var result = await repository.DeleteAsync(animalId, cancellationToken);
+        var result = await animalsService.DeleteAsync(animalId, cancellationToken);
         if (result.IsFailed)
         {
             logger.LogError("Could not find animal with ID: {AnimalId}", animalId);

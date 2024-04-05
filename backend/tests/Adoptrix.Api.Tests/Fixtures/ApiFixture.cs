@@ -17,7 +17,7 @@ namespace Adoptrix.Api.Tests.Fixtures;
 
 public class ApiFixture : WebApplicationFactory<Program>
 {
-    public Mock<IAnimalsRepository> AnimalsRepository { get; } = new();
+    public Mock<IAnimalsService> AnimalsRepository { get; } = new();
     public Mock<IBreedsRepository> BreedsRepository { get; } = new();
     public Mock<ISpeciesRepository> SpeciesRepository { get; } = new();
     public Mock<IAnimalImageManager> AnimalImageManager { get; } = new();
@@ -50,8 +50,8 @@ public class ApiFixture : WebApplicationFactory<Program>
         builder.ConfigureServices(services =>
         {
             // remove infrastructure services and replace them with mocks
-            services.RemoveAll<IAnimalsRepository>()
-                .AddScoped<IAnimalsRepository>(_ => AnimalsRepository.Object);
+            services.RemoveAll<IAnimalsService>()
+                .AddScoped<IAnimalsService>(_ => AnimalsRepository.Object);
             services.RemoveAll<IBreedsRepository>()
                 .AddScoped<IBreedsRepository>(_ => BreedsRepository.Object);
             services.RemoveAll<ISpeciesRepository>()
@@ -75,7 +75,7 @@ public class ApiFixture : WebApplicationFactory<Program>
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TestAuthHandler.SchemeName);
     }
 
-    private static void SetupAnimalRepositoryMock(Mock<IAnimalsRepository> mock,
+    private static void SetupAnimalRepositoryMock(Mock<IAnimalsService> mock,
         int searchResultsCount = SearchResultsCount)
     {
         mock.Setup(repository =>

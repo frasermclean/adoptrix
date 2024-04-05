@@ -14,7 +14,7 @@ public class UpdateAnimalEndpoint
         SetAnimalRequest request,
         IValidator<SetAnimalRequest> validator,
         ILogger<UpdateAnimalEndpoint> logger,
-        IAnimalsRepository animalsRepository,
+        IAnimalsService animalsService,
         ISpeciesRepository speciesRepository,
         IBreedsRepository breedsRepository,
         CancellationToken cancellationToken)
@@ -28,7 +28,7 @@ public class UpdateAnimalEndpoint
         }
 
         // get animal from database
-        var getResult = await animalsRepository.GetAsync(animalId, cancellationToken);
+        var getResult = await animalsService.GetAsync(animalId, cancellationToken);
         if (getResult.IsFailed)
         {
             logger.LogError("Could not find animal with Id {AnimalId} to update", animalId);
@@ -47,7 +47,7 @@ public class UpdateAnimalEndpoint
         animal.Sex = request.Sex;
         animal.DateOfBirth = request.DateOfBirth;
 
-        await animalsRepository.UpdateAsync(animal, cancellationToken);
+        await animalsService.UpdateAsync(animal, cancellationToken);
 
         return TypedResults.Ok(animal.ToResponse());
     }
