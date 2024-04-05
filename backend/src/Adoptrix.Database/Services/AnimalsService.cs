@@ -50,8 +50,7 @@ public class AnimalsService(AdoptrixDbContext dbContext, IBatchManager batchMana
             : animal;
     }
 
-    public async Task<Result<Animal>> AddAsync(SetAnimalRequest request, Guid createdBy,
-        CancellationToken cancellationToken = default)
+    public async Task<Result<Animal>> AddAsync(SetAnimalRequest request, CancellationToken cancellationToken = default)
     {
         var breed = await DbContext.Breeds.FindAsync([request.BreedId], cancellationToken: cancellationToken);
         if (breed is null)
@@ -59,7 +58,7 @@ public class AnimalsService(AdoptrixDbContext dbContext, IBatchManager batchMana
             return new BreedNotFoundError(request.BreedId);
         }
 
-        var animal = request.ToAnimal(breed, createdBy);
+        var animal = request.ToAnimal(breed);
         var entry = DbContext.Animals.Add(animal);
 
         await SaveChangesAsync(cancellationToken);
@@ -74,13 +73,12 @@ public class AnimalsService(AdoptrixDbContext dbContext, IBatchManager batchMana
 
     public async Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default)
     {
-        var getResult = await GetAsync(animalId, cancellationToken);
-        if (getResult.IsFailed)
+        var animal = await DbContext.Animals.FindAsync([animalId], cancellationToken: cancellationToken);
+        if (animal is null)
         {
-            return getResult.ToResult();
+            return new AnimalNotFoundError(animalId);
         }
 
-        var animal = getResult.Value;
         DbContext.Animals.Remove(animal);
         return await SaveChangesAsync(cancellationToken);
     }

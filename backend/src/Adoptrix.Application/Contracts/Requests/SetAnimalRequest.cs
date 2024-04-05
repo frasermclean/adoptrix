@@ -10,6 +10,7 @@ public class SetAnimalRequest
     public required Guid BreedId { get; init; }
     public Sex Sex { get; init; }
     public required DateOnly DateOfBirth { get; init; }
+    public Guid UserId { get; set; }
 
     public override string ToString() => $"{Name} {DateOfBirth}";
 }

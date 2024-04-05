@@ -12,7 +12,7 @@ public interface IAnimalsService
 
     Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
 
-    Task<Result<Animal>> AddAsync(SetAnimalRequest request, Guid createdBy, CancellationToken cancellationToken = default);
+    Task<Result<Animal>> AddAsync(SetAnimalRequest request, CancellationToken cancellationToken = default);
     Task<Result> UpdateAsync(Animal animal, CancellationToken cancellationToken = default);
     Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default);
 }

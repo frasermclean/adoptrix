@@ -35,7 +35,7 @@ public class AnimalsServiceTests(DatabaseFixture fixture)
         var request = CreateSetAnimalRequest(breedId: BreedIds.GermanShepherd);
 
         // act
-        var result = await animalsService.AddAsync(request, createdBy);
+        var result = await animalsService.AddAsync(request);
 
         // assert
         result.Should().BeSuccess();

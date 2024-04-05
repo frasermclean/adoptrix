@@ -29,7 +29,8 @@ public sealed class AddAnimalEndpoint
         }
 
         // add animal to database
-        var addAnimalResult = await animalsService.AddAsync(request, claimsPrincipal.GetUserId(), cancellationToken);
+        request.UserId = claimsPrincipal.GetUserId();
+        var addAnimalResult = await animalsService.AddAsync(request, cancellationToken);
 
         logger.LogInformation("Added animal with id {Id}", addAnimalResult.Value.Id);
 

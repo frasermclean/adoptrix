@@ -105,9 +105,9 @@ public class ApiFixture : WebApplicationFactory<Program>
                 : AnimalFactory.Create(animalId));
 
         mock.Setup(repository =>
-                repository.AddAsync(It.IsAny<SetAnimalRequest>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((SetAnimalRequest request, Guid createdBy, CancellationToken _) =>
-                Result.Ok(request.ToAnimal(BreedFactory.Create(request.BreedId), createdBy)));
+                repository.AddAsync(It.IsAny<SetAnimalRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((SetAnimalRequest request, CancellationToken _) =>
+                Result.Ok(request.ToAnimal(BreedFactory.Create(request.BreedId))));
 
         mock.Setup(repository => repository.UpdateAsync(It.IsAny<Animal>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Animal animal, CancellationToken _) => animal.Id == Guid.Empty
