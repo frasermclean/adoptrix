@@ -1,4 +1,6 @@
-﻿using Adoptrix.Application.Errors;
+﻿using Adoptrix.Application.Contracts.Requests;
+using Adoptrix.Application.Errors;
+using Adoptrix.Application.Extensions;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
@@ -48,11 +50,19 @@ public class AnimalsService(AdoptrixDbContext dbContext, IBatchManager batchMana
             : animal;
     }
 
-    public async Task<Result<Animal>> AddAsync(Animal animal, CancellationToken cancellationToken = default)
+    public async Task<Result<Animal>> AddAsync(SetAnimalRequest request, Guid createdBy,
+        CancellationToken cancellationToken = default)
     {
-        var entry = DbContext.Animals.Add(animal);
-        await SaveChangesAsync(cancellationToken);
+        var breed = await DbContext.Breeds.FindAsync([request.BreedId], cancellationToken: cancellationToken);
+        if (breed is null)
+        {
+            return new BreedNotFoundError(request.BreedId);
+        }
 
+        var animal = request.ToAnimal(breed, createdBy);
+        var entry = DbContext.Animals.Add(animal);
+
+        await SaveChangesAsync(cancellationToken);
         return entry.Entity;
     }
 

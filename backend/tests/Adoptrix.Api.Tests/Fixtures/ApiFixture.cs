@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Api.Tests.Mocks;
+using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Errors;
+using Adoptrix.Application.Extensions;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
@@ -102,8 +104,10 @@ public class ApiFixture : WebApplicationFactory<Program>
                 ? new Result<Animal>().WithError(new AnimalNotFoundError(Guid.Empty))
                 : AnimalFactory.Create(animalId));
 
-        mock.Setup(repository => repository.AddAsync(It.IsAny<Animal>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Animal animal, CancellationToken _) => Result.Ok(animal));
+        mock.Setup(repository =>
+                repository.AddAsync(It.IsAny<SetAnimalRequest>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((SetAnimalRequest request, Guid createdBy, CancellationToken _) =>
+                Result.Ok(request.ToAnimal(BreedFactory.Create(request.BreedId), createdBy)));
 
         mock.Setup(repository => repository.UpdateAsync(It.IsAny<Animal>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Animal animal, CancellationToken _) => animal.Id == Guid.Empty
@@ -123,10 +127,7 @@ public class ApiFixture : WebApplicationFactory<Program>
             .ReturnsAsync((Guid? _, bool? _, CancellationToken _) => BreedFactory.CreateMany(SearchResultsCount)
                 .Select(breed => new SearchBreedsResult
                 {
-                    Id = breed.Id,
-                    Name = breed.Name,
-                    SpeciesId = breed.Species.Id,
-                    AnimalIds = Enumerable.Empty<Guid>()
+                    Id = breed.Id, Name = breed.Name, SpeciesId = breed.Species.Id, AnimalIds = Enumerable.Empty<Guid>()
                 }));
 
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))

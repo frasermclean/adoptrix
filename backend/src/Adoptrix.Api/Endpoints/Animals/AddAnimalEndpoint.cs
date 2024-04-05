@@ -4,7 +4,6 @@ using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -18,8 +17,6 @@ public sealed class AddAnimalEndpoint
         IValidator<SetAnimalRequest> validator,
         ILogger<AddAnimalEndpoint> logger,
         IAnimalsService animalsService,
-        ISpeciesRepository speciesRepository,
-        IBreedsRepository breedsRepository,
         LinkGenerator linkGenerator,
         CancellationToken cancellationToken)
     {
@@ -31,19 +28,8 @@ public sealed class AddAnimalEndpoint
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        // get species and breed (should be validated by validator)
-        var breed = (await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken)).Value;
-
         // add animal to database
-        var addAnimalResult = await animalsService.AddAsync(new Animal
-        {
-            Name = request.Name,
-            Description = request.Description,
-            Breed = breed,
-            Sex = request.Sex,
-            DateOfBirth = request.DateOfBirth,
-            CreatedBy = claimsPrincipal.GetUserId()
-        }, cancellationToken);
+        var addAnimalResult = await animalsService.AddAsync(request, claimsPrincipal.GetUserId(), cancellationToken);
 
         logger.LogInformation("Added animal with id {Id}", addAnimalResult.Value.Id);
 

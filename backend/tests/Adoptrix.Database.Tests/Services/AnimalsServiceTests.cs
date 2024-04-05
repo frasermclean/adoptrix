@@ -1,7 +1,9 @@
-﻿using Adoptrix.Application.Errors;
+﻿using Adoptrix.Application.Contracts.Requests;
+using Adoptrix.Application.Errors;
+using Adoptrix.Application.Extensions;
 using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
-using Adoptrix.Domain.Models.Factories;
+using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Database.Tests.Services;
 
@@ -10,7 +12,6 @@ namespace Adoptrix.Database.Tests.Services;
 public class AnimalsServiceTests(DatabaseFixture fixture)
 {
     private readonly IAnimalsService animalsService = fixture.AnimalsRepository!;
-    private readonly IBreedsRepository breedsRepository = fixture.BreedsRepository!;
 
     [Fact]
     public async Task GetAsync_WithInvalidId_ShouldFail()
@@ -27,18 +28,33 @@ public class AnimalsServiceTests(DatabaseFixture fixture)
     }
 
     [Fact]
-    public async Task AddAsync_WithValidAnimal_ShouldPass()
+    public async Task AddAsync_WithValidRequest_ShouldPass()
     {
         // arrange
-        var breedResult = await breedsRepository.GetByIdAsync(BreedIds.GermanShepherd);
-        var animal = AnimalFactory.Create(breed: breedResult.Value);
+        var createdBy = Guid.NewGuid();
+        var request = CreateSetAnimalRequest(breedId: BreedIds.GermanShepherd);
 
         // act
-        var addResult = await animalsService.AddAsync(animal);
-        var getResult = await animalsService.GetAsync(animal.Id);
+        var result = await animalsService.AddAsync(request, createdBy);
 
         // assert
-        addResult.Should().BeSuccess().Which.Should().HaveValue(animal);
-        getResult.Should().BeSuccess().Which.Value.Should().BeEquivalentTo(animal);
+        result.Should().BeSuccess();
+        result.Value.Id.Should().NotBeEmpty();
+        result.Value.Name.Should().Be(request.Name);
+        result.Value.Description.Should().Be(request.Description);
+        result.Value.Breed.Id.Should().Be(request.BreedId);
+        result.Value.Sex.Should().Be(request.Sex);
+        result.Value.DateOfBirth.Should().Be(request.DateOfBirth);
     }
+
+    private static SetAnimalRequest CreateSetAnimalRequest(string? name = "Max", string? description = "A good boy",
+        Guid? speciesId = null, Guid? breedId = null, Sex sex = Sex.Male, int ageInYears = 2) => new()
+    {
+        Name = name!,
+        Description = description,
+        SpeciesId = speciesId ?? Guid.NewGuid(),
+        BreedId = breedId ?? Guid.NewGuid(),
+        Sex = sex,
+        DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * ageInYears))
+    };
 }
