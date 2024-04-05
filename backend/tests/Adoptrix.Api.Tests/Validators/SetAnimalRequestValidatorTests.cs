@@ -1,5 +1,5 @@
-﻿using Adoptrix.Api.Contracts.Requests;
-using Adoptrix.Api.Validators;
+﻿using Adoptrix.Api.Validators;
+using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;

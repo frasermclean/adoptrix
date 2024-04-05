@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
-using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
+using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using FluentValidation;

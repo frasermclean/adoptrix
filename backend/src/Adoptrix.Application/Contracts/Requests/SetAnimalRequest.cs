@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Domain.Models;
 
-namespace Adoptrix.Api.Contracts.Requests;
+namespace Adoptrix.Application.Contracts.Requests;
 
 public class SetAnimalRequest
 {
