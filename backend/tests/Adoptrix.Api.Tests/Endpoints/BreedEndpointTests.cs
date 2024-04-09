@@ -2,9 +2,9 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Api.Tests.Mocks;
 using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Errors;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +40,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
     [Theory]
     [InlineData("00000000-0000-0000-0000-000000000000")]
-    [InlineData(ApiFixture.UnknownBreedName)]
+    [InlineData(MockBreedsRepository.UnknownBreedName)]
     public async Task GetBreed_WithUnknownBreedIdOrName_Returns_NotFound(string breedIdOrName)
     {
         // act
@@ -69,9 +69,9 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         const string breedName = "Sausage Dog";
-        fixture.BreedsService
+        fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new BreedNotFoundError(breedName));
+            .ReturnsAsync((string _, CancellationToken _) => null);
         var request = new SetBreedRequest
         {
             Name = breedName, SpeciesId = Guid.NewGuid()
@@ -109,9 +109,9 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         // arrange
         var breedId = Guid.NewGuid();
         const string breedName = "Golden Retriever";
-        fixture.BreedsService
+        fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new BreedNotFoundError(breedName));
+            .ReturnsAsync((string _, CancellationToken _) => null);
         var request = new SetBreedRequest
         {
             Name = breedName, SpeciesId = Guid.NewGuid()

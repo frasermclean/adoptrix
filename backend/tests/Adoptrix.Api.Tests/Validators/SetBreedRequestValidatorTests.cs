@@ -1,5 +1,4 @@
-﻿using Adoptrix.Api.Contracts.Requests;
-using Adoptrix.Api.Validators;
+﻿using Adoptrix.Api.Validators;
 using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Services;
@@ -18,7 +17,7 @@ public class SetBreedRequestValidatorTests
     public SetBreedRequestValidatorTests()
     {
         var breedsServiceMock = new Mock<IBreedsService>();
-        var speciesRepositoryMock = new Mock<ISpeciesRepository>();
+        var speciesServiceMock = new Mock<ISpeciesService>();
 
         breedsServiceMock.Setup(repository =>
                 repository.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -29,7 +28,7 @@ public class SetBreedRequestValidatorTests
                     Name = breedName, Species = new Species()
                 }));
 
-        speciesRepositoryMock.Setup(repository =>
+        speciesServiceMock.Setup(repository =>
                 repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == Guid.Empty
                 ? new SpeciesNotFoundError(speciesId)
@@ -38,7 +37,7 @@ public class SetBreedRequestValidatorTests
                     Id = speciesId
                 }));
 
-        validator = new SetBreedRequestValidator(breedsServiceMock.Object, speciesRepositoryMock.Object);
+        validator = new SetBreedRequestValidator(breedsServiceMock.Object, speciesServiceMock.Object);
     }
 
     [Fact]

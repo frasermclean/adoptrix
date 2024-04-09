@@ -48,7 +48,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(expectedStatusCode);
-        fixture.AnimalsService.Verify(repository => repository.GetAsync(animalId, It.IsAny<CancellationToken>()),
+        fixture.AnimalsRepositoryMock.Verify(repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()),
             Times.Once);
         if (expectedStatusCode == HttpStatusCode.OK)
         {

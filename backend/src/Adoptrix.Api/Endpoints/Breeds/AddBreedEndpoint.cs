@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
-using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -35,7 +35,7 @@ public class AddBreedEndpoint
         var breed = new Breed
         {
             Name = request.Name,
-            Species = (await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken)).Value,
+            Species = (await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken))!,
             CreatedBy = claimsPrincipal.GetUserId()
         };
         await breedsService.AddAsync(breed, cancellationToken);

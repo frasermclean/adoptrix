@@ -7,7 +7,7 @@ namespace Adoptrix.Api.Validators;
 
 public sealed class SetAnimalRequestValidator : AbstractValidator<SetAnimalRequest>
 {
-    public SetAnimalRequestValidator(DateOfBirthValidator dateOfBirthValidator, ISpeciesRepository speciesRepository,
+    public SetAnimalRequestValidator(DateOfBirthValidator dateOfBirthValidator, ISpeciesService speciesService,
         IBreedsService breedsService)
     {
         RuleFor(request => request.Name)
@@ -21,7 +21,7 @@ public sealed class SetAnimalRequestValidator : AbstractValidator<SetAnimalReque
             .NotEmpty()
             .MustAsync(async (speciesId, cancellationToken) =>
             {
-                var result = await speciesRepository.GetByIdAsync(speciesId, cancellationToken);
+                var result = await speciesService.GetByIdAsync(speciesId, cancellationToken);
                 return result.IsSuccess;
             })
             .WithMessage("Could not find species with ID: {PropertyValue}");

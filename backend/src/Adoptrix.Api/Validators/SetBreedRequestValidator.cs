@@ -1,5 +1,4 @@
-﻿using Adoptrix.Api.Contracts.Requests;
-using Adoptrix.Application.Contracts.Requests;
+﻿using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using FluentValidation;
@@ -8,7 +7,7 @@ namespace Adoptrix.Api.Validators;
 
 public class SetBreedRequestValidator : AbstractValidator<SetBreedRequest>
 {
-    public SetBreedRequestValidator(IBreedsService breedsService, ISpeciesRepository speciesRepository)
+    public SetBreedRequestValidator(IBreedsService breedsService, ISpeciesService speciesService)
     {
         RuleFor(request => request.Name)
             .NotEmpty()
@@ -24,7 +23,7 @@ public class SetBreedRequestValidator : AbstractValidator<SetBreedRequest>
             .NotEmpty()
             .MustAsync(async (speciesId, cancellationToken) =>
             {
-                var result = await speciesRepository.GetByIdAsync(speciesId, cancellationToken);
+                var result = await speciesService.GetByIdAsync(speciesId, cancellationToken);
                 return result.IsSuccess;
             })
             .WithMessage("Could not find species with ID: {PropertyValue}");

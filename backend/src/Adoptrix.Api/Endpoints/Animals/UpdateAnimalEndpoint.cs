@@ -2,6 +2,7 @@
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 

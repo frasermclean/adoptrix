@@ -10,7 +10,6 @@ public class SearchBreedsEndpoint
     public static async Task<IEnumerable<BreedResponse>> ExecuteAsync(
         [AsParameters] SearchBreedsRequest request,
         IBreedsService breedsService,
-        ISpeciesRepository speciesRepository,
         CancellationToken cancellationToken = default)
     {
         var results = await breedsService.SearchAsync(request.SpeciesId, request.WithAnimals, cancellationToken);

@@ -1,4 +1,4 @@
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Database.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,8 +15,8 @@ public static class ServiceRegistration
             var connectionString = configuration.GetValue<string>("Database:ConnectionString");
             builder.UseSqlServer(connectionString);
         }, optionsLifetime: ServiceLifetime.Singleton)
-        .AddScoped<IAnimalsService, AnimalsService>()
-        .AddScoped<IBreedsService, BreedsService>()
+        .AddScoped<IAnimalsRepository, AnimalsRepository>()
+        .AddScoped<IBreedsRepository, BreedsRepository>()
         .AddScoped<ISpeciesRepository, SpeciesRepository>()
         .AddScoped<IBatchManager, BatchManager>();
 }

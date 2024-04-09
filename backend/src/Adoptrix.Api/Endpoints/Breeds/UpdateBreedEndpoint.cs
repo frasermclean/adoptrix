@@ -1,5 +1,4 @@
-﻿using Adoptrix.Api.Contracts.Requests;
-using Adoptrix.Api.Contracts.Responses;
+﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Services;
@@ -17,7 +16,7 @@ public class UpdateBreedEndpoint
             IValidator<SetBreedRequest> validator,
             ILogger<UpdateBreedEndpoint> logger,
             IBreedsService breedsService,
-            ISpeciesRepository speciesRepository,
+            ISpeciesService speciesService,
             CancellationToken cancellationToken)
     {
         // find the breed by id
@@ -35,7 +34,7 @@ public class UpdateBreedEndpoint
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var speciesResult = await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken);
+        var speciesResult = await speciesService.GetByIdAsync(request.SpeciesId, cancellationToken);
 
         // update breed properties
         var breed = getResult.Value;

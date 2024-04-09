@@ -1,11 +1,8 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Api.Tests.Mocks;
-using Adoptrix.Application.Contracts.Requests;
-using Adoptrix.Application.Errors;
-using Adoptrix.Application.Extensions;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain.Models;
+using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models.Factories;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication;
@@ -19,19 +16,20 @@ namespace Adoptrix.Api.Tests.Fixtures;
 
 public class ApiFixture : WebApplicationFactory<Program>
 {
-    public Mock<IAnimalsService> AnimalsService { get; } = AnimalsServiceMock.CreateInstance();
-    public Mock<IBreedsService> BreedsService { get; } = new();
-    public Mock<ISpeciesRepository> SpeciesRepository { get; } = new();
+    public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; }
+    public Mock<IBreedsRepository> BreedsRepositoryMock { get; }
+    public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; } = new();
     public Mock<IAnimalImageManager> AnimalImageManager { get; } = new();
 
     public const int SearchResultsCount = 3;
-    public const string UnknownBreedName = "unknown-breed";
+
     public const string UnknownSpeciesName = "unknown-species";
 
     public ApiFixture()
     {
-        SetupBreedsServiceMock(BreedsService);
-        SetupSpeciesRepositoryMock(SpeciesRepository);
+        AnimalsRepositoryMock = new Mock<IAnimalsRepository>().SetupDefaults();
+        BreedsRepositoryMock = new Mock<IBreedsRepository>().SetupDefaults();
+        SetupSpeciesRepositoryMock(SpeciesRepositoryMock);
         SetupAnimalImageManagerMock(AnimalImageManager);
     }
 
@@ -51,12 +49,12 @@ public class ApiFixture : WebApplicationFactory<Program>
         builder.ConfigureServices(services =>
         {
             // remove infrastructure services and replace them with mocks
-            services.RemoveAll<IAnimalsService>()
-                .AddScoped<IAnimalsService>(_ => AnimalsService.Object);
-            services.RemoveAll<IBreedsService>()
-                .AddScoped<IBreedsService>(_ => BreedsService.Object);
+            services.RemoveAll<IAnimalsRepository>()
+                .AddScoped<IAnimalsRepository>(_ => AnimalsRepositoryMock.Object);
+            services.RemoveAll<IBreedsRepository>()
+                .AddScoped<IBreedsRepository>(_ => BreedsRepositoryMock.Object);
             services.RemoveAll<ISpeciesRepository>()
-                .AddScoped<ISpeciesRepository>(_ => SpeciesRepository.Object);
+                .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object);
             services.RemoveAll<IAnimalImageManager>()
                 .AddScoped<IAnimalImageManager>(_ => AnimalImageManager.Object);
 
@@ -76,32 +74,6 @@ public class ApiFixture : WebApplicationFactory<Program>
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TestAuthHandler.SchemeName);
     }
 
-    private static void SetupBreedsServiceMock(Mock<IBreedsService> mock)
-    {
-        mock.Setup(repository =>
-                repository.SearchAsync(It.IsAny<Guid?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid? _, bool? _, CancellationToken _) => BreedFactory.CreateMany(SearchResultsCount)
-                .Select(breed => new SearchBreedsResult
-                {
-                    Id = breed.Id, Name = breed.Name, SpeciesId = breed.Species.Id, AnimalIds = Enumerable.Empty<Guid>()
-                }));
-
-        mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid breedId, CancellationToken _) => breedId == Guid.Empty
-                ? new BreedNotFoundError(Guid.Empty)
-                : BreedFactory.Create(breedId));
-
-        mock.Setup(repository => repository.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string breedName, CancellationToken _) => breedName == UnknownBreedName
-                ? new BreedNotFoundError(UnknownBreedName)
-                : BreedFactory.Create(name: breedName));
-
-        mock.Setup(repository => repository.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid breedId, CancellationToken _) => breedId == Guid.Empty
-                ? new BreedNotFoundError(Guid.Empty)
-                : Result.Ok());
-    }
-
     private static void SetupSpeciesRepositoryMock(Mock<ISpeciesRepository> mock)
     {
         mock.Setup(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()))
@@ -109,12 +81,12 @@ public class ApiFixture : WebApplicationFactory<Program>
 
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == Guid.Empty
-                ? new SpeciesNotFoundError(Guid.Empty)
+                ? null
                 : SpeciesFactory.Create());
 
         mock.Setup(repository => repository.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string speciesName, CancellationToken _) => speciesName == UnknownSpeciesName
-                ? new SpeciesNotFoundError(speciesName)
+                ? null
                 : SpeciesFactory.Create());
     }
 

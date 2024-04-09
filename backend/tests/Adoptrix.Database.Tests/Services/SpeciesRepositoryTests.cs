@@ -1,5 +1,6 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Database.Tests.Fixtures;
+using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Database.Tests.Services;
 
@@ -24,11 +25,10 @@ public class SpeciesRepositoryTests(DatabaseFixture fixture)
     public async Task GetByIdAsync_WithValidId_ShouldReturnExpectedResult(Guid speciesId, string expectedName)
     {
         // act
-        var result = await repository.GetByIdAsync(speciesId);
+        var species = await repository.GetByIdAsync(speciesId);
 
         // assert
-        result.Should().BeSuccess();
-        result.Value.Name.Should().Be(expectedName);
+        species.Should().BeOfType<Species>().Which.Name.Should().Be(expectedName);
     }
 
     [Theory]
@@ -36,11 +36,10 @@ public class SpeciesRepositoryTests(DatabaseFixture fixture)
     public async Task GetByNameAsync_WithValidName_ShouldReturnExpectedResult(Guid expectedId, string speciesName)
     {
         // act
-        var result = await repository.GetByNameAsync(speciesName);
+        var species = await repository.GetByNameAsync(speciesName);
 
         // assert
-        result.Should().BeSuccess();
-        result.Value.Id.Should().Be(expectedId);
+        species.Should().BeOfType<Species>().Which.Id.Should().Be(expectedId);
     }
 
     public static TheoryData<Guid, string> GetKnownSpecies() => new()
