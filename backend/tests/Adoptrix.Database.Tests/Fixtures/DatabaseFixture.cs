@@ -14,8 +14,6 @@ public class DatabaseFixture : IAsyncLifetime
         .Build();
 
     private IServiceProvider? serviceProvider;
-    public IBreedsRepository? BreedsRepository { get; private set; }
-    public ISpeciesRepository? SpeciesRepository { get; private set; }
 
     public async Task InitializeAsync()
     {

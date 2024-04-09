@@ -9,14 +9,13 @@ namespace Adoptrix.Api.Endpoints.Breeds;
 
 public class UpdateBreedEndpoint
 {
-    public static async
-        Task<Results<Ok<BreedResponse>, NotFound, ValidationProblem>> ExecuteAsync(
-            Guid breedId,
-            SetBreedRequest request,
-            IValidator<SetBreedRequest> validator,
-            ILogger<UpdateBreedEndpoint> logger,
-            IBreedsService breedsService,
-            CancellationToken cancellationToken)
+    public static async Task<Results<Ok<BreedResponse>, NotFound, ValidationProblem>> ExecuteAsync(
+        Guid breedId,
+        SetBreedRequest request,
+        IValidator<SetBreedRequest> validator,
+        ILogger<UpdateBreedEndpoint> logger,
+        IBreedsService breedsService,
+        CancellationToken cancellationToken)
     {
         // find the breed by id
         var getResult = await breedsService.GetByIdAsync(breedId, cancellationToken);

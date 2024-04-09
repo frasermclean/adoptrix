@@ -9,7 +9,7 @@ namespace Adoptrix.Application.Services;
 
 public interface IBreedsService
 {
-    Task<IEnumerable<SearchBreedsResult>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
+    Task<IEnumerable<SearchBreedsResult>> SearchAsync(SearchBreedsRequest request,
         CancellationToken cancellationToken = default);
 
     Task<Result<Breed>> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default);
@@ -23,10 +23,10 @@ public interface IBreedsService
 public sealed class BreedsService(IBreedsRepository breedsRepository, ISpeciesRepository speciesRepository)
     : IBreedsService
 {
-    public Task<IEnumerable<SearchBreedsResult>> SearchAsync(Guid? speciesId, bool? withAnimals,
+    public Task<IEnumerable<SearchBreedsResult>> SearchAsync(SearchBreedsRequest request,
         CancellationToken cancellationToken)
     {
-        return breedsRepository.SearchAsync(speciesId, withAnimals, cancellationToken);
+        return breedsRepository.SearchAsync(request.SpeciesId, request.WithAnimals, cancellationToken);
     }
 
     public async Task<Result<Breed>> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default)

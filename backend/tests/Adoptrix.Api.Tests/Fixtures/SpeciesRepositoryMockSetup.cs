@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models.Factories;
 
-namespace Adoptrix.Api.Tests.Mocks;
+namespace Adoptrix.Api.Tests.Fixtures;
 
 public static class SpeciesRepositoryMockSetup
 {
