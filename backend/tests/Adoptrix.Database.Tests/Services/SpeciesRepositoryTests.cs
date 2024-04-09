@@ -6,15 +6,21 @@ namespace Adoptrix.Database.Tests.Services;
 
 [Trait("Category", "Integration")]
 [Collection(nameof(DatabaseCollection))]
-public class SpeciesRepositoryTests(DatabaseFixture fixture)
+public class SpeciesRepositoryTests
 {
-    private readonly ISpeciesRepository repository = fixture.SpeciesRepository!;
+    private readonly ISpeciesRepository speciesRepository;
+    public SpeciesRepositoryTests(DatabaseFixture fixture)
+    {
+        var collection = fixture.GetRepositoryCollection();
+
+        speciesRepository = collection.SpeciesRepository;
+    }
 
     [Fact]
     public async Task GetAllAsync_WithNoParameters_ShouldReturnAllSpecies()
     {
         // act
-        var results = await repository.GetAllAsync();
+        var results = await speciesRepository.GetAllAsync();
 
         // assert
         results.Should().HaveCountGreaterOrEqualTo(3);
@@ -25,7 +31,7 @@ public class SpeciesRepositoryTests(DatabaseFixture fixture)
     public async Task GetByIdAsync_WithValidId_ShouldReturnExpectedResult(Guid speciesId, string expectedName)
     {
         // act
-        var species = await repository.GetByIdAsync(speciesId);
+        var species = await speciesRepository.GetByIdAsync(speciesId);
 
         // assert
         species.Should().BeOfType<Species>().Which.Name.Should().Be(expectedName);
@@ -36,7 +42,7 @@ public class SpeciesRepositoryTests(DatabaseFixture fixture)
     public async Task GetByNameAsync_WithValidName_ShouldReturnExpectedResult(Guid expectedId, string speciesName)
     {
         // act
-        var species = await repository.GetByNameAsync(speciesName);
+        var species = await speciesRepository.GetByNameAsync(speciesName);
 
         // assert
         species.Should().BeOfType<Species>().Which.Id.Should().Be(expectedId);

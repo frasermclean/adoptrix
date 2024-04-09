@@ -14,8 +14,6 @@ public class DatabaseFixture : IAsyncLifetime
         .Build();
 
     private IServiceProvider? serviceProvider;
-
-    public IAnimalsRepository? AnimalsRepository { get; private set; }
     public IBreedsRepository? BreedsRepository { get; private set; }
     public ISpeciesRepository? SpeciesRepository { get; private set; }
 
@@ -34,15 +32,29 @@ public class DatabaseFixture : IAsyncLifetime
         await serviceProvider.GetRequiredService<AdoptrixDbContext>()
             .Database
             .EnsureCreatedAsync();
-
-        AnimalsRepository = serviceProvider.GetRequiredService<IAnimalsRepository>();
-        BreedsRepository = serviceProvider.GetRequiredService<IBreedsRepository>();
-        SpeciesRepository = serviceProvider.GetRequiredService<ISpeciesRepository>();
     }
 
     public async Task DisposeAsync()
     {
         await container.StopAsync();
+    }
+
+    /// <summary>
+    /// Get a collection of scoped repositories for use in tests.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Will occur if service provider is accessed before
+    /// class has been properly initialized.</exception>
+    public RepositoryCollection GetRepositoryCollection()
+    {
+        var scope = serviceProvider?.CreateScope() ??
+                    throw new InvalidOperationException("Service provider is not initialized");
+
+        return new RepositoryCollection
+        {
+            AnimalsRepository = scope.ServiceProvider.GetRequiredService<IAnimalsRepository>(),
+            BreedsRepository = scope.ServiceProvider.GetRequiredService<IBreedsRepository>(),
+            SpeciesRepository = scope.ServiceProvider.GetRequiredService<ISpeciesRepository>()
+        };
     }
 
     private static IConfiguration CreateConfiguration(string connectionString)

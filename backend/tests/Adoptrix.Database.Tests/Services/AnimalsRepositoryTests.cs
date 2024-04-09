@@ -6,10 +6,17 @@ namespace Adoptrix.Database.Tests.Services;
 
 [Trait("Category", "Integration")]
 [Collection(nameof(DatabaseCollection))]
-public class AnimalsRepositoryTests(DatabaseFixture fixture)
+public class AnimalsRepositoryTests
 {
-    private readonly IAnimalsRepository animalsRepository = fixture.AnimalsRepository!;
-    private readonly IBreedsRepository breedsRepository = fixture.BreedsRepository!;
+    private readonly IAnimalsRepository animalsRepository;
+    private readonly IBreedsRepository breedsRepository;
+
+    public AnimalsRepositoryTests(DatabaseFixture fixture)
+    {
+        var collection = fixture.GetRepositoryCollection();
+        animalsRepository = collection.AnimalsRepository;
+        breedsRepository = collection.BreedsRepository;
+    }
 
     [Fact]
     public async Task GetByIdAsync_WithInvalidId_ShouldFail()

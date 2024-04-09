@@ -8,10 +8,18 @@ namespace Adoptrix.Database.Tests.Services;
 
 [Trait("Category", "Integration")]
 [Collection(nameof(DatabaseCollection))]
-public class BreedsRepositoryTests(DatabaseFixture fixture)
+public class BreedsRepositoryTests
 {
-    private readonly IBreedsRepository breedsRepository = fixture.BreedsRepository!;
-    private readonly ISpeciesRepository speciesRepository = fixture.SpeciesRepository!;
+    private readonly IBreedsRepository breedsRepository;
+    private readonly ISpeciesRepository speciesRepository;
+
+    public BreedsRepositoryTests(DatabaseFixture fixture)
+    {
+        var collection = fixture.GetRepositoryCollection();
+
+        breedsRepository = collection.BreedsRepository;
+        speciesRepository = collection.SpeciesRepository;
+    }
 
     [Fact]
     public async Task SearchAsync_WithNoParameters_ShouldReturnAllBreeds()
