@@ -11,7 +11,7 @@ namespace Adoptrix.Database.Tests.Services;
 [Collection(nameof(DatabaseCollection))]
 public class AnimalsServiceTests(DatabaseFixture fixture)
 {
-    private readonly IAnimalsService animalsService = fixture.AnimalsRepository!;
+    private readonly IAnimalsService animalsService = fixture.AnimalsService!;
 
     [Fact]
     public async Task GetAsync_WithInvalidId_ShouldFail()

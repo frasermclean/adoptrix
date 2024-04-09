@@ -48,7 +48,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(expectedStatusCode);
-        fixture.AnimalsRepository.Verify(repository => repository.GetAsync(animalId, It.IsAny<CancellationToken>()),
+        fixture.AnimalsService.Verify(repository => repository.GetAsync(animalId, It.IsAny<CancellationToken>()),
             Times.Once);
         if (expectedStatusCode == HttpStatusCode.OK)
         {
@@ -174,7 +174,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
         response.Should().NotBeNull();
-        ValidateAnimalResponse(response!);
+        ValidateAnimalResponse(response!, 1);
     }
 
     [Fact]
@@ -220,7 +220,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * ageInYears))
     };
 
-    private static void ValidateAnimalResponse(AnimalResponse response)
+    private static void ValidateAnimalResponse(AnimalResponse response, int expectedImageCount = 0)
     {
         response.Id.Should().NotBeEmpty();
         response.Name.Should().NotBeEmpty();
@@ -230,6 +230,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         response.BreedName.Should().NotBeEmpty();
         response.Sex.Should().BeDefined();
         response.DateOfBirth.Should().NotBe(default);
+        response.Images.Should().HaveCount(expectedImageCount);
     }
 
     private static MultipartFormDataContent CreateMultipartFormDataContent(string fileName = "lab_puppy_1.jpeg",

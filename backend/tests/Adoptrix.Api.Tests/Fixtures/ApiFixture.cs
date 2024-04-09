@@ -19,7 +19,7 @@ namespace Adoptrix.Api.Tests.Fixtures;
 
 public class ApiFixture : WebApplicationFactory<Program>
 {
-    public Mock<IAnimalsService> AnimalsRepository { get; } = new();
+    public Mock<IAnimalsService> AnimalsService { get; } = AnimalsServiceMock.CreateInstance();
     public Mock<IBreedsService> BreedsService { get; } = new();
     public Mock<ISpeciesRepository> SpeciesRepository { get; } = new();
     public Mock<IAnimalImageManager> AnimalImageManager { get; } = new();
@@ -30,7 +30,6 @@ public class ApiFixture : WebApplicationFactory<Program>
 
     public ApiFixture()
     {
-        SetupAnimalRepositoryMock(AnimalsRepository);
         SetupBreedsServiceMock(BreedsService);
         SetupSpeciesRepositoryMock(SpeciesRepository);
         SetupAnimalImageManagerMock(AnimalImageManager);
@@ -53,7 +52,7 @@ public class ApiFixture : WebApplicationFactory<Program>
         {
             // remove infrastructure services and replace them with mocks
             services.RemoveAll<IAnimalsService>()
-                .AddScoped<IAnimalsService>(_ => AnimalsRepository.Object);
+                .AddScoped<IAnimalsService>(_ => AnimalsService.Object);
             services.RemoveAll<IBreedsService>()
                 .AddScoped<IBreedsService>(_ => BreedsService.Object);
             services.RemoveAll<ISpeciesRepository>()
@@ -75,49 +74,6 @@ public class ApiFixture : WebApplicationFactory<Program>
     {
         // configure the client to use the test auth scheme
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TestAuthHandler.SchemeName);
-    }
-
-    private static void SetupAnimalRepositoryMock(Mock<IAnimalsService> mock,
-        int searchResultsCount = SearchResultsCount)
-    {
-        mock.Setup(repository =>
-                repository.SearchAsync(It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string _, Guid? _, CancellationToken _) => AnimalFactory.CreateMany(searchResultsCount)
-                .Select(animal => new SearchAnimalsResult
-                {
-                    Id = animal.Id,
-                    Name = animal.Name,
-                    SpeciesName = animal.Breed.Species.Name,
-                    BreedName = animal.Breed.Name,
-                    Sex = animal.Sex,
-                    DateOfBirth = animal.DateOfBirth,
-                    CreatedAt = animal.CreatedAt,
-                    Image = animal.Images.Select(image => new AnimalImageResponse
-                        {
-                            Id = image.Id, Description = image.Description, IsProcessed = image.IsProcessed
-                        })
-                        .FirstOrDefault(),
-                }));
-
-        mock.Setup(repository => repository.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid animalId, CancellationToken _) => animalId == Guid.Empty
-                ? new Result<Animal>().WithError(new AnimalNotFoundError(Guid.Empty))
-                : AnimalFactory.Create(animalId));
-
-        mock.Setup(repository =>
-                repository.AddAsync(It.IsAny<SetAnimalRequest>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((SetAnimalRequest request, CancellationToken _) =>
-                Result.Ok(request.ToAnimal(BreedFactory.Create(request.BreedId))));
-
-        mock.Setup(repository => repository.UpdateAsync(It.IsAny<Guid>(), It.IsAny<SetAnimalRequest>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid animalId, SetAnimalRequest request, CancellationToken _) => animalId == Guid.Empty
-                ? new AnimalNotFoundError(Guid.Empty)
-                : Result.Ok(request.ToAnimal(BreedFactory.Create(request.BreedId))));
-
-        mock.Setup(repository => repository.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid animalId, CancellationToken _) => animalId == Guid.Empty
-                ? new AnimalNotFoundError(Guid.Empty)
-                : Result.Ok());
     }
 
     private static void SetupBreedsServiceMock(Mock<IBreedsService> mock)
