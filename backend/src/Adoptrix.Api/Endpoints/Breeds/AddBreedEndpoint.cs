@@ -3,6 +3,7 @@ using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
+using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using FluentValidation;
@@ -18,7 +19,7 @@ public class AddBreedEndpoint
         ILogger<AddBreedEndpoint> logger,
         IValidator<SetBreedRequest> validator,
         ISpeciesRepository speciesRepository,
-        IBreedsRepository breedsRepository,
+        IBreedsService breedsService,
         LinkGenerator linkGenerator,
         CancellationToken cancellationToken)
     {
@@ -37,7 +38,7 @@ public class AddBreedEndpoint
             Species = (await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken)).Value,
             CreatedBy = claimsPrincipal.GetUserId()
         };
-        await breedsRepository.AddAsync(breed, cancellationToken);
+        await breedsService.AddAsync(breed, cancellationToken);
         var response = breed.ToResponse();
 
         return TypedResults.Created(linkGenerator.GetPathByName(GetBreedEndpoint.EndpointName, new

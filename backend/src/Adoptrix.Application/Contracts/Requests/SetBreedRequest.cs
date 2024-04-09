@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Api.Contracts.Requests;
+﻿namespace Adoptrix.Application.Contracts.Requests;
 
 public sealed class SetBreedRequest
 {

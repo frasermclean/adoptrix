@@ -20,7 +20,7 @@ namespace Adoptrix.Api.Tests.Fixtures;
 public class ApiFixture : WebApplicationFactory<Program>
 {
     public Mock<IAnimalsService> AnimalsRepository { get; } = new();
-    public Mock<IBreedsRepository> BreedsRepository { get; } = new();
+    public Mock<IBreedsService> BreedsService { get; } = new();
     public Mock<ISpeciesRepository> SpeciesRepository { get; } = new();
     public Mock<IAnimalImageManager> AnimalImageManager { get; } = new();
 
@@ -31,7 +31,7 @@ public class ApiFixture : WebApplicationFactory<Program>
     public ApiFixture()
     {
         SetupAnimalRepositoryMock(AnimalsRepository);
-        SetupBreedsRepositoryMock(BreedsRepository);
+        SetupBreedsServiceMock(BreedsService);
         SetupSpeciesRepositoryMock(SpeciesRepository);
         SetupAnimalImageManagerMock(AnimalImageManager);
     }
@@ -54,8 +54,8 @@ public class ApiFixture : WebApplicationFactory<Program>
             // remove infrastructure services and replace them with mocks
             services.RemoveAll<IAnimalsService>()
                 .AddScoped<IAnimalsService>(_ => AnimalsRepository.Object);
-            services.RemoveAll<IBreedsRepository>()
-                .AddScoped<IBreedsRepository>(_ => BreedsRepository.Object);
+            services.RemoveAll<IBreedsService>()
+                .AddScoped<IBreedsService>(_ => BreedsService.Object);
             services.RemoveAll<ISpeciesRepository>()
                 .AddScoped<ISpeciesRepository>(_ => SpeciesRepository.Object);
             services.RemoveAll<IAnimalImageManager>()
@@ -120,7 +120,7 @@ public class ApiFixture : WebApplicationFactory<Program>
                 : Result.Ok());
     }
 
-    private static void SetupBreedsRepositoryMock(Mock<IBreedsRepository> mock)
+    private static void SetupBreedsServiceMock(Mock<IBreedsService> mock)
     {
         mock.Setup(repository =>
                 repository.SearchAsync(It.IsAny<Guid?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))

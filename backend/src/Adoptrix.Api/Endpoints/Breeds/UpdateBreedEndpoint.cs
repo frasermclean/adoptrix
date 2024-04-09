@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
+using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -15,12 +16,12 @@ public class UpdateBreedEndpoint
             SetBreedRequest request,
             IValidator<SetBreedRequest> validator,
             ILogger<UpdateBreedEndpoint> logger,
-            IBreedsRepository breedsRepository,
+            IBreedsService breedsService,
             ISpeciesRepository speciesRepository,
             CancellationToken cancellationToken)
     {
         // find the breed by id
-        var getResult = await breedsRepository.GetByIdAsync(breedId, cancellationToken);
+        var getResult = await breedsService.GetByIdAsync(breedId, cancellationToken);
         if (getResult.IsFailed)
         {
             return TypedResults.NotFound();
@@ -41,7 +42,7 @@ public class UpdateBreedEndpoint
         breed.Name = request.Name;
         breed.Species = speciesResult.Value;
 
-        await breedsRepository.UpdateAsync(breed, cancellationToken);
+        await breedsService.UpdateAsync(breed, cancellationToken);
 
         return TypedResults.Ok(breed.ToResponse());
     }

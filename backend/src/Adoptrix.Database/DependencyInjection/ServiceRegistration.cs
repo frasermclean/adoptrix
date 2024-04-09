@@ -16,7 +16,7 @@ public static class ServiceRegistration
             builder.UseSqlServer(connectionString);
         }, optionsLifetime: ServiceLifetime.Singleton)
         .AddScoped<IAnimalsService, AnimalsService>()
-        .AddScoped<IBreedsRepository, BreedsRepository>()
+        .AddScoped<IBreedsService, BreedsService>()
         .AddScoped<ISpeciesRepository, SpeciesRepository>()
         .AddScoped<IBatchManager, BatchManager>();
 }

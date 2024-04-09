@@ -16,7 +16,7 @@ public class UpdateAnimalEndpoint
         ILogger<UpdateAnimalEndpoint> logger,
         IAnimalsService animalsService,
         ISpeciesRepository speciesRepository,
-        IBreedsRepository breedsRepository,
+        IBreedsService breedsService,
         CancellationToken cancellationToken)
     {
         // validate request

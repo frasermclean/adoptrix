@@ -11,12 +11,12 @@ public static class GetBreedEndpoint
 
     public static async Task<Results<Ok<BreedResponse>, NotFound>> ExecuteAsync(
         string breedIdOrName,
-        IBreedsRepository breedsRepository,
+        IBreedsService breedsService,
         CancellationToken cancellationToken)
     {
         var result = Guid.TryParse(breedIdOrName, out var breedId)
-            ? await breedsRepository.GetByIdAsync(breedId, cancellationToken)
-            : await breedsRepository.GetByNameAsync(breedIdOrName, cancellationToken);
+            ? await breedsService.GetByIdAsync(breedId, cancellationToken)
+            : await breedsService.GetByNameAsync(breedIdOrName, cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.Ok(result.Value.ToResponse())

@@ -7,10 +7,10 @@ public static class DeleteBreedEndpoint
 {
     public static async Task<Results<NoContent, NotFound>> ExecuteAsync(
         Guid breedId,
-        IBreedsRepository breedsRepository,
+        IBreedsService breedsService,
         CancellationToken cancellationToken)
     {
-        var result = await breedsRepository.DeleteAsync(breedId, cancellationToken);
+        var result = await breedsService.DeleteAsync(breedId, cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.NoContent()

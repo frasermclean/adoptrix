@@ -4,7 +4,7 @@ using FluentResults;
 
 namespace Adoptrix.Application.Services;
 
-public interface IBreedsRepository
+public interface IBreedsService
 {
     Task<IEnumerable<SearchBreedsResult>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
         CancellationToken cancellationToken = default);

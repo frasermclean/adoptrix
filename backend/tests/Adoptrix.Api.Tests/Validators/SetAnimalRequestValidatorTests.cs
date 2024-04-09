@@ -23,8 +23,8 @@ public class SetAnimalRequestValidatorTests
                     Id = speciesId, Name = speciesId.ToString()
                 });
 
-        var breedsRepositoryMock = new Mock<IBreedsRepository>();
-        breedsRepositoryMock.Setup(service =>
+        var breedsServiceMock = new Mock<IBreedsService>();
+        breedsServiceMock.Setup(service =>
                 service.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid breedId, CancellationToken _) => breedId == Guid.Empty
                 ? new BreedNotFoundError(breedId)
@@ -34,7 +34,7 @@ public class SetAnimalRequestValidatorTests
                 });
 
         validator = new SetAnimalRequestValidator(new DateOfBirthValidator(), speciesRepositoryMock.Object,
-            breedsRepositoryMock.Object);
+            breedsServiceMock.Object);
     }
 
     [Fact]

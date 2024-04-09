@@ -9,11 +9,11 @@ public class SearchBreedsEndpoint
 {
     public static async Task<IEnumerable<BreedResponse>> ExecuteAsync(
         [AsParameters] SearchBreedsRequest request,
-        IBreedsRepository breedsRepository,
+        IBreedsService breedsService,
         ISpeciesRepository speciesRepository,
         CancellationToken cancellationToken = default)
     {
-        var results = await breedsRepository.SearchAsync(request.SpeciesId, request.WithAnimals, cancellationToken);
+        var results = await breedsService.SearchAsync(request.SpeciesId, request.WithAnimals, cancellationToken);
         return results.Select(result => result.ToResponse());
     }
 }

@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Errors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -68,7 +69,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         const string breedName = "Sausage Dog";
-        fixture.BreedsRepository
+        fixture.BreedsService
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new BreedNotFoundError(breedName));
         var request = new SetBreedRequest
@@ -108,7 +109,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         // arrange
         var breedId = Guid.NewGuid();
         const string breedName = "Golden Retriever";
-        fixture.BreedsRepository
+        fixture.BreedsService
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new BreedNotFoundError(breedName));
         var request = new SetBreedRequest
