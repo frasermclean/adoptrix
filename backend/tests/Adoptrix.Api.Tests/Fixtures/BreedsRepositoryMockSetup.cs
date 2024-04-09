@@ -4,7 +4,7 @@ using Adoptrix.Domain.Models.Factories;
 
 namespace Adoptrix.Api.Tests.Mocks;
 
-public static class MockBreedsRepository
+public static class BreedsRepositoryMockSetup
 {
     public const string UnknownBreedName = "unknown-breed";
 

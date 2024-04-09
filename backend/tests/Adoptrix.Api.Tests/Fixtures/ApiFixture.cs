@@ -18,18 +18,18 @@ public class ApiFixture : WebApplicationFactory<Program>
 {
     public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; }
     public Mock<IBreedsRepository> BreedsRepositoryMock { get; }
-    public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; } = new();
+    public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; }
     public Mock<IAnimalImageManager> AnimalImageManager { get; } = new();
 
     public const int SearchResultsCount = 3;
 
-    public const string UnknownSpeciesName = "unknown-species";
+
 
     public ApiFixture()
     {
         AnimalsRepositoryMock = new Mock<IAnimalsRepository>().SetupDefaults();
         BreedsRepositoryMock = new Mock<IBreedsRepository>().SetupDefaults();
-        SetupSpeciesRepositoryMock(SpeciesRepositoryMock);
+        SpeciesRepositoryMock = new Mock<ISpeciesRepository>().SetupDefaults();
         SetupAnimalImageManagerMock(AnimalImageManager);
     }
 
@@ -48,7 +48,7 @@ public class ApiFixture : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // remove infrastructure services and replace them with mocks
+            // repository mocks
             services.RemoveAll<IAnimalsRepository>()
                 .AddScoped<IAnimalsRepository>(_ => AnimalsRepositoryMock.Object);
             services.RemoveAll<IBreedsRepository>()
@@ -72,22 +72,6 @@ public class ApiFixture : WebApplicationFactory<Program>
     {
         // configure the client to use the test auth scheme
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TestAuthHandler.SchemeName);
-    }
-
-    private static void SetupSpeciesRepositoryMock(Mock<ISpeciesRepository> mock)
-    {
-        mock.Setup(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(SpeciesFactory.CreateMany(SearchResultsCount));
-
-        mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == Guid.Empty
-                ? null
-                : SpeciesFactory.Create());
-
-        mock.Setup(repository => repository.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string speciesName, CancellationToken _) => speciesName == UnknownSpeciesName
-                ? null
-                : SpeciesFactory.Create());
     }
 
     private static void SetupAnimalImageManagerMock(Mock<IAnimalImageManager> mock)

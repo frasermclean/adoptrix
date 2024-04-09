@@ -4,7 +4,7 @@ using Adoptrix.Domain.Models.Factories;
 
 namespace Adoptrix.Api.Tests.Mocks;
 
-public static class MockAnimalsRepository
+public static class AnimalsRepositoryMockSetup
 {
     public static Mock<IAnimalsRepository> SetupDefaults(this Mock<IAnimalsRepository> mock, int searchResultsCount = 3)
     {

@@ -40,7 +40,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
     [Theory]
     [InlineData("00000000-0000-0000-0000-000000000000")]
-    [InlineData(MockBreedsRepository.UnknownBreedName)]
+    [InlineData(BreedsRepositoryMockSetup.UnknownBreedName)]
     public async Task GetBreed_WithUnknownBreedIdOrName_Returns_NotFound(string breedIdOrName)
     {
         // act
