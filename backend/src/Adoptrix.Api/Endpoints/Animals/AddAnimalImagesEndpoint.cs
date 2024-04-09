@@ -4,9 +4,11 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Api.Validators;
+using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Events;
 using Adoptrix.Domain.Models;
+using FluentResults;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
@@ -36,35 +38,36 @@ public static class AddAnimalImagesEndpoint
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var animal = getResult.Value;
-        var userId = claimsPrincipal.GetUserId();
-
-        // add images to animal
-        foreach (var formFile in request.FormFileCollection)
+        // upload images to blob storage
+        var uploadResults = await Task.WhenAll(request.FormFileCollection.Select(async formFile =>
         {
-            var image = animal.AddImage(formFile.FileName, formFile.ContentType, formFile.Name, userId);
-            await ProcessImageAsync(formFile, imageManager, animalsService, eventPublisher, animal, image.Id,
-                cancellationToken);
+            var image = new AnimalImage
+            {
+                Description = formFile.Name,
+                OriginalFileName = formFile.FileName,
+                OriginalContentType = formFile.ContentType,
+                UploadedBy = claimsPrincipal.GetUserId()
+            };
+
+            var result = await imageManager.UploadImageAsync(request.AnimalId, image.Id, formFile.OpenReadStream(),
+                formFile.ContentType, ImageCategory.Original, cancellationToken);
+
+            return result.IsSuccess
+                ? Result.Ok(image)
+                : Result.Fail(result.Errors);
+        }));
+
+        // update database entity
+        var addImagesResult = await animalsService.AddImagesAsync(request.AnimalId,
+            uploadResults.Where(result => result.IsSuccess).Select(result => result.Value), cancellationToken);
+        var animal = addImagesResult.Value;
+
+        // publish domain events
+        foreach (var domainEvent in animal.Images.Select(image => new AnimalImageAddedEvent(animal.Id, image.Id)))
+        {
+            await eventPublisher.PublishDomainEventAsync(domainEvent, cancellationToken);
         }
 
         return TypedResults.Ok(animal.ToResponse());
-    }
-
-    private static async Task ProcessImageAsync(IFormFile formFile, IAnimalImageManager imageManager,
-        IAnimalsService animalsService, IEventPublisher eventPublisher, Animal animal, Guid imageId,
-        CancellationToken cancellationToken)
-    {
-        await using var fileStream = formFile.OpenReadStream();
-
-        // upload the original image to blob storage
-        await imageManager.UploadImageAsync(animal.Id, imageId, fileStream, formFile.ContentType,
-            cancellationToken: cancellationToken);
-
-        // update animal in the database
-        await animalsService.UpdateAsync(animal, cancellationToken);
-
-        // publish domain event
-        var domainEvent = new AnimalImageAddedEvent(animal.Id, imageId);
-        await eventPublisher.PublishDomainEventAsync(domainEvent, cancellationToken);
     }
 }

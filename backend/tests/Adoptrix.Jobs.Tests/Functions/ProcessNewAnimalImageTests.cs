@@ -15,12 +15,13 @@ public class ProcessNewAnimalImageTests
     private readonly Mock<ILogger<ProcessNewAnimalImage>> loggerMock = new();
     private readonly Mock<IAnimalImageManager> animalImageManagerMock = new();
     private readonly Mock<IImageProcessor> imageProcessorMock = new();
-    private readonly Mock<IAnimalsService> animalsRepositoryMock = new();
+    private readonly Mock<IAnimalsService> animalsServiceMock = new();
     private readonly ProcessNewAnimalImage sut;
 
     public ProcessNewAnimalImageTests()
     {
-        sut = new ProcessNewAnimalImage(loggerMock.Object, animalImageManagerMock.Object, imageProcessorMock.Object, animalsRepositoryMock.Object);
+        sut = new ProcessNewAnimalImage(loggerMock.Object, animalImageManagerMock.Object, imageProcessorMock.Object,
+            animalsServiceMock.Object);
     }
 
     [Fact]
@@ -30,29 +31,39 @@ public class ProcessNewAnimalImageTests
         var (animal, animalId, imageId) = CreateTestData();
         var originalReadStream = new MemoryStream();
         var eventData = new AnimalImageAddedEvent(animalId, imageId);
-        animalImageManagerMock.Setup(manager => manager.GetImageReadStreamAsync(animalId, imageId, It.IsAny<ImageCategory>(), It.IsAny<CancellationToken>()))
+        animalImageManagerMock.Setup(manager =>
+                manager.GetImageReadStreamAsync(animalId, imageId, It.IsAny<ImageCategory>(),
+                    It.IsAny<CancellationToken>()))
             .ReturnsAsync(originalReadStream);
-        imageProcessorMock.Setup(processor => processor.ProcessOriginalAsync(originalReadStream, It.IsAny<CancellationToken>()))
+        imageProcessorMock.Setup(processor =>
+                processor.ProcessOriginalAsync(originalReadStream, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ImageStreamBundle
             {
-                ThumbnailWriteStream = new MemoryStream(), PreviewWriteStream = new MemoryStream(), FullSizeWriteStream = new MemoryStream()
+                ThumbnailWriteStream = new MemoryStream(),
+                PreviewWriteStream = new MemoryStream(),
+                FullSizeWriteStream = new MemoryStream()
             });
-        animalsRepositoryMock.Setup(repository => repository.GetAsync(animalId, It.IsAny<CancellationToken>()))
+        animalsServiceMock.Setup(repository => repository.GetAsync(animalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Ok(animal));
 
         // act
         await sut.Run(eventData);
 
         // assert
-        animalImageManagerMock.Verify(manager => manager.UploadImageAsync(animalId, imageId, It.IsAny<Stream>(), ImageProcessor.OutputContentType,
+        animalImageManagerMock.Verify(manager => manager.UploadImageAsync(animalId, imageId, It.IsAny<Stream>(),
+            ImageProcessor.OutputContentType,
             ImageCategory.Thumbnail, It.IsAny<CancellationToken>()), Times.Once());
-        animalImageManagerMock.Verify(manager => manager.UploadImageAsync(animalId, imageId, It.IsAny<Stream>(), ImageProcessor.OutputContentType,
+        animalImageManagerMock.Verify(manager => manager.UploadImageAsync(animalId, imageId, It.IsAny<Stream>(),
+            ImageProcessor.OutputContentType,
             ImageCategory.Preview, It.IsAny<CancellationToken>()), Times.Once());
-        animalImageManagerMock.Verify(manager => manager.UploadImageAsync(animalId, imageId, It.IsAny<Stream>(), ImageProcessor.OutputContentType,
+        animalImageManagerMock.Verify(manager => manager.UploadImageAsync(animalId, imageId, It.IsAny<Stream>(),
+            ImageProcessor.OutputContentType,
             ImageCategory.FullSize, It.IsAny<CancellationToken>()), Times.Once());
-        loggerMock.VerifyLog($"Uploaded processed images for animal with ID: {animal.Id}", LogLevel.Information, Times.Once());
-        animal.Images.First().IsProcessed.Should().BeTrue();
-        animalsRepositoryMock.Verify(repository => repository.UpdateAsync(animal, It.IsAny<CancellationToken>()), Times.Once());
+        loggerMock.VerifyLog($"Uploaded processed images for animal with ID: {animal.Id}", LogLevel.Information,
+            Times.Once());
+        animalsServiceMock.Verify(
+            animalsService => animalsService.SetImageProcessedAsync(animalId, imageId, It.IsAny<CancellationToken>()),
+            Times.Once());
     }
 
     private static (Animal Animal, Guid AnimalId, Guid ImageId) CreateTestData()

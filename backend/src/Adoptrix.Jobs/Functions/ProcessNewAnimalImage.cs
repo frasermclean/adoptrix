@@ -26,7 +26,7 @@ public class ProcessNewAnimalImage(
         await UploadImagesAsync(animalId, imageId, bundle);
 
         // update entity in database
-        await UpdateEntityAsync(animalId, imageId);
+        await animalsService.SetImageProcessedAsync(animalId, imageId);
 
         logger.LogInformation("Processed image with ID: {ImageId} for animal with ID: {AnimalId}", imageId, animalId);
     }
@@ -44,19 +44,5 @@ public class ProcessNewAnimalImage(
         );
 
         logger.LogInformation("Uploaded processed images for animal with ID: {AnimalId}", animalId);
-    }
-
-    private async Task UpdateEntityAsync(Guid animalId, Guid imageId)
-    {
-        var getResult = await animalsService.GetAsync(animalId);
-
-        var animal = getResult.IsSuccess
-            ? getResult.Value
-            : throw new InvalidOperationException($"Animal with ID {animalId} not found");
-
-        var image = animal.Images.First(image => image.Id == imageId);
-        image.IsProcessed = true;
-
-        await animalsService.UpdateAsync(animal);
     }
 }

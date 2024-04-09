@@ -11,7 +11,7 @@ public class Animal : Aggregate
     public required Sex Sex { get; set; }
     public required DateOnly DateOfBirth { get; set; }
 
-    public ICollection<AnimalImage> Images { get; init; } = new List<AnimalImage>();
+    public List<AnimalImage> Images { get; init; } = new();
 
     public AnimalImage AddImage(string originalFileName, string originalContentType,
         string? description = null, Guid? uploadedBy = null)
