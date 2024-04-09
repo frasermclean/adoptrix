@@ -4,8 +4,6 @@ using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Contracts.Requests;
 using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -18,7 +16,6 @@ public class AddBreedEndpoint
         ClaimsPrincipal claimsPrincipal,
         ILogger<AddBreedEndpoint> logger,
         IValidator<SetBreedRequest> validator,
-        ISpeciesRepository speciesRepository,
         IBreedsService breedsService,
         LinkGenerator linkGenerator,
         CancellationToken cancellationToken)
@@ -31,16 +28,12 @@ public class AddBreedEndpoint
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        // create new breed and add to database
-        var breed = new Breed
-        {
-            Name = request.Name,
-            Species = (await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken))!,
-            CreatedBy = claimsPrincipal.GetUserId()
-        };
-        await breedsService.AddAsync(breed, cancellationToken);
-        var response = breed.ToResponse();
+        // attach user id to request
+        request.UserId = claimsPrincipal.GetUserId();
 
+        var result = await breedsService.AddAsync(request, cancellationToken);
+
+        var response = result.Value.ToResponse();
         return TypedResults.Created(linkGenerator.GetPathByName(GetBreedEndpoint.EndpointName, new
         {
             breedIdOrName = response.Id

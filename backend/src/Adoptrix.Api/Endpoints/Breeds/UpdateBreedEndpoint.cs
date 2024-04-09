@@ -16,7 +16,6 @@ public class UpdateBreedEndpoint
             IValidator<SetBreedRequest> validator,
             ILogger<UpdateBreedEndpoint> logger,
             IBreedsService breedsService,
-            ISpeciesService speciesService,
             CancellationToken cancellationToken)
     {
         // find the breed by id
@@ -34,15 +33,8 @@ public class UpdateBreedEndpoint
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var speciesResult = await speciesService.GetByIdAsync(request.SpeciesId, cancellationToken);
+        var result = await breedsService.UpdateAsync(breedId, request, cancellationToken);
 
-        // update breed properties
-        var breed = getResult.Value;
-        breed.Name = request.Name;
-        breed.Species = speciesResult.Value;
-
-        await breedsService.UpdateAsync(breed, cancellationToken);
-
-        return TypedResults.Ok(breed.ToResponse());
+        return TypedResults.Ok(result.Value.ToResponse());
     }
 }
