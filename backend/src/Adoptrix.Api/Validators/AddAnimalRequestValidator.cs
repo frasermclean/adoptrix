@@ -1,4 +1,4 @@
-﻿using Adoptrix.Api.Contracts.Requests;
+﻿using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Services;
 using FluentValidation;
 

@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
-using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Api.Validators;
+using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Events;

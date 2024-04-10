@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Adoptrix.Api.Contracts.Requests;
+namespace Adoptrix.Application.Contracts.Requests.Animals;
 
 public class AddAnimalImagesRequest
 {
