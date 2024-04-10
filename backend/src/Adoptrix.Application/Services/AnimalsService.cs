@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Extensions;
-using Adoptrix.Application.Models;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
 using FluentResults;
