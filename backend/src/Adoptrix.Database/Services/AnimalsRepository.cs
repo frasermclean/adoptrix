@@ -15,7 +15,9 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
         return await DbContext.Animals
             .AsNoTracking()
             .Where(animal => (request.Name == null || animal.Name.Contains(request.Name)) &&
-                             (request.BreedId == null || animal.Breed.Id == request.BreedId))
+                             (request.BreedId == null || animal.Breed.Id == request.BreedId) &&
+                             (request.SpeciesId == null || animal.Breed.Species.Id == request.SpeciesId) &&
+                             (request.Sex == null || animal.Sex == request.Sex))
             .Select(animal => new SearchAnimalsResult
             {
                 Id = animal.Id,
