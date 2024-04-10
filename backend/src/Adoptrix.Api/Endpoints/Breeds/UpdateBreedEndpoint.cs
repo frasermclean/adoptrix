@@ -17,7 +17,6 @@ public class UpdateBreedEndpoint
         ISender sender,
         CancellationToken cancellationToken)
     {
-        // validate request
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {

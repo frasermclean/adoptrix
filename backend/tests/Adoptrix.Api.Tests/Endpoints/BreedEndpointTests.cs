@@ -152,7 +152,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var breedId = Guid.Empty;
         var request = new SetBreedRequest
         {
-            Name = "Corgi", SpeciesId = Guid.NewGuid()
+            Name = BreedsRepositoryMockSetup.UnknownBreedName, SpeciesId = Guid.NewGuid()
         };
 
         // act
