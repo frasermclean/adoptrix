@@ -10,7 +10,7 @@ namespace Adoptrix.Application.Handlers.Breeds;
 public class UpdateBreedHandler(IBreedsRepository breedsRepository, ISpeciesRepository speciesRepository)
     : IRequestHandler<UpdateBreedRequest, Result<Breed>>
 {
-    public async Task<Result<Breed>> Handle(UpdateBreedRequest request, CancellationToken cancellationToken)
+    public async Task<Result<Breed>> Handle(UpdateBreedRequest request, CancellationToken cancellationToken = default)
     {
         var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
         if (breed is null)
