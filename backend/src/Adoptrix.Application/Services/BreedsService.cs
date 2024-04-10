@@ -14,7 +14,6 @@ public interface IBreedsService
 
     Task<Result<Breed>> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default);
     Task<Result<Breed>> GetByNameAsync(string breedName, CancellationToken cancellationToken = default);
-    Task<Result<Breed>> AddAsync(SetBreedRequest request, CancellationToken cancellationToken = default);
     Task<Result<Breed>> UpdateAsync(Guid breedId, SetBreedRequest request,
         CancellationToken cancellationToken = default);
     Task<Result> DeleteAsync(Guid breedId, CancellationToken cancellationToken = default);
@@ -45,23 +44,6 @@ public sealed class BreedsService(IBreedsRepository breedsRepository, ISpeciesRe
         return breed is not null
             ? breed
             : new BreedNotFoundError(breedName);
-    }
-
-    public async Task<Result<Breed>> AddAsync(SetBreedRequest request, CancellationToken cancellationToken = default)
-    {
-        var species = await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken);
-        if (species is null)
-        {
-            return new SpeciesNotFoundError(request.SpeciesId);
-        }
-
-        var breed = new Breed
-        {
-            Name = request.Name, Species = species, CreatedBy = request.UserId
-        };
-        await breedsRepository.AddAsync(breed, cancellationToken);
-
-        return breed;
     }
 
     public async Task<Result<Breed>> UpdateAsync(Guid breedId, SetBreedRequest request,
