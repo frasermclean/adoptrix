@@ -1,4 +1,5 @@
-﻿using Adoptrix.Application.Models;
+﻿using Adoptrix.Application.Contracts.Requests.Animals;
+using Adoptrix.Application.Models;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,13 +9,13 @@ namespace Adoptrix.Database.Services;
 public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
     : Repository(dbContext, batchManager), IAnimalsRepository
 {
-    public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(string? animalName = null,
-        Guid? breedId = null, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsRequest request,
+        CancellationToken cancellationToken = default)
     {
         return await DbContext.Animals
             .AsNoTracking()
-            .Where(animal => (animalName == null || animal.Name.Contains(animalName)) &&
-                             (breedId == null || animal.Breed.Id == breedId))
+            .Where(animal => (request.Name == null || animal.Name.Contains(request.Name)) &&
+                             (request.BreedId == null || animal.Breed.Id == request.BreedId))
             .Select(animal => new SearchAnimalsResult
             {
                 Id = animal.Id,

@@ -10,11 +10,12 @@ namespace Adoptrix.Application.Services;
 
 public interface IAnimalsService
 {
-    Task<IEnumerable<SearchAnimalsResult>> SearchAsync(string? animalName = null, Guid? breedId = null,
+    Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken = default);
 
     Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
     Task<Result<Animal>> AddAsync(SetAnimalRequest request, CancellationToken cancellationToken = default);
+
     Task<Result<Animal>> UpdateAsync(Guid animalId, SetAnimalRequest request,
         CancellationToken cancellationToken = default);
 
@@ -28,10 +29,10 @@ public interface IAnimalsService
 
 public class AnimalsService(IAnimalsRepository animalsRepository, IBreedsRepository breedsRepository) : IAnimalsService
 {
-    public Task<IEnumerable<SearchAnimalsResult>> SearchAsync(string? animalName = null,
-        Guid? breedId = null, CancellationToken cancellationToken = default)
+    public Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsRequest request,
+        CancellationToken cancellationToken = default)
     {
-        return animalsRepository.SearchAsync(animalName, breedId, cancellationToken);
+        return animalsRepository.SearchAsync(request, cancellationToken);
     }
 
     public async Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default)
@@ -56,6 +57,7 @@ public class AnimalsService(IAnimalsRepository animalsRepository, IBreedsReposit
 
         return animal;
     }
+
     public async Task<Result<Animal>> UpdateAsync(Guid animalId, SetAnimalRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -93,6 +95,7 @@ public class AnimalsService(IAnimalsRepository animalsRepository, IBreedsReposit
 
         return Result.Ok();
     }
+
     public async Task<Result<Animal>> AddImagesAsync(Guid animalId, IEnumerable<AnimalImage> images,
         CancellationToken cancellationToken = default)
     {

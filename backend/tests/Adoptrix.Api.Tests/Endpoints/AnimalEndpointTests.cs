@@ -5,9 +5,11 @@ using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using System.Net.Http.Headers;
+using System.Text;
 using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Models;
 using Adoptrix.Domain.Models;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Endpoints;
@@ -25,11 +27,18 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         }
     };
 
-    [Fact]
-    public async Task SearchAnimals_WithValidRequest_Should_ReturnOk()
+    [Theory]
+    [InlineData("Max", "dc1ff27e-e14a-4f4d-af5a-2cba7f9c9749")]
+    public async Task SearchAnimals_WithValidRequest_Should_ReturnOk(string? name, Guid breedId)
     {
+        // arrange
+        var query = new QueryBuilder();
+        if (name is not null) query.Add("name", name);
+        if (breedId != Guid.Empty) query.Add("breedId", breedId.ToString());
+        var uri = new Uri($"api/animals{query}", UriKind.Relative);
+
         // act
-        var message = await httpClient.GetAsync("api/animals");
+        var message = await httpClient.GetAsync(uri);
         var responses = await message.Content.ReadFromJsonAsync<IEnumerable<SearchAnimalsResult>>(SerializerOptions);
 
         // assert
@@ -48,7 +57,8 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(expectedStatusCode);
-        fixture.AnimalsRepositoryMock.Verify(repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()),
+        fixture.AnimalsRepositoryMock.Verify(
+            repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()),
             Times.Once);
         if (expectedStatusCode == HttpStatusCode.OK)
         {
