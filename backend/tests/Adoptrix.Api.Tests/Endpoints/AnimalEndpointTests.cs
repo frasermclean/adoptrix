@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using System.Net.Http.Headers;
-using Adoptrix.Application.Contracts.Requests.Animals;
+using Adoptrix.Api.Contracts.Data;
 using Adoptrix.Application.Models;
 using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -71,10 +71,10 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var uri = new Uri("api/admin/animals", UriKind.Relative);
-        var request = CreateSetAnimalRequest();
+        var data = CreateSetAnimalData();
 
         // act
-        var message = await httpClient.PostAsJsonAsync(uri, request);
+        var message = await httpClient.PostAsJsonAsync(uri, data);
         var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
 
         // assert
@@ -89,14 +89,14 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     [InlineData("Max", "")]
     [InlineData(null, null)]
     public async Task AddAnimal_WithInvalidRequest_Should_Return_ProblemDetails(string? name, string? description,
-        Guid speciesId = default, Guid breedId = default, Sex sex = default, int ageInYears = default)
+        Guid breedId = default, Sex sex = default, int ageInYears = default)
     {
         // arrange
         var uri = new Uri("api/admin/animals", UriKind.Relative);
-        var request = CreateSetAnimalRequest(name, description, speciesId, breedId, sex, ageInYears);
+        var data = CreateSetAnimalData(name!, description, breedId, sex, ageInYears);
 
         // act
-        var message = await httpClient.PostAsJsonAsync(uri, request);
+        var message = await httpClient.PostAsJsonAsync(uri, data);
         var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
 
         // assert
@@ -110,10 +110,10 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         // arrange
         var animalId = Guid.NewGuid();
         var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
-        var request = CreateSetAnimalRequest();
+        var data = CreateSetAnimalData();
 
         // act
-        var message = await httpClient.PutAsJsonAsync(uri, request);
+        var message = await httpClient.PutAsJsonAsync(uri, data);
         var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
 
         // assert
@@ -128,10 +128,10 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         // arrange
         var animalId = Guid.NewGuid();
         var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
-        var request = CreateSetAnimalRequest(name: null);
+        var data = CreateSetAnimalData(name: null!);
 
         // act
-        var message = await httpClient.PutAsJsonAsync(uri, request);
+        var message = await httpClient.PutAsJsonAsync(uri, data);
         var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
 
         // assert
@@ -144,10 +144,10 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var uri = new Uri($"api/admin/animals/{Guid.Empty}", UriKind.Relative);
-        var request = CreateSetAnimalRequest();
+        var data = CreateSetAnimalData();
 
         // act
-        var message = await httpClient.PutAsJsonAsync(uri, request);
+        var message = await httpClient.PutAsJsonAsync(uri, data);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
@@ -218,16 +218,9 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
-    private static SetAnimalRequest CreateSetAnimalRequest(string? name = "Max", string? description = "A good boy",
-        Guid? speciesId = null, Guid? breedId = null, Sex sex = Sex.Male, int ageInYears = 2) => new()
-    {
-        Name = name!,
-        Description = description,
-        SpeciesId = speciesId ?? Guid.NewGuid(),
-        BreedId = breedId ?? Guid.NewGuid(),
-        Sex = sex,
-        DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * ageInYears))
-    };
+    private static SetAnimalData CreateSetAnimalData(string name = "Max", string? description = "A good boy",
+        Guid? breedId = null, Sex sex = Sex.Male, int ageInYears = 2) => new(name, description,
+        breedId ?? Guid.NewGuid(), sex, DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * ageInYears)));
 
     private static void ValidateAnimalResponse(AnimalResponse response, int expectedImageCount = 0)
     {

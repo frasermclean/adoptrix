@@ -56,7 +56,6 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
 
     public async Task UpdateAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        DbContext.Animals.Update(animal);
         await SaveChangesAsync(cancellationToken);
     }
 

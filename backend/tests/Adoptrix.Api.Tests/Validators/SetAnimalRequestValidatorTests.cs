@@ -1,5 +1,5 @@
-﻿using Adoptrix.Api.Validators;
-using Adoptrix.Application.Contracts.Requests.Animals;
+﻿using Adoptrix.Api.Contracts.Data;
+using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
 using Adoptrix.Domain.Models.Factories;
@@ -36,10 +36,10 @@ public class SetAnimalRequestValidatorTests
     public async Task ValidRequest_Should_Not_HaveAnyErrors()
     {
         // arrange
-        var request = CreateRequest();
+        var data = CreateData();
 
         // act
-        var result = await validator.TestValidateAsync(request);
+        var result = await validator.TestValidateAsync(data);
 
         // assert
         result.ShouldNotHaveAnyValidationErrors();
@@ -52,10 +52,10 @@ public class SetAnimalRequestValidatorTests
     public async Task WhenName_IsInvalid_Should_HaveValidationError(string name, string expectedErrorMessage)
     {
         // arrange
-        var request = CreateRequest(name);
+        var data = CreateData(name);
 
         // act
-        var result = await validator.TestValidateAsync(request);
+        var result = await validator.TestValidateAsync(data);
 
         // assert
         result.ShouldHaveValidationErrorFor(r => r.Name)
@@ -66,35 +66,20 @@ public class SetAnimalRequestValidatorTests
     public async Task WhenDateOfBirth_IsInTheFuture_Should_HaveError()
     {
         // arrange
-        var request = CreateRequest(age: -1);
+        var data = CreateData(age: -1);
 
         // act
-        var result = await validator.TestValidateAsync(request);
+        var result = await validator.TestValidateAsync(data);
 
         // assert
         result.ShouldHaveValidationErrorFor(r => r.DateOfBirth);
     }
 
     [Fact]
-    public async Task WhenSpeciesName_IsInvalid_Should_HaveError()
-    {
-        // arrange
-        var request = CreateRequest(speciesId: Guid.Empty);
-
-
-        // act
-        var result = await validator.TestValidateAsync(request);
-
-        // assert
-        result.ShouldHaveValidationErrorFor(r => r.SpeciesId)
-            .WithErrorMessage($"Could not find species with ID: {Guid.Empty}");
-    }
-
-    [Fact]
     public async Task WhenBreedId_IsInvalid_Should_HaveError()
     {
         // arrange
-        var request = CreateRequest(breedId: Guid.Empty);
+        var request = CreateData(breedId: Guid.Empty);
 
         // act
         var result = await validator.TestValidateAsync(request);
@@ -104,14 +89,16 @@ public class SetAnimalRequestValidatorTests
             .WithErrorMessage($"Could not find breed with ID: {Guid.Empty}");
     }
 
-    private static SetAnimalRequest CreateRequest(string name = "Max", string description = "A good boy", int age = 2,
-        Guid? speciesId = null, Guid? breedId = null, Sex sex = Sex.Male) => new()
-    {
-        Name = name,
-        Description = description,
-        DateOfBirth = DateOnly.FromDateTime(DateTime.Now - TimeSpan.FromDays(365 * age)),
-        SpeciesId = speciesId ?? Guid.NewGuid(),
-        BreedId = breedId ?? Guid.NewGuid(),
-        Sex = sex
-    };
+    private static SetAnimalData CreateData(
+        string name = "Max",
+        string description = "A good boy",
+        Guid? breedId = null,
+        Sex sex = Sex.Male,
+        int age = 2)
+        => new(
+            name,
+            description,
+            breedId ?? Guid.NewGuid(),
+            sex,
+            DateOnly.FromDateTime(DateTime.Now - TimeSpan.FromDays(365 * age)));
 }

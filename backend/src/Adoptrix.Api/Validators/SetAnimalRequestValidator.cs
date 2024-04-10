@@ -1,11 +1,11 @@
-﻿using Adoptrix.Application.Contracts.Requests.Animals;
+﻿using Adoptrix.Api.Contracts.Data;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
 using FluentValidation;
 
 namespace Adoptrix.Api.Validators;
 
-public sealed class SetAnimalRequestValidator : AbstractValidator<SetAnimalRequest>
+public sealed class SetAnimalRequestValidator : AbstractValidator<SetAnimalData>
 {
     public SetAnimalRequestValidator(DateOfBirthValidator dateOfBirthValidator, ISpeciesRepository speciesRepository,
         IBreedsRepository breedsRepository)
@@ -16,15 +16,6 @@ public sealed class SetAnimalRequestValidator : AbstractValidator<SetAnimalReque
 
         RuleFor(request => request.Description)
             .MaximumLength(Animal.DescriptionMaxLength);
-
-        RuleFor(request => request.SpeciesId)
-            .NotEmpty()
-            .MustAsync(async (speciesId, cancellationToken) =>
-            {
-                var result = await speciesRepository.GetByIdAsync(speciesId, cancellationToken);
-                return result is not null;
-            })
-            .WithMessage("Could not find species with ID: {PropertyValue}");
 
         RuleFor(request => request.BreedId)
             .MustAsync(async (breedId, cancellationToken) =>
