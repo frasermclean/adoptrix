@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Contracts.Requests;
+﻿using Adoptrix.Application.Contracts.Requests.Breeds;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using FluentValidation;

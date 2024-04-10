@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Application.Contracts.Requests;
+using Adoptrix.Application.Contracts.Requests.Breeds;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Endpoints;

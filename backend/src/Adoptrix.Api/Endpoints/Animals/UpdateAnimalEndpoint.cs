@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Contracts.Requests;
+using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
 using FluentValidation;

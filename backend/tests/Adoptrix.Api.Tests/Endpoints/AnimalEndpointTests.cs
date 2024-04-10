@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using System.Net.Http.Headers;
-using Adoptrix.Application.Contracts.Requests;
+using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Models;
 using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Mvc;

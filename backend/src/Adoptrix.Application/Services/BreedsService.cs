@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Contracts.Requests;
+﻿using Adoptrix.Application.Contracts.Requests.Breeds;
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services.Repositories;

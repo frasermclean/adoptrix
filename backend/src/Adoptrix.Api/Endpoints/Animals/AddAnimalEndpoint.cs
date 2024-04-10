@@ -2,7 +2,7 @@
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Contracts.Requests;
+using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;

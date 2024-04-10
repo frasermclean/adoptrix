@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Contracts.Requests;
+﻿using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Application.Extensions;
