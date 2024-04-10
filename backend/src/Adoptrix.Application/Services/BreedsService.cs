@@ -16,7 +16,6 @@ public interface IBreedsService
     Task<Result<Breed>> GetByNameAsync(string breedName, CancellationToken cancellationToken = default);
     Task<Result<Breed>> UpdateAsync(Guid breedId, SetBreedRequest request,
         CancellationToken cancellationToken = default);
-    Task<Result> DeleteAsync(Guid breedId, CancellationToken cancellationToken = default);
 }
 
 public sealed class BreedsService(IBreedsRepository breedsRepository, ISpeciesRepository speciesRepository)
@@ -66,17 +65,5 @@ public sealed class BreedsService(IBreedsRepository breedsRepository, ISpeciesRe
         await breedsRepository.UpdateAsync(breed, cancellationToken);
 
         return breed;
-    }
-
-    public async Task<Result> DeleteAsync(Guid breedId, CancellationToken cancellationToken = default)
-    {
-        var breed = await breedsRepository.GetByIdAsync(breedId, cancellationToken);
-        if (breed is null)
-        {
-            return new BreedNotFoundError(breedId);
-        }
-
-        await breedsRepository.DeleteAsync(breed, cancellationToken);
-        return Result.Ok();
     }
 }
