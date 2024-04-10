@@ -1,18 +1,18 @@
-﻿using Adoptrix.Api.Validators;
-using Adoptrix.Application.Contracts.Requests.Breeds;
+﻿using Adoptrix.Api.Contracts.Data;
+using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models.Factories;
 using FluentValidation.TestHelper;
 
 namespace Adoptrix.Api.Tests.Validators;
 
-public class SetBreedRequestValidatorTests
+public class SetBreedDataValidatorTests
 {
-    private readonly SetBreedRequestValidator validator;
+    private readonly SetBreedDataValidator validator;
 
     private const string ExistingBreedName = "Sausage Dog";
 
-    public SetBreedRequestValidatorTests()
+    public SetBreedDataValidatorTests()
     {
         var breedsRepositoryMock = new Mock<IBreedsRepository>();
         var speciesRepositoryMock = new Mock<ISpeciesRepository>();
@@ -29,14 +29,14 @@ public class SetBreedRequestValidatorTests
                 ? null
                 : SpeciesFactory.Create(speciesId));
 
-        validator = new SetBreedRequestValidator(breedsRepositoryMock.Object, speciesRepositoryMock.Object);
+        validator = new SetBreedDataValidator(breedsRepositoryMock.Object, speciesRepositoryMock.Object);
     }
 
     [Fact]
     public async Task ValidRequest_Should_Not_HaveAnyErrors()
     {
         // arrange
-        var request = CreateRequest();
+        var request = CreateData();
 
         // act
         var result = await validator.TestValidateAsync(request);
@@ -49,7 +49,7 @@ public class SetBreedRequestValidatorTests
     public async Task Request_WithExistingName_Should_HaveError()
     {
         // arrange
-        var request = CreateRequest(ExistingBreedName);
+        var request = CreateData(ExistingBreedName);
 
         // act
         var result = await validator.TestValidateAsync(request);
@@ -63,7 +63,7 @@ public class SetBreedRequestValidatorTests
     public async Task Request_WithNonExistingSpeciesId_Should_HaveError()
     {
         // arrange
-        var request = CreateRequest(speciesId: Guid.Empty);
+        var request = CreateData(speciesId: Guid.Empty);
 
         // act
         var result = await validator.TestValidateAsync(request);
@@ -73,8 +73,6 @@ public class SetBreedRequestValidatorTests
             .WithErrorMessage($"Could not find species with ID: {Guid.Empty}");
     }
 
-    private static SetBreedRequest CreateRequest(string name = "Corgi", Guid? speciesId = null) => new()
-    {
-        Name = name, SpeciesId = speciesId ?? Guid.NewGuid()
-    };
+    private static SetBreedData CreateData(string name = "Corgi", Guid? speciesId = null)
+        => new(name, speciesId ?? Guid.NewGuid());
 }

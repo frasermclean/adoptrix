@@ -2,9 +2,9 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Adoptrix.Api.Contracts.Data;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Application.Contracts.Requests.Breeds;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Endpoints;
@@ -70,13 +70,10 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
             .ReturnsAsync((string _, CancellationToken _) => null);
-        var request = new SetBreedRequest
-        {
-            Name = breedName, SpeciesId = Guid.NewGuid()
-        };
+        var data = new SetBreedData(breedName, Guid.NewGuid());
 
         // act
-        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(request));
+        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(data));
         var response = await message.Content.ReadFromJsonAsync<BreedResponse>(SerializerOptions);
 
         // assert
@@ -87,13 +84,11 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     [Fact]
     public async Task AddBreed_WithDuplicateBreedName_Returns_ProblemDetails()
     {
-        var request = new SetBreedRequest
-        {
-            Name = "Corgi", SpeciesId = Guid.NewGuid()
-        };
+        // arrange
+        var data = CreateData();
 
         // act
-        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(request));
+        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(data));
         var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
 
         // assert
@@ -102,7 +97,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Fact]
-    public async Task UpdateBreed_WithValidRequest_Should_Return_Ok()
+    public async Task UpdateBreed_WithValidData_Should_Return_Ok()
     {
         // arrange
         var breedId = Guid.NewGuid();
@@ -110,13 +105,10 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
             .ReturnsAsync((string _, CancellationToken _) => null);
-        var request = new SetBreedRequest
-        {
-            Name = breedName, SpeciesId = Guid.NewGuid()
-        };
+        var data = CreateData(breedName);
 
         // act
-        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
+        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(data));
         var response = await message.Content.ReadFromJsonAsync<BreedResponse>(SerializerOptions);
 
         // assert
@@ -129,13 +121,10 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var breedId = Guid.NewGuid();
-        var request = new SetBreedRequest
-        {
-            Name = "Corgi", SpeciesId = Guid.NewGuid()
-        };
+        var data = CreateData();
 
         // act
-        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
+        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(data));
         var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
 
         // assert
@@ -150,13 +139,10 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var breedId = Guid.Empty;
-        var request = new SetBreedRequest
-        {
-            Name = BreedsRepositoryMockSetup.UnknownBreedName, SpeciesId = Guid.NewGuid()
-        };
+        var data = CreateData(BreedsRepositoryMockSetup.UnknownBreedName);
 
         // act
-        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
+        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(data));
         var details = await message.Content.ReadFromJsonAsync<ProblemDetails>(SerializerOptions);
 
         // assert
@@ -186,6 +172,9 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
+
+    private static SetBreedData CreateData(string name = "Corgi", Guid? speciesId = null)
+        => new(name, speciesId ?? Guid.NewGuid());
 
     private static void ValidateBreedResponse(BreedResponse response)
     {

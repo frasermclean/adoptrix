@@ -1,13 +1,13 @@
-﻿using Adoptrix.Application.Contracts.Requests.Breeds;
+﻿using Adoptrix.Api.Contracts.Data;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
 using FluentValidation;
 
 namespace Adoptrix.Api.Validators;
 
-public class SetBreedRequestValidator : AbstractValidator<SetBreedRequest>
+public class SetBreedDataValidator : AbstractValidator<SetBreedData>
 {
-    public SetBreedRequestValidator(IBreedsRepository breedsRepository, ISpeciesRepository speciesRepository)
+    public SetBreedDataValidator(IBreedsRepository breedsRepository, ISpeciesRepository speciesRepository)
     {
         RuleFor(request => request.Name)
             .NotEmpty()

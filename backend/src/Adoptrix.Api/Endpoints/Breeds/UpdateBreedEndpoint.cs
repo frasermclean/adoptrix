@@ -1,4 +1,5 @@
-﻿using Adoptrix.Api.Contracts.Responses;
+﻿using Adoptrix.Api.Contracts.Data;
+using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Contracts.Requests.Breeds;
 using FluentValidation;
@@ -11,20 +12,20 @@ public class UpdateBreedEndpoint
 {
     public static async Task<Results<Ok<BreedResponse>, NotFound, ValidationProblem>> ExecuteAsync(
         Guid breedId,
-        SetBreedRequest request,
-        IValidator<SetBreedRequest> validator,
+        SetBreedData data,
+        IValidator<SetBreedData> validator,
         ILogger<UpdateBreedEndpoint> logger,
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        var validationResult = await validator.ValidateAsync(data, cancellationToken);
         if (!validationResult.IsValid)
         {
-            logger.LogWarning("Validation failed for request: {Request}", request);
+            logger.LogWarning("Validation failed for request: {Request}", data);
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var result = await sender.Send(new UpdateBreedRequest(breedId, request.Name, request.SpeciesId),
+        var result = await sender.Send(new UpdateBreedRequest(breedId, data.Name, data.SpeciesId),
             cancellationToken);
 
         return result.IsSuccess
