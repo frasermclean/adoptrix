@@ -1,9 +1,7 @@
 ﻿using Adoptrix.Api.Validators;
 using Adoptrix.Application.Contracts.Requests.Breeds;
-using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services;
-using Adoptrix.Domain.Models;
-using FluentResults;
+using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Domain.Models.Factories;
 using FluentValidation.TestHelper;
 
 namespace Adoptrix.Api.Tests.Validators;
@@ -16,28 +14,22 @@ public class SetBreedRequestValidatorTests
 
     public SetBreedRequestValidatorTests()
     {
-        var breedsServiceMock = new Mock<IBreedsService>();
-        var speciesServiceMock = new Mock<ISpeciesService>();
+        var breedsRepositoryMock = new Mock<IBreedsRepository>();
+        var speciesRepositoryMock = new Mock<ISpeciesRepository>();
 
-        breedsServiceMock.Setup(repository =>
+        breedsRepositoryMock.Setup(repository =>
                 repository.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((string breedName, CancellationToken _) => breedName != ExistingBreedName
-                ? new BreedNotFoundError(breedName)
-                : Result.Ok(new Breed
-                {
-                    Name = breedName, Species = new Species()
-                }));
+                ? null
+                : BreedFactory.Create(name: breedName));
 
-        speciesServiceMock.Setup(repository =>
+        speciesRepositoryMock.Setup(repository =>
                 repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == Guid.Empty
-                ? new SpeciesNotFoundError(speciesId)
-                : Result.Ok(new Species
-                {
-                    Id = speciesId
-                }));
+                ? null
+                : SpeciesFactory.Create(speciesId));
 
-        validator = new SetBreedRequestValidator(breedsServiceMock.Object, speciesServiceMock.Object);
+        validator = new SetBreedRequestValidator(breedsRepositoryMock.Object, speciesRepositoryMock.Object);
     }
 
     [Fact]

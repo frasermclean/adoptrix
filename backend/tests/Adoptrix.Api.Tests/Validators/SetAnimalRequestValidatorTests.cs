@@ -1,8 +1,8 @@
 ﻿using Adoptrix.Api.Validators;
 using Adoptrix.Application.Contracts.Requests.Animals;
-using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Factories;
 using FluentValidation.TestHelper;
 
 namespace Adoptrix.Api.Tests.Validators;
@@ -13,28 +13,23 @@ public class SetAnimalRequestValidatorTests
 
     public SetAnimalRequestValidatorTests()
     {
-        var speciesServiceMock = new Mock<ISpeciesService>();
-        speciesServiceMock.Setup(service =>
-                service.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+        var speciesRepositoryMock = new Mock<ISpeciesRepository>();
+        speciesRepositoryMock.Setup(repository =>
+                repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == Guid.Empty
-                ? new SpeciesNotFoundError(speciesId)
-                : new Species
-                {
-                    Id = speciesId, Name = speciesId.ToString()
-                });
+                ? null
+                : SpeciesFactory.Create(speciesId));
 
-        var breedsServiceMock = new Mock<IBreedsService>();
-        breedsServiceMock.Setup(service =>
+
+        var breedsRepositoryMock = new Mock<IBreedsRepository>();
+        breedsRepositoryMock.Setup(service =>
                 service.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid breedId, CancellationToken _) => breedId == Guid.Empty
-                ? new BreedNotFoundError(breedId)
-                : new Breed
-                {
-                    Id = breedId, Name = breedId.ToString(), Species = new Species()
-                });
+                ? null
+                : BreedFactory.Create(breedId));
 
-        validator = new SetAnimalRequestValidator(new DateOfBirthValidator(), speciesServiceMock.Object,
-            breedsServiceMock.Object);
+        validator = new SetAnimalRequestValidator(new DateOfBirthValidator(), speciesRepositoryMock.Object,
+            breedsRepositoryMock.Object);
     }
 
     [Fact]
