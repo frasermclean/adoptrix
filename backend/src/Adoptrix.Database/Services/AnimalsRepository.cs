@@ -9,6 +9,8 @@ namespace Adoptrix.Database.Services;
 public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
     : Repository(dbContext, batchManager), IAnimalsRepository
 {
+    private const int SearchLimit = 10;
+
     public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -18,6 +20,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
                              (request.BreedId == null || animal.Breed.Id == request.BreedId) &&
                              (request.SpeciesId == null || animal.Breed.Species.Id == request.SpeciesId) &&
                              (request.Sex == null || animal.Sex == request.Sex))
+            .Take(request.Limit ?? SearchLimit)
             .Select(animal => new SearchAnimalsResult
             {
                 Id = animal.Id,

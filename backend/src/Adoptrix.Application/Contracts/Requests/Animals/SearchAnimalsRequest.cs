@@ -8,4 +8,5 @@ public class SearchAnimalsRequest
     public Guid? BreedId { get; init; }
     public Guid? SpeciesId { get; init; }
     public Sex? Sex { get; init; }
+    public int? Limit { get; init; }
 }
