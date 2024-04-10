@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Errors;
-using Adoptrix.Application.Extensions;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
 using FluentResults;
@@ -10,7 +9,6 @@ namespace Adoptrix.Application.Services;
 public interface IAnimalsService
 {
     Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
-    Task<Result<Animal>> AddAsync(SetAnimalRequest request, CancellationToken cancellationToken = default);
 
     Task<Result<Animal>> UpdateAsync(Guid animalId, SetAnimalRequest request,
         CancellationToken cancellationToken = default);
@@ -32,20 +30,6 @@ public class AnimalsService(IAnimalsRepository animalsRepository, IBreedsReposit
         return animal is not null
             ? animal
             : new AnimalNotFoundError(animalId);
-    }
-
-    public async Task<Result<Animal>> AddAsync(SetAnimalRequest request, CancellationToken cancellationToken = default)
-    {
-        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
-        if (breed is null)
-        {
-            return new BreedNotFoundError(request.BreedId);
-        }
-
-        var animal = request.ToAnimal(breed);
-        await animalsRepository.AddAsync(animal, cancellationToken);
-
-        return animal;
     }
 
     public async Task<Result<Animal>> UpdateAsync(Guid animalId, SetAnimalRequest request,

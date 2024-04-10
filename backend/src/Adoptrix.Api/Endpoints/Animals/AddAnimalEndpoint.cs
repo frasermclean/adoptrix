@@ -3,8 +3,8 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Contracts.Requests.Animals;
-using Adoptrix.Application.Services;
 using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
@@ -16,7 +16,7 @@ public sealed class AddAnimalEndpoint
         ClaimsPrincipal claimsPrincipal,
         IValidator<SetAnimalRequest> validator,
         ILogger<AddAnimalEndpoint> logger,
-        IAnimalsService animalsService,
+        ISender sender,
         LinkGenerator linkGenerator,
         CancellationToken cancellationToken)
     {
@@ -29,10 +29,14 @@ public sealed class AddAnimalEndpoint
         }
 
         // add animal to database
-        request.UserId = claimsPrincipal.GetUserId();
-        var addAnimalResult = await animalsService.AddAsync(request, cancellationToken);
-
-        logger.LogInformation("Added animal with id {Id}", addAnimalResult.Value.Id);
+        var addAnimalResult = await sender.Send(new AddAnimalRequest(
+                request.Name,
+                request.Description,
+                request.BreedId,
+                request.Sex,
+                request.DateOfBirth,
+                claimsPrincipal.GetUserId()),
+            cancellationToken);
 
         var response = addAnimalResult.Value.ToResponse();
         return TypedResults.Created(linkGenerator.GetPathByName(GetAnimalEndpoint.EndpointName, new
