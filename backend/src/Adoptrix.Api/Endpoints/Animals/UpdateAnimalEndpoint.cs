@@ -2,7 +2,6 @@
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -16,8 +15,6 @@ public class UpdateAnimalEndpoint
         IValidator<SetAnimalRequest> validator,
         ILogger<UpdateAnimalEndpoint> logger,
         IAnimalsService animalsService,
-        ISpeciesRepository speciesRepository,
-        IBreedsService breedsService,
         CancellationToken cancellationToken)
     {
         // validate request

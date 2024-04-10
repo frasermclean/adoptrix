@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Validators;
-using Adoptrix.Application.Contracts.Requests.Breeds;
 using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
@@ -39,7 +38,6 @@ public static class ServiceRegistration
 
         builder.Services
             .AddAuthentication(builder.Configuration)
-            .AddMediatR(configuration => configuration.RegisterServicesFromAssemblyContaining<AddBreedRequest>())
             .AddValidatorsFromAssemblyContaining<SetAnimalRequestValidator>()
             .AddProblemDetails()
             .AddApplicationServices()

@@ -1,6 +1,9 @@
-﻿namespace Adoptrix.Application.Contracts.Requests.Breeds;
+﻿using Adoptrix.Application.Models;
+using MediatR;
 
-public class SearchBreedsRequest
+namespace Adoptrix.Application.Contracts.Requests.Breeds;
+
+public class SearchBreedsRequest : IRequest<IEnumerable<SearchBreedsResult>>
 {
     public Guid? SpeciesId { get; init; }
     public bool? WithAnimals { get; init; }
