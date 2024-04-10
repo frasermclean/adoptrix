@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Contracts.Requests.Species;
-using Adoptrix.Application.Services;
 using MediatR;
 
 namespace Adoptrix.Api.Endpoints.Species;

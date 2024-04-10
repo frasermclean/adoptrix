@@ -10,9 +10,6 @@ namespace Adoptrix.Application.Services;
 
 public interface IAnimalsService
 {
-    Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsRequest request,
-        CancellationToken cancellationToken = default);
-
     Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
     Task<Result<Animal>> AddAsync(SetAnimalRequest request, CancellationToken cancellationToken = default);
 
@@ -29,12 +26,6 @@ public interface IAnimalsService
 
 public class AnimalsService(IAnimalsRepository animalsRepository, IBreedsRepository breedsRepository) : IAnimalsService
 {
-    public Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        return animalsRepository.SearchAsync(request, cancellationToken);
-    }
-
     public async Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default)
     {
         var animal = await animalsRepository.GetByIdAsync(animalId, cancellationToken);
