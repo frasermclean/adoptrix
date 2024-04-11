@@ -35,8 +35,4 @@
     <ProjectReference Include="..\Adoptrix.Tests.Shared\Adoptrix.Tests.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Fixtures\" />
-  </ItemGroup>
-
 </Project>

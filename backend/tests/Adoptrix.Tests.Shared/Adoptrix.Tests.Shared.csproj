@@ -9,11 +9,12 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture.AutoMoq" />
     <PackageReference Include="AutoFixture.Xunit2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Moq" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Adoptrix.Domain\Adoptrix.Domain.csproj" />
-  </ItemGroup>
+  </ItemGroup> 
 
 </Project>

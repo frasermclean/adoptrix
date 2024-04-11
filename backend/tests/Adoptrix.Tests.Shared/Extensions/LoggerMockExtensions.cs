@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Adoptrix.Jobs.Tests.Extensions;
+namespace Adoptrix.Tests.Shared.Extensions;
 
 public static class LoggerMockExtensions
 {
