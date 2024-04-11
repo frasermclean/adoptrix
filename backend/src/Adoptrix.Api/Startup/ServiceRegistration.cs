@@ -38,7 +38,7 @@ public static class ServiceRegistration
 
         builder.Services
             .AddAuthentication(builder.Configuration)
-            .AddValidatorsFromAssemblyContaining<SetAnimalRequestValidator>()
+            .AddValidatorsFromAssemblyContaining<SetAnimalDataValidator>()
             .AddProblemDetails()
             .AddApplicationServices()
             .AddDatabaseServices()

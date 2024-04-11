@@ -5,10 +5,9 @@ using FluentValidation;
 
 namespace Adoptrix.Api.Validators;
 
-public sealed class SetAnimalRequestValidator : AbstractValidator<SetAnimalData>
+public sealed class SetAnimalDataValidator : AbstractValidator<SetAnimalData>
 {
-    public SetAnimalRequestValidator(DateOfBirthValidator dateOfBirthValidator, ISpeciesRepository speciesRepository,
-        IBreedsRepository breedsRepository)
+    public SetAnimalDataValidator(DateOfBirthValidator dateOfBirthValidator, IBreedsRepository breedsRepository)
     {
         RuleFor(request => request.Name)
             .NotEmpty()

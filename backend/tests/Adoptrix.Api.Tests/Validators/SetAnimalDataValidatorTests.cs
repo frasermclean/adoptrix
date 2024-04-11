@@ -7,20 +7,12 @@ using FluentValidation.TestHelper;
 
 namespace Adoptrix.Api.Tests.Validators;
 
-public class SetAnimalRequestValidatorTests
+public class SetAnimalDataValidatorTests
 {
-    private readonly SetAnimalRequestValidator validator;
+    private readonly SetAnimalDataValidator validator;
 
-    public SetAnimalRequestValidatorTests()
+    public SetAnimalDataValidatorTests()
     {
-        var speciesRepositoryMock = new Mock<ISpeciesRepository>();
-        speciesRepositoryMock.Setup(repository =>
-                repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == Guid.Empty
-                ? null
-                : SpeciesFactory.Create(speciesId));
-
-
         var breedsRepositoryMock = new Mock<IBreedsRepository>();
         breedsRepositoryMock.Setup(service =>
                 service.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -28,8 +20,7 @@ public class SetAnimalRequestValidatorTests
                 ? null
                 : BreedFactory.Create(breedId));
 
-        validator = new SetAnimalRequestValidator(new DateOfBirthValidator(), speciesRepositoryMock.Object,
-            breedsRepositoryMock.Object);
+        validator = new SetAnimalDataValidator(new DateOfBirthValidator(), breedsRepositoryMock.Object);
     }
 
     [Fact]
