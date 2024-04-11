@@ -9,9 +9,6 @@ public interface IAnimalsService
 {
     Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
 
-    Task<Result<Animal>> AddImagesAsync(Guid animalId, IEnumerable<AnimalImage> images,
-        CancellationToken cancellationToken = default);
-
     Task<Result> SetImageProcessedAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken = default);
 }
 
@@ -24,21 +21,6 @@ public class AnimalsService(IAnimalsRepository animalsRepository) : IAnimalsServ
         return animal is not null
             ? animal
             : new AnimalNotFoundError(animalId);
-    }
-
-    public async Task<Result<Animal>> AddImagesAsync(Guid animalId, IEnumerable<AnimalImage> images,
-        CancellationToken cancellationToken = default)
-    {
-        var animal = await animalsRepository.GetByIdAsync(animalId, cancellationToken);
-        if (animal is null)
-        {
-            return new AnimalNotFoundError(animalId);
-        }
-
-        animal.Images.AddRange(images);
-        await animalsRepository.UpdateAsync(animal, cancellationToken);
-
-        return animal;
     }
 
     public async Task<Result> SetImageProcessedAsync(Guid animalId, Guid imageId,
