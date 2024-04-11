@@ -3,46 +3,39 @@ using Adoptrix.Application.Errors;
 using Adoptrix.Application.Handlers.Breeds;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
+using Adoptrix.Tests.Shared;
 using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Application.Tests.Handlers.Breeds;
 
 public class UpdateBreedHandlerTests
 {
-    private readonly UpdateBreedHandler handler;
-    private readonly Mock<IBreedsRepository> breedsRepositoryMock = new();
-    private readonly Mock<ISpeciesRepository> speciesRepositoryMock = new();
-
-    public UpdateBreedHandlerTests()
-    {
-        handler = new UpdateBreedHandler(breedsRepositoryMock.Object, speciesRepositoryMock.Object);
-    }
-
-    [Theory, AutoData]
-    public async Task Handle_WithValidRequest_ReturnsSuccess(UpdateBreedRequest request)
+    [Theory, AdoptrixAutoData]
+    public async Task Handle_WithValidRequest_ReturnsSuccess(
+        [Frozen] Mock<IBreedsRepository> breedsRepositoryMock,
+        UpdateBreedRequest request, UpdateBreedHandler handler)
     {
         // arrange
         breedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(BreedFactory.Create(request.BreedId));
-        speciesRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(SpeciesFactory.Create(request.SpeciesId));
 
         // act
         var result = await handler.Handle(request);
 
         // assert
-        result.Should().BeSuccess().Which.Value.Should().BeOfType<Breed>();
+        result.Should().BeSuccess().Which.Value.Should().BeOfType<Breed>().Which.Id.Should().Be(request.BreedId);
     }
 
-    [Theory, AutoData]
-    public async Task Handle_WithInvalidBreedId_ReturnsBreedNotFoundError(UpdateBreedRequest request)
+    [Theory, AdoptrixAutoData]
+    public async Task Handle_WithInvalidBreedId_ReturnsBreedNotFoundError(
+        [Frozen] Mock<IBreedsRepository> breedsRepositoryMock, UpdateBreedRequest request,
+        UpdateBreedHandler handler)
     {
         // arrange
         breedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Breed?)null);
+            .ReturnsAsync(null as Breed);
 
         // act
         var result = await handler.Handle(request);
@@ -51,8 +44,12 @@ public class UpdateBreedHandlerTests
         result.Should().BeFailure().Which.HasError<BreedNotFoundError>();
     }
 
-    [Theory, AutoData]
-    public async Task Handle_WithInvalidSpeciesId_ReturnsSpeciesNotFoundError(UpdateBreedRequest request)
+    [Theory, AdoptrixAutoData]
+    public async Task Handle_WithInvalidSpeciesId_ReturnsSpeciesNotFoundError(
+        [Frozen] Mock<IBreedsRepository> breedsRepositoryMock,
+        [Frozen] Mock<ISpeciesRepository> speciesRepositoryMock,
+        UpdateBreedRequest request,
+        UpdateBreedHandler handler)
     {
         // arrange
         breedsRepositoryMock
@@ -60,7 +57,7 @@ public class UpdateBreedHandlerTests
             .ReturnsAsync(BreedFactory.Create(request.BreedId));
         speciesRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Species?)null);
+            .ReturnsAsync(null as Species);
 
         // act
         var result = await handler.Handle(request);

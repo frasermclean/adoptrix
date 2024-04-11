@@ -10,7 +10,7 @@ namespace Adoptrix.Jobs.Tests.Functions;
 public class AnimalFunctionsTests
 {
 
-    [Theory, MoqAutoData]
+    [Theory, AdoptrixAutoData]
     public async Task ProcessAnimalImage_WithValidNotification_ShouldPass(AnimalImageAddedNotification notification,
         AnimalFunctions animalFunctions)
     {
@@ -18,7 +18,7 @@ public class AnimalFunctionsTests
         await animalFunctions.ProcessAnimalImage(notification);
     }
 
-    [Theory, MoqAutoData]
+    [Theory, AdoptrixAutoData]
     public async Task ProcessAnimalImage_WithFailedRequest_ShouldThrow(AnimalImageAddedNotification notification,
         [Frozen] Mock<ISender> senderMock, AnimalFunctions animalFunctions)
     {
@@ -33,7 +33,7 @@ public class AnimalFunctionsTests
         await act.Should().ThrowAsync<Exception>();
     }
 
-    [Theory, MoqAutoData]
+    [Theory, AdoptrixAutoData]
     public async Task CleanupDeletedAnimal_ValidNotification_ShouldPass(AnimalDeletedNotification notification,
         AnimalFunctions animalFunctions)
     {
@@ -41,7 +41,7 @@ public class AnimalFunctionsTests
         await animalFunctions.CleanupDeletedAnimal(notification);
     }
 
-    [Theory, MoqAutoData]
+    [Theory, AdoptrixAutoData]
     public async Task CleanupDeletedAnimal_WhenResultIsFailure_ShouldThrow(AnimalDeletedNotification notification,
         [Frozen] Mock<ISender> senderMock, AnimalFunctions animalFunctions)
     {

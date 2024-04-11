@@ -3,29 +3,15 @@ using Adoptrix.Application.Errors;
 using Adoptrix.Application.Handlers.Breeds;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
-using Adoptrix.Tests.Shared.Factories;
+using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Application.Tests.Handlers.Breeds;
 
 public class AddBreedHandlerTests
 {
-    private readonly AddBreedHandler handler;
-    private readonly Mock<IBreedsRepository> breedsRepositoryMock = new();
-    private readonly Mock<ISpeciesRepository> speciesRepositoryMock = new();
-
-    public AddBreedHandlerTests()
+    [Theory, AdoptrixAutoData]
+    public async Task Handle_WithValidRequest_ShouldReturnSuccess(AddBreedRequest request, AddBreedHandler handler)
     {
-        handler = new AddBreedHandler(breedsRepositoryMock.Object, speciesRepositoryMock.Object);
-    }
-
-    [Theory, AutoData]
-    public async Task Handle_WithValidRequest_ReturnsSuccess(AddBreedRequest request)
-    {
-        // arrange
-        speciesRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(SpeciesFactory.Create(request.SpeciesId));
-
         // act
         var result = await handler.Handle(request);
 
@@ -33,8 +19,9 @@ public class AddBreedHandlerTests
         result.Should().BeSuccess().Which.Value.Should().BeOfType<Breed>();
     }
 
-    [Theory, AutoData]
-    public async Task Handle_WithInvalidSpeciesId_ReturnsSpeciesNotFoundError(AddBreedRequest request)
+    [Theory, AdoptrixAutoData]
+    public async Task Handle_WithInvalidSpeciesId_ShouldReturnError(
+        [Frozen] Mock<ISpeciesRepository> speciesRepositoryMock, AddBreedRequest request, AddBreedHandler handler)
     {
         // arrange
         speciesRepositoryMock
