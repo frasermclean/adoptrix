@@ -9,6 +9,5 @@ public static class ServiceRegistration
     {
         return services.AddScoped<IAnimalsService, AnimalsService>()
             .AddSingleton<IImageProcessor, ImageProcessor>();
-
     }
 }
