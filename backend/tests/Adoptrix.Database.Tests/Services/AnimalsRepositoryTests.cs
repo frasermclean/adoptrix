@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services.Repositories;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
 

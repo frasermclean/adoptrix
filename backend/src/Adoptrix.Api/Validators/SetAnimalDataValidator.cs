@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Api.Contracts.Data;
-using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using FluentValidation;
 

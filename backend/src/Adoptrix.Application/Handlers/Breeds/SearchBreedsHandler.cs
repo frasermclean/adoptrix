@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Breeds;
 using Adoptrix.Application.Models;
-using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Application.Services;
 using MediatR;
 
 namespace Adoptrix.Application.Handlers.Breeds;

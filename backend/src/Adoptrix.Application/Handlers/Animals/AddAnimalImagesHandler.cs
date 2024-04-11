@@ -3,7 +3,6 @@ using Adoptrix.Application.Errors;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Notifications.Animals;
 using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
 using FluentResults;
 using MediatR;

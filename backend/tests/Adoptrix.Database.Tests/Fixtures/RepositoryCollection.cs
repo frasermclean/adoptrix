@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services.Repositories;
+﻿using Adoptrix.Application.Services;
 
 namespace Adoptrix.Database.Tests.Fixtures;
 

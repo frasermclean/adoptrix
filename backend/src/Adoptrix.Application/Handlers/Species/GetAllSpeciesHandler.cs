@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Species;
-using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Application.Services;
 using MediatR;
 using SpeciesModel = Adoptrix.Domain.Models.Species;
 

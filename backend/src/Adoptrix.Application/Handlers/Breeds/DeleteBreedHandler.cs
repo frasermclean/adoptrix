@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Breeds;
 using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Application.Services;
 using FluentResults;
 using MediatR;
 

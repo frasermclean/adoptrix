@@ -7,7 +7,6 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        return services.AddScoped<IAnimalsService, AnimalsService>()
-            .AddSingleton<IImageProcessor, ImageProcessor>();
+        return services.AddSingleton<IImageProcessor, ImageProcessor>();
     }
 }

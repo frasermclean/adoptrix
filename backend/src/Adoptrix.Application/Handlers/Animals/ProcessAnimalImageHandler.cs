@@ -2,7 +2,6 @@
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Repositories;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;

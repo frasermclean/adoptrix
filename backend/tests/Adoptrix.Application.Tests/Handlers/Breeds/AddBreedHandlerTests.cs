@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Breeds;
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Handlers.Breeds;
-using Adoptrix.Application.Services.Repositories;
+using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using Adoptrix.Tests.Shared;
 
