@@ -1,5 +1,5 @@
 using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Factories;
+using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Domain.Tests;
 

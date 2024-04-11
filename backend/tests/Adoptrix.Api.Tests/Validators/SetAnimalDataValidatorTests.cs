@@ -2,7 +2,7 @@
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Factories;
+using Adoptrix.Tests.Shared.Factories;
 using FluentValidation.TestHelper;
 
 namespace Adoptrix.Api.Tests.Validators;

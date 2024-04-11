@@ -1,8 +1,7 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Notifications.Animals;
 using Adoptrix.Jobs.Functions;
-using Adoptrix.Jobs.Tests.Fixtures;
-using AutoFixture.Xunit2;
+using Adoptrix.Tests.Shared;
 using FluentResults;
 using MediatR;
 
@@ -11,7 +10,7 @@ namespace Adoptrix.Jobs.Tests.Functions;
 public class AnimalFunctionsTests
 {
 
-    [Theory, CustomizedAutoData]
+    [Theory, MoqAutoData]
     public async Task ProcessAnimalImage_WithValidNotification_ShouldPass(AnimalImageAddedNotification notification,
         AnimalFunctions animalFunctions)
     {
@@ -19,7 +18,7 @@ public class AnimalFunctionsTests
         await animalFunctions.ProcessAnimalImage(notification);
     }
 
-    [Theory, CustomizedAutoData]
+    [Theory, MoqAutoData]
     public async Task ProcessAnimalImage_WithFailedRequest_ShouldThrow(AnimalImageAddedNotification notification,
         [Frozen] Mock<ISender> senderMock, AnimalFunctions animalFunctions)
     {
@@ -34,7 +33,7 @@ public class AnimalFunctionsTests
         await act.Should().ThrowAsync<Exception>();
     }
 
-    [Theory, CustomizedAutoData]
+    [Theory, MoqAutoData]
     public async Task CleanupDeletedAnimal_ValidNotification_ShouldPass(AnimalDeletedNotification notification,
         AnimalFunctions animalFunctions)
     {
@@ -42,7 +41,7 @@ public class AnimalFunctionsTests
         await animalFunctions.CleanupDeletedAnimal(notification);
     }
 
-    [Theory, CustomizedAutoData]
+    [Theory, MoqAutoData]
     public async Task CleanupDeletedAnimal_WhenResultIsFailure_ShouldThrow(AnimalDeletedNotification notification,
         [Frozen] Mock<ISender> senderMock, AnimalFunctions animalFunctions)
     {

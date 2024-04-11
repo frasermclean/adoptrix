@@ -1,7 +1,8 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Domain.Models.Factories;
+using Adoptrix.Tests.Shared.Factories;
+
 
 namespace Adoptrix.Api.Tests.Fixtures;
 

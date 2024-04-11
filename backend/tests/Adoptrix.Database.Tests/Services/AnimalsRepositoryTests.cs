@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Database.Tests.Fixtures;
-using Adoptrix.Domain.Models.Factories;
+using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Database.Tests.Services;
 

@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Application.Handlers.Animals;
 using Adoptrix.Database.DependencyInjection;

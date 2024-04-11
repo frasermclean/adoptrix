@@ -3,7 +3,7 @@ using Adoptrix.Application.Errors;
 using Adoptrix.Application.Handlers.Breeds;
 using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Factories;
+using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Application.Tests.Handlers.Breeds;
 

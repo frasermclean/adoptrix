@@ -1,4 +1,6 @@
-﻿namespace Adoptrix.Domain.Models.Factories;
+﻿using Adoptrix.Domain.Models;
+
+namespace Adoptrix.Tests.Shared.Factories;
 
 public static class BreedFactory
 {

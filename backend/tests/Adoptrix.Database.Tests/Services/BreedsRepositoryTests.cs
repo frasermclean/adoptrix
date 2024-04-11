@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Services.Repositories;
 using Adoptrix.Database.Tests.Fixtures;
 using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Factories;
+using Adoptrix.Tests.Shared.Factories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Tests.Services;

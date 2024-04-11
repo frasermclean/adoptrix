@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Storage", "src\Ado
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Storage.Tests", "tests\Adoptrix.Storage.Tests\Adoptrix.Storage.Tests.csproj", "{68593B6B-7E51-4140-89DE-3B748EBEC4A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Tests.Shared", "tests\Adoptrix.Tests.Shared\Adoptrix.Tests.Shared.csproj", "{11D2C635-9C83-47C2-A72A-AE8B866D75EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{68593B6B-7E51-4140-89DE-3B748EBEC4A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68593B6B-7E51-4140-89DE-3B748EBEC4A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68593B6B-7E51-4140-89DE-3B748EBEC4A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11D2C635-9C83-47C2-A72A-AE8B866D75EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11D2C635-9C83-47C2-A72A-AE8B866D75EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11D2C635-9C83-47C2-A72A-AE8B866D75EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11D2C635-9C83-47C2-A72A-AE8B866D75EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CF65350A-8D80-4AF2-B369-8C71A5BFB620} = {4958F816-17AA-4833-819B-5D666C416361}
@@ -95,5 +101,6 @@ Global
 		{080F1E84-3700-4B9D-B929-B686447C36AF} = {4958F816-17AA-4833-819B-5D666C416361}
 		{780D9ED8-AF1B-4C78-819F-E2D7130204A7} = {4958F816-17AA-4833-819B-5D666C416361}
 		{68593B6B-7E51-4140-89DE-3B748EBEC4A0} = {4958F816-17AA-4833-819B-5D666C416361}
+		{11D2C635-9C83-47C2-A72A-AE8B866D75EE} = {4958F816-17AA-4833-819B-5D666C416361}
 	EndGlobalSection
 EndGlobal
