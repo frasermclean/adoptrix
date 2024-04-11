@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Models;
+using Adoptrix.Application.Notifications.Animals;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain.Events;
 using Adoptrix.Storage;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -14,9 +14,9 @@ public class ProcessNewAnimalImage(
     IAnimalsService animalsService)
 {
     [Function(nameof(ProcessNewAnimalImage))]
-    public async Task Run([QueueTrigger(QueueNames.AnimalImageAdded)] AnimalImageAddedEvent eventData)
+    public async Task Run([QueueTrigger(QueueNames.AnimalImageAdded)] AnimalImageAddedNotification notification)
     {
-        var (animalId, imageId) = eventData;
+        var (animalId, imageId) = notification;
 
         // process original image
         await using var originalReadStream = await animalImageManager.GetImageReadStreamAsync(animalId, imageId);

@@ -14,7 +14,6 @@ public static class ServiceRegistration
     public static IServiceCollection AddStorageServices(this IServiceCollection services,
         IConfiguration configuration) => services
         .AddScoped<IAnimalImageManager, AnimalImageManager>()
-        .AddSingleton<IEventPublisher, EventPublisher>()
         .AddAzureStorageServices(configuration);
 
     private static IServiceCollection AddAzureStorageServices(this IServiceCollection services,

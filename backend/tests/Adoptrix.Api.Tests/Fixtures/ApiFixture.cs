@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using Adoptrix.Api.Tests.Mocks;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
@@ -21,8 +20,6 @@ public class ApiFixture : WebApplicationFactory<Program>
     public Mock<IAnimalImageManager> AnimalImageManager { get; } = new();
 
     public const int SearchResultsCount = 3;
-
-
 
     public ApiFixture()
     {
@@ -56,10 +53,6 @@ public class ApiFixture : WebApplicationFactory<Program>
                 .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object);
             services.RemoveAll<IAnimalImageManager>()
                 .AddScoped<IAnimalImageManager>(_ => AnimalImageManager.Object);
-
-            // remove the real event publisher and replace it with a mock
-            services.RemoveAll<IEventPublisher>();
-            services.AddScoped<IEventPublisher, MockEventPublisher>();
 
             // add test auth handler
             services.AddAuthentication(TestAuthHandler.SchemeName)

@@ -1,5 +1,5 @@
-﻿using Adoptrix.Application.Services;
-using Adoptrix.Domain.Events;
+﻿using Adoptrix.Application.Notifications.Animals;
+using Adoptrix.Application.Services;
 using Adoptrix.Jobs.Functions;
 using Adoptrix.Jobs.Tests.Extensions;
 using AutoFixture.Xunit2;
@@ -23,7 +23,7 @@ public class AnimalDeletedImageCleanupTests
     public async Task Run_WithValidData_Should_Pass(int imageCount, Guid animalId)
     {
         // arrange
-        var eventData = new AnimalDeletedEvent(animalId);
+        var eventData = new AnimalDeletedNotification(animalId);
         animalImageManagerMock.Setup(manager => manager.DeleteAnimalImagesAsync(animalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Ok(imageCount));
 
@@ -38,12 +38,12 @@ public class AnimalDeletedImageCleanupTests
     public async Task Run_WithInvalidData_Should_Throw()
     {
         // arrange
-        var eventData = new AnimalDeletedEvent(Guid.NewGuid());
-        animalImageManagerMock.Setup(manager => manager.DeleteAnimalImagesAsync(eventData.AnimalId, It.IsAny<CancellationToken>()))
+        var notification = new AnimalDeletedNotification(Guid.NewGuid());
+        animalImageManagerMock.Setup(manager => manager.DeleteAnimalImagesAsync(notification.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Fail("Failed to delete images"));
 
         // act
-        var act = async () => await sut.Run(eventData);
+        var act = async () => await sut.Run(notification);
 
         // assert
         await act.Should().ThrowAsync<Exception>();

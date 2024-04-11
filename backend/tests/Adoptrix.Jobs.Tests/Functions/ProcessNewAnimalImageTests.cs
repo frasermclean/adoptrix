@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Models;
+using Adoptrix.Application.Notifications.Animals;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain.Events;
 using Adoptrix.Domain.Models;
 using Adoptrix.Jobs.Functions;
 using Adoptrix.Jobs.Tests.Extensions;
@@ -30,7 +30,7 @@ public class ProcessNewAnimalImageTests
         // arrange
         var (animal, animalId, imageId) = CreateTestData();
         var originalReadStream = new MemoryStream();
-        var eventData = new AnimalImageAddedEvent(animalId, imageId);
+        var notification = new AnimalImageAddedNotification(animalId, imageId);
         animalImageManagerMock.Setup(manager =>
                 manager.GetImageReadStreamAsync(animalId, imageId, It.IsAny<ImageCategory>(),
                     It.IsAny<CancellationToken>()))
@@ -47,7 +47,7 @@ public class ProcessNewAnimalImageTests
             .ReturnsAsync(Result.Ok(animal));
 
         // act
-        await sut.Run(eventData);
+        await sut.Run(notification);
 
         // assert
         animalImageManagerMock.Verify(manager => manager.UploadImageAsync(animalId, imageId, It.IsAny<Stream>(),

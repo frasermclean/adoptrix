@@ -1,9 +1,9 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Models;
+using Adoptrix.Application.Notifications.Animals;
 using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Repositories;
-using Adoptrix.Domain.Events;
 using Adoptrix.Domain.Models;
 using FluentResults;
 using MediatR;
@@ -13,10 +13,9 @@ namespace Adoptrix.Application.Handlers.Animals;
 
 public class AddAnimalImagesHandler(
     ILogger<AddAnimalImagesHandler> logger,
-    ISender sender,
+    IMediator mediator,
     IAnimalImageManager imageManager,
-    IAnimalsRepository animalsRepository,
-    IEventPublisher eventPublisher) : IRequestHandler<AddAnimalImagesRequest, Result<Animal>>
+    IAnimalsRepository animalsRepository) : IRequestHandler<AddAnimalImagesRequest, Result<Animal>>
 {
     public async Task<Result<Animal>> Handle(AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
@@ -39,11 +38,9 @@ public class AddAnimalImagesHandler(
 
         var animal = updateAnimalResult.Value;
 
-        // publish domain events
-        foreach (var domainEvent in animal.Images.Select(image => new AnimalImageAddedEvent(animal.Id, image.Id)))
-        {
-            await eventPublisher.PublishDomainEventAsync(domainEvent, cancellationToken);
-        }
+        // publish notifications
+        await Task.WhenAll(uploadResults.Select(result =>
+            mediator.Publish(new AnimalImageAddedNotification(request.AnimalId, result.Value.Id), cancellationToken)));
 
         return animal;
     }
@@ -71,7 +68,7 @@ public class AddAnimalImagesHandler(
         CancellationToken cancellationToken)
     {
         // get animal from database
-        var getAnimalResult = await sender.Send(new GetAnimalRequest(animalId), cancellationToken);
+        var getAnimalResult = await mediator.Send(new GetAnimalRequest(animalId), cancellationToken);
         if (getAnimalResult.IsFailed)
         {
             return getAnimalResult;
