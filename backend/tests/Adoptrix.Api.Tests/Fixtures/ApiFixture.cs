@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Api.Tests.Fixtures;
 
@@ -39,6 +40,11 @@ public class ApiFixture : WebApplicationFactory<Program>
                     "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://xxxx.applicationinsights.azure.com/"
                 )
             });
+        });
+
+        builder.ConfigureLogging(loggingBuilder =>
+        {
+            loggingBuilder.ClearProviders();
         });
 
         builder.ConfigureServices(services =>
