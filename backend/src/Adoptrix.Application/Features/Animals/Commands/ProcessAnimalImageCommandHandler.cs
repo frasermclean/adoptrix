@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Application.Errors;
 using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Support;
+using Adoptrix.Domain.Models;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,14 @@ public class ProcessAnimalImageCommandHandler(
 {
     public async Task<Result> Handle(ProcessAnimalImageCommand command, CancellationToken cancellationToken = default)
     {
+        // ensure animal exists in database
+        var animal = await animalsRepository.GetByIdAsync(command.AnimalId, cancellationToken);
+        if (animal is null)
+        {
+            logger.LogError("Could not find animal with ID {AnimalId}, will not process command", command.AnimalId);
+            return new AnimalNotFoundError(command.AnimalId);
+        }
+
         // process original image
         await using var originalReadStream = await imageManager.GetImageReadStreamAsync(command.AnimalId,
             command.ImageId, cancellationToken: cancellationToken);
@@ -25,7 +34,7 @@ public class ProcessAnimalImageCommandHandler(
         await UploadImagesAsync(command.AnimalId, command.ImageId, bundle);
 
         // update entity in database
-        var updateResult = await SetImageProcessedAsync(command.AnimalId, command.ImageId, cancellationToken);
+        var updateResult = await SetImageProcessedAsync(animal, command.ImageId, cancellationToken);
 
         if (updateResult.IsSuccess)
         {
@@ -51,20 +60,14 @@ public class ProcessAnimalImageCommandHandler(
         logger.LogInformation("Uploaded processed images for animal with ID: {AnimalId}", animalId);
     }
 
-    private async Task<Result> SetImageProcessedAsync(Guid animalId, Guid imageId,
-        CancellationToken cancellationToken = default)
+    private async Task<Result> SetImageProcessedAsync(Animal animal, Guid imageId, CancellationToken cancellationToken)
     {
-        var animal = await animalsRepository.GetByIdAsync(animalId, cancellationToken);
-        if (animal is null)
-        {
-            return new AnimalNotFoundError(animalId);
-        }
-
         var image = animal.Images.FirstOrDefault(image => image.Id == imageId);
         if (image is null)
         {
-            return new AnimalImageNotFoundError(imageId, animalId);
+            return new AnimalImageNotFoundError(imageId, animal.Id);
         }
+
         image.IsProcessed = true;
 
         await animalsRepository.UpdateAsync(animal, cancellationToken);
