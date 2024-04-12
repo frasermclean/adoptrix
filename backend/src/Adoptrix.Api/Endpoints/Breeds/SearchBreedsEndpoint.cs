@@ -1,19 +1,18 @@
-﻿using Adoptrix.Api.Contracts.Requests;
-using Adoptrix.Api.Contracts.Responses;
+﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Features.Breeds.Queries;
+using MediatR;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
 public class SearchBreedsEndpoint
 {
     public static async Task<IEnumerable<BreedResponse>> ExecuteAsync(
-        [AsParameters] SearchBreedsRequest request,
-        IBreedsRepository breedsRepository,
-        ISpeciesRepository speciesRepository,
+        [AsParameters] SearchBreedsQuery query,
+        ISender sender,
         CancellationToken cancellationToken = default)
     {
-        var results = await breedsRepository.SearchAsync(request.SpeciesId, request.WithAnimals, cancellationToken);
+        var results = await sender.Send(query, cancellationToken);
         return results.Select(result => result.ToResponse());
     }
 }

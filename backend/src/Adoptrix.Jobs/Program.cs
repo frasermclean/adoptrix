@@ -1,4 +1,5 @@
 using Adoptrix.Application.DependencyInjection;
+using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Storage.DependencyInjection;
 using Azure.Identity;
@@ -38,6 +39,9 @@ public static class Program
                 services.AddApplicationInsightsTelemetryWorkerService();
                 services.ConfigureFunctionsApplicationInsights();
 
+                services.AddMediatR(configuration =>
+                    configuration.RegisterServicesFromAssemblyContaining<AddAnimalCommandHandler>());
+
                 // local project services
                 services.AddApplicationServices();
                 services.AddDatabaseServices();
@@ -48,8 +52,10 @@ public static class Program
                 builder.Services.Configure<LoggerFilterOptions>(options =>
                 {
                     // remove default rule which excludes information level logs from Application Insights
-                    const string appInsightsProviderName = "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider";
-                    var defaultRule = options.Rules.FirstOrDefault(rule => rule.ProviderName == appInsightsProviderName);
+                    const string appInsightsProviderName =
+                        "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider";
+                    var defaultRule =
+                        options.Rules.FirstOrDefault(rule => rule.ProviderName == appInsightsProviderName);
                     if (defaultRule is not null)
                     {
                         options.Rules.Remove(defaultRule);

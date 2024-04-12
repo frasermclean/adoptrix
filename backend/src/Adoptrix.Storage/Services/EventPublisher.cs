@@ -2,46 +2,37 @@
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Events;
 using Azure.Storage.Queues;
-using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Storage.Services;
 
-public class EventPublisher(
-    ILogger<EventPublisher> logger,
-    [FromKeyedServices(QueueNames.AnimalDeleted)]
-    QueueClient animalDeletedQueueClient,
-    [FromKeyedServices(QueueNames.AnimalImageAdded)]
-    QueueClient animalImageAddedQueueClient
-) : IEventPublisher
+public class EventPublisher(ILogger<EventPublisher> logger, IServiceProvider serviceProvider) : IEventPublisher
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public async Task<Result> PublishDomainEventAsync<T>(T domainEvent, CancellationToken cancellationToken = default)
+    public async Task PublishAsync<T>(T domainEvent, CancellationToken cancellationToken = default)
         where T : IDomainEvent
     {
+        // serialize domain event
         var data = new BinaryData(domainEvent, SerializerOptions);
 
+        // publish domain event to queue
         var queueClient = GetQueueClient(domainEvent);
-
-        logger.LogInformation("Publishing domain event {DomainEvent} to queue {QueueName}",
-            domainEvent.GetType().Name, queueClient.Name);
-
         var response = await queueClient.SendMessageAsync(data, cancellationToken: cancellationToken);
-        var httpResponse = response.GetRawResponse();
 
-        return Result.FailIf(httpResponse.IsError, "Failed to publish domain event to queue");
+        logger.LogInformation("Published {DomainEvent} to queue: {QueueName} - Message ID: {MessageId}",
+            domainEvent, queueClient.Name, response.Value.MessageId);
     }
 
     private QueueClient GetQueueClient<T>(T domainEvent) where T : IDomainEvent =>
         domainEvent switch
         {
-            AnimalDeletedEvent => animalDeletedQueueClient,
-            AnimalImageAddedEvent => animalImageAddedQueueClient,
+            AnimalDeletedEvent => serviceProvider.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalDeleted),
+            AnimalImageAddedEvent => serviceProvider.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalImageAdded),
             _ => throw new ArgumentOutOfRangeException(nameof(domainEvent))
         };
 }

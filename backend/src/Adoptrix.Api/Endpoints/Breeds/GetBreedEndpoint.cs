@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Features.Breeds.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
@@ -11,12 +12,10 @@ public static class GetBreedEndpoint
 
     public static async Task<Results<Ok<BreedResponse>, NotFound>> ExecuteAsync(
         string breedIdOrName,
-        IBreedsRepository breedsRepository,
+        ISender sender,
         CancellationToken cancellationToken)
     {
-        var result = Guid.TryParse(breedIdOrName, out var breedId)
-            ? await breedsRepository.GetByIdAsync(breedId, cancellationToken)
-            : await breedsRepository.GetByNameAsync(breedIdOrName, cancellationToken);
+        var result = await sender.Send(new GetBreedQuery(breedIdOrName), cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.Ok(result.Value.ToResponse())

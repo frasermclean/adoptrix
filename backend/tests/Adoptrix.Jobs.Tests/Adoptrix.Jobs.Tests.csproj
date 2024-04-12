@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoFixture.AutoMoq" />
     <PackageReference Include="AutoFixture.Xunit2" />
     <PackageReference Include="FluentAssertions"/>
     <PackageReference Include="FluentAssertions.Analyzers">
@@ -31,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Adoptrix.Jobs\Adoptrix.Jobs.csproj" />
+    <ProjectReference Include="..\Adoptrix.Tests.Shared\Adoptrix.Tests.Shared.csproj" />
   </ItemGroup>
 
 </Project>

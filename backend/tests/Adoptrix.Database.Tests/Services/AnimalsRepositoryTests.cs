@@ -1,44 +1,55 @@
-﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
-using Adoptrix.Domain.Models.Factories;
+using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Database.Tests.Services;
 
 [Trait("Category", "Integration")]
 [Collection(nameof(DatabaseCollection))]
-public class AnimalsRepositoryTests(DatabaseFixture fixture)
+public class AnimalsRepositoryTests
 {
-    private readonly IAnimalsRepository animalsRepository = fixture.AnimalsRepository!;
-    private readonly IBreedsRepository breedsRepository = fixture.BreedsRepository!;
+    private readonly IAnimalsRepository animalsRepository;
+    private readonly IBreedsRepository breedsRepository;
+
+    public AnimalsRepositoryTests(DatabaseFixture fixture)
+    {
+        var collection = fixture.GetRepositoryCollection();
+        animalsRepository = collection.AnimalsRepository;
+        breedsRepository = collection.BreedsRepository;
+    }
 
     [Fact]
-    public async Task GetAsync_WithInvalidId_ShouldFail()
+    public async Task GetByIdAsync_WithInvalidId_ShouldFail()
     {
         // arrange
         var animalId = Guid.Empty;
 
         // act
-        var result = await animalsRepository.GetAsync(animalId);
+        var animal = await animalsRepository.GetByIdAsync(animalId);
 
         // assert
-        result.Should().BeFailure().Which
-            .Should().HaveReason<AnimalNotFoundError>($"Could not find animal with ID {animalId}");
+        animal.Should().BeNull();
     }
 
     [Fact]
     public async Task AddAsync_WithValidAnimal_ShouldPass()
     {
         // arrange
-        var breedResult = await breedsRepository.GetByIdAsync(BreedIds.GermanShepherd);
-        var animal = AnimalFactory.Create(breed: breedResult.Value);
+        var breed = await breedsRepository.GetByIdAsync(BreedIds.GermanShepherd);
+        var animalToAdd = AnimalFactory.Create(breed: breed);
 
         // act
-        var addResult = await animalsRepository.AddAsync(animal);
-        var getResult = await animalsRepository.GetAsync(animal.Id);
+        await animalsRepository.AddAsync(animalToAdd);
+        var animal = await animalsRepository.GetByIdAsync(animalToAdd.Id);
 
         // assert
-        addResult.Should().BeSuccess().Which.Should().HaveValue(animal);
-        getResult.Should().BeSuccess().Which.Value.Should().BeEquivalentTo(animal);
+        animal.Should().NotBeNull();
+        animal!.Id.Should().NotBeEmpty();
+        animal.Name.Should().Be(animalToAdd.Name);
+        animal.Description.Should().Be(animalToAdd.Description);
+        animal.Breed.Should().Be(breed);
+        animal.Sex.Should().Be(animalToAdd.Sex);
+        animal.DateOfBirth.Should().Be(animalToAdd.DateOfBirth);
+        animal.CreatedBy.Should().NotBeEmpty();
     }
 }

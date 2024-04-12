@@ -1,25 +1,18 @@
-﻿using Adoptrix.Application.Services;
-using Adoptrix.Domain.Events;
+﻿using Adoptrix.Application.Features.Animals.Commands;
+using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
 public sealed class DeleteAnimalEndpoint
 {
-    public static async Task<Results<NoContent, NotFound>> ExecuteAsync(Guid animalId, IAnimalsRepository repository,
-        ILogger<DeleteAnimalEndpoint> logger, IEventPublisher eventPublisher, CancellationToken cancellationToken)
+    public static async Task<Results<NoContent, NotFound>> ExecuteAsync(Guid animalId, ISender sender,
+        CancellationToken cancellationToken)
     {
-        // delete animal from database
-        var result = await repository.DeleteAsync(animalId, cancellationToken);
-        if (result.IsFailed)
-        {
-            logger.LogError("Could not find animal with ID: {AnimalId}", animalId);
-            return TypedResults.NotFound();
-        }
+        var result = await sender.Send(new DeleteAnimalCommand(animalId), cancellationToken);
 
-        // publish domain event
-        await eventPublisher.PublishDomainEventAsync( new AnimalDeletedEvent(animalId), cancellationToken);
-
-        return TypedResults.NoContent();
+        return result.IsSuccess
+            ? TypedResults.NoContent()
+            : TypedResults.NotFound();
     }
 }

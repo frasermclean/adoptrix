@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Models;
+﻿using Adoptrix.Application.Features.Animals.Responses;
 using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Api.Contracts.Responses;

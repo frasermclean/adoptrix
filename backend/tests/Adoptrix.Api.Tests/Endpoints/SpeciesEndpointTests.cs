@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Api.Tests.Fixtures.Mocks;
 
 namespace Adoptrix.Api.Tests.Endpoints;
 
@@ -18,7 +19,7 @@ public class SpeciesEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        fixture.SpeciesRepository.Verify(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()),
+        fixture.SpeciesRepositoryMock.Verify(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()),
             Times.Once);
         responses.Should().HaveCount(3).And.AllSatisfy(response =>
         {
@@ -43,14 +44,14 @@ public class SpeciesEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture
     public async Task GetSpecies_WithInvalidId_Should_Return_NotFound()
     {
         // arrange
-        var speciesId = Guid.Empty;
+        var speciesId = SpeciesRepositoryMockSetup.UnknownSpeciesId;
 
         // act
         var message = await httpClient.GetAsync($"api/species/{speciesId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
-        fixture.SpeciesRepository.Verify(repository => repository.GetByIdAsync(speciesId, It.IsAny<CancellationToken>()),
+        fixture.SpeciesRepositoryMock.Verify(repository => repository.GetByIdAsync(speciesId, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }

@@ -8,8 +8,7 @@ namespace Adoptrix.Storage.Tests.Services;
 [Trait("Category", "Integration")]
 public class EventPublisherTests(StorageEmulatorFixture fixture) : IClassFixture<StorageEmulatorFixture>
 {
-    private readonly EventPublisher eventPublisher = new(Mock.Of<ILogger<EventPublisher>>(),
-        fixture.AnimalDeletedQueueClient!, fixture.AnimalImageAddedQueueClient!);
+    private readonly EventPublisher eventPublisher = new(Mock.Of<ILogger<EventPublisher>>(), fixture.ServiceProvider!);
 
     [Fact]
     public async Task PublishDomainEventAsync_WithAnimalDeletedEvent_Should_ReturnSuccess()
@@ -18,9 +17,6 @@ public class EventPublisherTests(StorageEmulatorFixture fixture) : IClassFixture
         var animalDeletedEvent = new AnimalDeletedEvent(Guid.NewGuid());
 
         // act
-        var result = await eventPublisher.PublishDomainEventAsync(animalDeletedEvent);
-
-        // assert
-        result.Should().BeSuccess();
+        await eventPublisher.PublishAsync(animalDeletedEvent);
     }
 }

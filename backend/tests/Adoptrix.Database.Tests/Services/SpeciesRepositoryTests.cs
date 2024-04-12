@@ -1,19 +1,26 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
+using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Database.Tests.Services;
 
 [Trait("Category", "Integration")]
 [Collection(nameof(DatabaseCollection))]
-public class SpeciesRepositoryTests(DatabaseFixture fixture)
+public class SpeciesRepositoryTests
 {
-    private readonly ISpeciesRepository repository = fixture.SpeciesRepository!;
+    private readonly ISpeciesRepository speciesRepository;
+    public SpeciesRepositoryTests(DatabaseFixture fixture)
+    {
+        var collection = fixture.GetRepositoryCollection();
+
+        speciesRepository = collection.SpeciesRepository;
+    }
 
     [Fact]
     public async Task GetAllAsync_WithNoParameters_ShouldReturnAllSpecies()
     {
         // act
-        var results = await repository.GetAllAsync();
+        var results = await speciesRepository.GetAllAsync();
 
         // assert
         results.Should().HaveCountGreaterOrEqualTo(3);
@@ -24,11 +31,10 @@ public class SpeciesRepositoryTests(DatabaseFixture fixture)
     public async Task GetByIdAsync_WithValidId_ShouldReturnExpectedResult(Guid speciesId, string expectedName)
     {
         // act
-        var result = await repository.GetByIdAsync(speciesId);
+        var species = await speciesRepository.GetByIdAsync(speciesId);
 
         // assert
-        result.Should().BeSuccess();
-        result.Value.Name.Should().Be(expectedName);
+        species.Should().BeOfType<Species>().Which.Name.Should().Be(expectedName);
     }
 
     [Theory]
@@ -36,11 +42,10 @@ public class SpeciesRepositoryTests(DatabaseFixture fixture)
     public async Task GetByNameAsync_WithValidName_ShouldReturnExpectedResult(Guid expectedId, string speciesName)
     {
         // act
-        var result = await repository.GetByNameAsync(speciesName);
+        var species = await speciesRepository.GetByNameAsync(speciesName);
 
         // assert
-        result.Should().BeSuccess();
-        result.Value.Id.Should().Be(expectedId);
+        species.Should().BeOfType<Species>().Which.Id.Should().Be(expectedId);
     }
 
     public static TheoryData<Guid, string> GetKnownSpecies() => new()

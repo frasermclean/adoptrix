@@ -1,48 +1,35 @@
-﻿using Adoptrix.Api.Contracts.Requests;
+﻿using Adoptrix.Api.Contracts.Data;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Features.Breeds.Commands;
 using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
 public class UpdateBreedEndpoint
 {
-    public static async
-        Task<Results<Ok<BreedResponse>, NotFound, ValidationProblem>> ExecuteAsync(
-            Guid breedId,
-            SetBreedRequest request,
-            IValidator<SetBreedRequest> validator,
-            ILogger<UpdateBreedEndpoint> logger,
-            IBreedsRepository breedsRepository,
-            ISpeciesRepository speciesRepository,
-            CancellationToken cancellationToken)
+    public static async Task<Results<Ok<BreedResponse>, NotFound, ValidationProblem>> ExecuteAsync(
+        Guid breedId,
+        SetBreedData data,
+        IValidator<SetBreedData> validator,
+        ILogger<UpdateBreedEndpoint> logger,
+        ISender sender,
+        CancellationToken cancellationToken)
     {
-        // find the breed by id
-        var getResult = await breedsRepository.GetByIdAsync(breedId, cancellationToken);
-        if (getResult.IsFailed)
-        {
-            return TypedResults.NotFound();
-        }
-
-        // validate request
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        var validationResult = await validator.ValidateAsync(data, cancellationToken);
         if (!validationResult.IsValid)
         {
-            logger.LogWarning("Validation failed for request: {Request}", request);
+            logger.LogWarning("Validation failed for request: {Request}", data);
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var speciesResult = await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken);
+        var result = await sender.Send(new UpdateBreedCommand(breedId, data.Name, data.SpeciesId),
+            cancellationToken);
 
-        // update breed properties
-        var breed = getResult.Value;
-        breed.Name = request.Name;
-        breed.Species = speciesResult.Value;
-
-        await breedsRepository.UpdateAsync(breed, cancellationToken);
-
-        return TypedResults.Ok(breed.ToResponse());
+        return result.IsSuccess
+            ? TypedResults.Ok(result.Value.ToResponse())
+            : TypedResults.NotFound();
     }
 }

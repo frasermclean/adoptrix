@@ -1,8 +1,7 @@
-﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Models;
+﻿using Adoptrix.Application.Features.Animals.Queries;
+using Adoptrix.Application.Features.Animals.Responses;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
-using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
@@ -10,13 +9,18 @@ namespace Adoptrix.Database.Services;
 public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
     : Repository(dbContext, batchManager), IAnimalsRepository
 {
-    public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(string? animalName = null,
-        Guid? breedId = null, CancellationToken cancellationToken = default)
+    private const int SearchLimit = 10;
+
+    public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsQuery query,
+        CancellationToken cancellationToken = default)
     {
         return await DbContext.Animals
             .AsNoTracking()
-            .Where(animal => (animalName == null || animal.Name.Contains(animalName)) &&
-                             (breedId == null || animal.Breed.Id == breedId))
+            .Where(animal => (query.Name == null || animal.Name.Contains(query.Name)) &&
+                             (query.BreedId == null || animal.Breed.Id == query.BreedId) &&
+                             (query.SpeciesId == null || animal.Breed.Species.Id == query.SpeciesId) &&
+                             (query.Sex == null || animal.Sex == query.Sex))
+            .Take(query.Limit ?? SearchLimit)
             .Select(animal => new SearchAnimalsResult
             {
                 Id = animal.Id,
@@ -36,42 +40,28 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default)
+    public async Task<Animal?> GetByIdAsync(Guid animalId, CancellationToken cancellationToken = default)
     {
-        var animal = await DbContext.Animals.Where(animal => animal.Id == animalId)
+        return await DbContext.Animals.Where(animal => animal.Id == animalId)
             .Include(animal => animal.Breed)
             .ThenInclude(breed => breed.Species)
             .FirstOrDefaultAsync(cancellationToken);
-
-        return animal is null
-            ? new AnimalNotFoundError(animalId)
-            : animal;
     }
 
-    public async Task<Result<Animal>> AddAsync(Animal animal, CancellationToken cancellationToken = default)
+    public async Task AddAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        var entry = DbContext.Animals.Add(animal);
+        DbContext.Animals.Add(animal);
         await SaveChangesAsync(cancellationToken);
-
-        return entry.Entity;
     }
 
-    public async Task<Result> UpdateAsync(Animal animal, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        DbContext.Animals.Update(animal);
-        return await SaveChangesAsync(cancellationToken);
+        await SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        var getResult = await GetAsync(animalId, cancellationToken);
-        if (getResult.IsFailed)
-        {
-            return getResult.ToResult();
-        }
-
-        var animal = getResult.Value;
         DbContext.Animals.Remove(animal);
-        return await SaveChangesAsync(cancellationToken);
+        await SaveChangesAsync(cancellationToken);
     }
 }

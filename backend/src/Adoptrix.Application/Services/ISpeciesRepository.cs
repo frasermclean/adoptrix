@@ -1,11 +1,10 @@
 ﻿using Adoptrix.Domain.Models;
-using FluentResults;
 
 namespace Adoptrix.Application.Services;
 
 public interface ISpeciesRepository
 {
     Task<IEnumerable<Species>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<Result<Species>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<Result<Species>> GetByNameAsync(string name, CancellationToken cancellationToken = default);
+    Task<Species?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Species?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
 }

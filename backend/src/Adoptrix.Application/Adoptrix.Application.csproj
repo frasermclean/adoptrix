@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentResults"/>
+    <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
@@ -17,6 +18,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Adoptrix.Domain\Adoptrix.Domain.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\" />
   </ItemGroup>  
 
 </Project>

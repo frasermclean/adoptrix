@@ -1,5 +1,5 @@
-﻿using Adoptrix.Application.Models;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Support;
 using Azure.Storage.Blobs;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;

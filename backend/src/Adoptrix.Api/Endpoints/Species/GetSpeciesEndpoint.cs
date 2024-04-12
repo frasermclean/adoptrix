@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Features.Species.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Species;
@@ -10,11 +11,9 @@ public static class GetSpeciesEndpoint
     public const string EndpointName = "GetSpecies";
 
     public static async Task<Results<Ok<SpeciesResponse>, NotFound>> ExecuteAsync(
-        string speciesIdOrName, ISpeciesRepository repository, CancellationToken cancellationToken)
+        string speciesIdOrName, ISender sender, CancellationToken cancellationToken)
     {
-        var result = Guid.TryParse(speciesIdOrName, out var speciesId)
-            ? await repository.GetByIdAsync(speciesId, cancellationToken)
-            : await repository.GetByNameAsync(speciesIdOrName, cancellationToken);
+        var result = await sender.Send(new GetSpeciesQuery(speciesIdOrName), cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.Ok(result.Value.ToResponse())

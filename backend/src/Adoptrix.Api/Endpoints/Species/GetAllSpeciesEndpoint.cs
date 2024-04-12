@@ -1,15 +1,16 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Features.Species.Queries;
+using MediatR;
 
 namespace Adoptrix.Api.Endpoints.Species;
 
 public static class GetAllSpeciesEndpoint
 {
     public static async Task<IEnumerable<SpeciesResponse>> ExecuteAsync(
-        ISpeciesRepository repository, CancellationToken cancellationToken)
+        ISender sender, CancellationToken cancellationToken)
     {
-        var species = await repository.GetAllAsync(cancellationToken);
-        return species.Select(s => s.ToResponse());
+        var allSpecies = await sender.Send(new GetAllSpeciesQuery(), cancellationToken);
+        return allSpecies.Select(species => species.ToResponse());
     }
 }
