@@ -60,7 +60,11 @@ public class ProcessAnimalImageCommandHandler(
             return new AnimalNotFoundError(animalId);
         }
 
-        var image = animal.Images.First(image => image.Id == imageId);
+        var image = animal.Images.FirstOrDefault(image => image.Id == imageId);
+        if (image is null)
+        {
+            return new AnimalImageNotFoundError(imageId, animalId);
+        }
         image.IsProcessed = true;
 
         await animalsRepository.UpdateAsync(animal, cancellationToken);
