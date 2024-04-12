@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Tests.Shared;
+﻿namespace Adoptrix.Tests.Shared.Customizations;
 
 public class TwoYearsAgoDateOnlyCustomization : ICustomization
 {
