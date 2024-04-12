@@ -8,7 +8,7 @@ namespace Adoptrix.Application.Features.Animals.Commands;
 public class CleanupAnimalImagesCommandHandler(ILogger<CleanupAnimalImagesCommandHandler> logger, IAnimalImageManager imageManager)
     : IRequestHandler<CleanupAnimalImagesCommand, Result>
 {
-    public async Task<Result> Handle(CleanupAnimalImagesCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CleanupAnimalImagesCommand command, CancellationToken cancellationToken = default)
     {
         var result = await imageManager.DeleteAnimalImagesAsync(command.AnimalId, cancellationToken);
         if (result.IsFailed)
