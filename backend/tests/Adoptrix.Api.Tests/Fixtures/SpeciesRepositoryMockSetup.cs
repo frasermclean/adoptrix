@@ -5,6 +5,7 @@ namespace Adoptrix.Api.Tests.Fixtures;
 
 public static class SpeciesRepositoryMockSetup
 {
+    public static readonly Guid UnknownSpeciesId = Guid.NewGuid();
     private const string UnknownSpeciesName = "unknown-species";
 
     public static Mock<ISpeciesRepository> SetupDefaults(this Mock<ISpeciesRepository> mock, int searchResultsCount = 3)
@@ -13,7 +14,7 @@ public static class SpeciesRepositoryMockSetup
             .ReturnsAsync(SpeciesFactory.CreateMany(searchResultsCount));
 
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == Guid.Empty
+            .ReturnsAsync((Guid speciesId, CancellationToken _) => speciesId == UnknownSpeciesId
                 ? null
                 : SpeciesFactory.Create());
 

@@ -43,7 +43,7 @@ public class SpeciesEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture
     public async Task GetSpecies_WithInvalidId_Should_Return_NotFound()
     {
         // arrange
-        var speciesId = Guid.Empty;
+        var speciesId = SpeciesRepositoryMockSetup.UnknownSpeciesId;
 
         // act
         var message = await httpClient.GetAsync($"api/species/{speciesId}");

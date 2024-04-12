@@ -26,14 +26,15 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         }
     };
 
-    [Theory]
-    [InlineData("Max", "dc1ff27e-e14a-4f4d-af5a-2cba7f9c9749")]
-    public async Task SearchAnimals_WithValidRequest_ShouldReturnOk(string? name, Guid breedId)
+    [Theory, AutoData]
+    public async Task SearchAnimals_WithValidRequest_ShouldReturnOk(string name, Guid breedId)
     {
         // arrange
-        var query = new QueryBuilder();
-        if (name is not null) query.Add("name", name);
-        if (breedId != Guid.Empty) query.Add("breedId", breedId.ToString());
+        var query = new QueryBuilder
+        {
+            { "name", name },
+            { "breedId", breedId.ToString() }
+        };
         var uri = new Uri($"api/animals{query}", UriKind.Relative);
 
         // act
@@ -45,25 +46,33 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllBeOfType<SearchAnimalsResult>();
     }
 
-    [Theory]
-    [InlineData("dc1ff27e-e14a-4f4d-af5a-2cba7f9c9749", HttpStatusCode.OK)]
-    [InlineData("00000000-0000-0000-0000-000000000000", HttpStatusCode.NotFound)]
-    public async Task GetAnimal_WithValidRequest_ShouldReturnExpectedStatusCode(Guid animalId,
-        HttpStatusCode expectedStatusCode)
+    [Theory, AutoData]
+    public async Task GetAnimal_WithValidRequest_ShouldReturnOk(Guid animalId)
     {
         // act
         var message = await httpClient.GetAsync($"api/animals/{animalId}");
 
         // assert
-        message.Should().HaveStatusCode(expectedStatusCode);
+        message.Should().HaveStatusCode(HttpStatusCode.OK);
+        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
+        ValidateAnimalResponse(response!);
         fixture.AnimalsRepositoryMock.Verify(
-            repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()),
-            Times.Once);
-        if (expectedStatusCode == HttpStatusCode.OK)
-        {
-            var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
-            ValidateAnimalResponse(response!);
-        }
+            repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetAnimal_WithUnknownAnimalId_ShouldReturnNotFound()
+    {
+        // arrange
+        var animalId = AnimalsRepositoryMockSetup.UnknownAnimalId;
+
+        // act
+        var message = await httpClient.GetAsync($"api/animals/{animalId}");
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.NotFound);
+        fixture.AnimalsRepositoryMock.Verify(
+            repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -143,7 +152,8 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     public async Task UpdateAnimal_WithUnknownAnimalId_ShouldReturnNotFound()
     {
         // arrange
-        var uri = new Uri($"api/admin/animals/{Guid.Empty}", UriKind.Relative);
+        var animalId = AnimalsRepositoryMockSetup.UnknownAnimalId;
+        var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
         var data = CreateSetAnimalData();
 
         // act
@@ -153,10 +163,8 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
-    [Theory]
-    [InlineData("dc1ff27e-e14a-4f4d-af5a-2cba7f9c9749", HttpStatusCode.NoContent)]
-    [InlineData("00000000-0000-0000-0000-000000000000", HttpStatusCode.NotFound)]
-    public async Task DeleteAnimal_WithValidCommand_ShouldReturnOk(Guid animalId, HttpStatusCode expectedStatusCode)
+    [Theory, AutoData]
+    public async Task DeleteAnimal_WithValidCommand_ShouldReturnNotContent(Guid animalId)
     {
         // arrange
         var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
@@ -165,7 +173,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var message = await httpClient.DeleteAsync(uri);
 
         // assert
-        message.Should().HaveStatusCode(expectedStatusCode);
+        message.Should().HaveStatusCode(HttpStatusCode.NoContent);
     }
 
     [Fact]
@@ -207,7 +215,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     public async Task AddAnimalImages_WithUnknownAnimalId_ShouldReturnNotFound()
     {
         // arrange
-        var animalId = Guid.Empty;
+        var animalId = AnimalsRepositoryMockSetup.UnknownAnimalId;
         var uri = new Uri($"api/admin/animals/{animalId}/images", UriKind.Relative);
         using var content = CreateMultipartFormDataContent();
 

@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -42,10 +44,7 @@ public class ApiFixture : WebApplicationFactory<Program>
             });
         });
 
-        builder.ConfigureLogging(loggingBuilder =>
-        {
-            loggingBuilder.ClearProviders();
-        });
+        builder.ConfigureLogging(loggingBuilder => { loggingBuilder.ClearProviders(); });
 
         builder.ConfigureServices(services =>
         {
@@ -56,6 +55,7 @@ public class ApiFixture : WebApplicationFactory<Program>
                 .AddScoped<IBreedsRepository>(_ => BreedsRepositoryMock.Object);
             services.RemoveAll<ISpeciesRepository>()
                 .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object);
+
             services.RemoveAll<IAnimalImageManager>()
                 .AddScoped<IAnimalImageManager>(_ => AnimalImageManager.Object);
 

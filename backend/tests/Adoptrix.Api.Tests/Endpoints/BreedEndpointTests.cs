@@ -22,9 +22,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         }
     };
 
-    [Theory]
-    [InlineData("dde81f4b-e863-465f-81a4-2e7886860b81")]
-    [InlineData("Beagle")]
+    [Theory, AutoData]
     public async Task GetBreed_WithValidBreedIdOrName_Returns_Ok(string breedIdOrName)
     {
         // act
@@ -36,13 +34,29 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         ValidateBreedResponse(response!);
     }
 
-    [Theory]
-    [InlineData("00000000-0000-0000-0000-000000000000")]
-    [InlineData(BreedsRepositoryMockSetup.UnknownBreedName)]
-    public async Task GetBreed_WithUnknownBreedIdOrName_Returns_NotFound(string breedIdOrName)
+    [Fact]
+    public async Task GetBreed_WithUnknownBreedName_Returns_NotFound()
     {
+        // arrange
+        const string breedName = BreedsRepositoryMockSetup.UnknownBreedName;
+
         // act
-        var message = await httpClient.GetAsync($"/api/breeds/{breedIdOrName}");
+        var message = await httpClient.GetAsync($"/api/breeds/{breedName}");
+        var details = await message.Content.ReadFromJsonAsync<ProblemDetails>(SerializerOptions);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.NotFound);
+        details.Should().BeOfType<ProblemDetails>().Which.Title.Should().Be("Not Found");
+    }
+
+    [Fact]
+    public async Task GetBreed_WithUnknownBreedId_Returns_NotFound()
+    {
+        // arrange
+        var breedId = BreedsRepositoryMockSetup.UnknownBreedId;
+
+        // act
+        var message = await httpClient.GetAsync($"/api/breeds/{breedId}");
         var details = await message.Content.ReadFromJsonAsync<ProblemDetails>(SerializerOptions);
 
         // assert
@@ -138,7 +152,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     public async Task UpdateBreed_WithUnknownBreedId_Returns_NotFound()
     {
         // arrange
-        var breedId = Guid.Empty;
+        var breedId = BreedsRepositoryMockSetup.UnknownBreedId;
         var data = CreateData(BreedsRepositoryMockSetup.UnknownBreedName);
 
         // act
@@ -150,12 +164,9 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         details.Should().BeOfType<ProblemDetails>().Which.Title.Should().Be("Not Found");
     }
 
-    [Fact]
-    public async Task DeleteBreed_WithValidBreedId_Returns_NoContent()
+    [Theory, AutoData]
+    public async Task DeleteBreed_WithValidBreedId_Returns_NoContent(Guid breedId)
     {
-        // arrange
-        var breedId = Guid.NewGuid();
-
         // act
         var message = await httpClient.DeleteAsync($"/api/breeds/{breedId}");
 
@@ -166,8 +177,11 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     [Fact]
     public async Task DeleteBreed_WithUnknownBreedId_Returns_NotFound()
     {
+        // arrange
+        var breedId = BreedsRepositoryMockSetup.UnknownBreedId;
+
         // act
-        var message = await httpClient.DeleteAsync($"/api/breeds/{Guid.Empty}");
+        var message = await httpClient.DeleteAsync($"/api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
