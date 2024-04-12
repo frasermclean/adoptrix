@@ -3,7 +3,6 @@ using Adoptrix.Application.Models;
 using Adoptrix.Application.Services;
 using Adoptrix.Tests.Shared.Factories;
 
-
 namespace Adoptrix.Api.Tests.Fixtures;
 
 public static class AnimalsRepositoryMockSetup
