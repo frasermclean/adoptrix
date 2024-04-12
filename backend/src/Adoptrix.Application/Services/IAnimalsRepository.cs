@@ -1,12 +1,12 @@
-﻿using Adoptrix.Application.Contracts.Requests.Animals;
-using Adoptrix.Application.Models;
+﻿using Adoptrix.Application.Features.Animals.Queries;
+using Adoptrix.Application.Features.Animals.Responses;
 using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Application.Services;
 
 public interface IAnimalsRepository
 {
-    Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsRequest request,
+    Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsQuery query,
         CancellationToken cancellationToken = default);
 
     Task<Animal?> GetByIdAsync(Guid animalId, CancellationToken cancellationToken = default);

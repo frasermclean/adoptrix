@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Contracts.Requests.Animals;
+﻿using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Domain.Events;
 using Adoptrix.Storage;
 using MediatR;
@@ -11,7 +11,7 @@ public class AnimalFunctions(ISender sender)
     [Function(nameof(ProcessAnimalImage))]
     public async Task ProcessAnimalImage([QueueTrigger(QueueNames.AnimalImageAdded)] AnimalImageAddedEvent eventData)
     {
-        var result = await sender.Send(new ProcessAnimalImageRequest(eventData.AnimalId, eventData.ImageId));
+        var result = await sender.Send(new ProcessAnimalImageCommand(eventData.AnimalId, eventData.ImageId));
 
         if (result.IsFailed)
         {
@@ -23,7 +23,7 @@ public class AnimalFunctions(ISender sender)
     [Function(nameof(CleanupDeletedAnimal))]
     public async Task CleanupDeletedAnimal([QueueTrigger(QueueNames.AnimalDeleted)] AnimalDeletedEvent eventData)
     {
-        var result = await sender.Send(new CleanupAnimalImagesRequest(eventData.AnimalId));
+        var result = await sender.Send(new CleanupAnimalImagesCommand(eventData.AnimalId));
 
         if (result.IsFailed)
         {

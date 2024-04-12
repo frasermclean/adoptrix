@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Contracts.Requests.Animals;
+﻿using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Domain.Events;
 using Adoptrix.Jobs.Functions;
 using Adoptrix.Tests.Shared;
@@ -22,7 +22,7 @@ public class AnimalFunctionsTests
         [Frozen] Mock<ISender> senderMock, AnimalFunctions animalFunctions)
     {
         // arrange
-        senderMock.Setup(sender => sender.Send(It.IsAny<ProcessAnimalImageRequest>(), It.IsAny<CancellationToken>()))
+        senderMock.Setup(sender => sender.Send(It.IsAny<ProcessAnimalImageCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Fail("Failed to process image"));
 
         // act
@@ -45,7 +45,7 @@ public class AnimalFunctionsTests
         [Frozen] Mock<ISender> senderMock, AnimalFunctions animalFunctions)
     {
         // arrange
-        senderMock.Setup(sender => sender.Send(It.IsAny<CleanupAnimalImagesRequest>(), It.IsAny<CancellationToken>()))
+        senderMock.Setup(sender => sender.Send(It.IsAny<CleanupAnimalImagesCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Fail("Failure"));
 
         // act

@@ -3,7 +3,8 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Api.Validators;
-using Adoptrix.Application.Contracts.Requests.Animals;
+using Adoptrix.Application.Features.Animals.Commands;
+using Adoptrix.Application.Features.Animals.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -20,7 +21,7 @@ public static class AddAnimalImagesEndpoint
         CancellationToken cancellationToken)
     {
         // ensure animal exists
-        var getResult = await sender.Send(new GetAnimalRequest(animalId), cancellationToken);
+        var getResult = await sender.Send(new GetAnimalQuery(animalId), cancellationToken);
         if (getResult.IsFailed)
         {
             return TypedResults.NotFound();
@@ -33,7 +34,7 @@ public static class AddAnimalImagesEndpoint
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var result = await sender.Send(new AddAnimalImagesRequest(
+        var result = await sender.Send(new AddAnimalImagesCommand(
                 animalId,
                 claimsPrincipal.GetUserId(),
                 formFileCollection.Select(formFile => new AnimalImageFileData(

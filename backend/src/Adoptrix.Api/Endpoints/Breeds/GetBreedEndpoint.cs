@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Contracts.Requests.Breeds;
+using Adoptrix.Application.Features.Breeds.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -15,7 +15,7 @@ public static class GetBreedEndpoint
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new GetBreedRequest(breedIdOrName), cancellationToken);
+        var result = await sender.Send(new GetBreedQuery(breedIdOrName), cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.Ok(result.Value.ToResponse())

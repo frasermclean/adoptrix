@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
-using Adoptrix.Application.Models;
+using Adoptrix.Application.Features.Breeds.Responses;
 using Adoptrix.Domain.Models;
 using Riok.Mapperly.Abstractions;
 

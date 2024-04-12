@@ -1,5 +1,5 @@
-﻿using Adoptrix.Application.Contracts.Requests.Animals;
-using Adoptrix.Application.Models;
+﻿using Adoptrix.Application.Features.Animals.Queries;
+using Adoptrix.Application.Features.Animals.Responses;
 using MediatR;
 
 namespace Adoptrix.Api.Endpoints.Animals;
@@ -7,9 +7,9 @@ namespace Adoptrix.Api.Endpoints.Animals;
 public static class SearchAnimalsEndpoint
 {
     public static async Task<IEnumerable<SearchAnimalsResult>> ExecuteAsync(
-        [AsParameters] SearchAnimalsRequest request,
+        [AsParameters] SearchAnimalsQuery query,
         ISender sender, CancellationToken cancellationToken)
     {
-        return await sender.Send(request, cancellationToken);
+        return await sender.Send(query, cancellationToken);
     }
 }

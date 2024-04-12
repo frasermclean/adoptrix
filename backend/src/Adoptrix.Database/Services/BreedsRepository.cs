@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Models;
+﻿using Adoptrix.Application.Features.Breeds.Responses;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using Microsoft.EntityFrameworkCore;

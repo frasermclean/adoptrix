@@ -3,7 +3,7 @@ using Adoptrix.Api.Contracts.Data;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Contracts.Requests.Breeds;
+using Adoptrix.Application.Features.Breeds.Commands;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -29,7 +29,7 @@ public class AddBreedEndpoint
         }
 
         var result = await sender.Send(
-            new AddBreedRequest(data.Name, data.SpeciesId, claimsPrincipal.GetUserId()),
+            new AddBreedCommand(data.Name, data.SpeciesId, claimsPrincipal.GetUserId()),
             cancellationToken);
 
         var response = result.Value.ToResponse();

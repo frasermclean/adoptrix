@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Contracts.Requests.Animals;
+using Adoptrix.Application.Features.Animals.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -13,7 +13,7 @@ public static class GetAnimalEndpoint
     public static async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(Guid animalId,
         ISender sender, CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new GetAnimalRequest(animalId), cancellationToken);
+        var result = await sender.Send(new GetAnimalQuery(animalId), cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.Ok(result.Value.ToResponse())

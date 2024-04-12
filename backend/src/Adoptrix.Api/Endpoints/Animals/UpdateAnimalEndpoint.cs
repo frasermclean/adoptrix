@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Api.Contracts.Data;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Contracts.Requests.Animals;
+using Adoptrix.Application.Features.Animals.Commands;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -27,7 +27,7 @@ public class UpdateAnimalEndpoint
         }
 
         // update animal in database
-        var updateResult = await sender.Send(new UpdateAnimalRequest(
+        var updateResult = await sender.Send(new UpdateAnimalCommand(
             animalId,
             data.Name,
             data.Description,

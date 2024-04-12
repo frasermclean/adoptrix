@@ -3,7 +3,7 @@ using Adoptrix.Api.Contracts.Data;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Contracts.Requests.Animals;
+using Adoptrix.Application.Features.Animals.Commands;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -30,7 +30,7 @@ public sealed class AddAnimalEndpoint
         }
 
         // add animal to database
-        var addAnimalResult = await sender.Send(new AddAnimalRequest(
+        var addAnimalResult = await sender.Send(new AddAnimalCommand(
                 data.Name,
                 data.Description,
                 data.BreedId,

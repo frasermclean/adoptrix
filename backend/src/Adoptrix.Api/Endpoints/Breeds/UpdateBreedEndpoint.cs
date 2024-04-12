@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Api.Contracts.Data;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Contracts.Requests.Breeds;
+using Adoptrix.Application.Features.Breeds.Commands;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -25,7 +25,7 @@ public class UpdateBreedEndpoint
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var result = await sender.Send(new UpdateBreedRequest(breedId, data.Name, data.SpeciesId),
+        var result = await sender.Send(new UpdateBreedCommand(breedId, data.Name, data.SpeciesId),
             cancellationToken);
 
         return result.IsSuccess

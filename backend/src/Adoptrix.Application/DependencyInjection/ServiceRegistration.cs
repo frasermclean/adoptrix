@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Contracts.Requests.Animals;
+﻿using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +9,7 @@ public static class ServiceRegistration
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         return services
-            .AddMediatR(configuration => { configuration.RegisterServicesFromAssemblyContaining<AddAnimalRequest>(); })
+            .AddMediatR(configuration => { configuration.RegisterServicesFromAssemblyContaining<AddAnimalCommand>(); })
             .AddSingleton<IImageProcessor, ImageProcessor>();
     }
 }

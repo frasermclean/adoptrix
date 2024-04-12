@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Models;
+﻿using Adoptrix.Application.Features.Breeds.Responses;
 using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Application.Services;

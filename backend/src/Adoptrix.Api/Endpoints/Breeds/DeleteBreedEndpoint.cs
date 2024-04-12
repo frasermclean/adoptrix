@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Contracts.Requests.Breeds;
+﻿using Adoptrix.Application.Features.Breeds.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -11,7 +11,7 @@ public static class DeleteBreedEndpoint
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new DeleteBreedRequest(breedId), cancellationToken);
+        var result = await sender.Send(new DeleteBreedCommand(breedId), cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.NoContent()
