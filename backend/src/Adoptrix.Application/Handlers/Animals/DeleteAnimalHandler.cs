@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Errors;
-using Adoptrix.Application.Notifications.Animals;
 using Adoptrix.Application.Services;
+using Adoptrix.Domain.Events;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -11,7 +11,7 @@ namespace Adoptrix.Application.Handlers.Animals;
 public class DeleteAnimalHandler(
     IAnimalsRepository animalsRepository,
     ILogger<DeleteAnimalHandler> logger,
-    IPublisher publisher)
+    IEventPublisher eventPublisher)
     : IRequestHandler<DeleteAnimalRequest, Result>
 {
     public async Task<Result> Handle(DeleteAnimalRequest request, CancellationToken cancellationToken)
@@ -26,8 +26,8 @@ public class DeleteAnimalHandler(
         await animalsRepository.DeleteAsync(animal, cancellationToken);
         logger.LogInformation("Deleted animal with ID: {AnimalId}", request.AnimalId);
 
-        // publish notification
-        await publisher.Publish(new AnimalDeletedNotification(animal.Id), cancellationToken);
+        // publish domain event
+        await eventPublisher.PublishAsync(new AnimalDeletedEvent(request.AnimalId), cancellationToken);
 
         return Result.Ok();
     }

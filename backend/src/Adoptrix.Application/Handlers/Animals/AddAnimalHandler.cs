@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Errors;
-using Adoptrix.Application.Notifications.Animals;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using FluentResults;
@@ -12,8 +11,7 @@ namespace Adoptrix.Application.Handlers.Animals;
 public class AddAnimalHandler(
     ILogger<AddAnimalHandler> logger,
     IAnimalsRepository animalsRepository,
-    IBreedsRepository breedsRepository,
-    IPublisher publisher)
+    IBreedsRepository breedsRepository)
     : IRequestHandler<AddAnimalRequest, Result<Animal>>
 {
     public async Task<Result<Animal>> Handle(AddAnimalRequest request, CancellationToken cancellationToken)
@@ -36,9 +34,6 @@ public class AddAnimalHandler(
         };
 
         await animalsRepository.AddAsync(animal, cancellationToken);
-
-        // publish notification
-        await publisher.Publish(new AnimalAddedNotification(animal.Id), cancellationToken);
 
         logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
 

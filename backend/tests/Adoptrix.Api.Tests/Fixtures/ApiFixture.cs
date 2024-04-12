@@ -1,9 +1,6 @@
 ﻿using System.Net.Http.Headers;
-using Adoptrix.Application.Models;
+using Adoptrix.Api.Tests.Fixtures.Mocks;
 using Adoptrix.Application.Services;
-using AutoFixture;
-using AutoFixture.AutoMoq;
-using FluentResults;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -19,7 +16,8 @@ public class ApiFixture : WebApplicationFactory<Program>
     public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; }
     public Mock<IBreedsRepository> BreedsRepositoryMock { get; }
     public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; }
-    public Mock<IAnimalImageManager> AnimalImageManager { get; } = new();
+    public Mock<IAnimalImageManager> AnimalImageManager { get; }
+    public Mock<IEventPublisher> EventPublisherMock { get; }
 
     public const int SearchResultsCount = 3;
 
@@ -28,7 +26,8 @@ public class ApiFixture : WebApplicationFactory<Program>
         AnimalsRepositoryMock = new Mock<IAnimalsRepository>().SetupDefaults();
         BreedsRepositoryMock = new Mock<IBreedsRepository>().SetupDefaults();
         SpeciesRepositoryMock = new Mock<ISpeciesRepository>().SetupDefaults();
-        SetupAnimalImageManagerMock(AnimalImageManager);
+        AnimalImageManager = new Mock<IAnimalImageManager>().SetupDefaults();
+        EventPublisherMock = new Mock<IEventPublisher>().SetupDefaults();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -48,7 +47,7 @@ public class ApiFixture : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // repository mocks
+            // replace database services with mocks
             services.RemoveAll<IAnimalsRepository>()
                 .AddScoped<IAnimalsRepository>(_ => AnimalsRepositoryMock.Object);
             services.RemoveAll<IBreedsRepository>()
@@ -56,8 +55,11 @@ public class ApiFixture : WebApplicationFactory<Program>
             services.RemoveAll<ISpeciesRepository>()
                 .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object);
 
+            // replace storage services with mocks
             services.RemoveAll<IAnimalImageManager>()
                 .AddScoped<IAnimalImageManager>(_ => AnimalImageManager.Object);
+            services.RemoveAll<IEventPublisher>()
+                .AddSingleton<IEventPublisher>(_ => EventPublisherMock.Object);
 
             // add test auth handler
             services.AddAuthentication(TestAuthHandler.SchemeName)
@@ -69,12 +71,5 @@ public class ApiFixture : WebApplicationFactory<Program>
     {
         // configure the client to use the test auth scheme
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TestAuthHandler.SchemeName);
-    }
-
-    private static void SetupAnimalImageManagerMock(Mock<IAnimalImageManager> mock)
-    {
-        mock.Setup(manager => manager.UploadImageAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Stream>(),
-                It.IsAny<string>(), It.IsAny<ImageCategory>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Ok);
     }
 }

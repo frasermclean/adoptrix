@@ -2,8 +2,7 @@
 using Adoptrix.Application.Services;
 using Adoptrix.Tests.Shared.Factories;
 
-
-namespace Adoptrix.Api.Tests.Fixtures;
+namespace Adoptrix.Api.Tests.Fixtures.Mocks;
 
 public static class BreedsRepositoryMockSetup
 {

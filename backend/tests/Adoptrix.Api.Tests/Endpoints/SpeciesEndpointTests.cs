@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Api.Tests.Fixtures.Mocks;
 
 namespace Adoptrix.Api.Tests.Endpoints;
 

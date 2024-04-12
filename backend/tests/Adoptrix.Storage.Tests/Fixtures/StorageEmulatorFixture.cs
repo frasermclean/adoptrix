@@ -17,16 +17,16 @@ public class StorageEmulatorFixture : IAsyncLifetime
         .WithPortBinding(TableContainerPort, true)
         .Build();
 
-    private IServiceProvider? serviceProvider;
+    public IServiceProvider? ServiceProvider { get; private set; }
 
     public BlobContainerClient? BlobContainerClient =>
-        serviceProvider?.GetRequiredKeyedService<BlobContainerClient>(BlobContainerNames.AnimalImages);
+        ServiceProvider?.GetRequiredKeyedService<BlobContainerClient>(BlobContainerNames.AnimalImages);
 
     public QueueClient? AnimalDeletedQueueClient =>
-        serviceProvider?.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalDeleted);
+        ServiceProvider?.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalDeleted);
 
     public QueueClient? AnimalImageAddedQueueClient =>
-        serviceProvider?.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalImageAdded);
+        ServiceProvider?.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalImageAdded);
 
     private const int BlobContainerPort = 10000;
     private const int QueueContainerPort = 10001;
@@ -53,12 +53,12 @@ public class StorageEmulatorFixture : IAsyncLifetime
             })
             .Build();
 
-        serviceProvider = new ServiceCollection()
+        ServiceProvider = new ServiceCollection()
             .AddStorageServices(configuration)
             .BuildServiceProvider();
 
-        await InitializeBlobContainersAsync(serviceProvider.GetRequiredService<BlobServiceClient>());
-        await InitializeQueuesAsync(serviceProvider.GetRequiredService<QueueServiceClient>());
+        await InitializeBlobContainersAsync(ServiceProvider.GetRequiredService<BlobServiceClient>());
+        await InitializeQueuesAsync(ServiceProvider.GetRequiredService<QueueServiceClient>());
     }
 
     private static async Task InitializeBlobContainersAsync(BlobServiceClient serviceClient)

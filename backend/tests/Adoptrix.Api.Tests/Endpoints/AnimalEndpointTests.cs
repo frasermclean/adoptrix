@@ -6,6 +6,7 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using System.Net.Http.Headers;
 using Adoptrix.Api.Contracts.Data;
+using Adoptrix.Api.Tests.Fixtures.Mocks;
 using Adoptrix.Application.Models;
 using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Http.Extensions;

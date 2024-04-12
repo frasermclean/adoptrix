@@ -1,8 +1,8 @@
 ﻿using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.Errors;
 using Adoptrix.Application.Models;
-using Adoptrix.Application.Notifications.Animals;
 using Adoptrix.Application.Services;
+using Adoptrix.Domain.Events;
 using Adoptrix.Domain.Models;
 using FluentResults;
 using MediatR;
@@ -12,9 +12,9 @@ namespace Adoptrix.Application.Handlers.Animals;
 
 public class AddAnimalImagesHandler(
     ILogger<AddAnimalImagesHandler> logger,
-    IMediator mediator,
     IAnimalImageManager imageManager,
-    IAnimalsRepository animalsRepository) : IRequestHandler<AddAnimalImagesRequest, Result<Animal>>
+    IAnimalsRepository animalsRepository,
+    IEventPublisher eventPublisher) : IRequestHandler<AddAnimalImagesRequest, Result<Animal>>
 {
     public async Task<Result<Animal>> Handle(AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
@@ -39,7 +39,8 @@ public class AddAnimalImagesHandler(
 
         // publish notifications
         await Task.WhenAll(uploadResults.Select(result =>
-            mediator.Publish(new AnimalImageAddedNotification(request.AnimalId, result.Value.Id), cancellationToken)));
+            eventPublisher.PublishAsync(new AnimalImageAddedEvent(request.AnimalId, result.Value.Id),
+                cancellationToken)));
 
         return animal;
     }
@@ -67,14 +68,13 @@ public class AddAnimalImagesHandler(
         CancellationToken cancellationToken)
     {
         // get animal from database
-        var getAnimalResult = await mediator.Send(new GetAnimalRequest(animalId), cancellationToken);
-        if (getAnimalResult.IsFailed)
+        var animal = await animalsRepository.GetByIdAsync(animalId, cancellationToken);
+        if (animal is null)
         {
-            return getAnimalResult;
+            return new AnimalNotFoundError(animalId);
         }
 
         // update database entity
-        var animal = getAnimalResult.Value;
         animal.Images.AddRange(images);
         await animalsRepository.UpdateAsync(animal, cancellationToken);
 

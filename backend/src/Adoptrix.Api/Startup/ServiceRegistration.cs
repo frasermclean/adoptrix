@@ -1,12 +1,10 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Validators;
-using Adoptrix.Application.Contracts.Requests.Animals;
 using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
 using Adoptrix.Storage.DependencyInjection;
-using Adoptrix.Storage.Handlers;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FluentValidation;
@@ -40,11 +38,6 @@ public static class ServiceRegistration
 
         builder.Services
             .AddAuthentication(builder.Configuration)
-            .AddMediatR(configuration =>
-            {
-                configuration.RegisterServicesFromAssemblyContaining<AddAnimalRequest>();
-                configuration.RegisterServicesFromAssemblyContaining<AnimalDeletedNotificationHandler>();
-            })
             .AddValidatorsFromAssemblyContaining<SetAnimalDataValidator>()
             .AddProblemDetails()
             .AddApplicationServices()
