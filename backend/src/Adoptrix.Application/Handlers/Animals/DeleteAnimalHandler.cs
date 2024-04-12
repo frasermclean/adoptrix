@@ -10,7 +10,7 @@ namespace Adoptrix.Application.Handlers.Animals;
 
 public class DeleteAnimalHandler(
     IAnimalsRepository animalsRepository,
-    ILogger<DelegatingHandler> logger,
+    ILogger<DeleteAnimalHandler> logger,
     IPublisher publisher)
     : IRequestHandler<DeleteAnimalRequest, Result>
 {
