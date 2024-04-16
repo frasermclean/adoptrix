@@ -1,14 +1,13 @@
-﻿using Adoptrix.Api.Contracts.Data;
-using Adoptrix.Application.Features.Animals.Validators;
+﻿using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using FluentValidation;
 
-namespace Adoptrix.Api.Validators;
+namespace Adoptrix.Application.Features.Animals.Validators;
 
-public sealed class SetAnimalDataValidator : AbstractValidator<SetAnimalData>
+public class AddAnimalCommandValidator : AbstractValidator<AddAnimalCommand>
 {
-    public SetAnimalDataValidator(DateOfBirthValidator dateOfBirthValidator, IBreedsRepository breedsRepository)
+    public AddAnimalCommandValidator(DateOfBirthValidator dateOfBirthValidator, IBreedsRepository breedsRepository)
     {
         RuleFor(request => request.Name)
             .NotEmpty()

@@ -4,7 +4,6 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Features.Animals.Commands;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -15,31 +14,22 @@ public sealed class AddAnimalEndpoint
     public static async Task<Results<Created<AnimalResponse>, ValidationProblem>> ExecuteAsync(
         SetAnimalData data,
         ClaimsPrincipal claimsPrincipal,
-        IValidator<SetAnimalData> validator,
         ILogger<AddAnimalEndpoint> logger,
         ISender sender,
         LinkGenerator linkGenerator,
         CancellationToken cancellationToken)
     {
-        // validate request
-        var validationResult = await validator.ValidateAsync(data, cancellationToken);
-        if (!validationResult.IsValid)
+        // dispatch command
+        var command = new AddAnimalCommand(data.Name, data.Description, data.BreedId, data.Sex, data.DateOfBirth,
+            claimsPrincipal.GetUserId());
+        var result = await sender.Send(command, cancellationToken);
+
+        if (result.IsFailed)
         {
-            logger.LogWarning("Validation failed for request: {Request}", data);
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+            return TypedResults.ValidationProblem(new Dictionary<string, string[]>());
         }
 
-        // add animal to database
-        var addAnimalResult = await sender.Send(new AddAnimalCommand(
-                data.Name,
-                data.Description,
-                data.BreedId,
-                data.Sex,
-                data.DateOfBirth,
-                claimsPrincipal.GetUserId()),
-            cancellationToken);
-
-        var response = addAnimalResult.Value.ToResponse();
+        var response = result.Value.ToResponse();
         return TypedResults.Created(linkGenerator.GetPathByName(GetAnimalEndpoint.EndpointName, new
         {
             animalId = response.Id

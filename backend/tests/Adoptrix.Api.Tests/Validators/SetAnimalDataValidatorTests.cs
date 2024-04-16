@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Api.Contracts.Data;
 using Adoptrix.Api.Validators;
+using Adoptrix.Application.Features.Animals.Validators;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using Adoptrix.Tests.Shared.Factories;
