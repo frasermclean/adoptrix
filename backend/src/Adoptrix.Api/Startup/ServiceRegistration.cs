@@ -1,13 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Adoptrix.Api.Validators;
 using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
 using Adoptrix.Storage.DependencyInjection;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Identity.Web;
@@ -51,7 +49,6 @@ public static class ServiceRegistration
 
         builder.Services
             .AddAuthentication(builder.Configuration)
-            .AddValidatorsFromAssemblyContaining<SetAnimalDataValidator>()
             .AddProblemDetails()
             .AddApplicationServices()
             .AddDatabaseServices()

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Adoptrix.Application.Features.Animals.Validators;
+namespace Adoptrix.Application.Validators;
 
 public class DateOfBirthValidator : AbstractValidator<DateOnly>
 {
