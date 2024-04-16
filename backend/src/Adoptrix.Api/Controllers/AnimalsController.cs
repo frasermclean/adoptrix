@@ -12,16 +12,14 @@ namespace Adoptrix.Api.Controllers;
 
 public class AnimalsController(ISender sender) : ApiController
 {
-    [HttpGet]
-    [AllowAnonymous]
+    [HttpGet, AllowAnonymous]
     public async Task<IEnumerable<SearchAnimalsResult>> SearchAnimals([FromQuery] SearchAnimalsQuery query,
         CancellationToken cancellationToken)
     {
         return await sender.Send(query, cancellationToken);
     }
 
-    [HttpGet("{animalId:guid}")]
-    [AllowAnonymous]
+    [HttpGet("{animalId:guid}"), AllowAnonymous]
     public async Task<IActionResult> GetAnimal(Guid animalId, CancellationToken cancellationToken)
     {
         var result = await sender.Send(new GetAnimalQuery(animalId), cancellationToken);

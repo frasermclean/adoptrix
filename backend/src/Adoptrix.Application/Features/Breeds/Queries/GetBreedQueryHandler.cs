@@ -10,12 +10,10 @@ public class GetBreedQueryHandler(IBreedsRepository breedsRepository) : IRequest
 {
     public async Task<Result<Breed>> Handle(GetBreedQuery query, CancellationToken cancellationToken)
     {
-        var breed = Guid.TryParse(query.BreedIdOrName, out var breedId)
-            ? await breedsRepository.GetByIdAsync(breedId, cancellationToken)
-            : await breedsRepository.GetByNameAsync(query.BreedIdOrName, cancellationToken);
+        var breed = await breedsRepository.GetByIdAsync(query.BreedId, cancellationToken);
 
         return breed is not null
             ? breed
-            : new BreedNotFoundError(breedId);
+            : new BreedNotFoundError(query.BreedId);
     }
 }

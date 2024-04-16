@@ -1,6 +1,4 @@
 ﻿using Adoptrix.Api.Endpoints;
-using Adoptrix.Api.Endpoints.Animals;
-using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Endpoints.Users;
 
@@ -42,21 +40,6 @@ public static class MiddlewareConfiguration
         apiGroup.MapGet("/about", AboutEndpoint.Execute)
             .AllowAnonymous()
             .WithName("About");
-
-
-
-        var adminGroup = apiGroup.MapGroup("/admin");
-        adminGroup.MapPost("/animals/{animalId:guid}/images", AddAnimalImagesEndpoint.ExecuteAsync)
-            .DisableAntiforgery(); // TODO: Learn more about anti-forgery and remove this line
-        adminGroup.RequireAuthorization();
-
-        var breedsGroup = apiGroup.MapGroup("/breeds");
-        breedsGroup.MapGet("/", SearchBreedsEndpoint.ExecuteAsync);
-        breedsGroup.MapGet("/{breedIdOrName}", GetBreedEndpoint.ExecuteAsync)
-            .WithName(GetBreedEndpoint.EndpointName);
-        breedsGroup.MapPost("/", AddBreedEndpoint.ExecuteAsync);
-        breedsGroup.MapPut("/{breedId:guid}", UpdateBreedEndpoint.ExecuteAsync);
-        breedsGroup.MapDelete("/{breedId:guid}", DeleteBreedEndpoint.ExecuteAsync);
 
         var speciesGroup = apiGroup.MapGroup("/species");
         speciesGroup.MapGet("", GetAllSpeciesEndpoint.ExecuteAsync);
