@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Application.Errors;
 using FluentResults;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 
 namespace Adoptrix.Application.Behaviours;
@@ -26,8 +27,11 @@ public class ValidationBehaviour<TRequest, TResponse>(IValidator<TRequest>? vali
             return await next();
         }
 
-        var errors = result.Errors.Select(failure => new ValidationError(failure.ErrorMessage, failure.PropertyName));
+        var errors = result.Errors.Select(MapFailureToValidationError);
 
         return (dynamic)Result.Fail(errors);
     }
+
+    private static ValidationError MapFailureToValidationError(ValidationFailure failure)
+        => new(failure.ErrorMessage, failure.PropertyName, failure.AttemptedValue);
 }
