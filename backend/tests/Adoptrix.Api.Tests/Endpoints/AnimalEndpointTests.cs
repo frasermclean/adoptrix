@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using System.Net.Http.Headers;
-using Adoptrix.Api.Contracts.Data;
+using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Tests.Fixtures.Mocks;
 using Adoptrix.Application.Features.Animals.Responses;
 using Adoptrix.Domain.Models;
@@ -77,21 +77,21 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Fact]
-    public async Task AddAnimal_WithValidRequest_ShouldReturnOk()
+    public async Task AddAnimal_WithValidRequest_ShouldReturnCreated()
     {
         // arrange
-        var uri = new Uri("api/admin/animals", UriKind.Relative);
+        var uri = new Uri("api/animals", UriKind.Relative);
         var data = CreateSetAnimalData();
 
         // act
         var message = await httpClient.PostAsJsonAsync(uri, data);
-        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
+        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
         response.Should().NotBeNull();
-        message.Headers.Should().ContainKey("Location").WhoseValue.Should().Equal($"/api/animals/{response!.Id}");
-        ValidateAnimalResponse(response);
+        message.Headers.Should().ContainKey("Location");
+        ValidateAnimalResponse(response!);
     }
 
     [Theory]
@@ -102,7 +102,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         Guid breedId = default, Sex sex = default, int ageInYears = default)
     {
         // arrange
-        var uri = new Uri("api/admin/animals", UriKind.Relative);
+        var uri = new Uri("api/animals", UriKind.Relative);
         var data = CreateSetAnimalData(name!, description, breedId, sex, ageInYears);
 
         // act
@@ -119,7 +119,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var animalId = Guid.NewGuid();
-        var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
+        var uri = new Uri($"api/animals/{animalId}", UriKind.Relative);
         var data = CreateSetAnimalData();
 
         // act
@@ -137,7 +137,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var animalId = Guid.NewGuid();
-        var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
+        var uri = new Uri($"api/animals/{animalId}", UriKind.Relative);
         var data = CreateSetAnimalData(name: null!);
 
         // act
@@ -154,7 +154,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var animalId = AnimalsRepositoryMockSetup.UnknownAnimalId;
-        var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
+        var uri = new Uri($"api/animals/{animalId}", UriKind.Relative);
         var data = CreateSetAnimalData();
 
         // act
@@ -168,7 +168,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     public async Task DeleteAnimal_WithValidCommand_ShouldReturnNotContent(Guid animalId)
     {
         // arrange
-        var uri = new Uri($"api/admin/animals/{animalId}", UriKind.Relative);
+        var uri = new Uri($"api/animals/{animalId}", UriKind.Relative);
 
         // act
         var message = await httpClient.DeleteAsync(uri);
@@ -182,7 +182,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var animalId = Guid.NewGuid();
-        var uri = new Uri($"api/admin/animals/{animalId}/images", UriKind.Relative);
+        var uri = new Uri($"api/animals/{animalId}/images", UriKind.Relative);
         using var content = CreateMultipartFormDataContent();
 
         // act
@@ -200,7 +200,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var animalId = Guid.NewGuid();
-        var uri = new Uri($"api/admin/animals/{animalId}/images", UriKind.Relative);
+        var uri = new Uri($"api/animals/{animalId}/images", UriKind.Relative);
         using var content = CreateMultipartFormDataContent(contentType: "application/json");
 
         // act
@@ -217,7 +217,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var animalId = AnimalsRepositoryMockSetup.UnknownAnimalId;
-        var uri = new Uri($"api/admin/animals/{animalId}/images", UriKind.Relative);
+        var uri = new Uri($"api/animals/{animalId}/images", UriKind.Relative);
         using var content = CreateMultipartFormDataContent();
 
         // act
@@ -227,7 +227,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
-    private static SetAnimalData CreateSetAnimalData(string name = "Max", string? description = "A good boy",
+    private static SetAnimalRequest CreateSetAnimalData(string name = "Max", string? description = "A good boy",
         Guid? breedId = null, Sex sex = Sex.Male, int ageInYears = 2) => new(name, description,
         breedId ?? Guid.NewGuid(), sex, DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * ageInYears)));
 

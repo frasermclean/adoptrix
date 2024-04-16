@@ -1,4 +1,4 @@
-﻿using Adoptrix.Api.Contracts.Data;
+﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Features.Animals.Validators;
 using Adoptrix.Application.Services;
@@ -81,7 +81,7 @@ public class SetAnimalDataValidatorTests
             .WithErrorMessage($"Could not find breed with ID: {Guid.Empty}");
     }
 
-    private static SetAnimalData CreateData(
+    private static SetAnimalRequest CreateData(
         string name = "Max",
         string description = "A good boy",
         Guid? breedId = null,

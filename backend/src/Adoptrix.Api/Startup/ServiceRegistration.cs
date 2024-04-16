@@ -21,6 +21,19 @@ public static class ServiceRegistration
     /// </summary>
     public static WebApplicationBuilder RegisterServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddRouting(options =>
+        {
+            options.LowercaseUrls = true;
+            options.LowercaseQueryStrings = true;
+        });
+
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
+
         // json serialization options
         builder.Services.Configure<JsonOptions>(options =>
         {

@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Adoptrix.Api.Contracts.Data;
+using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Api.Tests.Fixtures.Mocks;
@@ -85,7 +85,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
             .ReturnsAsync((string _, CancellationToken _) => null);
-        var data = new SetBreedData(breedName, Guid.NewGuid());
+        var data = new SetBreedRequest(breedName, Guid.NewGuid());
 
         // act
         var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(data));
@@ -188,7 +188,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
-    private static SetBreedData CreateData(string name = "Corgi", Guid? speciesId = null)
+    private static SetBreedRequest CreateData(string name = "Corgi", Guid? speciesId = null)
         => new(name, speciesId ?? Guid.NewGuid());
 
     private static void ValidateBreedResponse(BreedResponse response)

@@ -2,7 +2,7 @@
 
 namespace Adoptrix.Application.Errors;
 
-public class SpeciesNotFoundError : Error
+public class SpeciesNotFoundError : Error, INotFoundError
 {
     public SpeciesNotFoundError(Guid speciesId)
         : base($"Species with ID: {speciesId} was not found")

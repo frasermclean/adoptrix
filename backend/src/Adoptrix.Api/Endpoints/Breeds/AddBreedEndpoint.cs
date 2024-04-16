@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Adoptrix.Api.Contracts.Data;
+using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
@@ -13,23 +13,23 @@ namespace Adoptrix.Api.Endpoints.Breeds;
 public class AddBreedEndpoint
 {
     public static async Task<Results<Created<BreedResponse>, ValidationProblem>> ExecuteAsync(
-        SetBreedData data,
+        SetBreedRequest request,
         ClaimsPrincipal claimsPrincipal,
         ISender sender,
         ILogger<AddBreedEndpoint> logger,
-        IValidator<SetBreedData> validator,
+        IValidator<SetBreedRequest> validator,
         LinkGenerator linkGenerator,
         CancellationToken cancellationToken)
     {
-        var validationResult = await validator.ValidateAsync(data, cancellationToken);
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
-            logger.LogWarning("Validation failed for request: {Request}", data);
+            logger.LogWarning("Validation failed for request: {Request}", request);
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
         var result = await sender.Send(
-            new AddBreedCommand(data.Name, data.SpeciesId, claimsPrincipal.GetUserId()),
+            new AddBreedCommand(request.Name, request.SpeciesId, claimsPrincipal.GetUserId()),
             cancellationToken);
 
         var response = result.Value.ToResponse();

@@ -1,4 +1,4 @@
-﻿using Adoptrix.Api.Contracts.Data;
+﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Validators;
 using Adoptrix.Application.Services;
 using Adoptrix.Tests.Shared.Factories;
@@ -73,6 +73,6 @@ public class SetBreedDataValidatorTests
             .WithErrorMessage($"Could not find species with ID: {Guid.Empty}");
     }
 
-    private static SetBreedData CreateData(string name = "Corgi", Guid? speciesId = null)
+    private static SetBreedRequest CreateData(string name = "Corgi", Guid? speciesId = null)
         => new(name, speciesId ?? Guid.NewGuid());
 }

@@ -1,4 +1,4 @@
-﻿using Adoptrix.Api.Contracts.Data;
+﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Application.Features.Animals.Validators;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
@@ -6,7 +6,7 @@ using FluentValidation;
 
 namespace Adoptrix.Api.Validators;
 
-public sealed class SetAnimalDataValidator : AbstractValidator<SetAnimalData>
+public sealed class SetAnimalDataValidator : AbstractValidator<SetAnimalRequest>
 {
     public SetAnimalDataValidator(DateOfBirthValidator dateOfBirthValidator, IBreedsRepository breedsRepository)
     {
