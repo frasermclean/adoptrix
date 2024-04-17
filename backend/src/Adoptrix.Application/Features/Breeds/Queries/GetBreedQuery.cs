@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Adoptrix.Application.Features.Breeds.Queries;
 
-public record GetBreedQuery(string BreedIdOrName) : IRequest<Result<Breed>>;
+public record GetBreedQuery(Guid BreedId) : IRequest<Result<Breed>>;

@@ -1,5 +1,7 @@
-﻿using Adoptrix.Application.Features.Animals.Commands;
+﻿using System.Reflection;
+using Adoptrix.Application.Behaviours;
 using Adoptrix.Application.Services;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Adoptrix.Application.DependencyInjection;
@@ -8,8 +10,15 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        var executingAssembly = Assembly.GetExecutingAssembly();
+
         return services
-            .AddMediatR(configuration => { configuration.RegisterServicesFromAssemblyContaining<AddAnimalCommand>(); })
+            .AddMediatR(configuration =>
+            {
+                configuration.RegisterServicesFromAssembly(executingAssembly);
+                configuration.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+            })
+            .AddValidatorsFromAssembly(executingAssembly)
             .AddSingleton<IImageProcessor, ImageProcessor>();
     }
 }

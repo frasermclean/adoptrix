@@ -17,6 +17,13 @@ public class AddAnimalImagesCommandHandler(
 {
     public async Task<Result<Animal>> Handle(AddAnimalImagesCommand command, CancellationToken cancellationToken)
     {
+        // get animal from database
+        var animal = await animalsRepository.GetByIdAsync(command.AnimalId, cancellationToken);
+        if (animal is null)
+        {
+            return new AnimalNotFoundError(command.AnimalId);
+        }
+
         // upload images to blob storage
         var uploadResults = await UploadImagesAsync(command, cancellationToken);
         if (uploadResults.Any(result => result.IsFailed))
@@ -26,15 +33,13 @@ public class AddAnimalImagesCommandHandler(
         }
 
         // update animal entity with new images
-        var updateAnimalResult = await UpdateAnimalEntity(command.AnimalId,
-            uploadResults.Select(result => result.Value), cancellationToken);
+        var images = uploadResults.Select(result => result.Value);
+        var updateAnimalResult = await UpdateAnimalEntity(animal, images, cancellationToken);
         if (updateAnimalResult.IsFailed)
         {
             logger.LogError("Failed to update animal with ID {AnimalId}", command.AnimalId);
             return updateAnimalResult;
         }
-
-        var animal = updateAnimalResult.Value;
 
         // publish notifications
         await Task.WhenAll(uploadResults.Select(result =>
@@ -63,16 +68,9 @@ public class AddAnimalImagesCommandHandler(
             : Result.Fail(result.Errors);
     }));
 
-    private async Task<Result<Animal>> UpdateAnimalEntity(Guid animalId, IEnumerable<AnimalImage> images,
+    private async Task<Result<Animal>> UpdateAnimalEntity(Animal animal, IEnumerable<AnimalImage> images,
         CancellationToken cancellationToken)
     {
-        // get animal from database
-        var animal = await animalsRepository.GetByIdAsync(animalId, cancellationToken);
-        if (animal is null)
-        {
-            return new AnimalNotFoundError(animalId);
-        }
-
         // update database entity
         animal.Images.AddRange(images);
         await animalsRepository.UpdateAsync(animal, cancellationToken);
