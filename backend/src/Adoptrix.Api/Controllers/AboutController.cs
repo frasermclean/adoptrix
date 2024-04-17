@@ -1,29 +1,33 @@
 ﻿using System.Globalization;
 using System.Reflection;
 using Adoptrix.Api.Contracts.Responses;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Adoptrix.Api.Endpoints;
+namespace Adoptrix.Api.Controllers;
 
-public static class AboutEndpoint
+public class AboutController : ApiController
 {
-    private static readonly AboutResponse Response;
+    private static readonly AboutResponse AboutResponse;
 
-    static AboutEndpoint()
+    static AboutController()
     {
-        var buildData = GetBuildData(Assembly.GetExecutingAssembly());
+        var buildData = GetBuildData();
 
-        Response = new AboutResponse(
+        AboutResponse = new AboutResponse(
             Version: buildData.Version,
             Environment: Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown",
             BuildDate: buildData.BuildDate);
     }
 
-    public static AboutResponse Execute() => Response;
+    [HttpGet, AllowAnonymous]
+    public AboutResponse GetAbout() => AboutResponse;
 
-    private static (string Version, DateTime BuildDate) GetBuildData(Assembly assembly)
+    private static (string Version, DateTime BuildDate) GetBuildData()
     {
         // get version string from custom attribute
-        var versionString = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+        var versionString = Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             !.InformationalVersion;
 
         // split the version string to get the date part

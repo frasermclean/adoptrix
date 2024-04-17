@@ -36,10 +36,6 @@ public static class MiddlewareConfiguration
     {
         var apiGroup = app.MapGroup("/api");
 
-        apiGroup.MapGet("/about", AboutEndpoint.Execute)
-            .AllowAnonymous()
-            .WithName("About");
-
         var usersGroup = apiGroup.MapGroup("/users");
         usersGroup.MapGet("/me", GetCurrentUserEndpoint.Execute);
         usersGroup.RequireAuthorization();
