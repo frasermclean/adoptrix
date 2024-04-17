@@ -2,15 +2,21 @@
 
 namespace Adoptrix.Application.Errors;
 
-public class ValidationError : Error
+public interface IValidationError : IError
 {
-    public const string PropertyNameKey = "PropertyName";
-    private const string AttemptedValueKey = "AttemptedValue";
+    string PropertyName { get; }
+    object AttemptedValue { get; }
+}
 
+public class ValidationError : Error, IValidationError
+{
     public ValidationError(string message, string propertyName, object attemptedValue)
         : base(message)
     {
-        Metadata.Add(PropertyNameKey, propertyName);
-        Metadata.Add(AttemptedValueKey, attemptedValue);
+        Metadata.Add("PropertyName", propertyName);
+        Metadata.Add("AttemptedValue", attemptedValue);
     }
+
+    public string PropertyName => Metadata["PropertyName"] as string ?? string.Empty;
+    public object AttemptedValue => Metadata["AttemptedValue"];
 }

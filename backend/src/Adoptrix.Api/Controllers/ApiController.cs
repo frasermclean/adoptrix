@@ -13,9 +13,9 @@ public abstract class ApiController : ControllerBase
 {
     protected IActionResult Problem(IList<IError> errors)
     {
-        if (errors.Any(error => error is ValidationError))
+        if (errors.Any(error => error is IValidationError))
         {
-            return ValidationProblem(errors.OfType<ValidationError>());
+            return ValidationProblem(errors.OfType<IValidationError>());
         }
 
         var (statusCode, detail) = errors.First() switch
@@ -29,18 +29,13 @@ public abstract class ApiController : ControllerBase
             statusCode: statusCode);
     }
 
-    private ActionResult ValidationProblem(IEnumerable<ValidationError> errors)
+    private ActionResult ValidationProblem(IEnumerable<IValidationError> errors)
     {
         var dictionary = new ModelStateDictionary();
 
         foreach (var error in errors)
         {
-            if (error.Metadata[ValidationError.PropertyNameKey] is not string key)
-            {
-                continue;
-            }
-
-            dictionary.AddModelError(key, error.Message);
+            dictionary.AddModelError(error.PropertyName, error.Message);
         }
 
         return ValidationProblem(dictionary);
