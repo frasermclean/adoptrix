@@ -69,6 +69,13 @@ public class AnimalsController(ISender sender) : ApiController
     public async Task<IActionResult> AddAnimalImages(Guid animalId, IFormFileCollection formFileCollection,
         CancellationToken cancellationToken)
     {
+        // TODO: Temporary workaround until https://github.com/dotnet/aspnetcore/issues/55174 is resolved
+        if (formFileCollection.Count == 0)
+        {
+            var form = await Request.ReadFormAsync(cancellationToken);
+            formFileCollection = form.Files;
+        }
+
         var command = new AddAnimalImagesCommand(animalId, User.GetUserId(),
             formFileCollection.Select(formFile => new AnimalImageFileData(
                 formFile.FileName,
