@@ -6,6 +6,7 @@ using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Api.Tests.Fixtures.Mocks;
+using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Endpoints;
@@ -70,10 +71,10 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
             .ReturnsAsync((string _, CancellationToken _) => null);
-        var data = new SetBreedRequest(breedName, Guid.NewGuid());
+        var request = new SetBreedRequest(breedName, Guid.NewGuid());
 
         // act
-        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(data));
+        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
@@ -85,10 +86,10 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     public async Task AddBreed_WithDuplicateBreedName_Returns_ProblemDetails()
     {
         // arrange
-        var data = CreateData();
+        var request = CreateRequest();
 
         // act
-        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(data));
+        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -97,7 +98,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     }
 
     [Fact]
-    public async Task UpdateBreed_WithValidData_Should_Return_Ok()
+    public async Task UpdateBreed_WithValidrequest_Should_Return_Ok()
     {
         // arrange
         var breedId = Guid.NewGuid();
@@ -105,10 +106,10 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
             .ReturnsAsync((string _, CancellationToken _) => null);
-        var data = CreateData(breedName);
+        var request = CreateRequest(breedName);
 
         // act
-        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(data));
+        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -121,10 +122,10 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var breedId = Guid.NewGuid();
-        var data = CreateData();
+        var request = CreateRequest();
 
         // act
-        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(data));
+        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -137,10 +138,13 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         var breedId = BreedsRepositoryMockSetup.UnknownBreedId;
-        var data = CreateData();
+        var request = CreateRequest("Schnauzer");
+        fixture.BreedsRepositoryMock
+            .Setup(repository => repository.GetByNameAsync(request.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(null as Breed);
 
         // act
-        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(data));
+        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
@@ -171,7 +175,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
-    private static SetBreedRequest CreateData(string name = "Corgi", Guid? speciesId = null)
+    private static SetBreedRequest CreateRequest(string name = "Corgi", Guid? speciesId = null)
         => new(name, speciesId ?? Guid.NewGuid());
 
     private static void ValidateBreedResponse(BreedResponse response)
