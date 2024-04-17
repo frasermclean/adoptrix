@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Api.Endpoints;
-using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Endpoints.Users;
 
 namespace Adoptrix.Api.Startup;
@@ -40,11 +39,6 @@ public static class MiddlewareConfiguration
         apiGroup.MapGet("/about", AboutEndpoint.Execute)
             .AllowAnonymous()
             .WithName("About");
-
-        var speciesGroup = apiGroup.MapGroup("/species");
-        speciesGroup.MapGet("", GetAllSpeciesEndpoint.ExecuteAsync);
-        speciesGroup.MapGet("/{speciesIdOrName}", GetSpeciesEndpoint.ExecuteAsync)
-            .WithName(GetSpeciesEndpoint.EndpointName);
 
         var usersGroup = apiGroup.MapGroup("/users");
         usersGroup.MapGet("/me", GetCurrentUserEndpoint.Execute);

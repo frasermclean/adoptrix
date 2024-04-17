@@ -11,14 +11,14 @@ public class SpeciesEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture
     private readonly HttpClient httpClient = fixture.CreateClient();
 
     [Fact]
-    public async Task SearchSpecies_WithValidRequest_Should_ReturnOk()
+    public async Task SearchSpecies_WithValidRequest_ShouldReturnOk()
     {
         // act
         var message = await httpClient.GetAsync("api/species");
-        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<SpeciesResponse>>();
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
+        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<SpeciesResponse>>();
         fixture.SpeciesRepositoryMock.Verify(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()),
             Times.Once);
         responses.Should().HaveCount(3).And.AllSatisfy(response =>
@@ -28,20 +28,25 @@ public class SpeciesEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture
         });
     }
 
-    [Theory]
-    [InlineData("dog")]
-    [InlineData("e936b936-650c-4c33-abdf-8d5287b809e8")]
-    public async Task GetSpecies_WithValidIdOrName_Should_Return_Ok(string speciesIdOrName)
+    [Fact]
+    public async Task GetSpecies_WithValidId_ShouldReturnOk()
     {
+        // arrange
+        var speciesId = Guid.NewGuid();
+
         // act
-        var message = await httpClient.GetAsync($"api/species/{speciesIdOrName}");
+        var message = await httpClient.GetAsync($"api/species/{speciesId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
+        var response = await message.Content.ReadFromJsonAsync<SpeciesResponse>();
+        response.Should().NotBeNull();
+        fixture.SpeciesRepositoryMock.Verify(repository => repository.GetByIdAsync(speciesId, It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
     [Fact]
-    public async Task GetSpecies_WithInvalidId_Should_Return_NotFound()
+    public async Task GetSpecies_WithInvalidId_ShouldReturnNotFound()
     {
         // arrange
         var speciesId = SpeciesRepositoryMockSetup.UnknownSpeciesId;
