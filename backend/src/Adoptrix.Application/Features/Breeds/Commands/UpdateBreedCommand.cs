@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Adoptrix.Application.Features.Breeds.Commands;
 
-public record UpdateBreedCommand(Guid BreedId, string Name, Guid SpeciesId) : IRequest<Result<Breed>>;
+public record UpdateBreedCommand(Guid BreedId, string BreedName, Guid SpeciesId) : IRequest<Result<Breed>>;

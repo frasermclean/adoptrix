@@ -1,13 +1,14 @@
 ﻿using Adoptrix.Application.Services;
 using FluentValidation;
 
-namespace Adoptrix.Application.Validators;
+namespace Adoptrix.Application.Features.Breeds.Validators;
 
-public class BreedIdValidator : AbstractValidator<Guid>
+public class BreedIdExistsValidator : AbstractValidator<Guid>
 {
-    public BreedIdValidator(IBreedsRepository breedsRepository)
+    public BreedIdExistsValidator(IBreedsRepository breedsRepository)
     {
         RuleFor(breedId => breedId)
+            .NotEmpty()
             .MustAsync(async (breedId, cancellationToken) =>
             {
                 var breed = await breedsRepository.GetByIdAsync(breedId, cancellationToken);

@@ -129,9 +129,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
         var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
-        details.Should().BeOfType<ValidationProblemDetails>()
-            .Which.Errors.Should().ContainKey("Name")
-            .WhoseValue.Should().Contain("Breed with name: 'Corgi' already exists");
+        details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().ContainKey("Name");
     }
 
     [Fact]

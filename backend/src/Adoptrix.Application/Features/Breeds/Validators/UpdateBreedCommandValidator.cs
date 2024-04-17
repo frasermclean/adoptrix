@@ -4,15 +4,15 @@ using FluentValidation;
 
 namespace Adoptrix.Application.Features.Breeds.Validators;
 
-public class AddBreedCommandValidator : AbstractValidator<AddBreedCommand>
+public class UpdateBreedCommandValidator : AbstractValidator<UpdateBreedCommand>
 {
-    public AddBreedCommandValidator(BreedNameDoesNotExistValidator breedNameDoesNotExistValidator,
+    public UpdateBreedCommandValidator(BreedNameDoesNotExistValidator breedNameDoesNotExistValidator,
         SpeciesIdExistsValidator speciesIdExistsValidator)
     {
-        RuleFor(command => command.Name)
+        RuleFor(command => command.BreedName)
             .SetValidator(breedNameDoesNotExistValidator);
 
-        RuleFor(command => command.SpeciesId)
+        RuleFor(request => request.SpeciesId)
             .SetValidator(speciesIdExistsValidator);
     }
 }
