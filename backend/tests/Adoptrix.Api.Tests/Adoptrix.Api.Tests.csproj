@@ -33,19 +33,4 @@
     <ProjectReference Include="..\Adoptrix.Tests.Shared\Adoptrix.Tests.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="..\..\..\data\images\lab_puppy_1.jpeg">
-      <Link>Data\lab_puppy_1.jpeg</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\..\data\images\lab_puppy_2.jpeg">
-      <Link>Data\lab_puppy_2.jpeg</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\..\data\images\lab_puppy_3.jpeg">
-      <Link>Data\lab_puppy_3.jpeg</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>

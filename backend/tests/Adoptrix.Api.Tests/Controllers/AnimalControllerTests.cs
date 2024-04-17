@@ -231,10 +231,13 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
         response.Images.Should().HaveCount(expectedImageCount);
     }
 
-    private static MultipartFormDataContent CreateMultipartFormDataContent(string fileName = "lab_puppy_1.jpeg",
-        string contentName = "First image", string contentType = "image/jpeg")
+    private static MultipartFormDataContent CreateMultipartFormDataContent(int minLength = 1024, int maxLength = 8096,
+        string fileName = "image.jpg", string contentName = "First image", string contentType = "image/jpeg")
     {
-        var content = new StreamContent(File.OpenRead($"Data/{fileName}"));
+        var buffer = new byte[Random.Shared.Next(minLength, maxLength)];
+        Random.Shared.NextBytes(buffer);
+
+        var content = new StreamContent(new MemoryStream(buffer));
         content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
 
         return new MultipartFormDataContent
