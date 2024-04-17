@@ -26,18 +26,8 @@ public static class MiddlewareConfiguration
 
         // map endpoints
         app.MapControllers();
-        app.MapEndpoints();
         app.MapHealthChecks("/health").AllowAnonymous();
 
         return app;
-    }
-
-    private static void MapEndpoints(this IEndpointRouteBuilder app)
-    {
-        var apiGroup = app.MapGroup("/api");
-
-        var usersGroup = apiGroup.MapGroup("/users");
-        usersGroup.MapGet("/me", GetCurrentUserEndpoint.Execute);
-        usersGroup.RequireAuthorization();
     }
 }
