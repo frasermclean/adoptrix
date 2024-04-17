@@ -23,7 +23,7 @@ public class UpdateBreedCommandHandler(IBreedsRepository breedsRepository, ISpec
             return new SpeciesNotFoundError(command.SpeciesId);
         }
 
-        breed.Name = command.BreedName;
+        breed.Name = command.Name;
         breed.Species = species;
         await breedsRepository.UpdateAsync(breed, cancellationToken);
 

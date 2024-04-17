@@ -9,7 +9,7 @@ public class UpdateBreedCommandValidator : AbstractValidator<UpdateBreedCommand>
     public UpdateBreedCommandValidator(BreedNameDoesNotExistValidator breedNameDoesNotExistValidator,
         SpeciesIdExistsValidator speciesIdExistsValidator)
     {
-        RuleFor(command => command.BreedName)
+        RuleFor(command => command.Name)
             .SetValidator(breedNameDoesNotExistValidator);
 
         RuleFor(request => request.SpeciesId)
