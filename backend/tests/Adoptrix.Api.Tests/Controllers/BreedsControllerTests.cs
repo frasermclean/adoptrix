@@ -1,7 +1,5 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
@@ -9,31 +7,20 @@ using Adoptrix.Api.Tests.Fixtures.Mocks;
 using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Adoptrix.Api.Tests.Endpoints;
+namespace Adoptrix.Api.Tests.Controllers;
 
-public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
+public class BreedsControllerTests(ApiFixture fixture) : ControllerTests(fixture), IClassFixture<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
-
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        Converters =
-        {
-            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-        }
-    };
-
     [Theory, AutoData]
     public async Task GetBreed_WithValidBreedId_Returns_Ok(Guid breedId)
     {
         // act
-        var message = await httpClient.GetAsync($"/api/breeds/{breedId}");
+        var message = await HttpClient.GetAsync($"/api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        var response = await message.Content.ReadFromJsonAsync<BreedResponse>(SerializerOptions);
-        ValidateBreedResponse(response!);
+        var response = await DeserializeJsonBody<BreedResponse>(message);
+        ValidateBreedResponse(response);
     }
 
     [Fact]
@@ -43,11 +30,11 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var breedId = BreedsRepositoryMockSetup.UnknownBreedId;
 
         // act
-        var message = await httpClient.GetAsync($"/api/breeds/{breedId}");
+        var message = await HttpClient.GetAsync($"/api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
-        var details = await message.Content.ReadFromJsonAsync<ProblemDetails>(SerializerOptions);
+        var details = await DeserializeJsonBody<ProblemDetails>(message);
         details.Should().BeOfType<ProblemDetails>().Which.Title.Should().Be("Not Found");
     }
 
@@ -55,11 +42,11 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     public async Task SearchBreeds_WithValidRequest_Returns_Ok()
     {
         // act
-        var message = await httpClient.GetAsync("api/breeds");
+        var message = await HttpClient.GetAsync("api/breeds");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<BreedResponse>>(SerializerOptions);
+        var responses = await DeserializeJsonBody<IEnumerable<BreedResponse>>(message);
         responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllSatisfy(ValidateBreedResponse);
     }
 
@@ -68,18 +55,18 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     {
         // arrange
         const string breedName = "Sausage Dog";
-        fixture.BreedsRepositoryMock
+        BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
             .ReturnsAsync((string _, CancellationToken _) => null);
         var request = new SetBreedRequest(breedName, Guid.NewGuid());
 
         // act
-        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(request));
+        var message = await HttpClient.PostAsync("api/breeds", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
-        var response = await message.Content.ReadFromJsonAsync<BreedResponse>(SerializerOptions);
-        ValidateBreedResponse(response!);
+        var response = await DeserializeJsonBody<BreedResponse>(message);
+        ValidateBreedResponse(response);
     }
 
     [Fact]
@@ -89,32 +76,32 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var request = CreateRequest();
 
         // act
-        var message = await httpClient.PostAsync("api/breeds", JsonContent.Create(request));
+        var message = await HttpClient.PostAsync("api/breeds", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
+        var details = await DeserializeJsonBody<ValidationProblemDetails>(message);
         details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().NotBeEmpty();
     }
 
     [Fact]
-    public async Task UpdateBreed_WithValidrequest_Should_Return_Ok()
+    public async Task UpdateBreed_WithValidRequest_Should_Return_Ok()
     {
         // arrange
         var breedId = Guid.NewGuid();
         const string breedName = "Golden Retriever";
-        fixture.BreedsRepositoryMock
+        BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
             .ReturnsAsync((string _, CancellationToken _) => null);
         var request = CreateRequest(breedName);
 
         // act
-        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
+        var message = await HttpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        var response = await message.Content.ReadFromJsonAsync<BreedResponse>(SerializerOptions);
-        ValidateBreedResponse(response!);
+        var response = await DeserializeJsonBody<BreedResponse>(message);
+        ValidateBreedResponse(response);
     }
 
     [Fact]
@@ -125,11 +112,11 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var request = CreateRequest();
 
         // act
-        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
+        var message = await HttpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
+        var details = await DeserializeJsonBody<ValidationProblemDetails>(message);
         details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().ContainKey("Name");
     }
 
@@ -139,16 +126,16 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         // arrange
         var breedId = BreedsRepositoryMockSetup.UnknownBreedId;
         var request = CreateRequest("Schnauzer");
-        fixture.BreedsRepositoryMock
+        BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(request.Name, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Breed);
 
         // act
-        var message = await httpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
+        var message = await HttpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
-        var details = await message.Content.ReadFromJsonAsync<ProblemDetails>(SerializerOptions);
+        var details = await DeserializeJsonBody<ProblemDetails>(message);
         details.Should().BeOfType<ProblemDetails>().Which.Title.Should().Be("Not Found");
     }
 
@@ -156,7 +143,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     public async Task DeleteBreed_WithValidBreedId_Returns_NoContent(Guid breedId)
     {
         // act
-        var message = await httpClient.DeleteAsync($"/api/breeds/{breedId}");
+        var message = await HttpClient.DeleteAsync($"/api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NoContent);
@@ -169,7 +156,7 @@ public class BreedEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var breedId = BreedsRepositoryMockSetup.UnknownBreedId;
 
         // act
-        var message = await httpClient.DeleteAsync($"/api/breeds/{breedId}");
+        var message = await HttpClient.DeleteAsync($"/api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);

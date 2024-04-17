@@ -1,7 +1,4 @@
-﻿using Adoptrix.Api.Endpoints;
-using Adoptrix.Api.Endpoints.Users;
-
-namespace Adoptrix.Api.Startup;
+﻿namespace Adoptrix.Api.Startup;
 
 public static class MiddlewareConfiguration
 {

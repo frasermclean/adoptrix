@@ -4,22 +4,20 @@ using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Api.Tests.Fixtures.Mocks;
 
-namespace Adoptrix.Api.Tests.Endpoints;
+namespace Adoptrix.Api.Tests.Controllers;
 
-public class SpeciesEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
+public class SpeciesControllerTests(ApiFixture fixture) : ControllerTests(fixture), IClassFixture<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
-
     [Fact]
     public async Task SearchSpecies_WithValidRequest_ShouldReturnOk()
     {
         // act
-        var message = await httpClient.GetAsync("api/species");
+        var message = await HttpClient.GetAsync("api/species");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
         var responses = await message.Content.ReadFromJsonAsync<IEnumerable<SpeciesResponse>>();
-        fixture.SpeciesRepositoryMock.Verify(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()),
+        SpeciesRepositoryMock.Verify(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()),
             Times.Once);
         responses.Should().HaveCount(3).And.AllSatisfy(response =>
         {
@@ -35,13 +33,13 @@ public class SpeciesEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture
         var speciesId = Guid.NewGuid();
 
         // act
-        var message = await httpClient.GetAsync($"api/species/{speciesId}");
+        var message = await HttpClient.GetAsync($"api/species/{speciesId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
         var response = await message.Content.ReadFromJsonAsync<SpeciesResponse>();
         response.Should().NotBeNull();
-        fixture.SpeciesRepositoryMock.Verify(repository => repository.GetByIdAsync(speciesId, It.IsAny<CancellationToken>()),
+        SpeciesRepositoryMock.Verify(repository => repository.GetByIdAsync(speciesId, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -52,11 +50,11 @@ public class SpeciesEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture
         var speciesId = SpeciesRepositoryMockSetup.UnknownSpeciesId;
 
         // act
-        var message = await httpClient.GetAsync($"api/species/{speciesId}");
+        var message = await HttpClient.GetAsync($"api/species/{speciesId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
-        fixture.SpeciesRepositoryMock.Verify(repository => repository.GetByIdAsync(speciesId, It.IsAny<CancellationToken>()),
+        SpeciesRepositoryMock.Verify(repository => repository.GetByIdAsync(speciesId, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }

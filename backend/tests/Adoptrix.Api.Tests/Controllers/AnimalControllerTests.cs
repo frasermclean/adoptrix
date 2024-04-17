@@ -1,32 +1,19 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
-using System.Net.Http.Headers;
-using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Tests.Fixtures.Mocks;
 using Adoptrix.Application.Features.Animals.Responses;
 using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Adoptrix.Api.Tests.Endpoints;
+namespace Adoptrix.Api.Tests.Controllers;
 
-public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
+public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture), IClassFixture<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
-
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        Converters =
-        {
-            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-        }
-    };
-
     [Theory, AutoData]
     public async Task SearchAnimals_WithValidRequest_ShouldReturnOk(string name, Guid breedId)
     {
@@ -39,8 +26,8 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var uri = new Uri($"api/animals{query}", UriKind.Relative);
 
         // act
-        var message = await httpClient.GetAsync(uri);
-        var responses = await message.Content.ReadFromJsonAsync<IEnumerable<SearchAnimalsResult>>(SerializerOptions);
+        var message = await HttpClient.GetAsync(uri);
+        var responses = await DeserializeJsonBody<IEnumerable<SearchAnimalsResult>>(message);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -51,13 +38,13 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     public async Task GetAnimal_WithValidRequest_ShouldReturnOk(Guid animalId)
     {
         // act
-        var message = await httpClient.GetAsync($"api/animals/{animalId}");
+        var message = await HttpClient.GetAsync($"api/animals/{animalId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
-        ValidateAnimalResponse(response!);
-        fixture.AnimalsRepositoryMock.Verify(
+        var response = await DeserializeJsonBody<AnimalResponse>(message);
+        ValidateAnimalResponse(response);
+        AnimalsRepositoryMock.Verify(
             repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -68,11 +55,11 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var animalId = AnimalsRepositoryMockSetup.UnknownAnimalId;
 
         // act
-        var message = await httpClient.GetAsync($"api/animals/{animalId}");
+        var message = await HttpClient.GetAsync($"api/animals/{animalId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
-        fixture.AnimalsRepositoryMock.Verify(
+        AnimalsRepositoryMock.Verify(
             repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -84,14 +71,14 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var data = CreateSetAnimalData();
 
         // act
-        var message = await httpClient.PostAsJsonAsync(uri, data);
+        var message = await HttpClient.PostAsJsonAsync(uri, data);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
-        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
+        var response = await DeserializeJsonBody<AnimalResponse>(message);
         response.Should().NotBeNull();
         message.Headers.Should().ContainKey("Location");
-        ValidateAnimalResponse(response!);
+        ValidateAnimalResponse(response);
     }
 
     [Theory]
@@ -106,11 +93,11 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var data = CreateSetAnimalData(name!, description, breedId, sex, ageInYears);
 
         // act
-        var message = await httpClient.PostAsJsonAsync(uri, data);
+        var message = await HttpClient.PostAsJsonAsync(uri, data);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
+        var details = await DeserializeJsonBody<ValidationProblemDetails>(message);
         details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().NotBeEmpty();
     }
 
@@ -123,13 +110,13 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var data = CreateSetAnimalData();
 
         // act
-        var message = await httpClient.PutAsJsonAsync(uri, data);
+        var message = await HttpClient.PutAsJsonAsync(uri, data);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
+        var response = await DeserializeJsonBody<AnimalResponse>(message);
         response.Should().NotBeNull();
-        ValidateAnimalResponse(response!);
+        ValidateAnimalResponse(response);
     }
 
     [Fact]
@@ -141,11 +128,11 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var data = CreateSetAnimalData(name: null!);
 
         // act
-        var message = await httpClient.PutAsJsonAsync(uri, data);
+        var message = await HttpClient.PutAsJsonAsync(uri, data);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
+        var details = await DeserializeJsonBody<ValidationProblemDetails>(message);
         details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().NotBeEmpty();
     }
 
@@ -158,7 +145,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var data = CreateSetAnimalData();
 
         // act
-        var message = await httpClient.PutAsJsonAsync(uri, data);
+        var message = await HttpClient.PutAsJsonAsync(uri, data);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
@@ -171,7 +158,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         var uri = new Uri($"api/animals/{animalId}", UriKind.Relative);
 
         // act
-        var message = await httpClient.DeleteAsync(uri);
+        var message = await HttpClient.DeleteAsync(uri);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NoContent);
@@ -186,13 +173,13 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         using var content = CreateMultipartFormDataContent();
 
         // act
-        var message = await httpClient.PostAsync(uri, content);
+        var message = await HttpClient.PostAsync(uri, content);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(SerializerOptions);
+        var response = await DeserializeJsonBody<AnimalResponse>(message);
         response.Should().NotBeNull();
-        ValidateAnimalResponse(response!, 1);
+        ValidateAnimalResponse(response, 1);
     }
 
     [Fact]
@@ -204,8 +191,8 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         using var content = CreateMultipartFormDataContent(contentType: "application/json");
 
         // act
-        var message = await httpClient.PostAsync(uri, content);
-        var details = await message.Content.ReadFromJsonAsync<ValidationProblemDetails>(SerializerOptions);
+        var message = await HttpClient.PostAsync(uri, content);
+        var details = await DeserializeJsonBody<ValidationProblemDetails>(message);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -221,7 +208,7 @@ public class AnimalEndpointTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         using var content = CreateMultipartFormDataContent();
 
         // act
-        var message = await httpClient.PostAsync(uri, content);
+        var message = await HttpClient.PostAsync(uri, content);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
