@@ -30,8 +30,6 @@ var tags = {
   appName: appName
 }
 
-var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
-
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
   name: storageAccountName
 
@@ -54,6 +52,9 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
   sku: {
     name: 'Y1'
   }
+  properties: {
+    reserved: true
+  }
 }
 
 // function app
@@ -61,7 +62,7 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
   name: '${workload}-${appEnv}-${appName}-func'
   location: location
   tags: tags
-  kind: 'functionapp'
+  kind: 'functionapp,linux'
   identity: {
     type: 'SystemAssigned'
   }
@@ -71,12 +72,12 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
     siteConfig: {
       http20Enabled: true
       ftpsState: 'FtpsOnly'
-      netFrameworkVersion: 'v8.0'
-      use32BitWorkerProcess: false
+      linuxFxVersion: 'DOTNET-ISOLATED|8.0'
+      minTlsVersion: '1.2'
       appSettings: [
         {
           name: 'AzureWebJobsStorage'
-          value: storageAccountConnectionString
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
         }
         {
           name: 'AZURE_FUNCTIONS_ENVIRONMENT'
@@ -93,18 +94,6 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'dotnet-isolated'
-        }
-        {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: storageAccountConnectionString
-        }
-        {
-          name: 'WEBSITE_CONTENTSHARE'
-          value: storageAccount::fileServices::functionAppContentShare.name
-        }
-        {
-          name: 'WEBSITE_RUN_FROM_PACKAGE'
-          value: '1'
         }
         {
           name: 'WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED' // improves cold start time: https://learn.microsoft.com/en-us/azure/azure-functions/dotnet-isolated-process-guide#placeholders
