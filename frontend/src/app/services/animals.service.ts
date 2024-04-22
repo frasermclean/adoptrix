@@ -9,7 +9,7 @@ import { Animal, SearchAnimalsParams, SearchAnimalsResult, SetAnimalRequest } fr
   providedIn: 'root',
 })
 export class AnimalsService {
-  private readonly baseUrl = environment.apiBaseUrl;
+  private readonly baseUrl = `${environment.apiBaseUrl}/animals`;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -22,22 +22,25 @@ export class AnimalsService {
       httpParams = httpParams.set('name', params.name);
     }
 
-    return this.httpClient.get<SearchAnimalsResult[]>(`${this.baseUrl}/animals`, { params: httpParams });
+    return this.httpClient.get<SearchAnimalsResult[]>(this.baseUrl, { params: httpParams });
   }
 
   public getAnimal(animalId: string): Observable<Animal> {
-    return this.httpClient.get<Animal>(`${this.baseUrl}/animals/${animalId}`);
+    const url = `${this.baseUrl}/${animalId}`;
+    return this.httpClient.get<Animal>(url);
   }
 
   public addAnimal(request: SetAnimalRequest): Observable<Animal> {
-    return this.httpClient.post<Animal>(`${this.baseUrl}/admin/animals`, request);
+    return this.httpClient.post<Animal>(this.baseUrl, request);
   }
 
   public updateAnimal(animalId: string, request: SetAnimalRequest) {
-    return this.httpClient.put<Animal>(`${this.baseUrl}/admin/animals/${animalId}`, request);
+    const url = `${this.baseUrl}/${animalId}`;
+    return this.httpClient.put<Animal>(url, request);
   }
 
   public deleteAnimal(animalId: string) {
-    return this.httpClient.delete(`${this.baseUrl}/admin/animals/${animalId}`);
+    const url = `${this.baseUrl}/${animalId}`;
+    return this.httpClient.delete(url);
   }
 }
