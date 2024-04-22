@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Adoptrix.Application.Features.Species.Queries;
 
-public record SearchSpeciesQuery : IRequest<IEnumerable<SearchSpeciesMatch>>;
+public record SearchSpeciesQuery(bool WithAnimals = false) : IRequest<IEnumerable<SearchSpeciesMatch>>;

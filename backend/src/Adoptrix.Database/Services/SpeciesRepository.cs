@@ -17,9 +17,11 @@ public class SpeciesRepository(AdoptrixDbContext dbContext, IBatchManager batchM
             {
                 SpeciesId = species.Id,
                 SpeciesName = species.Name,
-                BreedCount = species.Breeds.Count
+                BreedCount = species.Breeds.Count,
+                AnimalCount = species.Breeds.Count(breed => breed.Animals.Count > 0)
             })
-            .OrderBy(match => match.SpeciesName)
+            .Where(match => !query.WithAnimals || match.AnimalCount > 0)
+            .OrderByDescending(match => match.AnimalCount)
             .ToListAsync(cancellationToken);
     }
 

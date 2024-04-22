@@ -10,9 +10,9 @@ namespace Adoptrix.Api.Controllers;
 public class SpeciesController(ISender sender) : ApiController
 {
     [HttpGet, AllowAnonymous]
-    public async Task<IEnumerable<SearchSpeciesMatch>> SearchSpecies(CancellationToken cancellationToken)
+    public async Task<IEnumerable<SearchSpeciesMatch>> SearchSpecies([FromQuery] SearchSpeciesQuery query,  CancellationToken cancellationToken)
     {
-        return await sender.Send(new SearchSpeciesQuery(), cancellationToken);
+        return await sender.Send(query, cancellationToken);
     }
 
     [HttpGet("{speciesId:guid}"), AllowAnonymous]
