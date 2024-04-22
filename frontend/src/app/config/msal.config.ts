@@ -18,6 +18,7 @@ import {
   MsalInterceptor,
   MsalInterceptorConfiguration,
   MsalService,
+  ProtectedResourceScopes,
 } from '@azure/msal-angular';
 
 import { environment } from '../../environments/environment';
@@ -49,6 +50,9 @@ export function provideMsal(): Provider[] {
 
 const instance = 'adoptrix.ciamlogin.com';
 const tenantId = 'adoptrix.com';
+
+// scopes
+const accessScope = `${environment.auth.appIdUri}/access`;
 
 /**
  * MSAL Instance Factory
@@ -83,7 +87,7 @@ function guardConfigurationFactory(): MsalGuardConfiguration {
   return {
     interactionType: InteractionType.Redirect,
     authRequest: {
-      scopes: [...environment.auth.scopes],
+      scopes: [accessScope],
     },
     loginFailedRoute: 'login-failed', // TODO: Implement login failed route
   };
@@ -93,14 +97,27 @@ function guardConfigurationFactory(): MsalGuardConfiguration {
  * MSAL interceptor configuration factory
  */
 function interceptorConfigurationFactory(): MsalInterceptorConfiguration {
-  const protectedResourceMap = new Map<string, Array<string>>();
-  protectedResourceMap.set(`${environment.apiBaseUrl}/admin`, environment.auth.scopes);
-
   return {
     interactionType: InteractionType.Redirect,
-    protectedResourceMap: new Map<string, Array<string> | null>([
-      [`${environment.apiBaseUrl}/admin/*`, environment.auth.scopes],
+    protectedResourceMap: new Map<string, Array<string | ProtectedResourceScopes> | null>([
       ['https://graph.microsoft.com/v1.0/me', ['user.read', 'profile']],
+      [
+        `${environment.apiBaseUrl}/*`,
+        [
+          {
+            httpMethod: 'POST',
+            scopes: [accessScope],
+          },
+          {
+            httpMethod: 'PUT',
+            scopes: [accessScope],
+          },
+          {
+            httpMethod: 'DELETE',
+            scopes: [accessScope],
+          },
+        ],
+      ],
     ]),
   };
 }
