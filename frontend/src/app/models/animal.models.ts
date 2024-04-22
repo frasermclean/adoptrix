@@ -15,8 +15,8 @@ export interface Animal {
 }
 
 export interface SearchAnimalsParams {
-  speciesId?: string;
-  name?: string;
+  speciesId: string;
+  name: string;
 }
 
 export interface SearchAnimalsResult {

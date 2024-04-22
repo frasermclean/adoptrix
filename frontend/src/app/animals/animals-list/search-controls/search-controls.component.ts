@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngxs/store';
 import { SpeciesActions } from '@state/species.actions';
 import { SpeciesState } from '@state/species.state';
+import { AnimalsActions } from '@state/animals.actions';
 
 @Component({
   selector: 'app-search-controls',
@@ -26,15 +27,17 @@ import { SpeciesState } from '@state/species.state';
   styleUrl: './search-controls.component.scss',
 })
 export class SearchControlsComponent implements OnInit {
+  value = '';
   speciesMatches$ = this.store.select(SpeciesState.matches);
 
   constructor(private store: Store) {}
+
   ngOnInit(): void {
     this.store.dispatch(new SpeciesActions.Search({ withAnimals: true }));
+    this.store.dispatch(new AnimalsActions.Search());
   }
-  value = '';
 
   onSpeciesChanged(speciesId: string): void {
-    console.log(speciesId);
+    this.store.dispatch(new AnimalsActions.Search({ speciesId: speciesId }));
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -16,7 +16,6 @@ import { AuthState } from '@state/auth.state';
 import { LoadingSpinnerComponent } from '@shared/loading-spinner/loading-spinner.component';
 import { AnimalEditComponent, AnimalEditData } from '../animal-edit/animal-edit.component';
 import { SetAnimalRequest } from '@models/animal.models';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-animals',
@@ -35,18 +34,14 @@ import { Router } from '@angular/router';
   templateUrl: './animals-list.component.html',
   styleUrl: './animals-list.component.scss',
 })
-export class AnimalsListComponent implements OnInit, OnDestroy {
+export class AnimalsListComponent implements OnDestroy {
   readonly state$ = this.store.select(AnimalsState.state);
   readonly animals$ = this.store.select(AnimalsState.searchResults);
   readonly userRole$ = this.store.select(AuthState.role);
 
   readonly destroy$ = new Subject<void>();
 
-  constructor(private store: Store, private dialog: MatDialog, private router: Router) {}
-
-  ngOnInit(): void {
-    this.store.dispatch(new AnimalsActions.Search());
-  }
+  constructor(private store: Store, private dialog: MatDialog) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();

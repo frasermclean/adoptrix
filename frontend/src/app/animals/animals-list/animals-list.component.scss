@@ -1,5 +1,10 @@
-.divider {
-  margin-bottom: 24px;
+#container {
+  display: flex;
+  gap: 12px;
+  min-height: 400px;
+  #controls {
+    min-width: 240px;
+  }
 }
 
 #results-container {

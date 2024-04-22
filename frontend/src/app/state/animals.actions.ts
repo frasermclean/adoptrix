@@ -3,7 +3,7 @@ import { SearchAnimalsParams, SetAnimalRequest } from '@models/animal.models';
 export namespace AnimalsActions {
   export class Search {
     static readonly type = '[Animals List Component] Search Animals';
-    constructor(public params?: SearchAnimalsParams) {}
+    constructor(public params?: Partial<SearchAnimalsParams>) {}
   }
 
   export class Get {

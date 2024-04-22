@@ -13,7 +13,7 @@ export class AnimalsService {
 
   constructor(private httpClient: HttpClient) {}
 
-  public searchAnimals(params: SearchAnimalsParams = {}): Observable<SearchAnimalsResult[]> {
+  public searchAnimals(params: Partial<SearchAnimalsParams> = {}): Observable<SearchAnimalsResult[]> {
     let httpParams = new HttpParams();
     if (params.speciesId) {
       httpParams = httpParams.set('speciesId', params.speciesId);
