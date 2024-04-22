@@ -44,7 +44,7 @@ public static class Program
 
                 // local project services
                 services.AddApplicationServices();
-                services.AddDatabaseServices();
+                services.AddDatabaseServices(context.Configuration);
                 services.AddStorageServices(context.Configuration);
             })
             .ConfigureLogging(builder =>

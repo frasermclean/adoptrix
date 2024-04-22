@@ -51,7 +51,7 @@ public static class ServiceRegistration
             .AddAuthentication(builder.Configuration)
             .AddProblemDetails()
             .AddApplicationServices()
-            .AddDatabaseServices()
+            .AddDatabaseServices(builder.Configuration)
             .AddStorageServices(builder.Configuration);
 
         // local development services

@@ -19,10 +19,10 @@ public class DatabaseFixture : IAsyncLifetime
     {
         await container.StartAsync();
         var connectionString = container.GetConnectionString();
+        var configuration = CreateConfiguration(connectionString);
 
         serviceProvider = new ServiceCollection()
-            .AddSingleton(CreateConfiguration(connectionString))
-            .AddDatabaseServices()
+            .AddDatabaseServices(configuration)
             .AddLogging()
             .BuildServiceProvider();
 
@@ -60,7 +60,7 @@ public class DatabaseFixture : IAsyncLifetime
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 {
-                    "Database:ConnectionString", connectionString
+                    AdoptrixDbContext.ConnectionStringKey, connectionString
                 }
             })
             .Build();
