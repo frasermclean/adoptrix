@@ -12,8 +12,8 @@ import { AnimalListItemComponent } from './animal-list-item/animal-list-item.com
 import { SearchControlsComponent } from './search-controls/search-controls.component';
 import { AnimalsState } from '@state/animals.state';
 import { AnimalsActions } from '@state/animals.actions';
+import { AuthState } from '@state/auth.state';
 import { LoadingSpinnerComponent } from '@shared/loading-spinner/loading-spinner.component';
-import { AuthState } from '../../auth/auth.state';
 import { AnimalEditComponent, AnimalEditData } from '../animal-edit/animal-edit.component';
 import { SetAnimalRequest } from '@models/animal.models';
 import { Router } from '@angular/router';
