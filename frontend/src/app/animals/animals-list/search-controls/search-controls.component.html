@@ -1,5 +1,10 @@
 <div id="container">
   <h1>Animal Search</h1>
+  <mat-chip-listbox (change)="onSpeciesChanged($event.value)">
+    @for (match of speciesMatches$ | async; track $index) {
+    <mat-chip-option color="accent" [value]="match.speciesId">{{ match.speciesName }}</mat-chip-option>
+    }
+  </mat-chip-listbox>
   <mat-form-field id="search-form-field">
     <mat-label>Search by name</mat-label>
     <input matInput type="text" [(ngModel)]="value" />
@@ -10,4 +15,3 @@
     }
   </mat-form-field>
 </div>
-

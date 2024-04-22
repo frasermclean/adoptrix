@@ -29,6 +29,7 @@ $light-theme: mat.define-light-theme(
 @include mat.core-theme($light-theme); // common styles for all components
 @include mat.button-theme($light-theme);
 @include mat.card-theme($light-theme);
+@include mat.chips-theme($light-theme);
 @include mat.datepicker-theme($light-theme);
 @include mat.dialog-theme($light-theme);
 @include mat.divider-theme($light-theme);
