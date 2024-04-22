@@ -72,9 +72,15 @@ function instanceFactory(): IPublicClientApplication {
     system: {
       allowNativeBroker: false, // Disables WAM Broker
       loggerOptions: {
-        loggerCallback,
         logLevel: LogLevel.Info,
         piiLoggingEnabled: false,
+        loggerCallback: (logLevel, message) => {
+          if (logLevel <= LogLevel.Warning) {
+            console.error(message);
+          } else {
+            console.log(message);
+          }
+        },
       },
     },
   });
@@ -120,19 +126,4 @@ function interceptorConfigurationFactory(): MsalInterceptorConfiguration {
       ],
     ]),
   };
-}
-
-function loggerCallback(logLevel: LogLevel, message: string): void {
-  switch (logLevel) {
-    case LogLevel.Error:
-      return console.error(message);
-    case LogLevel.Warning:
-      return console.warn(message);
-    case LogLevel.Info:
-      return console.info(message);
-    case LogLevel.Verbose:
-      return console.debug(message);
-    default:
-      return console.log(message);
-  }
 }
