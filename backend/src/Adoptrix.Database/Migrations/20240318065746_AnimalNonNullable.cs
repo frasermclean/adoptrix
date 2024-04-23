@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Adoptrix.Infrastructure.Migrations
+namespace Adoptrix.Database.Migrations
 {
     /// <inheritdoc />
     public partial class AnimalNonNullable : Migration

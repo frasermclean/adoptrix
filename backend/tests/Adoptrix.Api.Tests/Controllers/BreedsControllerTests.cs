@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Api.Tests.Fixtures.Mocks;
 using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,11 +22,13 @@ public class BreedsControllerTests(ApiFixture fixture) : ControllerTests(fixture
         ValidateBreedResponse(response);
     }
 
-    [Fact]
-    public async Task GetBreed_WithUnknownBreedId_Returns_NotFound()
+    [Theory, AutoData]
+    public async Task GetBreed_WithUnknownBreedId_Returns_NotFound(Guid breedId)
     {
         // arrange
-        var breedId = BreedsRepositoryMockSetup.UnknownBreedId;
+        BreedsRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(breedId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(null as Breed);
 
         // act
         var message = await HttpClient.GetAsync($"/api/breeds/{breedId}");
@@ -50,15 +51,13 @@ public class BreedsControllerTests(ApiFixture fixture) : ControllerTests(fixture
         responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllSatisfy(ValidateBreedResponse);
     }
 
-    [Fact]
-    public async Task AddBreed_WithValidRequest_Returns_Created()
+    [Theory, AutoData]
+    public async Task AddBreed_WithValidRequest_Returns_Created(SetBreedRequest request)
     {
         // arrange
-        const string breedName = "Sausage Dog";
         BreedsRepositoryMock
-            .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string _, CancellationToken _) => null);
-        var request = new SetBreedRequest(breedName, Guid.NewGuid());
+            .Setup(repository => repository.GetByNameAsync(request.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(null as Breed);
 
         // act
         var message = await HttpClient.PostAsync("api/breeds", JsonContent.Create(request));
@@ -69,11 +68,13 @@ public class BreedsControllerTests(ApiFixture fixture) : ControllerTests(fixture
         ValidateBreedResponse(response);
     }
 
-    [Fact]
-    public async Task AddBreed_WithDuplicateBreedName_Returns_ProblemDetails()
+    [Theory, AutoData]
+    public async Task AddBreed_WithDuplicateBreedName_ReturnsProblemDetails(SetBreedRequest request, Breed breed)
     {
         // arrange
-        var request = CreateRequest();
+        BreedsRepositoryMock
+            .Setup(repository => repository.GetByNameAsync(request.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(breed);
 
         // act
         var message = await HttpClient.PostAsync("api/breeds", JsonContent.Create(request));
@@ -84,16 +85,13 @@ public class BreedsControllerTests(ApiFixture fixture) : ControllerTests(fixture
         details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().NotBeEmpty();
     }
 
-    [Fact]
-    public async Task UpdateBreed_WithValidRequest_Should_Return_Ok()
+    [Theory, AutoData]
+    public async Task UpdateBreed_WithValidRequest_Should_Return_Ok(Guid breedId, SetBreedRequest request)
     {
         // arrange
-        var breedId = Guid.NewGuid();
-        const string breedName = "Golden Retriever";
         BreedsRepositoryMock
-            .Setup(repository => repository.GetByNameAsync(breedName, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetByNameAsync(request.Name, It.IsAny<CancellationToken>()))
             .ReturnsAsync((string _, CancellationToken _) => null);
-        var request = CreateRequest(breedName);
 
         // act
         var message = await HttpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
@@ -104,30 +102,28 @@ public class BreedsControllerTests(ApiFixture fixture) : ControllerTests(fixture
         ValidateBreedResponse(response);
     }
 
-    [Fact]
-    public async Task UpdateBreed_WithDuplicateBreedName_Returns_ProblemDetails()
+    [Theory, AutoData]
+    public async Task UpdateBreed_WithDuplicateBreedName_Returns_ProblemDetails(Guid breedId, SetBreedRequest request)
     {
-        // arrange
-        var breedId = Guid.NewGuid();
-        var request = CreateRequest();
-
         // act
         var message = await HttpClient.PutAsync($"/api/breeds/{breedId}", JsonContent.Create(request));
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
         var details = await DeserializeJsonBody<ValidationProblemDetails>(message);
-        details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().ContainKey("Name");
+        details.Should().BeOfType<ValidationProblemDetails>().Which.Errors.Should().ContainSingle()
+            .Which.Key.Should().Be("name");
     }
 
-    [Fact]
-    public async Task UpdateBreed_WithUnknownBreedId_Returns_NotFound()
+    [Theory, AutoData]
+    public async Task UpdateBreed_WithUnknownBreedId_ReturnsNotFound(Guid breedId, SetBreedRequest request)
     {
         // arrange
-        var breedId = BreedsRepositoryMockSetup.UnknownBreedId;
-        var request = CreateRequest("Schnauzer");
         BreedsRepositoryMock
             .Setup(repository => repository.GetByNameAsync(request.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(null as Breed);
+        BreedsRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(breedId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Breed);
 
         // act
@@ -149,11 +145,13 @@ public class BreedsControllerTests(ApiFixture fixture) : ControllerTests(fixture
         message.Should().HaveStatusCode(HttpStatusCode.NoContent);
     }
 
-    [Fact]
-    public async Task DeleteBreed_WithUnknownBreedId_Returns_NotFound()
+    [Theory, AutoData]
+    public async Task DeleteBreed_WithUnknownBreedId_Returns_NotFound(Guid breedId)
     {
         // arrange
-        var breedId = BreedsRepositoryMockSetup.UnknownBreedId;
+        BreedsRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(breedId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(null as Breed);
 
         // act
         var message = await HttpClient.DeleteAsync($"/api/breeds/{breedId}");
@@ -161,9 +159,6 @@ public class BreedsControllerTests(ApiFixture fixture) : ControllerTests(fixture
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
-
-    private static SetBreedRequest CreateRequest(string name = "Corgi", Guid? speciesId = null)
-        => new(name, speciesId ?? Guid.NewGuid());
 
     private static void ValidateBreedResponse(BreedResponse response)
     {

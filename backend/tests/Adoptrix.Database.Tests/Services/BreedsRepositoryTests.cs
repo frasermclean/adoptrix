@@ -16,9 +16,7 @@ public class BreedsRepositoryTests
     public BreedsRepositoryTests(DatabaseFixture fixture)
     {
         var collection = fixture.GetRepositoryCollection();
-
-        breedsRepository = collection.BreedsRepository;
-        speciesRepository = collection.SpeciesRepository;
+        (_, breedsRepository, speciesRepository) = collection;
     }
 
     [Fact]
