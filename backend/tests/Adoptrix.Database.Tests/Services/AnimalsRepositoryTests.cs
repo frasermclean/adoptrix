@@ -51,4 +51,20 @@ public class AnimalsRepositoryTests
         animal.DateOfBirth.Should().Be(animalToAdd.DateOfBirth);
         animal.CreatedBy.Should().NotBeEmpty();
     }
+
+    [Fact]
+    public async Task DeleteAsync_WithValidAnimal_ShouldPass()
+    {
+        // arrange
+        var breed = await breedsRepository.GetByIdAsync(BreedIds.GoldenRetriever);
+        var animalToAdd = AnimalFactory.Create(breed: breed);
+        await animalsRepository.AddAsync(animalToAdd);
+
+        // act
+        await animalsRepository.DeleteAsync(animalToAdd);
+        var animal = await animalsRepository.GetByIdAsync(animalToAdd.Id);
+
+        // assert
+        animal.Should().BeNull();
+    }
 }
