@@ -17,7 +17,8 @@ public static class SpeciesRepositoryMockSetup
             {
                 SpeciesId = species.Id,
                 SpeciesName = species.Name,
-                BreedCount = species.Breeds.Count
+                BreedCount = species.Breeds.Count,
+                AnimalCount = Random.Shared.Next(5)
             }));
 
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
