@@ -15,8 +15,11 @@ export interface Animal {
 }
 
 export interface SearchAnimalsParams {
-  speciesId: string;
   name: string;
+  breedId: string;
+  speciesId: string;
+  sex: Sex;
+  limit: number;
 }
 
 export interface SearchAnimalsResult {

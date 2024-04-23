@@ -21,6 +21,9 @@ export class AnimalsService {
     if (params.name) {
       httpParams = httpParams.set('name', params.name);
     }
+    if (params.sex) {
+      httpParams = httpParams.set('sex', params.sex);
+    }
 
     return this.httpClient.get<SearchAnimalsResult[]>(this.baseUrl, { params: httpParams });
   }

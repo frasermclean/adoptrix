@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,12 @@ import { Store } from '@ngxs/store';
 import { SpeciesActions } from '@state/species.actions';
 import { SpeciesState } from '@state/species.state';
 import { AnimalsActions } from '@state/animals.actions';
+import { Sex } from '@models/sex.enum';
+
+interface SearchData {
+  speciesId?: string;
+  sex?: Sex;
+}
 
 @Component({
   selector: 'app-search-controls',
@@ -27,8 +33,8 @@ import { AnimalsActions } from '@state/animals.actions';
   styleUrl: './search-controls.component.scss',
 })
 export class SearchControlsComponent implements OnInit {
-  value = '';
   speciesMatches$ = this.store.select(SpeciesState.matches);
+  data = signal<SearchData>({});
 
   constructor(private store: Store) {}
 
@@ -38,6 +44,16 @@ export class SearchControlsComponent implements OnInit {
   }
 
   onSpeciesChanged(speciesId: string): void {
-    this.store.dispatch(new AnimalsActions.Search({ speciesId: speciesId }));
+    this.data.update((value) => ({ ...value, speciesId: speciesId }));
+    this.updateSearch();
+  }
+
+  onSexChanged(sex: Sex): void {
+    this.data.update((value) => ({ ...value, sex: sex }));
+    this.updateSearch();
+  }
+
+  private updateSearch() {
+    this.store.dispatch(new AnimalsActions.Search(this.data()));
   }
 }
