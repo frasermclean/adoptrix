@@ -1,15 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Application.DependencyInjection;
-using Adoptrix.Application.Services;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
 using Adoptrix.Storage.DependencyInjection;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Json;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 
 namespace Adoptrix.Api.Startup;

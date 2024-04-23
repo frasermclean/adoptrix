@@ -1,5 +1,4 @@
 using Adoptrix.Application.DependencyInjection;
-using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Storage.DependencyInjection;
 using Azure.Identity;
