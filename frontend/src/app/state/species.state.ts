@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Species } from '@models/species.model';
+import { SearchSpeciesMatch } from '@models/species.model';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { catchError, tap } from 'rxjs';
 import { SpeciesService } from '@services/species.service';
@@ -8,7 +8,8 @@ import { SpeciesActions } from './species.actions';
 interface SpeciesStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
-  allSpecies: Species[];
+  all: SearchSpeciesMatch[];
+  matches: SearchSpeciesMatch[];
 }
 
 const SPECIES_STATE_TOKEN = new StateToken<SpeciesStateModel>('species');
@@ -18,18 +19,31 @@ const SPECIES_STATE_TOKEN = new StateToken<SpeciesStateModel>('species');
   defaults: {
     state: 'initial',
     error: null,
-    allSpecies: [],
+    all: [],
+    matches: [],
   },
 })
 @Injectable()
 export class SpeciesState {
   constructor(private speciesService: SpeciesService) {}
 
+  @Action(SpeciesActions.Search)
+  searchSpecies(context: StateContext<SpeciesStateModel>, action: SpeciesActions.Search) {
+    context.patchState({ state: 'busy' });
+    return this.speciesService.searchSpecies(action.query).pipe(
+      tap((matches) => context.patchState({ state: 'ready', matches: matches })),
+      catchError((error) => {
+        context.patchState({ state: 'error', error });
+        throw error;
+      })
+    );
+  }
+
   @Action(SpeciesActions.GetAll)
   getAllSpecies(context: StateContext<SpeciesStateModel>) {
     context.patchState({ state: 'busy' });
-    return this.speciesService.getAllSpecies().pipe(
-      tap((allSpecies) => context.patchState({ state: 'ready', allSpecies })),
+    return this.speciesService.searchSpecies().pipe(
+      tap((all) => context.patchState({ state: 'ready', all })),
       catchError((error) => {
         context.patchState({ state: 'error', error });
         throw error;
@@ -39,6 +53,11 @@ export class SpeciesState {
 
   @Selector()
   static allSpecies(state: SpeciesStateModel) {
-    return state.allSpecies;
+    return state.all;
+  }
+
+  @Selector()
+  static matches(state: SpeciesStateModel) {
+    return state.matches;
   }
 }

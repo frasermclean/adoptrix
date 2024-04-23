@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { EnvironmentProviders, importProvidersFrom } from '@angular/core';
 import { NgxsLoggerPluginModule, NgxsLoggerPluginOptions } from '@ngxs/logger-plugin';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
-import { AuthState } from '../auth/auth.state';
+import { AuthState } from '@state/auth.state';
 
 export function provideNgxsModules(): EnvironmentProviders {
   return importProvidersFrom([

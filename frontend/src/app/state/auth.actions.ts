@@ -1,5 +1,3 @@
-import { AccountInfo } from '@azure/msal-browser';
-
 export class Processing {
   static readonly type = '[Auth Service] Processing';
 }

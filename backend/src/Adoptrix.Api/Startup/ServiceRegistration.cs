@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Application.DependencyInjection;
+using Adoptrix.Application.Services;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
 using Adoptrix.Storage.DependencyInjection;
@@ -8,6 +9,7 @@ using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 
 namespace Adoptrix.Api.Startup;
@@ -37,7 +39,7 @@ public static class ServiceRegistration
         builder.Services.AddOpenTelemetry()
             .UseAzureMonitor(options =>
             {
-                options.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+                options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
                 options.Credential = new DefaultAzureCredential();
             });
 
@@ -45,7 +47,7 @@ public static class ServiceRegistration
             .AddAuthentication(builder.Configuration)
             .AddProblemDetails()
             .AddApplicationServices()
-            .AddDatabaseServices()
+            .AddDatabaseServices(builder.Configuration)
             .AddStorageServices(builder.Configuration);
 
         // local development services

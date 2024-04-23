@@ -6,8 +6,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Store } from '@ngxs/store';
-import { AuthState } from '../../auth/auth.state';
-import { Login, Logout } from '../../auth/auth.actions';
+import { AuthState } from '@state/auth.state';
+import { Login, Logout } from '@state/auth.actions';
 import { AvatarComponent } from './avatar/avatar.component';
 
 @Component({
