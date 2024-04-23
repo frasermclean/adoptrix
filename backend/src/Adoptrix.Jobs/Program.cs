@@ -39,9 +39,6 @@ public static class Program
                 services.AddApplicationInsightsTelemetryWorkerService();
                 services.ConfigureFunctionsApplicationInsights();
 
-                services.AddMediatR(configuration =>
-                    configuration.RegisterServicesFromAssemblyContaining<AddAnimalCommandHandler>());
-
                 // local project services
                 services.AddApplicationServices();
                 services.AddDatabaseServices(context.Configuration);
