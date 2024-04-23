@@ -11,7 +11,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
 {
     private const int SearchLimit = 10;
 
-    public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsQuery query,
+    public async Task<IEnumerable<SearchAnimalsMatch>> SearchAsync(SearchAnimalsQuery query,
         CancellationToken cancellationToken = default)
     {
         return await DbContext.Animals
@@ -21,13 +21,14 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
                              (query.SpeciesId == null || animal.Breed.Species.Id == query.SpeciesId) &&
                              (query.Sex == null || animal.Sex == query.Sex))
             .Take(query.Limit ?? SearchLimit)
-            .Select(animal => new SearchAnimalsResult
+            .Select(animal => new SearchAnimalsMatch
             {
                 Id = animal.Id,
                 Name = animal.Name,
                 SpeciesName = animal.Breed.Species.Name,
                 BreedName = animal.Breed.Name,
                 Sex = animal.Sex,
+                Slug = animal.Slug,
                 DateOfBirth = animal.DateOfBirth,
                 CreatedAt = animal.CreatedAt,
                 Image = animal.Images.Select(image => new AnimalImageResponse

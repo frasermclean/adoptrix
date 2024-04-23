@@ -14,13 +14,14 @@ public static class AnimalsRepositoryMockSetup
         mock.Setup(repository =>
                 repository.SearchAsync(It.IsAny<SearchAnimalsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((SearchAnimalsQuery _, CancellationToken _) => AnimalFactory.CreateMany(searchResultsCount)
-                .Select(animal => new SearchAnimalsResult
+                .Select(animal => new SearchAnimalsMatch
                 {
                     Id = animal.Id,
                     Name = animal.Name,
                     SpeciesName = animal.Breed.Species.Name,
                     BreedName = animal.Breed.Name,
                     Sex = animal.Sex,
+                    Slug = animal.Slug,
                     DateOfBirth = animal.DateOfBirth,
                     CreatedAt = animal.CreatedAt,
                     Image = animal.Images.Select(image => new AnimalImageResponse

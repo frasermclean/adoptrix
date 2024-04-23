@@ -27,11 +27,11 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
 
         // act
         var message = await HttpClient.GetAsync(uri);
-        var responses = await DeserializeJsonBody<IEnumerable<SearchAnimalsResult>>(message);
+        var responses = await DeserializeJsonBody<IEnumerable<SearchAnimalsMatch>>(message);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllBeOfType<SearchAnimalsResult>();
+        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllBeOfType<SearchAnimalsMatch>();
     }
 
     [Theory, AutoData]

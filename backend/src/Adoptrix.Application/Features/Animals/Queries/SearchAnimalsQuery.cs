@@ -9,4 +9,4 @@ public record SearchAnimalsQuery(
     Guid? BreedId,
     Guid? SpeciesId,
     Sex? Sex,
-    int? Limit) : IRequest<IEnumerable<SearchAnimalsResult>>;
+    int? Limit) : IRequest<IEnumerable<SearchAnimalsMatch>>;
