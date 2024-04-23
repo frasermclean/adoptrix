@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AccountInfo, InteractionStatus, RedirectRequest } from '@azure/msal-browser';
 import { Store } from '@ngxs/store';
-import { Processing, Completed } from '../auth/auth.actions';
+import { Processing, Completed } from '@state/auth.actions';
 
 @Injectable({
   providedIn: 'root',

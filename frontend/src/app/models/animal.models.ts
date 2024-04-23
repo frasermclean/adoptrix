@@ -14,9 +14,12 @@ export interface Animal {
   images: ImageResponse[];
 }
 
-export interface SearchAnimalsParams {
-  speciesId?: string;
-  name?: string;
+export interface SearchAnimalsQuery {
+  name: string;
+  breedId: string;
+  speciesId: string;
+  sex: Sex;
+  limit: number;
 }
 
 export interface SearchAnimalsResult {

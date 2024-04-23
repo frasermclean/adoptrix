@@ -1,4 +1,5 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Features.Species.Queries;
+using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
 using Adoptrix.Domain.Models;
 
@@ -17,10 +18,13 @@ public class SpeciesRepositoryTests
     }
 
     [Fact]
-    public async Task GetAllAsync_WithNoParameters_ShouldReturnAllSpecies()
+    public async Task SearchAsync_WithEmptyQuery_ShouldReturnAllSpecies()
     {
+        // arrange
+        var query = new SearchSpeciesQuery();
+
         // act
-        var results = await speciesRepository.GetAllAsync();
+        var results = await speciesRepository.SearchAsync(query);
 
         // assert
         results.Should().HaveCountGreaterOrEqualTo(3);

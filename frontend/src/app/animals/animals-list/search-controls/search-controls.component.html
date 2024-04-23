@@ -1,13 +1,21 @@
 <div id="container">
   <h1>Animal Search</h1>
-  <mat-form-field id="search-form-field">
-    <mat-label>Search by name</mat-label>
-    <input matInput type="text" [(ngModel)]="value" />
-    @if (value) {
-    <button matSuffix mat-icon-button aria-label="Clear" (click)="value = ''">
-      <mat-icon>close</mat-icon>
-    </button>
-    }
-  </mat-form-field>
-</div>
+  <div class="control-group">
+    <p class="label">Species</p>
+    <mat-chip-listbox (change)="onSpeciesChanged($event.value)" [value]="data().speciesId">
+      @for (match of speciesMatches$ | async; track $index) {
+      <mat-chip-option [value]="match.speciesId" [matBadge]="match.animalCount" matBadgeColor="accent">
+        {{ match.speciesName }}
+      </mat-chip-option>
+      }
+    </mat-chip-listbox>
+  </div>
 
+  <div class="control-group">
+    <p class="label">Sex</p>
+    <mat-chip-listbox (change)="onSexChanged($event.value)" [value]="data().sex">
+      <mat-chip-option value="male">Male</mat-chip-option>
+      <mat-chip-option value="female">Female</mat-chip-option>
+    </mat-chip-listbox>
+  </div>
+</div>
