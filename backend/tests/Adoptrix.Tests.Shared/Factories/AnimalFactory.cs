@@ -13,6 +13,7 @@ public static class AnimalFactory
         Name = name ?? Names[Random.Shared.Next(Names.Length)],
         Breed = breed ?? BreedFactory.Create(),
         Sex = sex,
+        Slug = Guid.NewGuid().ToString(),
         DateOfBirth = dateOfBirth ?? DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 2)),
         Images = AnimalImageFactory.CreateMany(imageCount).ToList(),
         CreatedBy = createdBy ?? Guid.NewGuid()

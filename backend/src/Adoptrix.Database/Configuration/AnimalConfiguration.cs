@@ -9,6 +9,8 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 {
     public void Configure(EntityTypeBuilder<Animal> builder)
     {
+        builder.HasAlternateKey(animal => animal.Slug);
+
         builder.Property(animal => animal.Name)
             .HasColumnType("nvarchar")
             .HasMaxLength(Animal.NameMaxLength);
@@ -22,6 +24,11 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             .HasColumnType("datetime2")
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
+
+        builder.Property(animal => animal.Slug)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(Animal.SlugMaxLength)
+            .HasDefaultValueSql("newid()");
 
         var animalImagesBuilder = builder.OwnsMany(animal => animal.Images)
             .ToTable("AnimalImages");

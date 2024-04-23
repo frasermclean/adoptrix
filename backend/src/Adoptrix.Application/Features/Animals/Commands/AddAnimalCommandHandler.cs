@@ -28,6 +28,7 @@ public class AddAnimalCommandHandler(
             Description = command.Description,
             Breed = breed,
             Sex = command.Sex,
+            Slug = Guid.NewGuid().ToString(), // TODO: Replace with slug generator service
             DateOfBirth = command.DateOfBirth,
             CreatedBy = command.UserId
         };
