@@ -10,11 +10,11 @@ namespace Adoptrix.Database.Tests.Services;
 public class SpeciesRepositoryTests
 {
     private readonly ISpeciesRepository speciesRepository;
+
     public SpeciesRepositoryTests(DatabaseFixture fixture)
     {
         var collection = fixture.GetRepositoryCollection();
-
-        speciesRepository = collection.SpeciesRepository;
+        (_, _, speciesRepository) = collection;
     }
 
     [Fact]

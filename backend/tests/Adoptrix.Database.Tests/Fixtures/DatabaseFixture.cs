@@ -47,12 +47,11 @@ public class DatabaseFixture : IAsyncLifetime
         var scope = serviceProvider?.CreateScope() ??
                     throw new InvalidOperationException("Service provider is not initialized");
 
-        return new RepositoryCollection
-        {
-            AnimalsRepository = scope.ServiceProvider.GetRequiredService<IAnimalsRepository>(),
-            BreedsRepository = scope.ServiceProvider.GetRequiredService<IBreedsRepository>(),
-            SpeciesRepository = scope.ServiceProvider.GetRequiredService<ISpeciesRepository>()
-        };
+        return new RepositoryCollection(
+            scope.ServiceProvider.GetRequiredService<IAnimalsRepository>(),
+            scope.ServiceProvider.GetRequiredService<IBreedsRepository>(),
+            scope.ServiceProvider.GetRequiredService<ISpeciesRepository>()
+        );
     }
 
     private static IConfiguration CreateConfiguration(string connectionString)
