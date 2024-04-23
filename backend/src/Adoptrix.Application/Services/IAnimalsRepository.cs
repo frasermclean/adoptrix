@@ -10,6 +10,7 @@ public interface IAnimalsRepository
         CancellationToken cancellationToken = default);
 
     Task<Animal?> GetByIdAsync(Guid animalId, CancellationToken cancellationToken = default);
+    Task<Animal?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default);
     Task AddAsync(Animal animal, CancellationToken cancellationToken = default);
     Task UpdateAsync(Animal animal, CancellationToken cancellationToken = default);
     Task DeleteAsync(Animal animal, CancellationToken cancellationToken = default);

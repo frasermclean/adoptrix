@@ -49,6 +49,14 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<Animal?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Animals.Where(animal => animal.Slug == slug)
+            .Include(animal => animal.Breed)
+            .ThenInclude(breed => breed.Species)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task AddAsync(Animal animal, CancellationToken cancellationToken = default)
     {
         DbContext.Animals.Add(animal);

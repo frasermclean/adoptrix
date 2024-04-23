@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
+using AutoFixture.Xunit2;
 
 namespace Adoptrix.Database.Tests.Services;
 
@@ -17,14 +18,21 @@ public class AnimalsRepositoryTests
         (animalsRepository, breedsRepository, _) = collection;
     }
 
-    [Fact]
-    public async Task GetByIdAsync_WithInvalidId_ShouldFail()
+    [Theory, AutoData]
+    public async Task GetByIdAsync_WithInvalidId_ShouldReturnNull(Guid animalId)
     {
-        // arrange
-        var animalId = Guid.Empty;
-
         // act
         var animal = await animalsRepository.GetByIdAsync(animalId);
+
+        // assert
+        animal.Should().BeNull();
+    }
+
+    [Theory, AutoData]
+    public async Task GetBySlugAsync_WithInvalidSlug_ShouldReturnNull(string slug)
+    {
+        // act
+        var animal = await animalsRepository.GetBySlugAsync(slug);
 
         // assert
         animal.Should().BeNull();
