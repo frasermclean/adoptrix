@@ -2,7 +2,6 @@
   <div id="controls">
     <app-search-controls></app-search-controls>
   </div>
-  <mat-divider class="divider" [vertical]="true"></mat-divider>
   <div id="content">
     @switch (state$ | async) { @case ('busy') {
     <app-loading-spinner title="Loading animals"></app-loading-spinner>
@@ -11,6 +10,8 @@
     <div id="results-container">
       @for (animal of animals$ | async; track $index) {
       <app-animal-list-item [animal]="animal"></app-animal-list-item>
+      } @empty {
+      <p>Unfortunately, no animals matched the search criteria.</p>
       }
     </div>
     @if ((userRole$ | async) === 'admin') {

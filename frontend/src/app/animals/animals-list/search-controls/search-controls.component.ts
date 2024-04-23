@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,8 +14,8 @@ import { AnimalsActions } from '@state/animals.actions';
 import { Sex } from '@models/sex.enum';
 
 interface SearchData {
-  speciesId?: string;
-  sex?: Sex;
+  speciesId: string;
+  sex: Sex;
 }
 
 @Component({
@@ -23,6 +24,7 @@ interface SearchData {
   imports: [
     CommonModule,
     FormsModule,
+    MatBadgeModule,
     MatButtonModule,
     MatChipsModule,
     MatFormFieldModule,
@@ -34,13 +36,13 @@ interface SearchData {
 })
 export class SearchControlsComponent implements OnInit {
   speciesMatches$ = this.store.select(SpeciesState.matches);
-  data = signal<SearchData>({});
+  data = signal<Partial<SearchData>>({});
 
   constructor(private store: Store) {}
 
   ngOnInit(): void {
     this.store.dispatch(new SpeciesActions.Search({ withAnimals: true }));
-    this.store.dispatch(new AnimalsActions.Search());
+    this.updateSearch();
   }
 
   onSpeciesChanged(speciesId: string): void {

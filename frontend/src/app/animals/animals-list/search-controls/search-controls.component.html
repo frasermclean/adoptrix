@@ -1,19 +1,21 @@
 <div id="container">
   <h1>Animal Search</h1>
   <div class="control-group">
-    <span class="label">Species</span>
-    <mat-chip-listbox (change)="onSpeciesChanged($event.value)">
+    <p class="label">Species</p>
+    <mat-chip-listbox (change)="onSpeciesChanged($event.value)" [value]="data().speciesId">
       @for (match of speciesMatches$ | async; track $index) {
-      <mat-chip-option color="accent" [value]="match.speciesId">{{ match.speciesName }}</mat-chip-option>
+      <mat-chip-option [value]="match.speciesId" [matBadge]="match.animalCount" matBadgeColor="accent">
+        {{ match.speciesName }}
+      </mat-chip-option>
       }
     </mat-chip-listbox>
   </div>
 
   <div class="control-group">
-    <span class="label">Sex</span>
-    <mat-chip-listbox (change)="onSexChanged($event.value)">
-      <mat-chip-option color="accent" value="male">Male</mat-chip-option>
-      <mat-chip-option color="accent" value="female">Female</mat-chip-option>
+    <p class="label">Sex</p>
+    <mat-chip-listbox (change)="onSexChanged($event.value)" [value]="data().sex">
+      <mat-chip-option value="male">Male</mat-chip-option>
+      <mat-chip-option value="female">Female</mat-chip-option>
     </mat-chip-listbox>
   </div>
 </div>
