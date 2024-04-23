@@ -107,13 +107,15 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
   }
 
   // firewall rules
-  resource firewallRule 'firewallRules' = [for item in concat(sqlDatabaseAllowedAzureServices, allowedExternalIpAddresses): if (!empty(item.ipAddress)) {
-    name: 'allow-${item.name}-rule'
-    properties: {
-      startIpAddress: item.ipAddress
-      endIpAddress: item.ipAddress
+  resource firewallRule 'firewallRules' = [
+    for item in concat(sqlDatabaseAllowedAzureServices, allowedExternalIpAddresses): if (!empty(item.ipAddress)) {
+      name: 'allow-${item.name}-rule'
+      properties: {
+        startIpAddress: item.ipAddress
+        endIpAddress: item.ipAddress
+      }
     }
-  }]
+  ]
 }
 
 // storage account
@@ -252,7 +254,6 @@ module containerAppsModule './containerApps.bicep' = {
     containerRegistryName: containerRegistryName
     apiImageName: apiImageName
     apiImageTag: apiImageTag
-    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     appConfigurationEndpoint: appConfiguration.properties.endpoint
     corsAllowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
@@ -280,6 +281,7 @@ module appConfigModule 'appConfig.bicep' = {
   params: {
     appConfigurationName: appConfigurationName
     appEnv: appEnv
+    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
     authenticationClientId: authenticationClientId
     authenticationAudience: authenticationAudience
     storageAccountBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
@@ -291,29 +293,31 @@ module appConfigModule 'appConfig.bicep' = {
 }
 
 // role assignments
-module roleAssignmentsModule 'roleAssignments.bicep' = if (attemptRoleAssignments) {
-  name: 'roleAssignments${deploymentSuffix}'
-  params: {
-    adminGroupObjectId: adminGroupObjectId
-    apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
-    functionAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
-    storageAccountName: storageAccount.name
-    applicationInsightsName: applicationInsights.name
+module roleAssignmentsModule 'roleAssignments.bicep' =
+  if (attemptRoleAssignments) {
+    name: 'roleAssignments${deploymentSuffix}'
+    params: {
+      adminGroupObjectId: adminGroupObjectId
+      apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
+      functionAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
+      storageAccountName: storageAccount.name
+      applicationInsightsName: applicationInsights.name
+    }
   }
-}
 
 // shared resource role assignments
-module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' = if (attemptRoleAssignments) {
-  name: 'roleAssignments-${appEnv}-${deploymentSuffix}'
-  scope: resourceGroup(sharedResourceGroup)
-  params: {
-    appConfigurationName: appConfigurationName
-    configurationDataReaders: [
-      containerAppsModule.outputs.apiAppPrincipalId
-      jobsAppModule.outputs.identityPrincipalId
-    ]
+module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' =
+  if (attemptRoleAssignments) {
+    name: 'roleAssignments-${appEnv}-${deploymentSuffix}'
+    scope: resourceGroup(sharedResourceGroup)
+    params: {
+      appConfigurationName: appConfigurationName
+      configurationDataReaders: [
+        containerAppsModule.outputs.apiAppPrincipalId
+        jobsAppModule.outputs.identityPrincipalId
+      ]
+    }
   }
-}
 
 @description('The name of the API container app')
 output apiAppName string = containerAppsModule.outputs.apiAppName

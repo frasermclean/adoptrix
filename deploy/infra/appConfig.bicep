@@ -7,6 +7,9 @@ param appConfigurationName string
 @description('Environment of the application')
 param appEnv string
 
+@description('Application Insights connection string')
+param applicationInsightsConnectionString string
+
 @description('Authentication client ID')
 param authenticationClientId string
 
@@ -30,6 +33,14 @@ param attemptRoleAssignments bool
 
 resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
   name: appConfigurationName
+
+  resource applicationInsightsConnectionStringKeyVault 'keyValues' = {
+    name: 'ApplicationInsights:ConnectionString$${appEnv}'
+    properties: {
+      value: applicationInsightsConnectionString
+      contentType: 'text/plain'
+    }
+  }
 
   resource authenticationClientIdKeyValue 'keyValues' = {
     name: 'Authentication:ClientId$${appEnv}'
