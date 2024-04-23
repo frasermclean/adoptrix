@@ -12,11 +12,7 @@ import { SpeciesActions } from '@state/species.actions';
 import { SpeciesState } from '@state/species.state';
 import { AnimalsActions } from '@state/animals.actions';
 import { Sex } from '@models/sex.enum';
-
-interface SearchData {
-  speciesId: string;
-  sex: Sex;
-}
+import { SearchAnimalsQuery } from '@models/animal.models';
 
 @Component({
   selector: 'app-search-controls',
@@ -36,7 +32,7 @@ interface SearchData {
 })
 export class SearchControlsComponent implements OnInit {
   speciesMatches$ = this.store.select(SpeciesState.matches);
-  data = signal<Partial<SearchData>>({});
+  data = signal<Partial<SearchAnimalsQuery>>({});
 
   constructor(private store: Store) {}
 

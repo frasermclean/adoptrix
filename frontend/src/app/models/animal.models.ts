@@ -14,7 +14,7 @@ export interface Animal {
   images: ImageResponse[];
 }
 
-export interface SearchAnimalsParams {
+export interface SearchAnimalsQuery {
   name: string;
   breedId: string;
   speciesId: string;

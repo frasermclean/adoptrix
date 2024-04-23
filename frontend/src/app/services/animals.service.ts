@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { Animal, SearchAnimalsParams, SearchAnimalsResult, SetAnimalRequest } from '@models/animal.models';
+import { Animal, SearchAnimalsQuery, SearchAnimalsResult, SetAnimalRequest } from '@models/animal.models';
 
 @Injectable({
   providedIn: 'root',
@@ -13,16 +13,16 @@ export class AnimalsService {
 
   constructor(private httpClient: HttpClient) {}
 
-  public searchAnimals(params: Partial<SearchAnimalsParams> = {}): Observable<SearchAnimalsResult[]> {
+  public searchAnimals(query: Partial<SearchAnimalsQuery> = {}): Observable<SearchAnimalsResult[]> {
     let httpParams = new HttpParams();
-    if (params.speciesId) {
-      httpParams = httpParams.set('speciesId', params.speciesId);
+    if (query.speciesId) {
+      httpParams = httpParams.set('speciesId', query.speciesId);
     }
-    if (params.name) {
-      httpParams = httpParams.set('name', params.name);
+    if (query.name) {
+      httpParams = httpParams.set('name', query.name);
     }
-    if (params.sex) {
-      httpParams = httpParams.set('sex', params.sex);
+    if (query.sex) {
+      httpParams = httpParams.set('sex', query.sex);
     }
 
     return this.httpClient.get<SearchAnimalsResult[]>(this.baseUrl, { params: httpParams });
