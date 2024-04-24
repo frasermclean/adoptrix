@@ -10,4 +10,7 @@ export interface Environment {
     redirectUri: string;
     appIdUri: string;
   };
+  appInsights: {
+    connectionString: string;
+  };
 }
