@@ -7,10 +7,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideMaterialConfig } from '@config/material.config';
 import { provideMsal } from '@config/msal.config';
 import { provideNgxsModules } from '@config/ngxs.config';
-
-// gallery
-import { GALLERY_CONFIG } from 'ng-gallery';
-import { galleryConfigFactory } from '@shared/gallery.config';
+import { provideGallery } from '@config/gallery.config';
 
 import { routes } from './app.routes';
 
@@ -22,9 +19,6 @@ export const appConfig: ApplicationConfig = {
     provideMaterialConfig(),
     provideMsal(),
     provideNgxsModules(),
-    {
-      provide: GALLERY_CONFIG,
-      useFactory: galleryConfigFactory,
-    },
+    provideGallery(),
   ],
 };
