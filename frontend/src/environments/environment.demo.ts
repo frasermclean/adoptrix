@@ -9,4 +9,8 @@ export const environment: Environment = {
     redirectUri: 'https://demo.adoptrix.com',
     appIdUri: 'https://api.demo.adoptrix.com',
   },
+  appInsights: {
+    connectionString:
+      'InstrumentationKey=197c296e-252b-4c50-bf68-e0094b35bd8d;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/;ApplicationId=ed4a05e7-9b22-4748-a9f0-6e919b052aa1',
+  },
 };
