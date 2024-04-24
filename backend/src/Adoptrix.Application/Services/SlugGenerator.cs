@@ -31,8 +31,8 @@ public class SlugGenerator(IAnimalsRepository animalsRepository) : ISlugGenerato
             .ToString();
 
         // ensure slug is unique
-        var animal = await animalsRepository.GetBySlugAsync(slug, cancellationToken);
-        return animal is null
+        var getResult = await animalsRepository.GetAsync(slug, cancellationToken);
+        return getResult.IsFailed
             ? Result.Ok(slug)
             : Result.Fail("Generated slug is not unique");
     }

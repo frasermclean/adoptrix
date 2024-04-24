@@ -1,7 +1,9 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Errors;
+using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 using Adoptrix.Tests.Shared;
 using Adoptrix.Tests.Shared.Factories;
+using FluentResults;
 
 namespace Adoptrix.Application.Tests.Services;
 
@@ -15,8 +17,8 @@ public class SlugGeneratorTests
         // arrange
         var (name, breed, dateOfBirth) = CreateValidInput();
         animalsRepositoryMock.Setup(repository =>
-                repository.GetBySlugAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Animal);
+                repository.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string slug, CancellationToken _) => new AnimalNotFoundError(slug));
 
         // act
         var result = await slugGenerator.GenerateAsync(name, breed, dateOfBirth);
@@ -33,7 +35,7 @@ public class SlugGeneratorTests
         // arrange
         var (name, breed, dateOfBirth) = CreateValidInput();
         animalsRepositoryMock.Setup(repository =>
-                repository.GetBySlugAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                repository.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingAnimal);
 
         // act

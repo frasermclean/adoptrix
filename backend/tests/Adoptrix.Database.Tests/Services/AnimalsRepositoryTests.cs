@@ -1,4 +1,5 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Errors;
+using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
 using AutoFixture.Xunit2;
@@ -19,23 +20,25 @@ public class AnimalsRepositoryTests
     }
 
     [Theory, AutoData]
-    public async Task GetByIdAsync_WithInvalidId_ShouldReturnNull(Guid animalId)
+    public async Task GetAsync_WithInvalidId_ShouldReturnFailure(Guid animalId)
     {
         // act
-        var animal = await animalsRepository.GetByIdAsync(animalId);
+        var result = await animalsRepository.GetAsync(animalId);
 
         // assert
-        animal.Should().BeNull();
+        result.Should().BeFailure().Which
+            .HasError<AnimalNotFoundError>(error => error.Message == $"Could not find animal with id: {animalId}");
     }
 
     [Theory, AutoData]
-    public async Task GetBySlugAsync_WithInvalidSlug_ShouldReturnNull(string slug)
+    public async Task GetAsync_WithInvalidSlug_ShouldReturnFailure(string animalSlug)
     {
         // act
-        var animal = await animalsRepository.GetBySlugAsync(slug);
+        var result = await animalsRepository.GetAsync(animalSlug);
 
         // assert
-        animal.Should().BeNull();
+        result.Should().BeFailure().Which
+            .HasError<AnimalNotFoundError>(error => error.Message == $"Could not find animal with slug: {animalSlug}");
     }
 
     [Fact]
