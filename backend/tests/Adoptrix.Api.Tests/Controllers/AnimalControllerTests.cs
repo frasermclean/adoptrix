@@ -227,6 +227,7 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
         response.BreedId.Should().NotBeEmpty();
         response.BreedName.Should().NotBeEmpty();
         response.Sex.Should().BeDefined();
+        response.Slug.Should().NotBeEmpty();
         response.DateOfBirth.Should().NotBe(default);
         response.Images.Should().HaveCount(expectedImageCount);
     }

@@ -4,7 +4,7 @@ public class Animal : Aggregate
 {
     public const int NameMaxLength = 30;
     public const int DescriptionMaxLength = 2000;
-    public const int SlugMaxLength = 60;
+    public const int SlugMaxLength = NameMaxLength + Breed.NameMaxLength + 20;
 
     public required string Name { get; set; }
     public string? Description { get; set; }

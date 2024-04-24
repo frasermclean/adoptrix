@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="FluentResults"/>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Humanizer.Core" />
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Microsoft.Extensions.Options" />
