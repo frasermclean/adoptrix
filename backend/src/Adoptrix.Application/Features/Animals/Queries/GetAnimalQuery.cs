@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Adoptrix.Application.Features.Animals.Queries;
 
-public record GetAnimalQuery(Guid AnimalId) : IRequest<Result<Animal>>;
+public record GetAnimalQuery(string AnimalIdOrSlug) : IRequest<Result<Animal>>;

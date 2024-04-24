@@ -1,7 +1,9 @@
-﻿using Adoptrix.Application.Features.Animals.Queries;
+﻿using Adoptrix.Application.Errors;
+using Adoptrix.Application.Features.Animals.Queries;
 using Adoptrix.Application.Features.Animals.Responses;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
@@ -55,6 +57,30 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
             .Include(animal => animal.Breed)
             .ThenInclude(breed => breed.Species)
             .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<Result<Animal>> GetAsync(Guid animalId, CancellationToken cancellationToken = default)
+    {
+        var animal =  await DbContext.Animals.Where(animal => animal.Id == animalId)
+            .Include(animal => animal.Breed)
+            .ThenInclude(breed => breed.Species)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return animal is null
+            ? new AnimalNotFoundError(animalId)
+            : animal;
+    }
+
+    public async Task<Result<Animal>> GetAsync(string animalSlug, CancellationToken cancellationToken = default)
+    {
+        var animal =  await DbContext.Animals.Where(animal => animal.Slug == animalSlug)
+            .Include(animal => animal.Breed)
+            .ThenInclude(breed => breed.Species)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return animal is null
+            ? new AnimalNotFoundError(animalSlug)
+            : animal;
     }
 
     public async Task AddAsync(Animal animal, CancellationToken cancellationToken = default)
