@@ -37,7 +37,7 @@ public class AnimalsController(ISender sender) : ApiController
         var result = await sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-            ? CreatedAtAction(nameof(GetAnimal), new { animalId = result.Value.Id }, result.Value.ToResponse())
+            ? CreatedAtAction(nameof(GetAnimal), new { animalIdOrSlug = result.Value.Slug }, result.Value.ToResponse())
             : Problem(result.Errors);
     }
 

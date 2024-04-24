@@ -36,6 +36,12 @@ public static class AnimalsRepositoryMockSetup
                 ? null
                 : AnimalFactory.Create(animalId));
 
+        mock.Setup(repository => repository.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid animalId, CancellationToken _) => AnimalFactory.Create(animalId));
+
+        mock.Setup(repository => repository.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string animalSlug, CancellationToken _) => AnimalFactory.Create(slug: animalSlug));
+
         return mock;
     }
 }

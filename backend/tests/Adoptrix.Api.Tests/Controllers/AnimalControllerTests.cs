@@ -5,6 +5,7 @@ using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Api.Tests.Fixtures.Mocks;
+using Adoptrix.Application.Errors;
 using Adoptrix.Application.Features.Animals.Responses;
 using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -45,14 +46,15 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
         var response = await DeserializeJsonBody<AnimalResponse>(message);
         ValidateAnimalResponse(response);
         AnimalsRepositoryMock.Verify(
-            repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()), Times.Once);
+            repository => repository.GetAsync(animalId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    [Fact]
-    public async Task GetAnimal_WithUnknownAnimalId_ShouldReturnNotFound()
+    [Theory, AutoData]
+    public async Task GetAnimal_WithUnknownAnimalId_ShouldReturnNotFound(Guid animalId)
     {
         // arrange
-        var animalId = AnimalsRepositoryMockSetup.UnknownAnimalId;
+        AnimalsRepositoryMock.Setup(repository => repository.GetAsync(animalId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new AnimalNotFoundError(animalId));
 
         // act
         var message = await HttpClient.GetAsync($"api/animals/{animalId}");
@@ -60,7 +62,7 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
         AnimalsRepositoryMock.Verify(
-            repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()), Times.Once);
+            repository => repository.GetAsync(animalId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -68,10 +70,13 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
     {
         // arrange
         var uri = new Uri("api/animals", UriKind.Relative);
-        var data = CreateSetAnimalData();
+        var request = CreateSetAnimalRequest();
+        const string expectedSlug = "max-golden-retriever-2020-01-01";
+        AnimalsRepositoryMock.Setup(repository => repository.GetAsync(expectedSlug, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new AnimalNotFoundError(expectedSlug));
 
         // act
-        var message = await HttpClient.PostAsJsonAsync(uri, data);
+        var message = await HttpClient.PostAsJsonAsync(uri, request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
@@ -86,14 +91,14 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
     [InlineData("Max", "")]
     [InlineData(null, null)]
     public async Task AddAnimal_WithInvalidRequest_ShouldReturnProblemDetails(string? name, string? description,
-        Guid breedId = default, Sex sex = default, int ageInYears = default)
+        Guid breedId = default, Sex sex = default)
     {
         // arrange
         var uri = new Uri("api/animals", UriKind.Relative);
-        var data = CreateSetAnimalData(name!, description, breedId, sex, ageInYears);
+        var request = CreateSetAnimalRequest(name!, description, breedId, sex);
 
         // act
-        var message = await HttpClient.PostAsJsonAsync(uri, data);
+        var message = await HttpClient.PostAsJsonAsync(uri, request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -107,10 +112,10 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
         // arrange
         var animalId = Guid.NewGuid();
         var uri = new Uri($"api/animals/{animalId}", UriKind.Relative);
-        var data = CreateSetAnimalData();
+        var request = CreateSetAnimalRequest();
 
         // act
-        var message = await HttpClient.PutAsJsonAsync(uri, data);
+        var message = await HttpClient.PutAsJsonAsync(uri, request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -125,10 +130,10 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
         // arrange
         var animalId = Guid.NewGuid();
         var uri = new Uri($"api/animals/{animalId}", UriKind.Relative);
-        var data = CreateSetAnimalData(name: null!);
+        var request = CreateSetAnimalRequest(name: null!);
 
         // act
-        var message = await HttpClient.PutAsJsonAsync(uri, data);
+        var message = await HttpClient.PutAsJsonAsync(uri, request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -142,10 +147,10 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
         // arrange
         var animalId = AnimalsRepositoryMockSetup.UnknownAnimalId;
         var uri = new Uri($"api/animals/{animalId}", UriKind.Relative);
-        var data = CreateSetAnimalData();
+        var request = CreateSetAnimalRequest();
 
         // act
-        var message = await HttpClient.PutAsJsonAsync(uri, data);
+        var message = await HttpClient.PutAsJsonAsync(uri, request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
@@ -214,9 +219,13 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
-    private static SetAnimalRequest CreateSetAnimalData(string name = "Max", string? description = "A good boy",
-        Guid? breedId = null, Sex sex = Sex.Male, int ageInYears = 2) => new(name, description,
-        breedId ?? Guid.NewGuid(), sex, DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * ageInYears)));
+    private static SetAnimalRequest CreateSetAnimalRequest(string name = "Max", string? description = "A good boy",
+        Guid? breedId = null, Sex sex = Sex.Male, DateOnly? dateOfBirth = null) => new(
+        name,
+        description,
+        breedId ?? Guid.NewGuid(),
+        sex,
+        dateOfBirth ?? DateOnly.Parse("2020-01-01"));
 
     private static void ValidateAnimalResponse(AnimalResponse response, int expectedImageCount = 0)
     {

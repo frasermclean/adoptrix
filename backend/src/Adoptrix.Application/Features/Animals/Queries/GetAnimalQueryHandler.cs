@@ -10,8 +10,10 @@ public class GetAnimalQueryHandler(IAnimalsRepository animalsRepository)
 {
     public async Task<Result<Animal>> Handle(GetAnimalQuery query, CancellationToken cancellationToken)
     {
-        return Guid.TryParse(query.AnimalIdOrSlug, out var animalId)
+        var result = Guid.TryParse(query.AnimalIdOrSlug, out var animalId)
             ? await animalsRepository.GetAsync(animalId, cancellationToken)
             : await animalsRepository.GetAsync(query.AnimalIdOrSlug, cancellationToken);
+
+        return result;
     }
 }
