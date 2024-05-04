@@ -10,4 +10,5 @@ public record AddAnimalCommand(
     Guid BreedId,
     Sex Sex,
     DateOnly DateOfBirth,
-    Guid UserId) : IRequest<Result<Animal>>;
+    Guid UserId,
+    bool ShouldGenerateDescription = false) : IRequest<Result<Animal>>;
