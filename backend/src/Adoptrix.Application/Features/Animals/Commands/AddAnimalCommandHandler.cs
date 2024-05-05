@@ -10,8 +10,7 @@ namespace Adoptrix.Application.Features.Animals.Commands;
 public class AddAnimalCommandHandler(
     ILogger<AddAnimalCommandHandler> logger,
     IAnimalsRepository animalsRepository,
-    IBreedsRepository breedsRepository,
-    IAnimalAssistant animalAssistant)
+    IBreedsRepository breedsRepository)
     : IRequestHandler<AddAnimalCommand, Result<Animal>>
 {
     public async Task<Result<Animal>> Handle(AddAnimalCommand command, CancellationToken cancellationToken)
@@ -23,14 +22,10 @@ public class AddAnimalCommandHandler(
             return new BreedNotFoundError(command.BreedId);
         }
 
-        var description = command.ShouldGenerateDescription
-            ? await animalAssistant.GenerateDescriptionAsync(command.Name, breed, command.Sex, command.DateOfBirth)
-            : command.Description;
-
         var animal = new Animal
         {
             Name = command.Name,
-            Description = description,
+            Description = command.Description,
             Breed = breed,
             Sex = command.Sex,
             DateOfBirth = command.DateOfBirth,
