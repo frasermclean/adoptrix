@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Adoptrix.AI.DependencyInjection;
 using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
@@ -45,7 +46,8 @@ public static class ServiceRegistration
             .AddProblemDetails()
             .AddApplicationServices()
             .AddDatabaseServices(builder.Configuration)
-            .AddStorageServices(builder.Configuration);
+            .AddStorageServices(builder.Configuration)
+            .AddAiServices();
 
         // local development services
         if (builder.Environment.IsDevelopment())

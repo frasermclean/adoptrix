@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Adoptrix.AI\Adoptrix.AI.csproj" />
     <ProjectReference Include="..\Adoptrix.Database\Adoptrix.Database.csproj" />
     <ProjectReference Include="..\Adoptrix.Storage\Adoptrix.Storage.csproj" />    
   </ItemGroup>
