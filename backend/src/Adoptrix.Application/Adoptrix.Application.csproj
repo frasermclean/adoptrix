@@ -12,8 +12,7 @@
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Microsoft.Extensions.Options" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-    <PackageReference Include="Microsoft.Identity.Web" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />    
     <PackageReference Include="SixLabors.ImageSharp" />
   </ItemGroup>
 
