@@ -19,6 +19,12 @@ param configurationDataOwners array = []
 @description('Array of prinicpal IDs that have read access to the configuration data')
 param configurationDataReaders array = []
 
+@description('Container registry name')
+param containerRegistryName string
+
+@description('Container registry resource group')
+param containerRegistryResourceGroup string
+
 var tags = {
   workload: workload
   category: category
@@ -94,6 +100,15 @@ module roleAssignments 'roleAssignments.bicep' = {
     appConfigurationName: appConfiguration.name
     configurationDataOwners: configurationDataOwners
     configurationDataReaders: configurationDataReaders
+  }
+}
+
+module containerRegistryRoleAssingmentModule 'containerRegistryRoleAssignment.bicep' = {
+  name: 'containerRegistryRoleAssingment-${workload}-${category}'
+  scope: resourceGroup(containerRegistryResourceGroup)
+  params: {
+    containerRegistryName: containerRegistryName
+    principalId: managedIdentity.properties.principalId
   }
 }
 
