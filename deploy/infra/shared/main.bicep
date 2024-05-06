@@ -13,12 +13,6 @@ param location string = resourceGroup().location
 @description('Domain name')
 param domainName string
 
-@description('Microsoft Entra instance')
-param authenticationInstance string
-
-@description('Microsoft Entra tenant ID')
-param authenticationTenantId string
-
 @description('Array of prinicpal IDs that have read and write access to the configuration data')
 param configurationDataOwners array = []
 
@@ -53,6 +47,18 @@ resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' = {
   }
 }
 
+// entra id directory
+resource entraIdDirectory 'Microsoft.AzureActiveDirectory/ciamDirectories@2023-05-17-preview' existing = {
+  name: '${workload}.onmicrosoft.com'
+}
+
+// user assigned managed identity
+resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: '${workload}-${category}-id'
+  location: location
+  tags: tags
+}
+
 // app configuration
 resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-03-01' = {
   name: '${workload}-${category}-ac'
@@ -68,7 +74,7 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
   resource authenticationInstanceKeyValue 'keyValues' = {
     name: 'Authentication:Instance'
     properties: {
-      value: authenticationInstance
+      value: 'https://${workload}.ciamlogin.com'
       contentType: 'text/plain'
     }
   }
@@ -76,7 +82,7 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
   resource authenticationTenantIdKeyValue 'keyValues' = {
     name: 'Authentication:TenantId'
     properties: {
-      value: authenticationTenantId
+      value: entraIdDirectory.properties.tenantId
       contentType: 'text/plain'
     }
   }
