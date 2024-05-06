@@ -276,6 +276,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' =
       functionAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
       storageAccountName: storageAccount.name
       applicationInsightsName: appInsightsModule.outputs.applicationInsightsName
+      azureOpenAiName: azureOpenAi.name
     }
   }
 
