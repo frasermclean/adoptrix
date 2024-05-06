@@ -11,6 +11,6 @@ export const environment: Environment = {
   },
   appInsights: {
     connectionString:
-      'InstrumentationKey=197c296e-252b-4c50-bf68-e0094b35bd8d;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/;ApplicationId=ed4a05e7-9b22-4748-a9f0-6e919b052aa1',
+      'InstrumentationKey=c1f91173-56d4-4237-a79f-04f5d08e2af5;IngestionEndpoint=https://australiaeast-1.in.applicationinsights.azure.com/;LiveEndpoint=https://australiaeast.livediagnostics.monitor.azure.com/;ApplicationId=b180f887-d8c3-491d-8660-c9f59163789b',
   },
 };
