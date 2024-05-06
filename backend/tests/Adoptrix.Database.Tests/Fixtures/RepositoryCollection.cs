@@ -2,9 +2,7 @@
 
 namespace Adoptrix.Database.Tests.Fixtures;
 
-public class RepositoryCollection
-{
-    public required IAnimalsRepository AnimalsRepository { get; init; }
-    public required IBreedsRepository BreedsRepository { get; init; }
-    public required ISpeciesRepository SpeciesRepository { get; init; }
-}
+public record RepositoryCollection(
+    IAnimalsRepository AnimalsRepository,
+    IBreedsRepository BreedsRepository,
+    ISpeciesRepository SpeciesRepository);

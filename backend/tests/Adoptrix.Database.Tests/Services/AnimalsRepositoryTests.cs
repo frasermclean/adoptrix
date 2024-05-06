@@ -14,8 +14,7 @@ public class AnimalsRepositoryTests
     public AnimalsRepositoryTests(DatabaseFixture fixture)
     {
         var collection = fixture.GetRepositoryCollection();
-        animalsRepository = collection.AnimalsRepository;
-        breedsRepository = collection.BreedsRepository;
+        (animalsRepository, breedsRepository, _) = collection;
     }
 
     [Fact]
@@ -51,5 +50,21 @@ public class AnimalsRepositoryTests
         animal.Sex.Should().Be(animalToAdd.Sex);
         animal.DateOfBirth.Should().Be(animalToAdd.DateOfBirth);
         animal.CreatedBy.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WithValidAnimal_ShouldPass()
+    {
+        // arrange
+        var breed = await breedsRepository.GetByIdAsync(BreedIds.GoldenRetriever);
+        var animalToAdd = AnimalFactory.Create(breed: breed);
+        await animalsRepository.AddAsync(animalToAdd);
+
+        // act
+        await animalsRepository.DeleteAsync(animalToAdd);
+        var animal = await animalsRepository.GetByIdAsync(animalToAdd.Id);
+
+        // assert
+        animal.Should().BeNull();
     }
 }

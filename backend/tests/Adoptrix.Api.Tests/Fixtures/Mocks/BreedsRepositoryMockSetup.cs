@@ -6,9 +6,6 @@ namespace Adoptrix.Api.Tests.Fixtures.Mocks;
 
 public static class BreedsRepositoryMockSetup
 {
-    public static readonly Guid UnknownBreedId = Guid.NewGuid();
-    public const string UnknownBreedName = "unknown-breed";
-
     public static Mock<IBreedsRepository> SetupDefaults(this Mock<IBreedsRepository> mock, int searchResultsCount = 3)
     {
         mock.Setup(repository =>
@@ -20,14 +17,10 @@ public static class BreedsRepositoryMockSetup
                 }));
 
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid breedId, CancellationToken _) => breedId == UnknownBreedId
-                ? null
-                : BreedFactory.Create(breedId));
+            .ReturnsAsync((Guid breedId, CancellationToken _) => BreedFactory.Create(breedId));
 
         mock.Setup(repository => repository.GetByNameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string breedName, CancellationToken _) => breedName == UnknownBreedName
-                ? null
-                : BreedFactory.Create(name: breedName));
+            .ReturnsAsync((string breedName, CancellationToken _) => BreedFactory.Create(name: breedName));
 
         return mock;
     }

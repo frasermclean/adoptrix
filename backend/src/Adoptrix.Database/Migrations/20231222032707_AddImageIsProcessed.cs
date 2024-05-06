@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Adoptrix.Infrastructure.Migrations
+namespace Adoptrix.Database.Migrations
 {
     /// <inheritdoc />
     public partial class AddImageIsProcessed : Migration

@@ -1,6 +1,6 @@
-﻿using Adoptrix.Api.Contracts.Responses;
-using Adoptrix.Api.Mapping;
+﻿using Adoptrix.Api.Mapping;
 using Adoptrix.Application.Features.Species.Queries;
+using Adoptrix.Application.Features.Species.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +10,9 @@ namespace Adoptrix.Api.Controllers;
 public class SpeciesController(ISender sender) : ApiController
 {
     [HttpGet, AllowAnonymous]
-    public async Task<IEnumerable<SpeciesResponse>> GetAllSpecies(CancellationToken cancellationToken)
+    public async Task<IEnumerable<SearchSpeciesMatch>> SearchSpecies([FromQuery] SearchSpeciesQuery query,  CancellationToken cancellationToken)
     {
-        var allSpecies = await sender.Send(new GetAllSpeciesQuery(), cancellationToken);
-        return allSpecies.Select(species => species.ToResponse());
+        return await sender.Send(query, cancellationToken);
     }
 
     [HttpGet("{speciesId:guid}"), AllowAnonymous]

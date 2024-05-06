@@ -10,7 +10,7 @@ import { AnimalDetailsComponent } from './animal-details/animal-details.componen
 import { AnimalAdminControlsComponent } from './animal-admin-controls/animal-admin-controls.component';
 import { AnimalsState } from '@state/animals.state';
 import { AnimalsActions } from '@state/animals.actions';
-import { AuthState } from '../../auth/auth.state';
+import { AuthState } from '@state/auth.state';
 
 @Component({
   selector: 'app-animal-view',

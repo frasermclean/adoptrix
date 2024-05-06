@@ -8,6 +8,9 @@ export interface Environment {
   auth: {
     clientId: string;
     redirectUri: string;
-    scopes: string[];
+    appIdUri: string;
+  };
+  appInsights: {
+    connectionString: string;
   };
 }

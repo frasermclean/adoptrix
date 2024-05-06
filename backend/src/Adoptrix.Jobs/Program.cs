@@ -1,5 +1,4 @@
 using Adoptrix.Application.DependencyInjection;
-using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Storage.DependencyInjection;
 using Azure.Identity;
@@ -39,12 +38,9 @@ public static class Program
                 services.AddApplicationInsightsTelemetryWorkerService();
                 services.ConfigureFunctionsApplicationInsights();
 
-                services.AddMediatR(configuration =>
-                    configuration.RegisterServicesFromAssemblyContaining<AddAnimalCommandHandler>());
-
                 // local project services
                 services.AddApplicationServices();
-                services.AddDatabaseServices();
+                services.AddDatabaseServices(context.Configuration);
                 services.AddStorageServices(context.Configuration);
             })
             .ConfigureLogging(builder =>

@@ -19,10 +19,10 @@ public class DatabaseFixture : IAsyncLifetime
     {
         await container.StartAsync();
         var connectionString = container.GetConnectionString();
+        var configuration = CreateConfiguration(connectionString);
 
         serviceProvider = new ServiceCollection()
-            .AddSingleton(CreateConfiguration(connectionString))
-            .AddDatabaseServices()
+            .AddDatabaseServices(configuration)
             .AddLogging()
             .BuildServiceProvider();
 
@@ -47,12 +47,11 @@ public class DatabaseFixture : IAsyncLifetime
         var scope = serviceProvider?.CreateScope() ??
                     throw new InvalidOperationException("Service provider is not initialized");
 
-        return new RepositoryCollection
-        {
-            AnimalsRepository = scope.ServiceProvider.GetRequiredService<IAnimalsRepository>(),
-            BreedsRepository = scope.ServiceProvider.GetRequiredService<IBreedsRepository>(),
-            SpeciesRepository = scope.ServiceProvider.GetRequiredService<ISpeciesRepository>()
-        };
+        return new RepositoryCollection(
+            scope.ServiceProvider.GetRequiredService<IAnimalsRepository>(),
+            scope.ServiceProvider.GetRequiredService<IBreedsRepository>(),
+            scope.ServiceProvider.GetRequiredService<ISpeciesRepository>()
+        );
     }
 
     private static IConfiguration CreateConfiguration(string connectionString)
@@ -60,7 +59,7 @@ public class DatabaseFixture : IAsyncLifetime
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 {
-                    "Database:ConnectionString", connectionString
+                    AdoptrixDbContext.ConnectionStringKey, connectionString
                 }
             })
             .Build();
