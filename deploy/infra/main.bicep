@@ -156,6 +156,39 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
+// azure open ai
+resource azureOpenAi 'Microsoft.CognitiveServices/accounts@2023-10-01-preview' = {
+  name: '${workload}-${appEnv}-oai'
+  location: location
+  tags: tags
+  kind: 'OpenAI'
+  sku: {
+    name: 'S0'
+  }
+  properties: {
+    customSubDomainName: '${workload}-${appEnv}'
+    publicNetworkAccess: 'Enabled'
+  }
+
+  resource textAssistDeployment 'deployments' = {
+    name: 'text-assist'
+    sku: {
+      name: 'Standard'
+      capacity: 120
+    }
+    properties: {
+      currentCapacity: 120
+      raiPolicyName: 'Microsoft.Default'
+      versionUpgradeOption: 'OnceNewDefaultVersionAvailable'
+      model: {
+        format: 'OpenAI'
+        name: 'gpt-35-turbo'
+        version: '1106'
+      }
+    }
+  }
+}
+
 // front end static web app
 module staticWebAppModule 'staticWebApp/main.bicep' = {
   name: 'staticWebApp-frontend${deploymentSuffix}'
@@ -227,6 +260,8 @@ module appConfigModule 'appConfig.bicep' = {
     storageAccountQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
     databaseConnectionString: 'Server=tcp:${sqlServer.name}${environment().suffixes.sqlServerHostname};Database=${sqlServer::database.name};Authentication="Active Directory Default";'
     containerAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
+    openAiEndpoint: azureOpenAi.properties.endpoint
+    openAiDeploymentName: azureOpenAi::textAssistDeployment.name
     attemptRoleAssignments: attemptRoleAssignments
   }
 }
