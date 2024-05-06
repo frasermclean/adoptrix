@@ -34,7 +34,7 @@ param attemptRoleAssignments bool
 resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
   name: appConfigurationName
 
-  resource applicationInsightsConnectionStringKeyVault 'keyValues' = {
+  resource applicationInsightsConnectionStringKeyValue 'keyValues' = {
     name: 'ApplicationInsights:ConnectionString$${appEnv}'
     properties: {
       value: applicationInsightsConnectionString
