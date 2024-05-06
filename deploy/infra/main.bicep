@@ -166,12 +166,12 @@ module staticWebAppModule 'staticWebApp/main.bicep' = {
     domainName: domainName
     sharedResourceGroup: sharedResourceGroup
     #disable-next-line no-hardcoded-location // static web apps have limited locations
-    location: 'eastasia'
+    location: 'centralus'
   }
 }
 
 module appInsightsModule 'appInsights.bicep' = {
-  name: 'appInsights-${deploymentSuffix}'
+  name: 'appInsights${deploymentSuffix}'
   params: {
     workload: workload
     appEnv: appEnv
@@ -247,7 +247,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' =
 // shared resource role assignments
 module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' =
   if (attemptRoleAssignments) {
-    name: 'roleAssignments-${appEnv}-${deploymentSuffix}'
+    name: 'roleAssignments-${appEnv}${deploymentSuffix}'
     scope: resourceGroup(sharedResourceGroup)
     params: {
       appConfigurationName: appConfigurationName
