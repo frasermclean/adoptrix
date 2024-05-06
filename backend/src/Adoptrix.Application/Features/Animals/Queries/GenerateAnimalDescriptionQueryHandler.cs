@@ -5,9 +5,9 @@ using MediatR;
 namespace Adoptrix.Application.Features.Animals.Queries;
 
 public class GenerateAnimalDescriptionQueryHandler(IAnimalAssistant animalAssistant)
-: IRequestHandler<GenerateAnimalDescriptionQuery, GenerateAnimalDescriptionResponse>
+: IRequestHandler<GenerateAnimalDescriptionQuery, AnimalDescriptionResponse>
 {
-    public async Task<GenerateAnimalDescriptionResponse> Handle(GenerateAnimalDescriptionQuery query, CancellationToken cancellationToken)
+    public async Task<AnimalDescriptionResponse> Handle(GenerateAnimalDescriptionQuery query, CancellationToken cancellationToken)
     {
         return await animalAssistant.GenerateDescriptionAsync(query, cancellationToken);
     }

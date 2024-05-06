@@ -9,4 +9,4 @@ public record GenerateAnimalDescriptionQuery(
     string BreedName,
     string SpeciesName,
     Sex Sex,
-    DateOnly DateOfBirth) : IRequest<GenerateAnimalDescriptionResponse>;
+    DateOnly DateOfBirth) : IRequest<AnimalDescriptionResponse>;

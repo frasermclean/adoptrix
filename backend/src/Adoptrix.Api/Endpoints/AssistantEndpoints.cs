@@ -6,7 +6,7 @@ namespace Adoptrix.Api.Endpoints;
 
 public static class AssistantEndpoints
 {
-    public static async Task<GenerateAnimalDescriptionResponse> GenerateAnimalDescription(ISender sender,
+    public static async Task<AnimalDescriptionResponse> GenerateAnimalDescription(ISender sender,
         [AsParameters] GenerateAnimalDescriptionQuery query)
     {
         var response = await sender.Send(query);

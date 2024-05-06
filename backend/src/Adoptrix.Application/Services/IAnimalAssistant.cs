@@ -8,5 +8,5 @@ namespace Adoptrix.Application.Services;
 /// </summary>
 public interface IAnimalAssistant
 {
-    Task<GenerateAnimalDescriptionResponse> GenerateDescriptionAsync(GenerateAnimalDescriptionQuery query, CancellationToken cancellationToken = default);
+    Task<AnimalDescriptionResponse> GenerateDescriptionAsync(GenerateAnimalDescriptionQuery query, CancellationToken cancellationToken = default);
 }

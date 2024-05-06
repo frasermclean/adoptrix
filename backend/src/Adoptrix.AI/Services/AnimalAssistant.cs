@@ -12,7 +12,7 @@ public class AnimalAssistant(OpenAIClient client, IOptions<OpenAiOptions> option
 {
     private readonly string deploymentName = options.Value.DeploymentName;
 
-    public async Task<GenerateAnimalDescriptionResponse> GenerateDescriptionAsync(GenerateAnimalDescriptionQuery query, CancellationToken cancellationToken)
+    public async Task<AnimalDescriptionResponse> GenerateDescriptionAsync(GenerateAnimalDescriptionQuery query, CancellationToken cancellationToken)
     {
         var (animalName, breedName, speciesName, sex, dateOfBirth) = query;
 
@@ -33,6 +33,6 @@ public class AnimalAssistant(OpenAIClient client, IOptions<OpenAiOptions> option
 
         var response = await client.GetChatCompletionsAsync(options, cancellationToken);
 
-        return new GenerateAnimalDescriptionResponse(response.Value.Choices[0].Message.Content);
+        return new AnimalDescriptionResponse(response.Value.Choices[0].Message.Content);
     }
 }
