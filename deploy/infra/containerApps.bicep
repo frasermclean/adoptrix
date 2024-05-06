@@ -35,6 +35,9 @@ param apiImageTag string
 @description('Array of front-end origins that are allowed to access the app service')
 param corsAllowedOrigins array
 
+@description('Flag to create a managed certificate for the API container app. Set to true on first run.')
+param shouldBindManagedCertificate bool = false
+
 var tags = {
   workload: workload
   appEnv: appEnv
@@ -42,6 +45,12 @@ var tags = {
 
 var containerRegistryLoginServer = '${containerRegistryName}${environment().suffixes.acrLoginServer}'
 var apiContainerAppName = '${workload}-${appEnv}-api-ca'
+
+// shared user assigned managed identity
+resource sharedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
+  name: '${workload}-shared-id'
+  scope: resourceGroup(sharedResourceGroup)
+}
 
 // container apps environment
 resource appsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
@@ -54,15 +63,16 @@ resource appsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
     }
   }
 
-  resource commentsCertificate 'managedCertificates' = {
-    name: 'api-cert'
-    location: location
-    tags: tags
-    properties: {
-      subjectName: dnsRecordsModule.outputs.apiFqdn
-      domainControlValidation: 'CNAME'
+  resource commentsCertificate 'managedCertificates' =
+    if (!shouldBindManagedCertificate) {
+      name: 'api-cert'
+      location: location
+      tags: tags
+      properties: {
+        subjectName: dnsRecordsModule.outputs.apiFqdn
+        domainControlValidation: 'CNAME'
+      }
     }
-  }
 }
 
 // container apps environment diagnostic settings
@@ -101,7 +111,10 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
   location: location
   tags: union(tags, { appName: 'api' })
   identity: {
-    type: 'SystemAssigned'
+    type: 'SystemAssigned,UserAssigned'
+    userAssignedIdentities: {
+      '${sharedIdentity.id}': {}
+    }
   }
   properties: {
     environmentId: appsEnvironment.id
@@ -121,8 +134,8 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
         customDomains: [
           {
             name: dnsRecordsModule.outputs.apiFqdn
-            bindingType: 'SniEnabled'
-            certificateId: appsEnvironment::commentsCertificate.id
+            bindingType: shouldBindManagedCertificate ? 'Disabled' : 'SniEnabled'
+            certificateId: shouldBindManagedCertificate ? null : appsEnvironment::commentsCertificate.id
           }
         ]
         corsPolicy: {
@@ -132,7 +145,7 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
       registries: [
         {
           server: containerRegistryLoginServer
-          identity: 'System'
+          identity: sharedIdentity.id
         }
       ]
     }
