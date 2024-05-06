@@ -3,24 +3,27 @@ using Adoptrix.AI.Services;
 using Adoptrix.Application.Services;
 using Azure.AI.OpenAI;
 using Azure.Identity;
+using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace Adoptrix.AI.DependencyInjection;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddAiServices(this IServiceCollection services)
+    public static IServiceCollection AddAiServices(this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddOptions<OpenAiOptions>()
             .BindConfiguration(OpenAiOptions.SectionName)
             .ValidateDataAnnotations();
 
-        services.AddSingleton(provider =>
+        services.AddAzureClients(builder =>
         {
-            var options = provider.GetRequiredService<IOptions<OpenAiOptions>>();
-            var endpointUri = new Uri(options.Value.Endpoint);
-            return new OpenAIClient(endpointUri, new DefaultAzureCredential());
+            const string key = $"{OpenAiOptions.SectionName}:{nameof(OpenAiOptions.Endpoint)}";
+            var endpoint = configuration.GetValue<string>(key);
+            builder.AddOpenAIClient(new Uri(endpoint!));
+            builder.UseCredential(new DefaultAzureCredential());
         });
 
         services.AddScoped<IAnimalAssistant, AnimalAssistant>();

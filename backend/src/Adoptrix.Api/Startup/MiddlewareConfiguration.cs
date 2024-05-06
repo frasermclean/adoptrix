@@ -1,4 +1,6 @@
-﻿namespace Adoptrix.Api.Startup;
+﻿using Adoptrix.Api.Endpoints;
+
+namespace Adoptrix.Api.Startup;
 
 public static class MiddlewareConfiguration
 {
@@ -23,8 +25,17 @@ public static class MiddlewareConfiguration
 
         // map endpoints
         app.MapControllers();
+        app.MapEndpoints();
         app.MapHealthChecks("/health").AllowAnonymous();
 
         return app;
+    }
+
+    private static void MapEndpoints(this IEndpointRouteBuilder routeBuilder)
+    {
+        var apiGroup = routeBuilder.MapGroup("api");
+
+        var assistantsGroup = apiGroup.MapGroup("assistants");
+        assistantsGroup.MapGet("animals/description", AssistantEndpoints.GenerateAnimalDescription);
     }
 }

@@ -27,7 +27,7 @@ public class AnimalAssistant(OpenAIClient client, IOptions<OpenAiOptions> option
                 new ChatRequestSystemMessage(
                     "You are a system which generates descriptions of animals that are available for adoption."),
                 new ChatRequestUserMessage(
-                    $"Generate a description for a {sex.ToString().ToLowerInvariant()}, {breedName}, ${speciesName} named {animalName} who is currently ${age}")
+                    $"Generate a description for a {sex.ToString().ToLowerInvariant()}, {breedName}, {speciesName} named {animalName} who is currently {age}")
             }
         };
 

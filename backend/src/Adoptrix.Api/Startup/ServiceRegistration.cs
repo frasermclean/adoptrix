@@ -47,7 +47,7 @@ public static class ServiceRegistration
             .AddApplicationServices()
             .AddDatabaseServices(builder.Configuration)
             .AddStorageServices(builder.Configuration)
-            .AddAiServices();
+            .AddAiServices(builder.Configuration);
 
         // local development services
         if (builder.Environment.IsDevelopment())

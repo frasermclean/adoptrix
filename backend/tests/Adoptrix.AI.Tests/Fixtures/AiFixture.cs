@@ -19,8 +19,7 @@ public class AiFixture
             .Build();
 
         serviceProvider = new ServiceCollection()
-            .AddSingleton<IConfiguration>(configuration)
-            .AddAiServices()
+            .AddAiServices(configuration)
             .BuildServiceProvider();
     }
 

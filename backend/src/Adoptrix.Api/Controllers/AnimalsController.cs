@@ -89,12 +89,4 @@ public class AnimalsController(ISender sender) : ApiController
             ? Ok(result.Value.ToResponse())
             : Problem(result.Errors);
     }
-
-    [HttpGet("description")]
-    public async Task<ActionResult<string>> GenerateAnimalDescription([FromQuery] GenerateAnimalDescriptionQuery query,
-        CancellationToken cancellationToken)
-    {
-        var description = await sender.Send(query, cancellationToken);
-        return Ok(description);
-    }
 }
