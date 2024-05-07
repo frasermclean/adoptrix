@@ -15,9 +15,7 @@ public class AnimalAssistant(OpenAIClient client, IOptions<OpenAiOptions> option
     public async Task<AnimalDescriptionResponse> GenerateDescriptionAsync(GenerateAnimalDescriptionQuery query, CancellationToken cancellationToken)
     {
         var (animalName, breedName, speciesName, sex, dateOfBirth) = query;
-
-        var ageSpan = DateTime.UtcNow - dateOfBirth.ToDateTime(TimeOnly.MinValue);
-        var age = ageSpan.Humanize();
+        var age = (DateTime.UtcNow - dateOfBirth.ToDateTime(TimeOnly.MinValue)).ToAge();
 
         var options = new ChatCompletionsOptions
         {
