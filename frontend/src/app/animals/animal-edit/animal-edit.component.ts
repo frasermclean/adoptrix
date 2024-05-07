@@ -96,7 +96,7 @@ export class AnimalEditComponent implements OnInit {
 
   onSubmit() {
     const value = this.formGroup.getRawValue();
-    this.dialogRef.close({ ...value, dateOfBirth: value.dateOfBirth.toISOString().split('T')[0] });
+    this.dialogRef.close(value);
   }
 
   getDescriptionSuggestion() {}

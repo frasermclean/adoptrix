@@ -38,5 +38,5 @@ export interface SetAnimalRequest {
   speciesId: string;
   breedId: string;
   sex: Sex;
-  dateOfBirth: string;
+  dateOfBirth: Date;
 }

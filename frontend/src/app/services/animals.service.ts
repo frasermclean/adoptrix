@@ -4,6 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { Animal, SearchAnimalsQuery, SearchAnimalsResult, SetAnimalRequest } from '@models/animal.models';
+import { DateUtilities } from '../utilities/date.utilities';
 
 @Injectable({
   providedIn: 'root',
@@ -34,16 +35,25 @@ export class AnimalsService {
   }
 
   public addAnimal(request: SetAnimalRequest): Observable<Animal> {
-    return this.httpClient.post<Animal>(this.baseUrl, request);
+    const body = this.mapRequestToBody(request);
+    return this.httpClient.post<Animal>(this.baseUrl, body);
   }
 
   public updateAnimal(animalId: string, request: SetAnimalRequest) {
     const url = `${this.baseUrl}/${animalId}`;
-    return this.httpClient.put<Animal>(url, request);
+    const body = this.mapRequestToBody(request);
+    return this.httpClient.put<Animal>(url, body);
   }
 
   public deleteAnimal(animalId: string) {
     const url = `${this.baseUrl}/${animalId}`;
     return this.httpClient.delete(url);
+  }
+
+  private mapRequestToBody(request: SetAnimalRequest) {
+    return {
+      ...request,
+      dateOfBirth: DateUtilities.toDateOnlyString(request.dateOfBirth),
+    };
   }
 }
