@@ -167,6 +167,7 @@ resource azureOpenAi 'Microsoft.CognitiveServices/accounts@2023-10-01-preview' =
   }
   properties: {
     customSubDomainName: '${workload}-${appEnv}'
+    disableLocalAuth: true
     publicNetworkAccess: 'Enabled'
   }
 
