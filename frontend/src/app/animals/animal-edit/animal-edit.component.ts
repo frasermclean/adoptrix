@@ -5,9 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Store } from '@ngxs/store';
 import { SpeciesState } from '@state/species.state';
 import { BreedsActions } from '@state/breeds.actions';
@@ -39,9 +41,11 @@ interface AnimalEditForm {
     MatDatepickerModule,
     MatDialogModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatRadioModule,
     MatSelectModule,
+    MatTooltipModule,
   ],
   templateUrl: './animal-edit.component.html',
   styleUrl: './animal-edit.component.scss',
@@ -54,6 +58,11 @@ export class AnimalEditComponent implements OnInit {
 
   get isEditing() {
     return this.animal !== undefined;
+  }
+
+  get isDescriptionEmpty() {
+    const value = this.formGroup.controls.description.getRawValue();
+    return value === null || value === '';
   }
 
   constructor(
@@ -89,6 +98,8 @@ export class AnimalEditComponent implements OnInit {
     const value = this.formGroup.getRawValue();
     this.dialogRef.close({ ...value, dateOfBirth: value.dateOfBirth.toISOString().split('T')[0] });
   }
+
+  getDescriptionSuggestion() {}
 
   private searchBreeds(speciesId: string) {
     this.store.dispatch(new BreedsActions.Search({ speciesId }));

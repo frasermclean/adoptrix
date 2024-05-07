@@ -7,5 +7,9 @@ form {
 }
 
 .description {
-  min-height: 160px;
+  min-height: 120px;
+}
+
+.spacer {
+  flex-grow: 1;
 }
