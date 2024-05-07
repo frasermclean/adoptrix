@@ -17,6 +17,7 @@ import { BreedsState } from '@state/breeds.state';
 import { SpeciesActions } from '@state/species.actions';
 import { Sex } from '@models/sex.enum';
 import { Animal, SetAnimalRequest } from '@models/animal.models';
+import { AssistantsService } from '@services/assistants.service';
 
 export interface AnimalEditData {
   animal: Animal;
@@ -67,6 +68,7 @@ export class AnimalEditComponent implements OnInit {
 
   constructor(
     private store: Store,
+    private assistantsService: AssistantsService,
     private dialogRef: MatDialogRef<AnimalEditComponent, SetAnimalRequest>,
     formBuilder: NonNullableFormBuilder,
     @Inject(MAT_DIALOG_DATA) data?: AnimalEditData
@@ -99,7 +101,19 @@ export class AnimalEditComponent implements OnInit {
     this.dialogRef.close(value);
   }
 
-  getDescriptionSuggestion() {}
+  async getDescriptionSuggestion() {
+    const speciesName = this.store.selectSnapshot(SpeciesState.speciesName(this.formGroup.controls.speciesId.value));
+
+    const response = await this.assistantsService.generateAnimalDescription(
+      this.formGroup.controls.name.value,
+      this.formGroup.controls.breedId.value,
+      speciesName || '',
+      this.formGroup.controls.sex.value,
+      this.formGroup.controls.dateOfBirth.value
+    );
+
+    this.formGroup.controls.description.setValue(response.description);
+  }
 
   private searchBreeds(speciesId: string) {
     this.store.dispatch(new BreedsActions.Search({ speciesId }));

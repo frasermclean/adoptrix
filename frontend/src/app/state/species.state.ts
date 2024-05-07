@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SearchSpeciesMatch } from '@models/species.model';
-import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
+import { Action, Selector, State, StateContext, StateToken, createSelector } from '@ngxs/store';
 import { catchError, tap } from 'rxjs';
 import { SpeciesService } from '@services/species.service';
 import { SpeciesActions } from './species.actions';
@@ -59,5 +59,11 @@ export class SpeciesState {
   @Selector()
   static matches(state: SpeciesStateModel) {
     return state.matches;
+  }
+
+  static speciesName(speciesId: string) {
+    return createSelector([SpeciesState], (state: SpeciesStateModel) => {
+      return state.all.find((species) => species.speciesId === speciesId)?.speciesName;
+    });
   }
 }
