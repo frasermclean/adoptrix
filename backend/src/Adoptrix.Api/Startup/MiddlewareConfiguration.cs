@@ -36,6 +36,6 @@ public static class MiddlewareConfiguration
         var apiGroup = routeBuilder.MapGroup("api");
 
         var assistantsGroup = apiGroup.MapGroup("assistants");
-        assistantsGroup.MapGet("animals/description", AssistantEndpoints.GenerateAnimalDescription);
+        assistantsGroup.MapGet("animal-description", AssistantEndpoints.GenerateAnimalDescription);
     }
 }
