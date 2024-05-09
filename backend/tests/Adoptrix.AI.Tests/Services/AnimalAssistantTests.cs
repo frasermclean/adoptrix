@@ -1,5 +1,5 @@
 ﻿using Adoptrix.AI.Tests.Fixtures;
-using Adoptrix.Application.Features.Animals.Queries;
+using Adoptrix.Application.Features.Generators.Queries;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
 

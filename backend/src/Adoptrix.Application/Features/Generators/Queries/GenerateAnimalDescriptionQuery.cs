@@ -1,9 +1,9 @@
-﻿using Adoptrix.Application.Features.Animals.Responses;
+﻿using Adoptrix.Application.Features.Generators.Responses;
 using Adoptrix.Domain.Models;
 using FluentResults;
 using MediatR;
 
-namespace Adoptrix.Application.Features.Animals.Queries;
+namespace Adoptrix.Application.Features.Generators.Queries;
 
 public record GenerateAnimalDescriptionQuery(
     string AnimalName,

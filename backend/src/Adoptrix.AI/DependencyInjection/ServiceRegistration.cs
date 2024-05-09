@@ -1,7 +1,6 @@
 ﻿using Adoptrix.AI.Options;
 using Adoptrix.AI.Services;
 using Adoptrix.Application.Services;
-using Azure.AI.OpenAI;
 using Azure.Identity;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;

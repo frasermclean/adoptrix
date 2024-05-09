@@ -1,5 +1,5 @@
-﻿using Adoptrix.Application.Features.Animals.Queries;
-using Adoptrix.Application.Features.Animals.Responses;
+﻿using Adoptrix.Application.Features.Generators.Queries;
+using Adoptrix.Application.Features.Generators.Responses;
 
 namespace Adoptrix.Application.Services;
 
@@ -8,5 +8,9 @@ namespace Adoptrix.Application.Services;
 /// </summary>
 public interface IAnimalAssistant
 {
-    Task<AnimalDescriptionResponse> GenerateDescriptionAsync(GenerateAnimalDescriptionQuery query, CancellationToken cancellationToken = default);
+    Task<AnimalNameResponse> GenerateNameAsync(GenerateAnimalNameQuery query,
+        CancellationToken cancellationToken = default);
+
+    Task<AnimalDescriptionResponse> GenerateDescriptionAsync(GenerateAnimalDescriptionQuery query,
+        CancellationToken cancellationToken = default);
 }

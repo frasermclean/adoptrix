@@ -1,9 +1,9 @@
-﻿using Adoptrix.Application.Features.Animals.Responses;
+﻿using Adoptrix.Application.Features.Generators.Responses;
 using Adoptrix.Application.Services;
 using FluentResults;
 using MediatR;
 
-namespace Adoptrix.Application.Features.Animals.Queries;
+namespace Adoptrix.Application.Features.Generators.Queries;
 
 public class GenerateAnimalDescriptionQueryHandler(IAnimalAssistant animalAssistant)
     : IRequestHandler<GenerateAnimalDescriptionQuery, Result<AnimalDescriptionResponse>>
