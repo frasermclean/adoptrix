@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints;
 
-public static class AssistantEndpoints
+public static class GeneratorEndpoints
 {
-    public static IEndpointRouteBuilder MapAssistantsEndpoints(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder MapGeneratorEndpoints(this IEndpointRouteBuilder builder)
     {
-        var group = builder.MapGroup("api/assistants");
-        
+        var group = builder.MapGroup("api/generators");
+
         group.MapGet("animal-description", GenerateAnimalDescription);
         group.MapGet("animal-name", GenerateAnimalName);
 

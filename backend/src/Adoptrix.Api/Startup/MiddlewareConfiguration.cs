@@ -33,6 +33,6 @@ public static class MiddlewareConfiguration
 
     private static void MapEndpoints(this IEndpointRouteBuilder builder)
     {
-        builder.MapAssistantsEndpoints();
+        builder.MapGeneratorEndpoints();
     }
 }
