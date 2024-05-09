@@ -8,7 +8,15 @@ namespace Adoptrix.Api.Endpoints;
 
 public static class AssistantEndpoints
 {
-    public static async Task<Results<Ok<AnimalDescriptionResponse>, ProblemHttpResult>> GenerateAnimalDescription(
+    public static IEndpointRouteBuilder MapAssistantsEndpoints(this IEndpointRouteBuilder builder)
+    {
+        var group = builder.MapGroup("api/assistants");
+        group.MapGet("animal-description", GenerateAnimalDescription);
+
+        return builder;
+    }
+
+    private static async Task<Results<Ok<AnimalDescriptionResponse>, ProblemHttpResult>> GenerateAnimalDescription(
         ISender sender, [AsParameters] GenerateAnimalDescriptionQuery query)
     {
         var result = await sender.Send(query);

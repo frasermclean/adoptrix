@@ -31,11 +31,8 @@ public static class MiddlewareConfiguration
         return app;
     }
 
-    private static void MapEndpoints(this IEndpointRouteBuilder routeBuilder)
+    private static void MapEndpoints(this IEndpointRouteBuilder builder)
     {
-        var apiGroup = routeBuilder.MapGroup("api");
-
-        var assistantsGroup = apiGroup.MapGroup("assistants");
-        assistantsGroup.MapGet("animal-description", AssistantEndpoints.GenerateAnimalDescription);
+        builder.MapAssistantsEndpoints();
     }
 }
