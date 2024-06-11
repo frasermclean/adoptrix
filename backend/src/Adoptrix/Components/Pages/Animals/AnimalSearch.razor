@@ -1,0 +1,43 @@
+﻿@page "/animals"
+@using Adoptrix.Application.Features.Animals.Queries
+@using Adoptrix.Application.Features.Animals.Responses
+@using MediatR
+@inject AppNameProvider AppNameProvider
+@inject ISender Sender;
+
+<PageTitle>Animals - @AppNameProvider.AppName</PageTitle>
+<MudText Typo="Typo.h3" GutterBottom="true">Search Animals</MudText>
+
+@if (results == null)
+{
+    <MudProgressCircular Indeterminate="true"/>
+}
+else
+{
+    <MudContainer Fixed="true" Class="d-flex flex-wrap justify-center gap-2">
+        @foreach (var result in results)
+        {
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">@result.Name</MudText>
+                    <MudText Typo="Typo.subtitle1">@result.SpeciesName - @result.BreedName</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+
+        </MudCard>
+        }
+    </MudContainer>
+}
+
+
+@code {
+    private IEnumerable<SearchAnimalsResult>? results;
+
+    protected override async Task OnInitializedAsync()
+    {
+        results = await Sender.Send(new SearchAnimalsQuery(
+            null, null, null, null, null));
+    }
+
+}
