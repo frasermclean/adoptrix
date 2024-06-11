@@ -1,16 +1,17 @@
 ﻿@inherits LayoutComponentBase
 @inject AppNameProvider AppNameProvider
+@inject ThemeProvider ThemeProvider
 
-<MudThemingProvider Theme="theme" />
+<MudThemeProvider Theme="@ThemeProvider.Theme" @ref="mudThemeProvider" @bind-IsDarkMode="@isDarkMode"/>
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle"/>
         <MudText Typo="Typo.h5" Class="ml-3">@AppNameProvider.AppName</MudText>
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End"/>
     </MudAppBar>
     <MudDrawer @bind-Open="isDrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavMenu />
+        <NavMenu/>
     </MudDrawer>
     <MudMainContent Class="mt-16 pa-4">
         @Body
@@ -19,20 +20,21 @@
 
 @code {
     private bool isDrawerOpen;
-
-    private readonly MudTheme theme = new()
-    {
-        Typography = new Typography
-        {
-            Default = new Default
-            {
-                FontFamily = ["Quicksand", "sans-serif"]
-            }
-        }
-    };
+    private bool isDarkMode;
+    private MudThemeProvider? mudThemeProvider;
 
     private void DrawerToggle()
     {
         isDrawerOpen = !isDrawerOpen;
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isDarkMode = await mudThemeProvider!.GetSystemPreference();
+            StateHasChanged();
+        }
+    }
+
 }

@@ -22,7 +22,9 @@ public static class ServiceRegistration
         builder.Services.AddDatabaseServices(builder.Configuration);
         builder.Services.AddStorageServices(builder.Configuration);
 
+        // local services
         builder.Services.AddSingleton<AppNameProvider>();
+        builder.Services.AddSingleton<ThemeProvider>();
 
         return builder;
     }
