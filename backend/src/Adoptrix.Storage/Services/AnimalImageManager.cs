@@ -13,6 +13,8 @@ public sealed class AnimalImageManager(
     BlobContainerClient containerClient)
     : BlobContainerManager(containerClient), IAnimalImageManager
 {
+    public Uri ContainerUri => containerClient.Uri;
+
     public async Task<Result> UploadImageAsync(Guid animalId, Guid imageId, Stream imageStream, string contentType,
         ImageCategory category = ImageCategory.Original, CancellationToken cancellationToken = default)
     {
@@ -55,7 +57,7 @@ public sealed class AnimalImageManager(
         return OpenReadStreamAsync(blobName, cancellationToken);
     }
 
-    private static string GetBlobName(Guid animalId, Guid imageId, ImageCategory category = ImageCategory.Original)
+    public string GetBlobName(Guid animalId, Guid imageId, ImageCategory category = ImageCategory.Original)
     {
         var suffix = category switch
         {
