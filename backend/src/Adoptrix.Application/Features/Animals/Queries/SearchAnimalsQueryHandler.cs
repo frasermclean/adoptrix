@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Application.Features.Animals.Responses;
 using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Support;
+using Adoptrix.Domain.Models;
 using MediatR;
 
 namespace Adoptrix.Application.Features.Animals.Queries;
@@ -30,9 +31,9 @@ public class SearchAnimalsQueryHandler(IAnimalsRepository animalsRepository, IAn
         }
 
         var containerUri = animalImageManager.ContainerUri;
-        var previewBlobName = animalImageManager.GetBlobName(animalId, imageResponse.Id, ImageCategory.Preview);
-        var thumbnailBlobName = animalImageManager.GetBlobName(animalId, imageResponse.Id, ImageCategory.Thumbnail);
-        var fullSizeBlobName = animalImageManager.GetBlobName(animalId, imageResponse.Id, ImageCategory.FullSize);
+        var previewBlobName = AnimalImage.GetBlobName(animalId, imageResponse.Id, AnimalImageCategory.Preview);
+        var thumbnailBlobName = AnimalImage.GetBlobName(animalId, imageResponse.Id, AnimalImageCategory.Thumbnail);
+        var fullSizeBlobName = AnimalImage.GetBlobName(animalId, imageResponse.Id, AnimalImageCategory.FullSize);
 
         imageResponse.PreviewUrl = $"{containerUri}/{previewBlobName}";
         imageResponse.ThumbnailUrl = $"{containerUri}/{thumbnailBlobName}";

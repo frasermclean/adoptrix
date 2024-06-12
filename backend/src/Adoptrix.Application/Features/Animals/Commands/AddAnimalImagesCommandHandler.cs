@@ -61,7 +61,7 @@ public class AddAnimalImagesCommandHandler(
         };
 
         var result = await imageManager.UploadImageAsync(command.AnimalId, image.Id, data.Stream,
-            data.ContentType, ImageCategory.Original, cancellationToken);
+            data.ContentType, AnimalImageCategory.Original, cancellationToken);
 
         return result.IsSuccess
             ? Result.Ok(image)

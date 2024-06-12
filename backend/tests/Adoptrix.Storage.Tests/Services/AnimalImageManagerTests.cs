@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Application.Services.Support;
+using Adoptrix.Domain.Models;
 using Adoptrix.Storage.Services;
 using Adoptrix.Storage.Tests.Fixtures;
 using Microsoft.Extensions.Logging;
@@ -13,10 +14,10 @@ public class AnimalImageManagerTests(StorageEmulatorFixture fixture) : IClassFix
         fixture.BlobContainerClient!);
 
     [Theory]
-    [InlineData("Data/lab_puppy_1.jpeg", ImageCategory.Thumbnail)]
-    [InlineData("Data/lab_puppy_2.jpeg", ImageCategory.Preview)]
-    [InlineData("Data/lab_puppy_3.jpeg", ImageCategory.FullSize)]
-    public async Task UploadImageAsync_WithValidInput_Should_ReturnSuccess(string filePath, ImageCategory category)
+    [InlineData("Data/lab_puppy_1.jpeg", AnimalImageCategory.Thumbnail)]
+    [InlineData("Data/lab_puppy_2.jpeg", AnimalImageCategory.Preview)]
+    [InlineData("Data/lab_puppy_3.jpeg", AnimalImageCategory.FullSize)]
+    public async Task UploadImageAsync_WithValidInput_Should_ReturnSuccess(string filePath, AnimalImageCategory category)
     {
         // arrange
         var (animalId, imageId) = CreateAnimalAndImageIds();

@@ -22,7 +22,7 @@ public class ProcessAnimalImageCommandHandlerTests
         // arrange
         imageManagerMock
             .Setup(manager => manager.GetImageReadStreamAsync(command.AnimalId, command.ImageId,
-                It.IsAny<ImageCategory>(), It.IsAny<CancellationToken>()))
+                It.IsAny<AnimalImageCategory>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Stream.Null);
         imageProcessorMock
             .Setup(processor => processor.ProcessOriginalAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))

@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Support;
+using Adoptrix.Domain.Models;
 using Azure.Storage.Blobs;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,9 +17,9 @@ public sealed class AnimalImageManager(
     public Uri ContainerUri => containerClient.Uri;
 
     public async Task<Result> UploadImageAsync(Guid animalId, Guid imageId, Stream imageStream, string contentType,
-        ImageCategory category = ImageCategory.Original, CancellationToken cancellationToken = default)
+        AnimalImageCategory category = AnimalImageCategory.Original, CancellationToken cancellationToken = default)
     {
-        var blobName = GetBlobName(animalId, imageId, category);
+        var blobName = AnimalImage.GetBlobName(animalId, imageId, category);
         return await UploadBlobAsync(blobName, imageStream, contentType, cancellationToken);
     }
 
@@ -44,29 +45,16 @@ public sealed class AnimalImageManager(
     }
 
     public async Task<Result> DeleteImageAsync(Guid animalId, Guid imageId,
-        ImageCategory category = ImageCategory.Original, CancellationToken cancellationToken = default)
+        AnimalImageCategory category = AnimalImageCategory.Original, CancellationToken cancellationToken = default)
     {
-        var blobName = GetBlobName(animalId, imageId, category);
+        var blobName = AnimalImage.GetBlobName(animalId, imageId, category);
         return await DeleteBlobAsync(blobName, cancellationToken);
     }
 
-    public Task<Stream> GetImageReadStreamAsync(Guid animalId, Guid imageId, ImageCategory category = ImageCategory.Original,
+    public Task<Stream> GetImageReadStreamAsync(Guid animalId, Guid imageId, AnimalImageCategory category = AnimalImageCategory.Original,
         CancellationToken cancellationToken = default)
     {
-        var blobName = GetBlobName(animalId, imageId, category);
+        var blobName = AnimalImage.GetBlobName(animalId, imageId, category);
         return OpenReadStreamAsync(blobName, cancellationToken);
-    }
-
-    public string GetBlobName(Guid animalId, Guid imageId, ImageCategory category = ImageCategory.Original)
-    {
-        var suffix = category switch
-        {
-            ImageCategory.FullSize => "full",
-            ImageCategory.Thumbnail => "thumb",
-            ImageCategory.Preview => "preview",
-            _ => "original"
-        };
-
-        return $"{animalId}/{imageId}/{suffix}";
     }
 }

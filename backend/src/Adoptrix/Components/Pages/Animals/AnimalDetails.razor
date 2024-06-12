@@ -1,21 +1,34 @@
 ﻿@page "/animals/{animalId:guid}"
 @using Adoptrix.Application.Features.Animals.Queries
+@using Adoptrix.Application.Services
 @using Adoptrix.Domain.Models
 @using MediatR
 @inject ISender Sender;
+@inject IAnimalImageManager AnimalImageManager;
 
 @if (animal is null)
 {
     <PageTitle>Animal Details</PageTitle>
     <MudText Typo="Typo.h3" GutterBottom="true">Animal Details</MudText>
     <MudText Typo="Typo.body1">Loading...</MudText>
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7"/>
 }
 else
 {
     <PageTitle>@animal.Name</PageTitle>
     <MudText Typo="Typo.h3" GutterBottom="true">@animal.Name</MudText>
+
+    @* Image thumbnails *@
+    <div class="d-flex gap-2 mb-6">
+        @foreach (var image in animal.Images)
+        {
+            <MudImage Src="@GetThumbnailUrl(image)" Width="160" Height="160" Class="rounded-lg"/>
+        }
+    </div>
+
     <MudText Typo="Typo.body1">@animal.Description</MudText>
+
+
 }
 
 @code {
@@ -37,4 +50,9 @@ else
         }
     }
 
+    private string GetThumbnailUrl(AnimalImage image)
+        => $"{AnimalImageManager.ContainerUri}/{image.GetBlobName(AnimalImageCategory.Thumbnail)}";
+
 }
+
+
