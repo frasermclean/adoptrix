@@ -1,0 +1,40 @@
+﻿@page "/animals/{animalId:guid}"
+@using Adoptrix.Application.Features.Animals.Queries
+@using Adoptrix.Domain.Models
+@using MediatR
+@inject ISender Sender;
+
+@if (animal is null)
+{
+    <PageTitle>Animal Details</PageTitle>
+    <MudText Typo="Typo.h3" GutterBottom="true">Animal Details</MudText>
+    <MudText Typo="Typo.body1">Loading...</MudText>
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+}
+else
+{
+    <PageTitle>@animal.Name</PageTitle>
+    <MudText Typo="Typo.h3" GutterBottom="true">@animal.Name</MudText>
+    <MudText Typo="Typo.body1">@animal.Description</MudText>
+}
+
+@code {
+
+    private Animal? animal;
+
+    [Parameter] public Guid AnimalId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Sender.Send(new GetAnimalQuery(AnimalId));
+
+        if (result.IsFailed)
+        {
+        }
+        else
+        {
+            animal = result.Value;
+        }
+    }
+
+}
