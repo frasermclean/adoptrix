@@ -25,7 +25,7 @@ else
                 <div class="d-flex gap-2 flex-wrap justify-center">
                     @foreach (var image in animal.Images)
                     {
-                    <MudImage Src="@GetThumbnailUrl(image)" Width="160" Height="160" Class="rounded-lg"/>
+                        <MudImage Src="@GetThumbnailUrl(image)" Width="160" Height="160" Class="rounded-lg"/>
                     }
                 </div>
             </DetailsBlock>
@@ -57,6 +57,10 @@ else
                     <MudListItem>
                         <MudText Typo="Typo.h6">Age</MudText>
                         <MudText Typo="Typo.body1">@animal.Age</MudText>
+                    </MudListItem>
+                    <MudListItem>
+                        <MudText Typo="Typo.h6">Date listed</MudText>
+                        <MudText Typo="Typo.body1">@(animal.CreatedAt.ToString("d"))</MudText>
                     </MudListItem>
                 </MudList>
             </DetailsBlock>
