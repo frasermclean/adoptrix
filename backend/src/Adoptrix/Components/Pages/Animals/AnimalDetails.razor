@@ -1,8 +1,9 @@
-﻿@page "/animals/{animalId:guid}"
 @using Adoptrix.Application.Features.Animals.Queries
 @using Adoptrix.Application.Services
 @using Adoptrix.Domain.Models
 @using MediatR
+
+@page "/animals/{animalId:guid}"
 @inject ISender Sender;
 @inject IAnimalImageManager AnimalImageManager;
 
@@ -11,7 +12,7 @@
     <PageTitle>Animal Details</PageTitle>
     <MudText Typo="Typo.h3" GutterBottom="true">Animal Details</MudText>
     <MudText Typo="Typo.body1">Loading...</MudText>
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7"/>
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
 }
 else
 {
@@ -19,15 +20,45 @@ else
     <MudText Typo="Typo.h3" GutterBottom="true">@animal.Name</MudText>
 
     @* Image thumbnails *@
-    <div class="d-flex gap-2 mb-6">
-        @foreach (var image in animal.Images)
-        {
-            <MudImage Src="@GetThumbnailUrl(image)" Width="160" Height="160" Class="rounded-lg"/>
-        }
-    </div>
+    <MudPaper Class="pa-4 mb-4" Elevation="2">
+        <MudText Typo="Typo.h5" GutterBottom="true">Images</MudText>
+        <div class="d-flex gap-2 flex-wrap">
+            @foreach (var image in animal.Images)
+            {
+                <MudImage Src="@GetThumbnailUrl(image)" Width="160" Height="160" Class="rounded-lg" />
+            }
+        </div>
+    </MudPaper>
 
-    <MudText Typo="Typo.body1">@animal.Description</MudText>
+    @* Description *@
+    <MudPaper Class="pa-4" Elevation="2">
+        <MudText Typo="Typo.h5" GutterBottom="true">Description</MudText>
+        <MudText Typo="Typo.body1">@animal.Description</MudText>
+    </MudPaper>
 
+
+    @* Details *@
+    <MudPaper Class="pa-4" Elevation="2">
+        <MudText Typo="Typo.h5" GutterBottom="true">Details</MudText>
+        <MudList>
+            <MudListItem>
+                <MudText Typo="Typo.h6">Breed</MudText>
+                <MudText Typo="Typo.body1">@animal.Breed.Name</MudText>
+            </MudListItem>
+            <MudListItem>
+                <MudText Typo="Typo.h6">Sex</MudText>
+                <MudText Typo="Typo.body1">@animal.Sex</MudText>
+            </MudListItem>
+            <MudListItem>
+                <MudText Typo="Typo.h6">Date of birth</MudText>
+                <MudText Typo="Typo.body1">@animal.DateOfBirth</MudText>
+            </MudListItem>
+            <MudListItem>
+                <MudText Typo="Typo.h6">Age</MudText>
+                <MudText Typo="Typo.body1">@animal.Age</MudText>
+            </MudListItem>
+        </MudList>
+    </MudPaper>
 
 }
 
@@ -52,7 +83,6 @@ else
 
     private string GetThumbnailUrl(AnimalImage image)
         => $"{AnimalImageManager.ContainerUri}/{image.GetBlobName(AnimalImageCategory.Thumbnail)}";
-
 }
 
 

@@ -1,4 +1,6 @@
-﻿namespace Adoptrix.Domain.Models;
+﻿using Adoptrix.Domain.Extensions;
+
+namespace Adoptrix.Domain.Models;
 
 public class Animal : Aggregate
 {
@@ -10,8 +12,8 @@ public class Animal : Aggregate
     public required Breed Breed { get; set; }
     public required Sex Sex { get; set; }
     public required DateOnly DateOfBirth { get; set; }
-
-    public List<AnimalImage> Images { get; init; } = new();
+    public string Age => DateOfBirth.ToAgeString();
+    public List<AnimalImage> Images { get; init; } = [];
 
     public AnimalImage AddImage(string originalFileName, string originalContentType,
         string? description = null, Guid? uploadedBy = null)

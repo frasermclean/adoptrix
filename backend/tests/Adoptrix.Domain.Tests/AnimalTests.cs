@@ -15,7 +15,7 @@ public class AnimalTests
         const Sex sex = Sex.Female;
         var userId = Guid.NewGuid();
         const int imageCount = 3;
-        var dateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 2));
+        var dateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 1.5));
 
         // act
         var animal = AnimalFactory.Create(id, name, breed, sex, dateOfBirth, imageCount, userId);
@@ -26,6 +26,7 @@ public class AnimalTests
         animal.Breed.Should().Be(breed);
         animal.Sex.Should().Be(sex);
         animal.DateOfBirth.Should().Be(dateOfBirth);
+        animal.Age.Should().Be("1 year, 6 months");
         animal.Images.Should().HaveCount(imageCount);
         animal.CreatedBy.Should().Be(userId);
     }
