@@ -13,18 +13,20 @@ public class AnimalTests
         const string name = "Susie";
         var breed = BreedFactory.Create();
         const Sex sex = Sex.Female;
+        const string slug = "susie-the-dog";
         var userId = Guid.NewGuid();
         const int imageCount = 3;
         var dateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 2));
 
         // act
-        var animal = AnimalFactory.Create(id, name, breed, sex, dateOfBirth, imageCount, userId);
+        var animal = AnimalFactory.Create(id, name, breed, sex, slug, dateOfBirth, imageCount, userId);
 
         // assert
         animal.Id.Should().Be(id);
         animal.Name.Should().Be(name);
         animal.Breed.Should().Be(breed);
         animal.Sex.Should().Be(sex);
+        animal.Slug.Should().Be(slug);
         animal.DateOfBirth.Should().Be(dateOfBirth);
         animal.Images.Should().HaveCount(imageCount);
         animal.CreatedBy.Should().Be(userId);

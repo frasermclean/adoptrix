@@ -14,13 +14,14 @@ public static class AnimalsRepositoryMockSetup
         mock.Setup(repository =>
                 repository.SearchAsync(It.IsAny<SearchAnimalsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((SearchAnimalsQuery _, CancellationToken _) => AnimalFactory.CreateMany(searchResultsCount)
-                .Select(animal => new SearchAnimalsResult
+                .Select(animal => new SearchAnimalsMatch
                 {
                     Id = animal.Id,
                     Name = animal.Name,
                     SpeciesName = animal.Breed.Species.Name,
                     BreedName = animal.Breed.Name,
                     Sex = animal.Sex,
+                    Slug = animal.Slug,
                     DateOfBirth = animal.DateOfBirth,
                     CreatedAt = animal.CreatedAt,
                     Image = animal.Images.Select(image => new AnimalImageResponse
@@ -34,6 +35,12 @@ public static class AnimalsRepositoryMockSetup
             .ReturnsAsync((Guid animalId, CancellationToken _) => animalId == UnknownAnimalId
                 ? null
                 : AnimalFactory.Create(animalId));
+
+        mock.Setup(repository => repository.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid animalId, CancellationToken _) => AnimalFactory.Create(animalId));
+
+        mock.Setup(repository => repository.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string animalSlug, CancellationToken _) => AnimalFactory.Create(slug: animalSlug));
 
         return mock;
     }

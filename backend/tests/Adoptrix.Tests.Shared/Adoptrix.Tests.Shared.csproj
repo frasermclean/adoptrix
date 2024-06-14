@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Adoptrix.Domain\Adoptrix.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Adoptrix.Application\Adoptrix.Application.csproj" />
   </ItemGroup> 
 
 </Project>

@@ -7,4 +7,5 @@ public class AdoptrixAutoDataAttribute()
         new AutoMoqCustomization(),
         new AnimalCustomization(),
         new SpeciesCustomization(),
+        new AddAnimalCommandCustomization(),
         new TwoYearsAgoDateOnlyCustomization())));
