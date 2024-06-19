@@ -13,7 +13,7 @@ public static class BreedsRepositoryMockSetup
             .ReturnsAsync((Guid? _, bool? _, CancellationToken _) => BreedFactory.CreateMany(searchResultsCount)
                 .Select(breed => new SearchBreedsResult
                 {
-                    Id = breed.Id, Name = breed.Name, SpeciesId = breed.Species.Id, AnimalIds = Enumerable.Empty<Guid>()
+                    Id = breed.Id, Name = breed.Name, SpeciesId = breed.Species.Id, AnimalCount = 0,
                 }));
 
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))

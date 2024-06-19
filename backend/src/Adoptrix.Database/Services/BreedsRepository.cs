@@ -19,7 +19,7 @@ public class BreedsRepository(AdoptrixDbContext dbContext, IBatchManager batchMa
                 Id = breed.Id,
                 Name = breed.Name,
                 SpeciesId = breed.Species.Id,
-                AnimalIds = breed.Animals.Select(animal => animal.Id)
+                AnimalCount = breed.Animals.Count(animal => animal.Breed.Id == breed.Id)
             })
             .OrderBy(result => result.Name)
             .ToListAsync(cancellationToken);
