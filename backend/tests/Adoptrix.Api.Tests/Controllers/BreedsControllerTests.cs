@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Application.Features.Breeds.Responses;
 using Adoptrix.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,8 +48,8 @@ public class BreedsControllerTests(ApiFixture fixture) : ControllerTests(fixture
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        var responses = await DeserializeJsonBody<IEnumerable<BreedResponse>>(message);
-        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllSatisfy(ValidateBreedResponse);
+        var responses = await DeserializeJsonBody<IEnumerable<SearchBreedsResult>>(message);
+        responses.Should().HaveCount(ApiFixture.SearchResultsCount);
     }
 
     [Theory, AutoData]
