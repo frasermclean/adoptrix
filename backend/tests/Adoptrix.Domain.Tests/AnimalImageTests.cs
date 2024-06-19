@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Domain.Models;
 using Adoptrix.Tests.Shared.Factories;
-using AutoFixture.Xunit2;
 
 namespace Adoptrix.Domain.Tests;
 
