@@ -2,6 +2,7 @@
 @using Adoptrix.Application.Features.Animals.Queries
 @using Adoptrix.Application.Features.Animals.Responses
 @using MediatR
+@using Adoptrix.Components.Animals
 @inject AppNameProvider AppNameProvider
 @inject ISender Sender;
 
@@ -14,12 +15,24 @@
 }
 else
 {
-    <MudContainer Fixed="true" Class="d-flex flex-wrap justify-center gap-2">
-        @foreach (var result in results)
-        {
-            <AnimalCard Result="result"/>
-        }
-    </MudContainer>
+    <MudGrid>
+        @* Search controls *@
+        <MudItem xs="12" md="3">
+            <MudPaper>
+                <AnimalSearchControls DataChanged="OnSearchDataChanged"></AnimalSearchControls>
+            </MudPaper>
+        </MudItem>
+
+        @* Results *@
+        <MudItem xs="12" md="9">
+            <MudContainer Fixed="true" Class="d-flex flex-wrap gap-2">
+                @foreach (var result in results)
+                {
+                    <AnimalCard Result="result"/>
+                }
+            </MudContainer>
+        </MudItem>
+    </MudGrid>
 }
 
 
@@ -28,8 +41,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        results = await Sender.Send(new SearchAnimalsQuery(
-            null, null, null, null, null));
+        results = await Sender.Send(new SearchAnimalsQuery());
+    }
+
+    private async Task OnSearchDataChanged(SearchAnimalsQuery query)
+    {
+        results = await Sender.Send(query);
     }
 
 }

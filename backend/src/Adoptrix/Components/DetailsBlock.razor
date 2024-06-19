@@ -1,10 +1,14 @@
 ﻿<MudPaper Class="pa-4" Elevation="@Elevation">
-    <MudText Typo="Typo.h5" GutterBottom="true">@Title</MudText>
+    @if (Title is not null)
+    {
+        <MudText Typo="Typo.h5" GutterBottom="true">@Title</MudText>
+    }
+
     @ChildContent
 </MudPaper>
 
 @code {
-    [Parameter] public string Title { get; set; } = "Details";
+    [Parameter] public string? Title { get; set; }
     [Parameter] public int Elevation { get; set; } = 2;
     [Parameter] public RenderFragment? ChildContent { get; set; }
 }

@@ -1,0 +1,60 @@
+@using Adoptrix.Application.Features.Animals.Queries
+@using Adoptrix.Application.Features.Species.Queries
+@using Adoptrix.Application.Features.Species.Responses
+@using Adoptrix.Domain.Models
+@using MediatR
+@inject ISender Sender;
+
+<DetailsBlock>
+    @if (speciesMatches is not null)
+    {
+        <MudText Typo="Typo.h6" GutterBottom="true">Species</MudText>
+        <MudChipSet Filter="true" Class="mb-2" SelectedChip="selectedSpecies" SelectedChipChanged="OnSpeciesChanged">
+            @foreach (var match in speciesMatches)
+            {
+                <MudBadge Content="@match.AnimalCount" Overlap="true" Color="Color.Secondary" Class="mr-2">
+                    <MudChip Text="@match.SpeciesName" Value="@match.SpeciesId" Color="Color.Primary"/>
+                </MudBadge>
+
+            }
+        </MudChipSet>
+
+        <MudText Typo="Typo.h6">Sex</MudText>
+        <MudChipSet Filter="true" Class="mb-2" SelectedChip="selectedSex" SelectedChipChanged="OnSexChanged">
+            <MudChip Text="Male" Value="Sex.Male" Color="Color.Primary" Icon="fa-solid fa-mars"/>
+            <MudChip Text="Female" Value="Sex.Female" Color="Color.Primary" Icon="fa-solid fa-venus"/>
+        </MudChipSet>
+    }
+</DetailsBlock>
+
+@code {
+    private IEnumerable<SearchSpeciesMatch>? speciesMatches;
+    private MudChip? selectedSpecies;
+    private MudChip? selectedSex;
+
+    [Parameter] public EventCallback<SearchAnimalsQuery> DataChanged { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        speciesMatches = await Sender.Send(new SearchSpeciesQuery { WithAnimals = true });
+    }
+
+    private void OnSpeciesChanged(MudChip? chip)
+    {
+        selectedSpecies = chip;
+        RaiseDataChanged();
+    }
+
+    private void OnSexChanged(MudChip? chip)
+    {
+        selectedSex = chip;
+        RaiseDataChanged();
+    }
+
+    private void RaiseDataChanged() => DataChanged.InvokeAsync(new SearchAnimalsQuery(
+        null,
+        null,
+        (Guid?)selectedSpecies?.Value,
+        (Sex?)selectedSex?.Value));
+
+}

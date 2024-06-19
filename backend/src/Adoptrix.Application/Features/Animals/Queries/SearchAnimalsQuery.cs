@@ -5,8 +5,8 @@ using MediatR;
 namespace Adoptrix.Application.Features.Animals.Queries;
 
 public record SearchAnimalsQuery(
-    string? Name,
-    Guid? BreedId,
-    Guid? SpeciesId,
-    Sex? Sex,
-    int? Limit) : IRequest<IEnumerable<SearchAnimalsResult>>;
+    string? Name = null,
+    Guid? BreedId = null,
+    Guid? SpeciesId = null,
+    Sex? Sex = null,
+    int? Limit = null) : IRequest<IEnumerable<SearchAnimalsResult>>;
