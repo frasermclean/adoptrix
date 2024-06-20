@@ -2,6 +2,7 @@
 using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Support;
+using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Models;
 using Adoptrix.Tests.Shared;
 using Adoptrix.Tests.Shared.Extensions;

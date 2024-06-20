@@ -1,8 +1,6 @@
-﻿using Adoptrix.Domain.Models;
+﻿namespace Adoptrix.Domain.Models.Responses;
 
-namespace Adoptrix.Application.Features.Animals.Responses;
-
-public class SearchAnimalsResult
+public class AnimalMatch
 {
     public required Guid Id { get; init; }
     public required string Name { get; init; }

@@ -1,11 +1,11 @@
-﻿using Adoptrix.Application.Features.Breeds.Responses;
-using Adoptrix.Domain.Models;
+﻿using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Responses;
 
 namespace Adoptrix.Application.Services;
 
 public interface IBreedsRepository
 {
-    Task<IEnumerable<SearchBreedsResult>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
+    Task<IEnumerable<BreedMatch>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
         CancellationToken cancellationToken = default);
 
     Task<Breed?> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default);

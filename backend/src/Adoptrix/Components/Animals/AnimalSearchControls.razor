@@ -1,9 +1,8 @@
-@using Adoptrix.Application.Features.Animals.Queries
-@using Adoptrix.Application.Features.Breeds.Queries
-@using Adoptrix.Application.Features.Breeds.Responses
-@using Adoptrix.Application.Features.Species.Queries
-@using Adoptrix.Application.Features.Species.Responses
 @using Adoptrix.Domain.Models
+@using Adoptrix.Domain.Models.Responses
+@using Adoptrix.Domain.Queries.Animals
+@using Adoptrix.Domain.Queries.Breeds
+@using Adoptrix.Domain.Queries.Species
 @using MediatR
 @inject ISender Sender;
 
@@ -49,8 +48,8 @@
 </DetailsBlock>
 
 @code {
-    private IEnumerable<SearchSpeciesMatch> speciesMatches = [];
-    private IEnumerable<SearchBreedsResult> breedMatches = [];
+    private IEnumerable<SpeciesMatch> speciesMatches = [];
+    private IEnumerable<BreedMatch> breedMatches = [];
     private MudChip? selectedSpecies;
     private MudChip? selectedBreed;
     private MudChip? selectedSex;

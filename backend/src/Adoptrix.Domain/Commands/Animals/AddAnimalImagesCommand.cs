@@ -2,7 +2,7 @@
 using FluentResults;
 using MediatR;
 
-namespace Adoptrix.Application.Features.Animals.Commands;
+namespace Adoptrix.Domain.Commands.Animals;
 
 public record AddAnimalImagesCommand(Guid AnimalId, Guid UserId, IEnumerable<AnimalImageFileData> FileData)
     : IRequest<Result<Animal>>;

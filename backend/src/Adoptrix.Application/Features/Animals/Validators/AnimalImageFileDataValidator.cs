@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Features.Animals.Commands;
+﻿using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Models;
 using FluentValidation;
 

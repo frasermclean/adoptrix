@@ -1,18 +1,19 @@
-﻿using Adoptrix.Application.Features.Animals.Responses;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Responses;
+using Adoptrix.Domain.Queries.Animals;
 using MediatR;
 
 namespace Adoptrix.Application.Features.Animals.Queries;
 
 public class SearchAnimalsQueryHandler(IAnimalsRepository animalsRepository, IAnimalImageManager animalImageManager)
-    : IRequestHandler<SearchAnimalsQuery, IEnumerable<SearchAnimalsResult>>
+    : IRequestHandler<SearchAnimalsQuery, IEnumerable<AnimalMatch>>
 {
-    public async Task<IEnumerable<SearchAnimalsResult>> Handle(SearchAnimalsQuery query,
+    public async Task<IEnumerable<AnimalMatch>> Handle(SearchAnimalsQuery query,
         CancellationToken cancellationToken)
     {
         var results = await animalsRepository.SearchAsync(query, cancellationToken);
-        var resultsList = results as List<SearchAnimalsResult> ?? results.ToList();
+        var resultsList = results as List<AnimalMatch> ?? results.ToList();
 
         foreach (var result in resultsList)
         {

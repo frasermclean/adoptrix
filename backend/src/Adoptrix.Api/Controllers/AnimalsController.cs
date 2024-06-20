@@ -1,9 +1,9 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Features.Animals.Commands;
-using Adoptrix.Application.Features.Animals.Queries;
-using Adoptrix.Application.Features.Animals.Responses;
+using Adoptrix.Domain.Commands.Animals;
+using Adoptrix.Domain.Models.Responses;
+using Adoptrix.Domain.Queries.Animals;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ namespace Adoptrix.Api.Controllers;
 public class AnimalsController(ISender sender) : ApiController
 {
     [HttpGet, AllowAnonymous]
-    public async Task<IEnumerable<SearchAnimalsResult>> SearchAnimals([FromQuery] SearchAnimalsQuery query,
+    public async Task<IEnumerable<AnimalMatch>> SearchAnimals([FromQuery] SearchAnimalsQuery query,
         CancellationToken cancellationToken)
     {
         return await sender.Send(query, cancellationToken);

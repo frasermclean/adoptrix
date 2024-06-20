@@ -1,6 +1,6 @@
-﻿using Adoptrix.Application.Features.Breeds.Responses;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
@@ -8,13 +8,13 @@ namespace Adoptrix.Database.Services;
 public class BreedsRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
     : Repository(dbContext, batchManager), IBreedsRepository
 {
-    public async Task<IEnumerable<SearchBreedsResult>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
+    public async Task<IEnumerable<BreedMatch>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
         CancellationToken cancellationToken = default)
     {
         return await DbContext.Breeds
             .Where(breed => (speciesId == null || breed.Species.Id == speciesId) &&
                             (withAnimals == null || withAnimals.Value && breed.Animals.Count > 0))
-            .Select(breed => new SearchBreedsResult
+            .Select(breed => new BreedMatch
             {
                 Id = breed.Id,
                 Name = breed.Name,

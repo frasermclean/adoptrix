@@ -1,7 +1,7 @@
-﻿using Adoptrix.Application.Features.Animals.Queries;
-using Adoptrix.Application.Features.Animals.Responses;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Responses;
+using Adoptrix.Domain.Queries.Animals;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
@@ -11,7 +11,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
 {
     private const int SearchLimit = 10;
 
-    public async Task<IEnumerable<SearchAnimalsResult>> SearchAsync(SearchAnimalsQuery query,
+    public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsQuery query,
         CancellationToken cancellationToken = default)
     {
         return await DbContext.Animals
@@ -21,7 +21,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
                              (query.SpeciesId == null || animal.Breed.Species.Id == query.SpeciesId) &&
                              (query.Sex == null || animal.Sex == query.Sex))
             .Take(query.Limit ?? SearchLimit)
-            .Select(animal => new SearchAnimalsResult
+            .Select(animal => new AnimalMatch
             {
                 Id = animal.Id,
                 Name = animal.Name,

@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Application.Features.Animals.Responses;
+﻿namespace Adoptrix.Domain.Models.Responses;
 
 public class AnimalImageResponse
 {

@@ -1,15 +1,15 @@
 ﻿@page "/animals"
-@using Adoptrix.Application.Features.Animals.Queries
-@using Adoptrix.Application.Features.Animals.Responses
 @using MediatR
 @using Adoptrix.Components.Animals
+@using Adoptrix.Domain.Models.Responses
+@using Adoptrix.Domain.Queries.Animals
 @inject AppNameProvider AppNameProvider
 @inject ISender Sender;
 
 <PageTitle>Animals - @AppNameProvider.AppName</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">Search Animals</MudText>
 
-@if (results == null)
+@if (matches == null)
 {
     <MudProgressCircular Indeterminate="true"/>
 }
@@ -26,9 +26,9 @@ else
         @* Results *@
         <MudItem xs="12" md="9">
             <MudContainer Fixed="true" Class="d-flex flex-wrap gap-2">
-                @foreach (var result in results)
+                @foreach (var match in matches)
                 {
-                    <AnimalCard Result="result"/>
+                    <AnimalCard Match="match"/>
                 }
             </MudContainer>
         </MudItem>
@@ -37,16 +37,16 @@ else
 
 
 @code {
-    private IEnumerable<SearchAnimalsResult>? results;
+    private IEnumerable<AnimalMatch>? matches;
 
     protected override async Task OnInitializedAsync()
     {
-        results = await Sender.Send(new SearchAnimalsQuery());
+        matches = await Sender.Send(new SearchAnimalsQuery());
     }
 
     private async Task OnSearchDataChanged(SearchAnimalsQuery query)
     {
-        results = await Sender.Send(query);
+        matches = await Sender.Send(query);
     }
 
 }

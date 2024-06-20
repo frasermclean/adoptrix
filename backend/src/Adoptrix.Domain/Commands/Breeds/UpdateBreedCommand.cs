@@ -2,6 +2,6 @@
 using FluentResults;
 using MediatR;
 
-namespace Adoptrix.Application.Features.Breeds.Commands;
+namespace Adoptrix.Domain.Commands.Breeds;
 
 public record UpdateBreedCommand(Guid BreedId, string Name, Guid SpeciesId) : IRequest<Result<Breed>>;

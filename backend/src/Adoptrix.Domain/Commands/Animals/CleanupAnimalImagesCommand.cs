@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 using MediatR;
 
-namespace Adoptrix.Application.Features.Animals.Commands;
+namespace Adoptrix.Domain.Commands.Animals;
 
 public record CleanupAnimalImagesCommand(Guid AnimalId) : IRequest<Result>;

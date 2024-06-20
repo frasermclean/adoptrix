@@ -1,6 +1,6 @@
-﻿namespace Adoptrix.Application.Features.Breeds.Responses;
+﻿namespace Adoptrix.Domain.Models.Responses;
 
-public class SearchBreedsResult
+public class BreedMatch
 {
     public required Guid Id { get; init; }
     public required string Name { get; init; }

@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain.Commands.Animals;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;

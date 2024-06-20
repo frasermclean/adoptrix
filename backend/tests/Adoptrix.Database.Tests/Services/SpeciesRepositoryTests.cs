@@ -1,7 +1,7 @@
-﻿using Adoptrix.Application.Features.Species.Queries;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
 using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Queries.Species;
 
 namespace Adoptrix.Database.Tests.Services;
 

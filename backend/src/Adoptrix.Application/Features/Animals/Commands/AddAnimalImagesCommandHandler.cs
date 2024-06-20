@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Application.Errors;
 using Adoptrix.Application.Services;
+using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Events;
 using Adoptrix.Domain.Models;
 using FluentResults;

@@ -5,8 +5,8 @@ using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Api.Tests.Fixtures.Mocks;
-using Adoptrix.Application.Features.Animals.Responses;
 using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Responses;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,11 +27,11 @@ public class AnimalControllerTests(ApiFixture fixture) : ControllerTests(fixture
 
         // act
         var message = await HttpClient.GetAsync(uri);
-        var responses = await DeserializeJsonBody<IEnumerable<SearchAnimalsResult>>(message);
+        var responses = await DeserializeJsonBody<IEnumerable<AnimalMatch>>(message);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllBeOfType<SearchAnimalsResult>();
+        responses.Should().HaveCount(ApiFixture.SearchResultsCount).And.AllBeOfType<AnimalMatch>();
     }
 
     [Theory, AutoData]

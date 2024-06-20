@@ -1,6 +1,6 @@
-﻿namespace Adoptrix.Application.Features.Species.Responses;
+﻿namespace Adoptrix.Domain.Models.Responses;
 
-public class SearchSpeciesMatch
+public class SpeciesMatch
 {
     public required Guid SpeciesId { get; init; }
     public required string SpeciesName { get; init; }

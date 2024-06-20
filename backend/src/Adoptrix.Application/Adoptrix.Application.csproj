@@ -6,8 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FluentResults"/>
+  <ItemGroup>    
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
@@ -20,9 +19,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Adoptrix.Domain\Adoptrix.Domain.csproj"/>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Features\" />
-  </ItemGroup>  
 
 </Project>

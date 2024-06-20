@@ -3,8 +3,8 @@ using System.Net.Http.Json;
 using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Application.Features.Breeds.Responses;
 using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Controllers;
@@ -48,7 +48,7 @@ public class BreedsControllerTests(ApiFixture fixture) : ControllerTests(fixture
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        var responses = await DeserializeJsonBody<IEnumerable<SearchBreedsResult>>(message);
+        var responses = await DeserializeJsonBody<IEnumerable<BreedMatch>>(message);
         responses.Should().HaveCount(ApiFixture.SearchResultsCount);
     }
 

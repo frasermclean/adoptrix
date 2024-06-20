@@ -1,6 +1,6 @@
-﻿using Adoptrix.Application.Features.Animals.Commands;
-using Adoptrix.Application.Features.Animals.Validators;
+﻿using Adoptrix.Application.Features.Animals.Validators;
 using Adoptrix.Application.Services;
+using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Models;
 using Adoptrix.Tests.Shared;
 

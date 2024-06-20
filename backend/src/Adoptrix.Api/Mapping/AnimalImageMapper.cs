@@ -1,5 +1,5 @@
-﻿using Adoptrix.Application.Features.Animals.Responses;
-using Adoptrix.Domain.Models;
+﻿using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Responses;
 using Riok.Mapperly.Abstractions;
 
 namespace Adoptrix.Api.Mapping;

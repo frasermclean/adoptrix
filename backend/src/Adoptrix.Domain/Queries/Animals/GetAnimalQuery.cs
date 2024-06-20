@@ -2,6 +2,6 @@
 using FluentResults;
 using MediatR;
 
-namespace Adoptrix.Application.Features.Animals.Queries;
+namespace Adoptrix.Domain.Queries.Animals;
 
 public record GetAnimalQuery(Guid AnimalId) : IRequest<Result<Animal>>;

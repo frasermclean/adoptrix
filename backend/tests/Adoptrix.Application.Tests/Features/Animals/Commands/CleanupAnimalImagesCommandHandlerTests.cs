@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Application.Services;
+using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Tests.Shared;
 using Adoptrix.Tests.Shared.Extensions;
 using FluentResults;

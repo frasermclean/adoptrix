@@ -1,5 +1,5 @@
-﻿using Adoptrix.Application.Features.Breeds.Commands;
-using Adoptrix.Application.Features.Species.Validators;
+﻿using Adoptrix.Application.Features.Species.Validators;
+using Adoptrix.Domain.Commands.Breeds;
 using FluentValidation;
 
 namespace Adoptrix.Application.Features.Breeds.Validators;

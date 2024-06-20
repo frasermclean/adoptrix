@@ -1,9 +1,9 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Mapping;
-using Adoptrix.Application.Features.Breeds.Commands;
-using Adoptrix.Application.Features.Breeds.Queries;
-using Adoptrix.Application.Features.Breeds.Responses;
+using Adoptrix.Domain.Commands.Breeds;
+using Adoptrix.Domain.Models.Responses;
+using Adoptrix.Domain.Queries.Breeds;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ namespace Adoptrix.Api.Controllers;
 public class BreedsController(ISender sender) : ApiController
 {
     [HttpGet, AllowAnonymous]
-    public async Task<IEnumerable<SearchBreedsResult>> SearchBreeds([FromQuery] SearchBreedsQuery query,
+    public async Task<IEnumerable<BreedMatch>> SearchBreeds([FromQuery] SearchBreedsQuery query,
         CancellationToken cancellationToken)
     {
         return await sender.Send(query, cancellationToken);

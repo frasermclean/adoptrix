@@ -2,7 +2,7 @@
 using FluentResults;
 using MediatR;
 
-namespace Adoptrix.Application.Features.Animals.Commands;
+namespace Adoptrix.Domain.Commands.Animals;
 
 public record UpdateAnimalCommand(
     Guid AnimalId,
@@ -10,5 +10,4 @@ public record UpdateAnimalCommand(
     string? Description,
     Guid BreedId,
     Sex Sex,
-    DateOnly DateOfBirth
-    ) : IRequest<Result<Animal>>;
+    DateOnly DateOfBirth) : IRequest<Result<Animal>>;

@@ -2,6 +2,6 @@
 using MediatR;
 using SpeciesModel = Adoptrix.Domain.Models.Species;
 
-namespace Adoptrix.Application.Features.Species.Queries;
+namespace Adoptrix.Domain.Queries.Species;
 
 public record GetSpeciesQuery(Guid SpeciesId) : IRequest<Result<SpeciesModel>>;
