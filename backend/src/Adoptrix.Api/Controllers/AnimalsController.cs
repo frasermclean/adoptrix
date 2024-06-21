@@ -1,12 +1,12 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Extensions;
-using Adoptrix.Api.Mapping;
 using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Models.Responses;
 using Adoptrix.Domain.Queries.Animals;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AnimalMapper = Adoptrix.Application.Mapping.AnimalMapper;
 
 namespace Adoptrix.Api.Controllers;
 
@@ -25,7 +25,7 @@ public class AnimalsController(ISender sender) : ApiController
         var result = await sender.Send(new GetAnimalQuery(animalId), cancellationToken);
 
         return result.IsSuccess
-            ? Ok(result.Value.ToResponse())
+            ? Ok(result.Value)
             : Problem(result.Errors);
     }
 
@@ -37,7 +37,7 @@ public class AnimalsController(ISender sender) : ApiController
         var result = await sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-            ? CreatedAtAction(nameof(GetAnimal), new { animalId = result.Value.Id }, result.Value.ToResponse())
+            ? CreatedAtAction(nameof(GetAnimal), new { animalId = result.Value.Id }, AnimalMapper.ToResponse(result.Value))
             : Problem(result.Errors);
     }
 
@@ -51,7 +51,7 @@ public class AnimalsController(ISender sender) : ApiController
         var result = await sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-            ? Ok(result.Value.ToResponse())
+            ? Ok(AnimalMapper.ToResponse(result.Value))
             : Problem(result.Errors);
     }
 
@@ -86,7 +86,7 @@ public class AnimalsController(ISender sender) : ApiController
         var result = await sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-            ? Ok(result.Value.ToResponse())
+            ? Ok(AnimalMapper.ToResponse(result.Value))
             : Problem(result.Errors);
     }
 }

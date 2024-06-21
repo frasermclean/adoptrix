@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="Microsoft.Identity.Web" />
+    <PackageReference Include="Riok.Mapperly" />
     <PackageReference Include="SixLabors.ImageSharp" />
   </ItemGroup>
 

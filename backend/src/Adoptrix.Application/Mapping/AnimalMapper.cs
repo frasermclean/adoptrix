@@ -1,8 +1,8 @@
-﻿using Adoptrix.Api.Contracts.Responses;
-using Adoptrix.Domain.Models;
+﻿using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Responses;
 using Riok.Mapperly.Abstractions;
 
-namespace Adoptrix.Api.Mapping;
+namespace Adoptrix.Application.Mapping;
 
 [Mapper]
 [UseStaticMapper(typeof(AnimalImageMapper))]

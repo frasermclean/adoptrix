@@ -1,5 +1,5 @@
 @page "/animals/{animalId:guid}"
-@using Adoptrix.Domain.Models
+@using Adoptrix.Domain.Models.Responses
 @using Adoptrix.Domain.Queries.Animals
 @inject ISender Sender;
 
@@ -22,7 +22,7 @@ else
                 <div class="d-flex gap-2 flex-wrap justify-center">
                     @foreach (var image in animal.Images)
                     {
-                        <MudImage Src="@GetThumbnailUrl(image)" Width="160" Height="160" Class="rounded-lg"/>
+                        <MudImage Src="@image.ThumbnailUrl" Width="160" Height="160" Class="rounded-lg"/>
                     }
                 </div>
             </DetailsBlock>
@@ -41,7 +41,7 @@ else
                 <MudList>
                     <MudListItem>
                         <MudText Typo="Typo.h6">Breed</MudText>
-                        <MudText Typo="Typo.body1">@animal.Breed.Name</MudText>
+                        <MudText Typo="Typo.body1">@animal.BreedName</MudText>
                     </MudListItem>
                     <MudListItem>
                         <MudText Typo="Typo.h6">Sex</MudText>
@@ -67,7 +67,7 @@ else
 
 @code {
 
-    private Animal? animal;
+    private AnimalResponse? animal;
 
     [Parameter] public Guid AnimalId { get; set; }
 
@@ -83,7 +83,5 @@ else
             animal = result.Value;
         }
     }
-
-    private string GetThumbnailUrl(AnimalImage image) => string.Empty; // TODO: Implement
 
 }

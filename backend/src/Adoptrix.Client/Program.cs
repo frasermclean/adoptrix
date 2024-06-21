@@ -1,4 +1,3 @@
-using Adoptrix.Client.Handlers;
 using Adoptrix.Client.Handlers.Animals;
 using Adoptrix.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

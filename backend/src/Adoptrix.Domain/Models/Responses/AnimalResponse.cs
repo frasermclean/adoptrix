@@ -1,7 +1,4 @@
-﻿using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Responses;
-
-namespace Adoptrix.Api.Contracts.Responses;
+﻿namespace Adoptrix.Domain.Models.Responses;
 
 public class AnimalResponse
 {
@@ -14,6 +11,7 @@ public class AnimalResponse
     public required string BreedName { get; init; }
     public required Sex Sex { get; init; }
     public required DateOnly DateOfBirth { get; init; }
+    public required string Age { get; init; }
     public required DateTime CreatedAt { get; init; }
     public required IEnumerable<AnimalImageResponse> Images { get; init; }
 }
