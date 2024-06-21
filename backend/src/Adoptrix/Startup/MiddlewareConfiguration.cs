@@ -1,4 +1,5 @@
-﻿using Adoptrix.Components;
+﻿using Adoptrix.Client.Pages;
+using Adoptrix.Components;
 
 namespace Adoptrix.Startup;
 
@@ -9,9 +10,13 @@ public static class MiddlewareConfiguration
     /// </summary>
     public static WebApplication ConfigureMiddleware(this WebApplication app)
     {
-        if (!app.Environment.IsDevelopment())
+        if (app.Environment.IsDevelopment())
         {
-            app.UseExceptionHandler("/Error");
+            app.UseWebAssemblyDebugging();
+        }
+        else
+        {
+            app.UseExceptionHandler("/error");
             app.UseHsts();
         }
 
@@ -21,7 +26,9 @@ public static class MiddlewareConfiguration
         app.UseAntiforgery();
 
         app.MapRazorComponents<App>()
-            .AddInteractiveServerRenderMode();
+            .AddInteractiveServerRenderMode()
+            .AddInteractiveWebAssemblyRenderMode()
+            .AddAdditionalAssemblies(typeof(Home).Assembly);
 
         return app;
     }
