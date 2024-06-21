@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Errors;
+﻿using Adoptrix.Domain.Errors;
 using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

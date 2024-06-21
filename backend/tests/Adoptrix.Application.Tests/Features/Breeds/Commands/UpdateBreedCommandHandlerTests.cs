@@ -1,7 +1,7 @@
-﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Features.Breeds.Commands;
+﻿using Adoptrix.Application.Features.Breeds.Commands;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Commands.Breeds;
+using Adoptrix.Domain.Errors;
 using Adoptrix.Domain.Models;
 using Adoptrix.Tests.Shared;
 using Adoptrix.Tests.Shared.Factories;

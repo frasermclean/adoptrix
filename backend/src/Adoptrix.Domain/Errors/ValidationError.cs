@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace Adoptrix.Application.Errors;
+namespace Adoptrix.Domain.Errors;
 
 public interface IValidationError : IError
 {

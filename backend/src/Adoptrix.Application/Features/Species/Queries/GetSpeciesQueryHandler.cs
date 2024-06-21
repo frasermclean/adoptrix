@@ -1,5 +1,5 @@
-﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain.Errors;
 using Adoptrix.Domain.Queries.Species;
 using FluentResults;
 using MediatR;

@@ -1,6 +1,6 @@
-﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain.Commands.Breeds;
+using Adoptrix.Domain.Errors;
 using FluentResults;
 using MediatR;
 

@@ -1,7 +1,7 @@
-﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Support;
 using Adoptrix.Domain.Commands.Animals;
+using Adoptrix.Domain.Errors;
 using Adoptrix.Domain.Models;
 using FluentResults;
 using MediatR;

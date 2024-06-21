@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace Adoptrix.Application.Errors;
+namespace Adoptrix.Domain.Errors;
 
 public class BreedNotFoundError(Guid breedId)
     : Error($"Breed with id: {breedId} was not found."), INotFoundError;
