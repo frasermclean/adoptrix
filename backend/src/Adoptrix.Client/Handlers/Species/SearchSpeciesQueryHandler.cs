@@ -1,14 +1,20 @@
-﻿using Adoptrix.Domain.Models.Responses;
+﻿using System.Net.Http.Json;
+using Adoptrix.Client.Extensions;
+using Adoptrix.Domain.Models.Responses;
 using Adoptrix.Domain.Queries.Species;
 using MediatR;
 
 namespace Adoptrix.Client.Handlers.Species;
 
-public class SearchSpeciesQueryHandler : IRequestHandler<SearchSpeciesQuery, IEnumerable<SpeciesMatch>>
+public class SearchSpeciesQueryHandler(HttpClient httpClient)
+    : IRequestHandler<SearchSpeciesQuery, IEnumerable<SpeciesMatch>>
 {
-    public Task<IEnumerable<SpeciesMatch>> Handle(SearchSpeciesQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<SpeciesMatch>> Handle(SearchSpeciesQuery query, CancellationToken cancellationToken)
     {
-        var matches = Enumerable.Empty<SpeciesMatch>();
-        return Task.FromResult(matches);
+        var queryString = query.ToQueryString();
+        var message = await httpClient.GetAsync($"api/species{queryString}", cancellationToken);
+        var matches = await message.Content.ReadFromJsonAsync<IEnumerable<SpeciesMatch>>(cancellationToken);
+
+        return matches ?? [];
     }
 }

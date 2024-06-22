@@ -10,8 +10,7 @@ public static class AnimalsEndpoints
     public static async Task<IEnumerable<AnimalMatch>> SearchAnimals([AsParameters] SearchAnimalsQuery query,
         ISender sender, CancellationToken cancellationToken)
     {
-        var matches = await sender.Send(query, cancellationToken);
-        return matches;
+        return await sender.Send(query, cancellationToken);
     }
 
     public static async Task<Results<Ok<AnimalResponse>, NotFound>> GetAnimal(Guid animalId, ISender sender,

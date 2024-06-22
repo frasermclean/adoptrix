@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Client.Pages;
 using Adoptrix.Components;
-using Adoptrix.Endpoints;
 
 namespace Adoptrix.Startup;
 
@@ -31,8 +30,7 @@ public static class MiddlewareConfiguration
             .AddInteractiveWebAssemblyRenderMode()
             .AddAdditionalAssemblies(typeof(Home).Assembly);
 
-        app.MapGet("api/animals", AnimalsEndpoints.SearchAnimals);
-        app.MapGet("api/animals/{animalId:guid}", AnimalsEndpoints.GetAnimal);
+        app.MapApiEndpoints();
 
         return app;
     }

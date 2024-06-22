@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" />
     <PackageReference Include="MudBlazor" />
   </ItemGroup>
 
