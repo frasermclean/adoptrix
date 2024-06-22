@@ -2,6 +2,8 @@
 using Adoptrix.Client;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Storage.DependencyInjection;
+using Azure.Identity;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 
 namespace Adoptrix.Startup;
 
@@ -20,6 +22,14 @@ public static class ServiceRegistration
             .AddApplicationServices()
             .AddDatabaseServices(builder.Configuration)
             .AddStorageServices(builder.Configuration);
+
+        // open telemetry services
+        builder.Services.AddOpenTelemetry()
+            .UseAzureMonitor(options =>
+            {
+                options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+                options.Credential = new DefaultAzureCredential();
+            });
 
         return builder;
     }
