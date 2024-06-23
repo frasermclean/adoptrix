@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Client.Pages;
 using Adoptrix.Components;
+using FastEndpoints;
 
 namespace Adoptrix.Startup;
 
@@ -30,7 +31,10 @@ public static class MiddlewareConfiguration
             .AddInteractiveWebAssemblyRenderMode()
             .AddAdditionalAssemblies(typeof(Home).Assembly);
 
-        app.MapApiEndpoints();
+        app.UseFastEndpoints(config =>
+        {
+            config.Endpoints.RoutePrefix = "api";
+        });
 
         return app;
     }
