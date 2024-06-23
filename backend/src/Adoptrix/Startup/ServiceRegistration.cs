@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Client;
@@ -23,6 +23,14 @@ public static class ServiceRegistration
             .AddInteractiveWebAssemblyComponents();
 
         builder.Services.AddFastEndpoints();
+
+        // json serialization options
+        builder.Services.Configure<JsonOptions>(options =>
+        {
+            options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+        });
 
         builder.Services.AddCommonServices()
             .AddApplicationServices()
