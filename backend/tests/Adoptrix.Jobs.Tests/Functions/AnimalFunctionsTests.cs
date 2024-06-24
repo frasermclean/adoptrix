@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Features.Animals.Commands;
+﻿using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Events;
 using Adoptrix.Jobs.Functions;
 using Adoptrix.Tests.Shared;

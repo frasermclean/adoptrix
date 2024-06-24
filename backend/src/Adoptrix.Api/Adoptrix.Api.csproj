@@ -17,12 +17,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
-    <PackageReference Include="Riok.Mapperly" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Adoptrix.Database\Adoptrix.Database.csproj" />
-    <ProjectReference Include="..\Adoptrix.Storage\Adoptrix.Storage.csproj" />    
+    <ProjectReference Include="..\Adoptrix.Storage\Adoptrix.Storage.csproj" />
   </ItemGroup>
 
 </Project>

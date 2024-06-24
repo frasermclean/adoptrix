@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" />
+    <PackageReference Include="FastEndpoints" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Adoptrix.Client\Adoptrix.Client.csproj" />
+    <ProjectReference Include="..\Adoptrix.Database\Adoptrix.Database.csproj" />
+    <ProjectReference Include="..\Adoptrix.Storage\Adoptrix.Storage.csproj" />
+  </ItemGroup>
+
+</Project>

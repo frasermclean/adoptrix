@@ -1,5 +1,5 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Tests.Shared.Factories;
+﻿using Adoptrix.Tests.Shared.Factories;
+using AnimalMapper = Adoptrix.Application.Mapping.AnimalMapper;
 
 namespace Adoptrix.Api.Tests.Mapping;
 
@@ -12,7 +12,7 @@ public class AnimalMapperTests
         var animal = AnimalFactory.Create(imageCount: 3);
 
         // act
-        var response = animal.ToResponse();
+        var response = AnimalMapper.ToResponse(animal);
 
         // assert
         response.Id.Should().Be(animal.Id);

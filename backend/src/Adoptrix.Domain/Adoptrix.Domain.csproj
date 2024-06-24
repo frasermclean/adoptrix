@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FluentResults" />
+    <PackageReference Include="MediatR.Contracts" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
-﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services;
-using Adoptrix.Application.Services.Support;
+﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain.Commands.Animals;
+using Adoptrix.Domain.Errors;
 using Adoptrix.Domain.Events;
 using Adoptrix.Domain.Models;
 using FluentResults;
@@ -61,7 +61,7 @@ public class AddAnimalImagesCommandHandler(
         };
 
         var result = await imageManager.UploadImageAsync(command.AnimalId, image.Id, data.Stream,
-            data.ContentType, ImageCategory.Original, cancellationToken);
+            data.ContentType, AnimalImageCategory.Original, cancellationToken);
 
         return result.IsSuccess
             ? Result.Ok(image)

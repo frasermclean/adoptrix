@@ -1,5 +1,5 @@
-﻿using Adoptrix.Application.Features.Breeds.Responses;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain.Models.Responses;
 using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Api.Tests.Fixtures.Mocks;
@@ -11,9 +11,9 @@ public static class BreedsRepositoryMockSetup
         mock.Setup(repository =>
                 repository.SearchAsync(It.IsAny<Guid?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid? _, bool? _, CancellationToken _) => BreedFactory.CreateMany(searchResultsCount)
-                .Select(breed => new SearchBreedsResult
+                .Select(breed => new BreedMatch
                 {
-                    Id = breed.Id, Name = breed.Name, SpeciesId = breed.Species.Id, AnimalIds = Enumerable.Empty<Guid>()
+                    Id = breed.Id, Name = breed.Name, SpeciesId = breed.Species.Id, AnimalCount = 0,
                 }));
 
         mock.Setup(repository => repository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))

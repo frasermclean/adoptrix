@@ -1,0 +1,99 @@
+@using Adoptrix.Domain.Models
+@using Adoptrix.Domain.Models.Responses
+@using Adoptrix.Domain.Queries.Animals
+@using Adoptrix.Domain.Queries.Breeds
+@using Adoptrix.Domain.Queries.Species
+@inject ISender Sender;
+
+<DetailsBlock>
+
+    @* Species *@
+    <MudText Typo="Typo.h6" GutterBottom="true">Species</MudText>
+    <MudChipSet Filter="true" Class="mb-2" SelectedChip="selectedSpecies" SelectedChipChanged="OnSpeciesChanged">
+        @foreach (var match in speciesMatches)
+        {
+            <MudBadge Content="@match.AnimalCount" Overlap="true" Color="Color.Secondary" Class="mr-2">
+                <MudChip Text="@match.SpeciesName" Value="@match.SpeciesId" Color="Color.Primary"/>
+            </MudBadge>
+        }
+    </MudChipSet>
+
+    @* Breed *@
+    @if (selectedSpecies is not null)
+    {
+        <MudText Typo="Typo.h6">Breed</MudText>
+        <MudChipSet Filter="true" Class="mb-2" SelectedChip="selectedBreed" SelectedChipChanged="OnBreedChanged">
+            @foreach (var match in breedMatches)
+            {
+                <MudBadge Content="@match.AnimalCount" Overlap="true" Color="Color.Secondary" Class="mr-2">
+                    <MudChip Text="@match.Name" Value="@match.Id" Color="Color.Primary"/>
+                </MudBadge>
+            }
+        </MudChipSet>
+    }
+
+    @* Sex *@
+    <MudText Typo="Typo.h6">Sex</MudText>
+    <MudChipSet Filter="true" Class="mb-2" SelectedChip="selectedSex" SelectedChipChanged="OnSexChanged">
+        <MudChip Text="Male" Value="Sex.Male" Color="Color.Primary" Icon="fa-solid fa-mars"/>
+        <MudChip Text="Female" Value="Sex.Female" Color="Color.Primary" Icon="fa-solid fa-venus"/>
+    </MudChipSet>
+
+    @if (HasFilters)
+    {
+        <MudButton OnClick="OnClearFilters" Class="mt-4" Style="width: 100%">Clear Filters</MudButton>
+    }
+
+</DetailsBlock>
+
+@code {
+    private IEnumerable<SpeciesMatch> speciesMatches = [];
+    private IEnumerable<BreedMatch> breedMatches = [];
+    private MudChip? selectedSpecies;
+    private MudChip? selectedBreed;
+    private MudChip? selectedSex;
+
+    [Parameter] public EventCallback<SearchAnimalsQuery> DataChanged { get; set; }
+
+    private bool HasFilters => selectedSpecies is not null || selectedBreed is not null || selectedSex is not null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        speciesMatches = await Sender.Send(new SearchSpeciesQuery { WithAnimals = true });
+    }
+
+    private async Task OnSpeciesChanged(MudChip? chip)
+    {
+        selectedSpecies = chip;
+        selectedBreed = null;
+        breedMatches = await Sender.Send(new SearchBreedsQuery { SpeciesId = (Guid?)selectedSpecies?.Value, WithAnimals = true });
+        RaiseDataChanged();
+    }
+
+    private void OnBreedChanged(MudChip? chip)
+    {
+        selectedBreed = chip;
+        RaiseDataChanged();
+    }
+
+    private void OnSexChanged(MudChip? chip)
+    {
+        selectedSex = chip;
+        RaiseDataChanged();
+    }
+
+    private void OnClearFilters()
+    {
+        selectedSpecies = null;
+        selectedBreed = null;
+        selectedSex = null;
+        RaiseDataChanged();
+    }
+
+    private void RaiseDataChanged() => DataChanged.InvokeAsync(new SearchAnimalsQuery(
+        null,
+        (Guid?)selectedBreed?.Value,
+        (Guid?)selectedSpecies?.Value,
+        (Sex?)selectedSex?.Value));
+
+}

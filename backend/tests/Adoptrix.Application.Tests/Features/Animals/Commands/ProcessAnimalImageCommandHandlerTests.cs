@@ -1,7 +1,8 @@
-﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Features.Animals.Commands;
+﻿using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Support;
+using Adoptrix.Domain.Commands.Animals;
+using Adoptrix.Domain.Errors;
 using Adoptrix.Domain.Models;
 using Adoptrix.Tests.Shared;
 using Adoptrix.Tests.Shared.Extensions;
@@ -22,7 +23,7 @@ public class ProcessAnimalImageCommandHandlerTests
         // arrange
         imageManagerMock
             .Setup(manager => manager.GetImageReadStreamAsync(command.AnimalId, command.ImageId,
-                It.IsAny<ImageCategory>(), It.IsAny<CancellationToken>()))
+                It.IsAny<AnimalImageCategory>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Stream.Null);
         imageProcessorMock
             .Setup(processor => processor.ProcessOriginalAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))

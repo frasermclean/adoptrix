@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Errors;
+﻿using Adoptrix.Domain.Errors;
 using FluentResults;
 using FluentValidation;
 using FluentValidation.Results;

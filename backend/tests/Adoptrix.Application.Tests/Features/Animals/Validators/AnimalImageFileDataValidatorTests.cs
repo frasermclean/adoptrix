@@ -1,5 +1,5 @@
-﻿using Adoptrix.Application.Features.Animals.Commands;
-using Adoptrix.Application.Features.Animals.Validators;
+﻿using Adoptrix.Application.Features.Animals.Validators;
+using Adoptrix.Domain.Commands.Animals;
 using FluentValidation.TestHelper;
 
 namespace Adoptrix.Application.Tests.Features.Animals.Validators;

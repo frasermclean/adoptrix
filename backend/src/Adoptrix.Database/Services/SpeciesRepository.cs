@@ -1,7 +1,7 @@
-﻿using Adoptrix.Application.Features.Species.Queries;
-using Adoptrix.Application.Features.Species.Responses;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
+using Adoptrix.Domain.Models.Responses;
+using Adoptrix.Domain.Queries.Species;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
@@ -9,11 +9,11 @@ namespace Adoptrix.Database.Services;
 public class SpeciesRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
     : Repository(dbContext, batchManager), ISpeciesRepository
 {
-    public async Task<IEnumerable<SearchSpeciesMatch>> SearchAsync(SearchSpeciesQuery query,
+    public async Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesQuery query,
         CancellationToken cancellationToken = default)
     {
         return await DbContext.Species
-            .Select(species => new SearchSpeciesMatch
+            .Select(species => new SpeciesMatch
             {
                 SpeciesId = species.Id,
                 SpeciesName = species.Name,

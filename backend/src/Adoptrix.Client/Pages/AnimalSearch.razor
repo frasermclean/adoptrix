@@ -1,0 +1,50 @@
+﻿@page "/animals"
+@using Adoptrix.Domain.Models.Responses
+@using Adoptrix.Domain.Queries.Animals
+@inject AppNameProvider AppNameProvider
+@inject ISender Sender;
+
+<PageTitle>Animals - @AppNameProvider.AppName</PageTitle>
+<MudText Typo="Typo.h3" GutterBottom="true">Search Animals</MudText>
+
+@if (matches == null)
+{
+    <MudProgressCircular Indeterminate="true"/>
+}
+else
+{
+    <MudGrid>
+        @* Search controls *@
+        <MudItem xs="12" md="3">
+            <MudPaper>
+                <AnimalSearchControls DataChanged="OnSearchDataChanged"></AnimalSearchControls>
+            </MudPaper>
+        </MudItem>
+
+        @* Results *@
+        <MudItem xs="12" md="9">
+            <MudContainer Fixed="true" Class="d-flex flex-wrap gap-2">
+                @foreach (var match in matches)
+                {
+                    <AnimalCard Match="match"/>
+                }
+            </MudContainer>
+        </MudItem>
+    </MudGrid>
+}
+
+
+@code {
+    private IEnumerable<AnimalMatch>? matches;
+
+    protected override async Task OnInitializedAsync()
+    {
+        matches = await Sender.Send(new SearchAnimalsQuery());
+    }
+
+    private async Task OnSearchDataChanged(SearchAnimalsQuery query)
+    {
+        matches = await Sender.Send(query);
+    }
+
+}

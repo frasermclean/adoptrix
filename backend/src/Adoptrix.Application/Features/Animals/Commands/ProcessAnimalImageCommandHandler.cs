@@ -1,6 +1,7 @@
-﻿using Adoptrix.Application.Errors;
-using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Support;
+using Adoptrix.Domain.Commands.Animals;
+using Adoptrix.Domain.Errors;
 using Adoptrix.Domain.Models;
 using FluentResults;
 using MediatR;
@@ -50,11 +51,11 @@ public class ProcessAnimalImageCommandHandler(
         // upload processed images
         await Task.WhenAll(
             imageManager.UploadImageAsync(animalId, imageId, bundle.ThumbnailWriteStream,
-                ImageProcessor.OutputContentType, ImageCategory.Thumbnail),
+                ImageProcessor.OutputContentType, AnimalImageCategory.Thumbnail),
             imageManager.UploadImageAsync(animalId, imageId, bundle.PreviewWriteStream,
-                ImageProcessor.OutputContentType, ImageCategory.Preview),
+                ImageProcessor.OutputContentType, AnimalImageCategory.Preview),
             imageManager.UploadImageAsync(animalId, imageId, bundle.FullSizeWriteStream,
-                ImageProcessor.OutputContentType, ImageCategory.FullSize)
+                ImageProcessor.OutputContentType, AnimalImageCategory.FullSize)
         );
 
         logger.LogInformation("Uploaded processed images for animal with ID: {AnimalId}", animalId);
