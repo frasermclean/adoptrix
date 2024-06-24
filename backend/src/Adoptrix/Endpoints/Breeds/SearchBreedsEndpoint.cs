@@ -2,11 +2,11 @@
 using Adoptrix.Domain.Models.Responses;
 using Adoptrix.Domain.Queries.Breeds;
 using FastEndpoints;
+using MediatR;
 
 namespace Adoptrix.Endpoints.Breeds;
 
-public class SearchBreedsEndpoint(IBreedsRepository breedsRepository)
-    : Endpoint<SearchBreedsQuery, IEnumerable<BreedMatch>>
+public class SearchBreedsEndpoint(ISender sender) : Endpoint<SearchBreedsQuery, IEnumerable<BreedMatch>>
 {
     public override void Configure()
     {
@@ -17,6 +17,6 @@ public class SearchBreedsEndpoint(IBreedsRepository breedsRepository)
     public override async Task<IEnumerable<BreedMatch>> ExecuteAsync(SearchBreedsQuery query,
         CancellationToken cancellationToken)
     {
-        return await breedsRepository.SearchAsync(query.SpeciesId, query.WithAnimals, cancellationToken);
+        return await sender.Send(query, cancellationToken);
     }
 }
