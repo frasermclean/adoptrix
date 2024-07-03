@@ -19,6 +19,7 @@ public static class ServiceRegistration
                 configuration.AddOpenBehavior(typeof(ValidationBehaviour<,>));
             })
             .AddValidatorsFromAssembly(executingAssembly)
-            .AddSingleton<IImageProcessor, ImageProcessor>();
+            .AddSingleton<IImageProcessor, ImageProcessor>()
+            .AddScoped<IAnimalsService, AnimalsService>();
     }
 }

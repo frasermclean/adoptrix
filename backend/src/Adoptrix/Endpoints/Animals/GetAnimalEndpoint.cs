@@ -1,12 +1,11 @@
-﻿using Adoptrix.Domain.Models.Responses;
-using Adoptrix.Domain.Queries.Animals;
+﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain.Models.Responses;
 using FastEndpoints;
-using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Endpoints.Animals;
 
-public class GetAnimalEndpoint(ISender sender) : Endpoint<GetAnimalQuery, Results<Ok<AnimalResponse>, NotFound>>
+public class GetAnimalEndpoint(IAnimalsService animalsService) : EndpointWithoutRequest<Results<Ok<AnimalResponse>, NotFound>>
 {
     public override void Configure()
     {
@@ -14,10 +13,10 @@ public class GetAnimalEndpoint(ISender sender) : Endpoint<GetAnimalQuery, Result
         AllowAnonymous();
     }
 
-    public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(GetAnimalQuery query,
-        CancellationToken cancellationToken)
+    public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(CancellationToken cancellationToken)
     {
-        var result = await sender.Send(query, cancellationToken);
+        var animalId = Route<Guid>("animalId");
+        var result = await animalsService.GetAnimalAsync(animalId, cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.Ok(result.Value)
