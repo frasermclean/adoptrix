@@ -1,11 +1,8 @@
-﻿using Adoptrix.Domain.Models;
-using FastEndpoints;
-using FluentResults;
-using MediatR;
+﻿using FastEndpoints;
 
 namespace Adoptrix.Domain.Contracts.Requests.Breeds;
 
-public class UpdateBreedRequest : IRequest<Result<Breed>>
+public class UpdateBreedRequest
 {
     public required string Name { get; init; }
     public Guid BreedId { get; init; }
