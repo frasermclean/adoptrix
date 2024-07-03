@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Domain.Commands.Animals;
-using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Contracts.Responses;
 using FluentResults;
 
@@ -9,9 +9,9 @@ public interface IAnimalsService
 {
     Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request, CancellationToken cancellationToken = default);
     Task<Result<AnimalResponse>> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
-    Task<Result<AnimalResponse>> AddAsync(AddAnimalCommand command, CancellationToken cancellationToken = default);
+    Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request, CancellationToken cancellationToken = default);
 
-    Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalCommand command,
+    Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalRequest request,
         CancellationToken cancellationToken = default);
 
     Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default);

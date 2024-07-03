@@ -1,11 +1,11 @@
 ﻿using Adoptrix.Application.Features.Breeds.Validators;
-using Adoptrix.Domain.Commands.Animals;
+using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Models;
 using FluentValidation;
 
 namespace Adoptrix.Application.Features.Animals.Validators;
 
-public class AddAnimalCommandValidator : AbstractValidator<AddAnimalCommand>
+public class AddAnimalCommandValidator : AbstractValidator<AddAnimalRequest>
 {
     public AddAnimalCommandValidator(DateOfBirthValidator dateOfBirthValidator, BreedIdExistsValidator breedIdExistsValidator)
     {

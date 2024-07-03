@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Mapping;
 using Adoptrix.Domain.Commands.Animals;
-using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Errors;
 using Adoptrix.Domain.Events;
@@ -62,23 +62,23 @@ public class AnimalsService(
         return response;
     }
 
-    public async Task<Result<AnimalResponse>> AddAsync(AddAnimalCommand command, CancellationToken cancellationToken)
+    public async Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request, CancellationToken cancellationToken = default)
     {
-        var breed = await breedsRepository.GetByIdAsync(command.BreedId, cancellationToken);
+        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
         if (breed is null)
         {
-            logger.LogError("Breed with ID {BreedId} was not found", command.BreedId);
-            return new BreedNotFoundError(command.BreedId);
+            logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
+            return new BreedNotFoundError(request.BreedId);
         }
 
         var animal = new Animal
         {
-            Name = command.Name,
-            Description = command.Description,
+            Name = request.Name,
+            Description = request.Description,
             Breed = breed,
-            Sex = command.Sex,
-            DateOfBirth = command.DateOfBirth,
-            CreatedBy = command.UserId
+            Sex = request.Sex,
+            DateOfBirth = request.DateOfBirth,
+            CreatedBy = request.UserId
         };
 
         await animalsRepository.AddAsync(animal, cancellationToken);
@@ -88,28 +88,28 @@ public class AnimalsService(
         return animal.ToResponse();
     }
 
-    public async Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalCommand command,
+    public async Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalRequest request,
         CancellationToken cancellationToken = default)
     {
-        var animal = await animalsRepository.GetByIdAsync(command.AnimalId, cancellationToken);
+        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
         if (animal is null)
         {
-            logger.LogError("Animal with ID {AnimalId} was not found", command.AnimalId);
-            return new AnimalNotFoundError(command.AnimalId);
+            logger.LogError("Animal with ID {AnimalId} was not found", request.AnimalId);
+            return new AnimalNotFoundError(request.AnimalId);
         }
 
-        var breed = await breedsRepository.GetByIdAsync(command.BreedId, cancellationToken);
+        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
         if (breed is null)
         {
-            logger.LogError("Breed with ID {BreedId} was not found", command.BreedId);
-            return new BreedNotFoundError(command.BreedId);
+            logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
+            return new BreedNotFoundError(request.BreedId);
         }
 
-        animal.Name = command.Name;
-        animal.Description = command.Description;
+        animal.Name = request.Name;
+        animal.Description = request.Description;
         animal.Breed = breed;
-        animal.Sex = command.Sex;
-        animal.DateOfBirth = command.DateOfBirth;
+        animal.Sex = request.Sex;
+        animal.DateOfBirth = request.DateOfBirth;
 
         await animalsRepository.UpdateAsync(animal, cancellationToken);
 

@@ -2,7 +2,7 @@
 using System.Text.Json;
 using Adoptrix.Client.Extensions;
 using Adoptrix.Domain.Commands.Animals;
-using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Services;
 using FluentResults;
@@ -32,13 +32,13 @@ public class AnimalsClient(HttpClient httpClient, JsonSerializerOptions serializ
         return response!;
     }
 
-    public Task<Result<AnimalResponse>> AddAsync(AddAnimalCommand command,
+    public Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalCommand command,
+    public Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalRequest request,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();

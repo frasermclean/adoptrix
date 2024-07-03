@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain.Contracts.Requests;
+﻿using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Services;
 using FastEndpoints;

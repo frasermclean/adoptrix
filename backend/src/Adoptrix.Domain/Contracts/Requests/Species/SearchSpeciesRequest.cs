@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Domain.Contracts.Requests;
+﻿namespace Adoptrix.Domain.Contracts.Requests.Species;
 
 public class SearchSpeciesRequest
 {

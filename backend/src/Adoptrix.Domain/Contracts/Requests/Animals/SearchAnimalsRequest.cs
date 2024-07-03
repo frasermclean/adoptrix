@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Domain.Models;
 
-namespace Adoptrix.Domain.Contracts.Requests;
+namespace Adoptrix.Domain.Contracts.Requests.Animals;
 
 public class SearchAnimalsRequest
 {

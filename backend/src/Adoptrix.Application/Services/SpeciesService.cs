@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Application.Mapping;
 using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Requests.Species;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Errors;
 using Adoptrix.Domain.Services;

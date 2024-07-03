@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain.Contracts.Requests;
+﻿using Adoptrix.Domain.Contracts.Requests.Animals;
 using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Adoptrix.Client.Extensions;

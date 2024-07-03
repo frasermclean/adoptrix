@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Application.Services;
-using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Tests.Shared.Factories;
 
