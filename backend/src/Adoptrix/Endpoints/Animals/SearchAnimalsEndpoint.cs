@@ -2,7 +2,6 @@
 using Adoptrix.Domain.Models.Responses;
 using Adoptrix.Domain.Queries.Animals;
 using FastEndpoints;
-using MediatR;
 
 namespace Adoptrix.Endpoints.Animals;
 

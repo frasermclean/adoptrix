@@ -1,5 +1,4 @@
-﻿using Adoptrix.Application.Services;
-using Adoptrix.Domain.Models.Responses;
+﻿using Adoptrix.Domain.Models.Responses;
 using Adoptrix.Domain.Queries.Breeds;
 using FastEndpoints;
 using MediatR;

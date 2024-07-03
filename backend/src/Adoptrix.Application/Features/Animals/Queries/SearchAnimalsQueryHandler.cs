@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Extensions;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain.Models;
 using Adoptrix.Domain.Models.Responses;
 using Adoptrix.Domain.Queries.Animals;
 using MediatR;

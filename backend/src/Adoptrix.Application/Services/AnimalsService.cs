@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Application.Mapping;
 using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Errors;
+using Adoptrix.Domain.Events;
 using Adoptrix.Domain.Models;
 using Adoptrix.Domain.Models.Responses;
 using Adoptrix.Domain.Queries.Animals;
@@ -14,13 +15,15 @@ public interface IAnimalsService
     Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsQuery query, CancellationToken cancellationToken = default);
     Task<Result<AnimalResponse>> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
     Task<Result<AnimalResponse>> AddAsync(AddAnimalCommand command, CancellationToken cancellationToken = default);
+    Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default);
 }
 
 public class AnimalsService(
     ILogger<AnimalsService> logger,
     IAnimalsRepository animalsRepository,
     IBreedsRepository breedsRepository,
-    IAnimalImageManager imageManager) : IAnimalsService
+    IAnimalImageManager imageManager,
+    IEventPublisher eventPublisher) : IAnimalsService
 {
     private readonly Uri containerUri = imageManager.ContainerUri;
 
@@ -90,6 +93,24 @@ public class AnimalsService(
         logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
 
         return animal.ToResponse();
+    }
+
+    public async Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default)
+    {
+        var animal = await animalsRepository.GetByIdAsync(animalId, cancellationToken);
+        if (animal is null)
+        {
+            logger.LogError("Could not find animal with ID: {AnimalId} to delete", animalId);
+            return new AnimalNotFoundError(animalId);
+        }
+
+        await animalsRepository.DeleteAsync(animal, cancellationToken);
+        logger.LogInformation("Deleted animal with ID: {AnimalId}", animalId);
+
+        // publish domain event
+        await eventPublisher.PublishAsync(new AnimalDeletedEvent(animalId), cancellationToken);
+
+        return Result.Ok();
     }
 
     private static void SetImageUrls(AnimalImageResponse response, Guid animalId, Uri containerUri)

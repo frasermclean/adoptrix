@@ -2,7 +2,6 @@
 using Adoptrix.Application.Mapping;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Errors;
-using Adoptrix.Domain.Models;
 using Adoptrix.Domain.Models.Responses;
 using Adoptrix.Domain.Queries.Animals;
 using FluentResults;
