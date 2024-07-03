@@ -61,8 +61,12 @@ public class AnimalImageFileDataValidatorTests
     }
 
     private static AnimalImageFileData CreateData(string fileName = "image.jpg", string description = "A cute dog",
-        string contentType = "image/jpeg", long length = 2048)
+        string contentType = "image/jpeg", long length = 2048) => new()
     {
-        return new AnimalImageFileData(fileName, description, contentType, length, new MemoryStream());
-    }
+        FileName = fileName,
+        Description = description,
+        ContentType = contentType,
+        Length = length,
+        Stream = new MemoryStream()
+    };
 }

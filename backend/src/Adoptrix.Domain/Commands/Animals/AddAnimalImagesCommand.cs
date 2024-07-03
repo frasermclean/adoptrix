@@ -1,10 +1,17 @@
-﻿using Adoptrix.Domain.Models;
-using FluentResults;
-using MediatR;
+﻿namespace Adoptrix.Domain.Commands.Animals;
 
-namespace Adoptrix.Domain.Commands.Animals;
+public class AddAnimalImagesCommand
+{
+    public required Guid AnimalId { get; init; }
+    public required Guid UserId { get; init; }
+    public required IEnumerable<AnimalImageFileData> FileData { get; init; }
+}
 
-public record AddAnimalImagesCommand(Guid AnimalId, Guid UserId, IEnumerable<AnimalImageFileData> FileData)
-    : IRequest<Result<Animal>>;
-
-public record AnimalImageFileData(string FileName, string Description, string ContentType, long Length, Stream Stream);
+public class AnimalImageFileData
+{
+    public required string FileName { get; init; }
+    public required string Description { get; init; }
+    public required string ContentType { get; init; }
+    public required long Length { get; init; }
+    public required Stream Stream { get; init; }
+}
