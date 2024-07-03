@@ -15,6 +15,7 @@ public interface IAnimalsService
     Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsQuery query, CancellationToken cancellationToken = default);
     Task<Result<AnimalResponse>> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
     Task<Result<AnimalResponse>> AddAsync(AddAnimalCommand command, CancellationToken cancellationToken = default);
+    Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalCommand command, CancellationToken cancellationToken = default);
     Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default);
 }
 
@@ -91,6 +92,35 @@ public class AnimalsService(
         await animalsRepository.AddAsync(animal, cancellationToken);
 
         logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
+
+        return animal.ToResponse();
+    }
+
+    public async Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalCommand command, CancellationToken cancellationToken = default)
+    {
+        var animal = await animalsRepository.GetByIdAsync(command.AnimalId, cancellationToken);
+        if (animal is null)
+        {
+            logger.LogError("Animal with ID {AnimalId} was not found", command.AnimalId);
+            return new AnimalNotFoundError(command.AnimalId);
+        }
+
+        var breed = await breedsRepository.GetByIdAsync(command.BreedId, cancellationToken);
+        if (breed is null)
+        {
+            logger.LogError("Breed with ID {BreedId} was not found", command.BreedId);
+            return new BreedNotFoundError(command.BreedId);
+        }
+
+        animal.Name = command.Name;
+        animal.Description = command.Description;
+        animal.Breed = breed;
+        animal.Sex = command.Sex;
+        animal.DateOfBirth = command.DateOfBirth;
+
+        await animalsRepository.UpdateAsync(animal, cancellationToken);
+
+        logger.LogInformation("Updated animal with ID: {AnimalId}", animal.Id);
 
         return animal.ToResponse();
     }
