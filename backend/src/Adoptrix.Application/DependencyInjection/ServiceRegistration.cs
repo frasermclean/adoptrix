@@ -21,6 +21,8 @@ public static class ServiceRegistration
             })
             .AddValidatorsFromAssembly(executingAssembly)
             .AddSingleton<IImageProcessor, ImageProcessor>()
-            .AddScoped<IAnimalsService, AnimalsService>();
+            .AddScoped<IAnimalsService, AnimalsService>()
+            .AddScoped<IBreedsService, BreedsService>()
+            .AddScoped<ISpeciesService, SpeciesService>();
     }
 }

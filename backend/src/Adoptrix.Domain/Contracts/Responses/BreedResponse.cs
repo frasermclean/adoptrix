@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Api.Contracts.Responses;
+﻿namespace Adoptrix.Domain.Contracts.Responses;
 
 public class BreedResponse
 {

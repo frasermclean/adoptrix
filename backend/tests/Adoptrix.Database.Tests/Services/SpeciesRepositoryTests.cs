@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
+using Adoptrix.Domain.Contracts.Requests;
 using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Queries.Species;
 
 namespace Adoptrix.Database.Tests.Services;
 
@@ -21,7 +21,7 @@ public class SpeciesRepositoryTests
     public async Task SearchAsync_WithEmptyQuery_ShouldReturnAllSpecies()
     {
         // arrange
-        var query = new SearchSpeciesQuery();
+        var query = new SearchSpeciesRequest();
 
         // act
         var results = await speciesRepository.SearchAsync(query);

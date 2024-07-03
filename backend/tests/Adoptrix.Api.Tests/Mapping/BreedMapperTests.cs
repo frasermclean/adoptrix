@@ -1,5 +1,5 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Tests.Shared.Factories;
+﻿using Adoptrix.Tests.Shared.Factories;
+using BreedMapper = Adoptrix.Application.Mapping.BreedMapper;
 
 namespace Adoptrix.Api.Tests.Mapping;
 
@@ -12,7 +12,7 @@ public class BreedMapperTests
         var breed = BreedFactory.Create();
 
         // act
-        var response = breed.ToResponse();
+        var response = BreedMapper.ToResponse(breed);
 
         // assert
         response.Id.Should().Be(breed.Id);

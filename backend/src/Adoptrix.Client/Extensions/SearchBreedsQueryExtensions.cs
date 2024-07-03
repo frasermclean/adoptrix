@@ -1,20 +1,20 @@
-﻿using Adoptrix.Domain.Queries.Breeds;
+﻿using Adoptrix.Domain.Contracts.Requests;
 using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Adoptrix.Client.Extensions;
 
 public static class SearchBreedsQueryExtensions
 {
-    public static string ToQueryString(this SearchBreedsQuery query)
+    public static string ToQueryString(this SearchBreedsRequest request)
     {
         var builder = new QueryBuilder();
 
-        if (query.SpeciesId.HasValue)
+        if (request.SpeciesId.HasValue)
         {
-            builder.Add("speciesId", query.SpeciesId.ToString());
+            builder.Add("speciesId", request.SpeciesId.ToString());
         }
 
-        if (query.WithAnimals.HasValue)
+        if (request.WithAnimals.HasValue)
         {
             builder.Add("withAnimals", "true");
         }

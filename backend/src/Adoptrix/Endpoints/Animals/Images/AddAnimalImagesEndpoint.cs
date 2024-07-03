@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Domain.Commands.Animals;
-using Adoptrix.Domain.Models.Responses;
+using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Services;
 using Adoptrix.Extensions;
 using FastEndpoints;

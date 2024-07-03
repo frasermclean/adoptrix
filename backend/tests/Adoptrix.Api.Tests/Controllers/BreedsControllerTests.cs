@@ -1,10 +1,9 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Adoptrix.Api.Contracts.Requests;
-using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adoptrix.Api.Tests.Controllers;

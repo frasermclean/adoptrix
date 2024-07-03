@@ -1,8 +1,8 @@
-﻿using Adoptrix.Api.Contracts.Responses;
+﻿using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Models;
 using Riok.Mapperly.Abstractions;
 
-namespace Adoptrix.Api.Mapping;
+namespace Adoptrix.Application.Mapping;
 
 [Mapper]
 public static partial class SpeciesMapper

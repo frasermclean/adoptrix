@@ -1,22 +1,25 @@
 ﻿using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Adoptrix.Client.Extensions;
 using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Contracts.Requests;
-using Adoptrix.Domain.Models.Responses;
+using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Services;
 using FluentResults;
+using Microsoft.Extensions.Options;
 
 namespace Adoptrix.Client.Services;
 
-public class AnimalsClient(HttpClient httpClient) : IAnimalsService
+public class AnimalsClient(HttpClient httpClient, JsonSerializerOptions serializerOptions) : IAnimalsService
 {
-    public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest? request, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
+        CancellationToken cancellationToken = default)
     {
-        var queryString = request?.ToQueryString() ?? string.Empty;
-        var message = await httpClient.GetAsync($"api/species{queryString}", cancellationToken);
+        var message = await httpClient.GetAsync($"api/animals{request.ToQueryString()}", cancellationToken);
         message.EnsureSuccessStatusCode();
 
-        var matches = await message.Content.ReadFromJsonAsync<IEnumerable<AnimalMatch>>(cancellationToken: cancellationToken);
+        var matches = await message.Content.ReadFromJsonAsync<IEnumerable<AnimalMatch>>(serializerOptions, cancellationToken);
 
         return matches ?? [];
     }
@@ -26,17 +29,19 @@ public class AnimalsClient(HttpClient httpClient) : IAnimalsService
         var message = await httpClient.GetAsync($"api/animals/{animalId}", cancellationToken);
         message.EnsureSuccessStatusCode();
 
-        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(cancellationToken: cancellationToken);
+        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(serializerOptions, cancellationToken);
 
         return response!;
     }
 
-    public Task<Result<AnimalResponse>> AddAsync(AddAnimalCommand command, CancellationToken cancellationToken = default)
+    public Task<Result<AnimalResponse>> AddAsync(AddAnimalCommand command,
+        CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalCommand command, CancellationToken cancellationToken = default)
+    public Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalCommand command,
+        CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -46,7 +51,8 @@ public class AnimalsClient(HttpClient httpClient) : IAnimalsService
         throw new NotImplementedException();
     }
 
-    public Task<Result<AnimalResponse>> AddImagesAsync(AddAnimalImagesCommand command, CancellationToken cancellationToken = default)
+    public Task<Result<AnimalResponse>> AddImagesAsync(AddAnimalImagesCommand command,
+        CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

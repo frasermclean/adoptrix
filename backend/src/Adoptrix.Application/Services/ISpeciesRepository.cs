@@ -1,12 +1,12 @@
-﻿using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Responses;
-using Adoptrix.Domain.Queries.Species;
+﻿using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Responses;
+using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Application.Services;
 
 public interface ISpeciesRepository
 {
-    Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesQuery query, CancellationToken cancellationToken = default);
+    Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesRequest request, CancellationToken cancellationToken = default);
     Task<Species?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Species?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
 }

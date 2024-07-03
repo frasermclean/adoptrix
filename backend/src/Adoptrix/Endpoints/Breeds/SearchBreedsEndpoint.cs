@@ -1,11 +1,11 @@
-﻿using Adoptrix.Domain.Models.Responses;
-using Adoptrix.Domain.Queries.Breeds;
+﻿using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Responses;
+using Adoptrix.Domain.Services;
 using FastEndpoints;
-using MediatR;
 
 namespace Adoptrix.Endpoints.Breeds;
 
-public class SearchBreedsEndpoint(ISender sender) : Endpoint<SearchBreedsQuery, IEnumerable<BreedMatch>>
+public class SearchBreedsEndpoint(IBreedsService breedsService) : Endpoint<SearchBreedsRequest, IEnumerable<BreedMatch>>
 {
     public override void Configure()
     {
@@ -13,9 +13,9 @@ public class SearchBreedsEndpoint(ISender sender) : Endpoint<SearchBreedsQuery, 
         AllowAnonymous();
     }
 
-    public override async Task<IEnumerable<BreedMatch>> ExecuteAsync(SearchBreedsQuery query,
+    public override async Task<IEnumerable<BreedMatch>> ExecuteAsync(SearchBreedsRequest request,
         CancellationToken cancellationToken)
     {
-        return await sender.Send(query, cancellationToken);
+        return await breedsService.SearchAsync(request, cancellationToken);
     }
 }

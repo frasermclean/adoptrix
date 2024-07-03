@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Services;
-using Adoptrix.Domain.Models.Responses;
-using Adoptrix.Domain.Queries.Species;
+using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Api.Tests.Fixtures.Mocks;
@@ -12,7 +12,7 @@ public static class SpeciesRepositoryMockSetup
 
     public static Mock<ISpeciesRepository> SetupDefaults(this Mock<ISpeciesRepository> mock, int searchResultsCount = 3)
     {
-        mock.Setup(repository => repository.SearchAsync(It.IsAny<SearchSpeciesQuery>(), It.IsAny<CancellationToken>()))
+        mock.Setup(repository => repository.SearchAsync(It.IsAny<SearchSpeciesRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(SpeciesFactory.CreateMany(searchResultsCount).Select(species => new SpeciesMatch
             {
                 SpeciesId = species.Id,

@@ -4,8 +4,8 @@ using System.Net.Http.Json;
 using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Api.Tests.Fixtures.Mocks;
+using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Responses;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 

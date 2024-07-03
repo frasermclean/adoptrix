@@ -1,5 +1,5 @@
-﻿using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Responses;
+﻿using Adoptrix.Domain.Contracts.Responses;
+using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Application.Services;
 

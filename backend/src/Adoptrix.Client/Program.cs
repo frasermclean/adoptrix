@@ -1,4 +1,5 @@
-using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Adoptrix.Client.Services;
 using Adoptrix.Domain.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -22,11 +23,14 @@ public static class Program
         builder.Services
             .AddCommonServices()
             .AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) })
-            .AddMediatR(configuration =>
+            .AddScoped<IAnimalsService, AnimalsClient>()
+            .AddScoped<IBreedsService, BreedsClient>()
+            .AddScoped<ISpeciesService, SpeciesClient>()
+            .AddSingleton(new JsonSerializerOptions(JsonSerializerDefaults.Web)
             {
-                configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-            })
-            .AddScoped<IAnimalsService, AnimalsClient>();
+                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+            });
+
 
         return builder;
     }

@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;

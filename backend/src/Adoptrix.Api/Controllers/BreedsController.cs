@@ -1,33 +1,14 @@
 ﻿using Adoptrix.Api.Contracts.Requests;
 using Adoptrix.Api.Extensions;
-using Adoptrix.Api.Mapping;
 using Adoptrix.Domain.Commands.Breeds;
-using Adoptrix.Domain.Models.Responses;
-using Adoptrix.Domain.Queries.Breeds;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BreedMapper = Adoptrix.Application.Mapping.BreedMapper;
 
 namespace Adoptrix.Api.Controllers;
 
 public class BreedsController(ISender sender) : ApiController
 {
-    [HttpGet, AllowAnonymous]
-    public async Task<IEnumerable<BreedMatch>> SearchBreeds([FromQuery] SearchBreedsQuery query,
-        CancellationToken cancellationToken)
-    {
-        return await sender.Send(query, cancellationToken);
-    }
-
-    [HttpGet("{breedId:guid}"), AllowAnonymous]
-    public async Task<IActionResult> GetBreed(Guid breedId, CancellationToken cancellationToken)
-    {
-        var result = await sender.Send(new GetBreedQuery(breedId), cancellationToken);
-
-        return result.IsSuccess
-            ? Ok(result.Value.ToResponse())
-            : Problem(result.Errors);
-    }
 
     [HttpPost]
     public async Task<IActionResult> AddBreed(SetBreedRequest request, CancellationToken cancellationToken)
@@ -36,7 +17,7 @@ public class BreedsController(ISender sender) : ApiController
         var result = await sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-            ? CreatedAtAction(nameof(GetBreed), new { breedId = result.Value.Id }, result.Value.ToResponse())
+            ? CreatedAtAction(nameof(GetBreed), new { breedId = result.Value.Id }, BreedMapper.ToResponse(result.Value))
             : Problem(result.Errors);
     }
 
@@ -48,7 +29,7 @@ public class BreedsController(ISender sender) : ApiController
         var result = await sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-            ? Ok(result.Value.ToResponse())
+            ? Ok(BreedMapper.ToResponse(result.Value))
             : Problem(result.Errors);
     }
 

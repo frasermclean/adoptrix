@@ -8,8 +8,7 @@
     <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MediatR" />
+  <ItemGroup>    
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" />
     <PackageReference Include="MudBlazor" />

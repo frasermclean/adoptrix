@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Responses;
-using Adoptrix.Domain.Queries.Species;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
@@ -9,7 +9,7 @@ namespace Adoptrix.Database.Services;
 public class SpeciesRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
     : Repository(dbContext, batchManager), ISpeciesRepository
 {
-    public async Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesQuery query,
+    public async Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesRequest request,
         CancellationToken cancellationToken = default)
     {
         return await DbContext.Species
@@ -20,7 +20,7 @@ public class SpeciesRepository(AdoptrixDbContext dbContext, IBatchManager batchM
                 BreedCount = species.Breeds.Count,
                 AnimalCount = species.Breeds.Count(breed => breed.Animals.Count > 0)
             })
-            .Where(match => !query.WithAnimals || match.AnimalCount > 0)
+            .Where(match => !request.WithAnimals || match.AnimalCount > 0)
             .OrderByDescending(match => match.AnimalCount)
             .ToListAsync(cancellationToken);
     }

@@ -1,9 +1,9 @@
 @using Adoptrix.Domain.Contracts.Requests
+@using Adoptrix.Domain.Contracts.Responses
 @using Adoptrix.Domain.Models
-@using Adoptrix.Domain.Models.Responses
-@using Adoptrix.Domain.Queries.Breeds
-@using Adoptrix.Domain.Queries.Species
-@inject ISender Sender;
+@using Adoptrix.Domain.Services
+@inject ISpeciesService SpeciesClient;
+@inject IBreedsService BreedsClient;
 
 <DetailsBlock>
 
@@ -59,14 +59,18 @@
 
     protected override async Task OnInitializedAsync()
     {
-        speciesMatches = await Sender.Send(new SearchSpeciesQuery { WithAnimals = true });
+        var request = new SearchSpeciesRequest { WithAnimals = true };
+        speciesMatches = await SpeciesClient.SearchAsync(request);
     }
 
     private async Task OnSpeciesChanged(MudChip? chip)
     {
         selectedSpecies = chip;
         selectedBreed = null;
-        breedMatches = await Sender.Send(new SearchBreedsQuery { SpeciesId = (Guid?)selectedSpecies?.Value, WithAnimals = true });
+
+        var request = new SearchBreedsRequest { SpeciesId = (Guid?)selectedSpecies?.Value, WithAnimals = true };
+        breedMatches = await BreedsClient.SearchAsync(request);
+
         RaiseDataChanged();
     }
 

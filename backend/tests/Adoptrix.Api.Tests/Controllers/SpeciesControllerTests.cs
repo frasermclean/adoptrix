@@ -1,10 +1,9 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Adoptrix.Api.Contracts.Responses;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Api.Tests.Fixtures.Mocks;
-using Adoptrix.Domain.Models.Responses;
-using Adoptrix.Domain.Queries.Species;
+using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Responses;
 
 namespace Adoptrix.Api.Tests.Controllers;
 
@@ -19,7 +18,7 @@ public class SpeciesControllerTests(ApiFixture fixture) : ControllerTests(fixtur
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
         var matches = await message.Content.ReadFromJsonAsync<IEnumerable<SpeciesMatch>>();
-        SpeciesRepositoryMock.Verify(repository => repository.SearchAsync(It.IsAny<SearchSpeciesQuery>(), It.IsAny<CancellationToken>()),
+        SpeciesRepositoryMock.Verify(repository => repository.SearchAsync(It.IsAny<SearchSpeciesRequest>(), It.IsAny<CancellationToken>()),
             Times.Once);
         matches.Should().HaveCount(3).And.AllSatisfy(match =>
         {

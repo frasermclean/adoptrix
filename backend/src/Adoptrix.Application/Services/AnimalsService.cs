@@ -1,10 +1,10 @@
 ﻿using Adoptrix.Application.Mapping;
 using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Errors;
 using Adoptrix.Domain.Events;
 using Adoptrix.Domain.Models;
-using Adoptrix.Domain.Models.Responses;
 using Adoptrix.Domain.Services;
 using FluentResults;
 using Microsoft.Extensions.Logging;

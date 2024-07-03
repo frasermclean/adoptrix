@@ -1,6 +1,6 @@
 ﻿@page "/animals"
 @using Adoptrix.Domain.Contracts.Requests
-@using Adoptrix.Domain.Models.Responses
+@using Adoptrix.Domain.Contracts.Responses
 @using Adoptrix.Domain.Services
 @inject AppNameProvider AppNameProvider
 @inject IAnimalsService AnimalsClient
@@ -40,7 +40,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        matches = await AnimalsClient.SearchAsync();
+        matches = await AnimalsClient.SearchAsync(new SearchAnimalsRequest());
     }
 
     private async Task OnSearchDataChanged(SearchAnimalsRequest request)
