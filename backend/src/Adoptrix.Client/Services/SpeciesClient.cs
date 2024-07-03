@@ -5,7 +5,6 @@ using Adoptrix.Domain.Contracts.Requests;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Services;
 using FluentResults;
-using Microsoft.Extensions.Options;
 
 namespace Adoptrix.Client.Services;
 

@@ -1,11 +1,10 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using Adoptrix.Client.Extensions;
-using Adoptrix.Domain.Contracts.Requests;
+using Adoptrix.Domain.Contracts.Requests.Breeds;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Services;
 using FluentResults;
-using Microsoft.Extensions.Options;
 
 namespace Adoptrix.Client.Services;
 
@@ -24,6 +23,21 @@ public class BreedsClient(HttpClient httpClient, JsonSerializerOptions serialize
     }
 
     public Task<Result<BreedResponse>> GetAsync(Guid breedId, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<BreedResponse>> AddAsync(AddBreedRequest request, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<BreedResponse>> UpdateAsync(UpdateBreedRequest request, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result> DeleteAsync(Guid breedId, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

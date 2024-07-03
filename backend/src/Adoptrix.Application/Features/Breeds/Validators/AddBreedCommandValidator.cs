@@ -1,10 +1,10 @@
 ﻿using Adoptrix.Application.Features.Species.Validators;
-using Adoptrix.Domain.Commands.Breeds;
+using Adoptrix.Domain.Contracts.Requests.Breeds;
 using FluentValidation;
 
 namespace Adoptrix.Application.Features.Breeds.Validators;
 
-public class AddBreedCommandValidator : AbstractValidator<AddBreedCommand>
+public class AddBreedCommandValidator : AbstractValidator<AddBreedRequest>
 {
     public AddBreedCommandValidator(BreedNameDoesNotExistValidator breedNameDoesNotExistValidator,
         SpeciesIdExistsValidator speciesIdExistsValidator)

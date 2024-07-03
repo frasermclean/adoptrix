@@ -1,13 +1,11 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Adoptrix.Client.Extensions;
 using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Contracts.Requests;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Services;
 using FluentResults;
-using Microsoft.Extensions.Options;
 
 namespace Adoptrix.Client.Services;
 
