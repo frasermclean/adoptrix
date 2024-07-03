@@ -12,8 +12,4 @@
     <PackageReference Include="MediatR.Contracts" />    
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\Breeds\" />
-  </ItemGroup>
-
 </Project>
