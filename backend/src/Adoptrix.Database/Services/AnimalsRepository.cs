@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Services;
+using Adoptrix.Domain.Contracts.Requests;
 using Adoptrix.Domain.Models;
 using Adoptrix.Domain.Models.Responses;
-using Adoptrix.Domain.Queries.Animals;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
@@ -11,16 +11,16 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
 {
     private const int SearchLimit = 10;
 
-    public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsQuery query,
+    public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken = default)
     {
         return await DbContext.Animals
             .AsNoTracking()
-            .Where(animal => (query.Name == null || animal.Name.Contains(query.Name)) &&
-                             (query.BreedId == null || animal.Breed.Id == query.BreedId) &&
-                             (query.SpeciesId == null || animal.Breed.Species.Id == query.SpeciesId) &&
-                             (query.Sex == null || animal.Sex == query.Sex))
-            .Take(query.Limit ?? SearchLimit)
+            .Where(animal => (request.Name == null || animal.Name.Contains(request.Name)) &&
+                             (request.BreedId == null || animal.Breed.Id == request.BreedId) &&
+                             (request.SpeciesId == null || animal.Breed.Species.Id == request.SpeciesId) &&
+                             (request.Sex == null || animal.Sex == request.Sex))
+            .Take(request.Limit ?? SearchLimit)
             .Select(animal => new AnimalMatch
             {
                 Id = animal.Id,

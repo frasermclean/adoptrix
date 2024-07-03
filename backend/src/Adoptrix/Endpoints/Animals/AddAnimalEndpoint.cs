@@ -1,6 +1,6 @@
-﻿using Adoptrix.Application.Services;
-using Adoptrix.Domain.Commands.Animals;
+﻿using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Models.Responses;
+using Adoptrix.Domain.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 

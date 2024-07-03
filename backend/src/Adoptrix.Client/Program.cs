@@ -1,5 +1,6 @@
-using Adoptrix.Client.Handlers.Animals;
+using System.Reflection;
 using Adoptrix.Client.Services;
+using Adoptrix.Domain.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 
@@ -23,8 +24,9 @@ public static class Program
             .AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) })
             .AddMediatR(configuration =>
             {
-                configuration.RegisterServicesFromAssemblyContaining<GetAnimalQueryHandler>();
-            });
+                configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            })
+            .AddScoped<IAnimalsService, AnimalsClient>();
 
         return builder;
     }

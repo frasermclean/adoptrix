@@ -11,4 +11,8 @@
     <PackageReference Include="MediatR.Contracts" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Queries\Animals\" />
+  </ItemGroup>
+
 </Project>

@@ -1,29 +1,15 @@
 ﻿using Adoptrix.Application.Mapping;
 using Adoptrix.Domain.Commands.Animals;
+using Adoptrix.Domain.Contracts.Requests;
 using Adoptrix.Domain.Errors;
 using Adoptrix.Domain.Events;
 using Adoptrix.Domain.Models;
 using Adoptrix.Domain.Models.Responses;
-using Adoptrix.Domain.Queries.Animals;
+using Adoptrix.Domain.Services;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Application.Services;
-
-public interface IAnimalsService
-{
-    Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsQuery query, CancellationToken cancellationToken = default);
-    Task<Result<AnimalResponse>> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
-    Task<Result<AnimalResponse>> AddAsync(AddAnimalCommand command, CancellationToken cancellationToken = default);
-
-    Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalCommand command,
-        CancellationToken cancellationToken = default);
-
-    Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default);
-
-    Task<Result<AnimalResponse>> AddImagesAsync(AddAnimalImagesCommand command,
-        CancellationToken cancellationToken = default);
-}
 
 public class AnimalsService(
     ILogger<AnimalsService> logger,
@@ -34,10 +20,10 @@ public class AnimalsService(
 {
     private readonly Uri containerUri = imageManager.ContainerUri;
 
-    public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsQuery query,
+    public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest? request,
         CancellationToken cancellationToken)
     {
-        var matches = await animalsRepository.SearchAsync(query, cancellationToken);
+        var matches = await animalsRepository.SearchAsync(request ?? new SearchAnimalsRequest(), cancellationToken);
         var matchesList = matches as List<AnimalMatch> ?? matches.ToList();
 
         foreach (var match in matchesList)

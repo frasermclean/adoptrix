@@ -1,6 +1,6 @@
+@using Adoptrix.Domain.Contracts.Requests
 @using Adoptrix.Domain.Models
 @using Adoptrix.Domain.Models.Responses
-@using Adoptrix.Domain.Queries.Animals
 @using Adoptrix.Domain.Queries.Breeds
 @using Adoptrix.Domain.Queries.Species
 @inject ISender Sender;
@@ -53,7 +53,7 @@
     private MudChip? selectedBreed;
     private MudChip? selectedSex;
 
-    [Parameter] public EventCallback<SearchAnimalsQuery> DataChanged { get; set; }
+    [Parameter] public EventCallback<SearchAnimalsRequest> DataChanged { get; set; }
 
     private bool HasFilters => selectedSpecies is not null || selectedBreed is not null || selectedSex is not null;
 
@@ -90,10 +90,10 @@
         RaiseDataChanged();
     }
 
-    private void RaiseDataChanged() => DataChanged.InvokeAsync(new SearchAnimalsQuery(
-        null,
-        (Guid?)selectedBreed?.Value,
-        (Guid?)selectedSpecies?.Value,
-        (Sex?)selectedSex?.Value));
-
+    private void RaiseDataChanged() => DataChanged.InvokeAsync(new SearchAnimalsRequest
+    {
+        BreedId = (Guid?)selectedBreed?.Value,
+        SpeciesId = (Guid?)selectedSpecies?.Value,
+        Sex = (Sex?)selectedSex?.Value
+    });
 }

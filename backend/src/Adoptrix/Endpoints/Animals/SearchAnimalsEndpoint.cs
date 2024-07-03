@@ -1,11 +1,11 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Domain.Contracts.Requests;
 using Adoptrix.Domain.Models.Responses;
-using Adoptrix.Domain.Queries.Animals;
+using Adoptrix.Domain.Services;
 using FastEndpoints;
 
 namespace Adoptrix.Endpoints.Animals;
 
-public class SearchAnimalsEndpoint(IAnimalsService animalsService) : Endpoint<SearchAnimalsQuery, IEnumerable<AnimalMatch>>
+public class SearchAnimalsEndpoint(IAnimalsService animalsService) : Endpoint<SearchAnimalsRequest, IEnumerable<AnimalMatch>>
 {
     public override void Configure()
     {
@@ -13,9 +13,9 @@ public class SearchAnimalsEndpoint(IAnimalsService animalsService) : Endpoint<Se
         AllowAnonymous();
     }
 
-    public override async Task<IEnumerable<AnimalMatch>> ExecuteAsync(SearchAnimalsQuery query,
+    public override async Task<IEnumerable<AnimalMatch>> ExecuteAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken)
     {
-        return await animalsService.SearchAsync(query, cancellationToken);
+        return await animalsService.SearchAsync(request, cancellationToken);
     }
 }

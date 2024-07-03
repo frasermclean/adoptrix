@@ -1,7 +1,7 @@
 @page "/animals/{animalId:guid}"
 @using Adoptrix.Domain.Models.Responses
-@using Adoptrix.Domain.Queries.Animals
-@inject ISender Sender;
+@using Adoptrix.Domain.Services
+@inject IAnimalsService AnimalsService;
 
 @if (animal is null)
 {
@@ -73,7 +73,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Sender.Send(new GetAnimalQuery(AnimalId));
+       var result = await AnimalsService.GetAsync(AnimalId);
 
         if (result.IsFailed)
         {
