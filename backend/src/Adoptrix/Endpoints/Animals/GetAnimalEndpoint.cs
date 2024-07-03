@@ -16,7 +16,7 @@ public class GetAnimalEndpoint(IAnimalsService animalsService) : EndpointWithout
     public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(CancellationToken cancellationToken)
     {
         var animalId = Route<Guid>("animalId");
-        var result = await animalsService.GetAnimalAsync(animalId, cancellationToken);
+        var result = await animalsService.GetAsync(animalId, cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.Ok(result.Value)

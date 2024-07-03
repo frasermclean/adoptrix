@@ -7,7 +7,9 @@ using Adoptrix.Storage.DependencyInjection;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FastEndpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Identity.Web;
 
 namespace Adoptrix.Startup;
 
@@ -22,7 +24,9 @@ public static class ServiceRegistration
             .AddInteractiveServerComponents()
             .AddInteractiveWebAssemblyComponents();
 
-        builder.Services.AddFastEndpoints();
+        builder.Services
+            .AddAuthentication(builder.Configuration)
+            .AddFastEndpoints();
 
         // json serialization options
         builder.Services.Configure<JsonOptions>(options =>
@@ -46,5 +50,20 @@ public static class ServiceRegistration
             });
 
         return builder;
+    }
+
+    private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApi(jwtBearerOptions =>
+            {
+                configuration.Bind("Authentication", jwtBearerOptions);
+                jwtBearerOptions.TokenValidationParameters.NameClaimType = ClaimConstants.Name;
+            }, microsoftIdentityOptions => { configuration.Bind("Authentication", microsoftIdentityOptions); });
+
+        services.AddAuthorizationBuilder()
+            .AddDefaultPolicy("DefaultPolicy", builder => { builder.RequireScope("access"); });
+
+        return services;
     }
 }

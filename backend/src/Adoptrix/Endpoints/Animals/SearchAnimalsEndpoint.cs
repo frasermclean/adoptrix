@@ -17,6 +17,6 @@ public class SearchAnimalsEndpoint(IAnimalsService animalsService) : Endpoint<Se
     public override async Task<IEnumerable<AnimalMatch>> ExecuteAsync(SearchAnimalsQuery query,
         CancellationToken cancellationToken)
     {
-        return await animalsService.SearchAnimalsAsync(query, cancellationToken);
+        return await animalsService.SearchAsync(query, cancellationToken);
     }
 }
