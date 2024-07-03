@@ -1,4 +1,6 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application;
+using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Storage.Services;
 using Azure.Identity;
 using Azure.Storage.Blobs;
@@ -42,9 +44,9 @@ public static class ServiceRegistration
         });
 
         // animal images blob container
-        services.AddKeyedSingleton<BlobContainerClient>(BlobContainerNames.AnimalImages, (provider, _)
-            => provider.GetRequiredService<BlobServiceClient>()
-                .GetBlobContainerClient(BlobContainerNames.AnimalImages));
+        services.AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages, (provider, _)
+            => new BlobContainerManager(provider.GetRequiredService<BlobServiceClient>(),
+                BlobContainerNames.AnimalImages));
 
         // animal deleted queue
         services.AddKeyedSingleton<QueueClient>(QueueNames.AnimalDeleted, (provider, _)

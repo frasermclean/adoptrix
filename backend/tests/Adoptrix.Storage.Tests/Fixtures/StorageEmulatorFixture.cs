@@ -1,4 +1,5 @@
-﻿using Adoptrix.Storage.DependencyInjection;
+﻿using Adoptrix.Application;
+using Adoptrix.Storage.DependencyInjection;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Queues;
