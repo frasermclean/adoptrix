@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services.Abstractions;
 using FluentValidation;
 
 namespace Adoptrix.Application.Features.Species.Validators;

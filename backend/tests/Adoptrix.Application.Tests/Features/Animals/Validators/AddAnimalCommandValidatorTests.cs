@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Application.Features.Animals.Validators;
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Models;
 using Adoptrix.Tests.Shared;

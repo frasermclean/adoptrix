@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Api.Tests.Fixtures.Mocks;
 using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Abstractions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;

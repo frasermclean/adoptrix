@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Application.Mapping;
+using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Errors;

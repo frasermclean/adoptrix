@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Domain.Events;
 
 namespace Adoptrix.Api.Tests.Fixtures.Mocks;

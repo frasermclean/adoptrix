@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Application.Features.Animals.Commands;
 using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Application.Services.Support;
 using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Errors;

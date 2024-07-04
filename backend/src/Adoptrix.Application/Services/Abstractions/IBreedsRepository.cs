@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Models;
 
-namespace Adoptrix.Application.Services;
+namespace Adoptrix.Application.Services.Abstractions;
 
 public interface IBreedsRepository
 {

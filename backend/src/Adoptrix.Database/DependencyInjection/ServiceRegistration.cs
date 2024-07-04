@@ -1,4 +1,4 @@
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Database.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

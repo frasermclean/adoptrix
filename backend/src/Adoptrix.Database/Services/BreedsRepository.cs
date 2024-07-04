@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Models;
 using Microsoft.EntityFrameworkCore;

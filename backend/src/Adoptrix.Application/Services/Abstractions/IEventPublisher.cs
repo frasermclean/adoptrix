@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Domain.Events;
 
-namespace Adoptrix.Application.Services;
+namespace Adoptrix.Application.Services.Abstractions;
 
 public interface IEventPublisher
 {

@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Application.Services;
+using Adoptrix.Application.Services.Abstractions;
 
 namespace Adoptrix.Api.Tests.Controllers;
 

@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Database.Tests.Fixtures;
 using Adoptrix.Domain.Contracts.Requests.Species;
 using Adoptrix.Domain.Models;
