@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/blazor-frontend
     paths:
       - .github/workflows/cicd.yml
       - backend/**
