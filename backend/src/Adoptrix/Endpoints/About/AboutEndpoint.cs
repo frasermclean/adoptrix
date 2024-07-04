@@ -2,7 +2,7 @@
 using System.Reflection;
 using FastEndpoints;
 
-namespace Adoptrix.Endpoints;
+namespace Adoptrix.Endpoints.About;
 
 public class AboutEndpoint : EndpointWithoutRequest<AboutResponse>
 {
@@ -12,10 +12,12 @@ public class AboutEndpoint : EndpointWithoutRequest<AboutResponse>
     {
         var buildData = GetBuildData();
 
-        AboutResponse = new AboutResponse(
-            Version: buildData.Version,
-            Environment: Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown",
-            BuildDate: buildData.BuildDate);
+        AboutResponse = new AboutResponse
+        {
+            Version = buildData.Version,
+            Environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown",
+            BuildDate = buildData.BuildDate
+        };
     }
 
     public override void Configure()
@@ -46,5 +48,3 @@ public class AboutEndpoint : EndpointWithoutRequest<AboutResponse>
         return (version, buildDate.ToUniversalTime());
     }
 }
-
-public record AboutResponse(string Version, string Environment, DateTime BuildDate);
