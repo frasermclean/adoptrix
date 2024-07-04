@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Client;
 using Adoptrix.Database.DependencyInjection;
+using Adoptrix.Database.Services;
 using Adoptrix.Storage.DependencyInjection;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
@@ -48,6 +49,12 @@ public static class ServiceRegistration
                 options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
                 options.Credential = new DefaultAzureCredential();
             });
+
+        // health checks services
+        builder.Services.AddHealthChecks()
+            .AddDbContextCheck<AdoptrixDbContext>()
+            .AddAzureBlobStorage()
+            .AddAzureQueueStorage();
 
         return builder;
     }

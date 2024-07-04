@@ -36,6 +36,9 @@ public static class MiddlewareConfiguration
             config.Endpoints.RoutePrefix = "api";
         });
 
+        app.MapHealthChecks("/health")
+            .AllowAnonymous();
+
         return app;
     }
 }
