@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="FastEndpoints.Attributes" />
     <PackageReference Include="FluentResults" />
-    <PackageReference Include="MediatR.Contracts" />    
   </ItemGroup>
 
 </Project>

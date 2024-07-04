@@ -15,10 +15,10 @@ public class AnimalsService(
     ILogger<AnimalsService> logger,
     IAnimalsRepository animalsRepository,
     IBreedsRepository breedsRepository,
-    IAnimalImageManager imageManager,
+    IAnimalImageManager animalImageManager,
     IEventPublisher eventPublisher) : IAnimalsService
 {
-    private readonly Uri containerUri = imageManager.ContainerUri;
+    private readonly Uri containerUri = animalImageManager.ContainerUri;
 
     public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest? request,
         CancellationToken cancellationToken)

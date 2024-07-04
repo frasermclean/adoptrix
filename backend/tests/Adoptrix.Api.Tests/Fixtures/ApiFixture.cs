@@ -14,22 +14,13 @@ namespace Adoptrix.Api.Tests.Fixtures;
 
 public class ApiFixture : WebApplicationFactory<Program>
 {
-    public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; }
-    public Mock<IBreedsRepository> BreedsRepositoryMock { get; }
-    public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; }
-    public Mock<IAnimalImageManager> AnimalImageManager { get; }
-    public Mock<IEventPublisher> EventPublisherMock { get; }
+    public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; } = new Mock<IAnimalsRepository>().SetupDefaults();
+    public Mock<IBreedsRepository> BreedsRepositoryMock { get; } = new Mock<IBreedsRepository>().SetupDefaults();
+    public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; } = new Mock<ISpeciesRepository>().SetupDefaults();
+    public Mock<IAnimalImageManager> AnimalImageManager { get; } = new Mock<IAnimalImageManager>().SetupDefaults();
+    public Mock<IEventPublisher> EventPublisherMock { get; } = new Mock<IEventPublisher>().SetupDefaults();
 
     public const int SearchResultsCount = 3;
-
-    public ApiFixture()
-    {
-        AnimalsRepositoryMock = new Mock<IAnimalsRepository>().SetupDefaults();
-        BreedsRepositoryMock = new Mock<IBreedsRepository>().SetupDefaults();
-        SpeciesRepositoryMock = new Mock<ISpeciesRepository>().SetupDefaults();
-        AnimalImageManager = new Mock<IAnimalImageManager>().SetupDefaults();
-        EventPublisherMock = new Mock<IEventPublisher>().SetupDefaults();
-    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

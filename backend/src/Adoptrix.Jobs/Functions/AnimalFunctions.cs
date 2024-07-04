@@ -1,17 +1,16 @@
-﻿using Adoptrix.Domain.Commands.Animals;
+﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain.Events;
 using Adoptrix.Storage;
-using MediatR;
 using Microsoft.Azure.Functions.Worker;
 
 namespace Adoptrix.Jobs.Functions;
 
-public class AnimalFunctions(ISender sender)
+public class AnimalFunctions(IAnimalImageManager animalImageManager)
 {
     [Function(nameof(ProcessAnimalImage))]
     public async Task ProcessAnimalImage([QueueTrigger(QueueNames.AnimalImageAdded)] AnimalImageAddedEvent eventData)
     {
-        var result = await sender.Send(new ProcessAnimalImageCommand(eventData.AnimalId, eventData.ImageId));
+        var result = await animalImageManager.ProcessOriginalAsync(eventData.AnimalId, eventData.ImageId);
 
         if (result.IsFailed)
         {
@@ -23,12 +22,11 @@ public class AnimalFunctions(ISender sender)
     [Function(nameof(CleanupDeletedAnimal))]
     public async Task CleanupDeletedAnimal([QueueTrigger(QueueNames.AnimalDeleted)] AnimalDeletedEvent eventData)
     {
-        var result = await sender.Send(new CleanupAnimalImagesCommand(eventData.AnimalId));
+        var result = await animalImageManager.DeleteAnimalImagesAsync(eventData.AnimalId);
 
         if (result.IsFailed)
         {
-            throw new Exception(
-                $"Failed to cleanup images for animal with ID: {eventData.AnimalId}");
+            throw new Exception($"Failed to cleanup images for animal with ID: {eventData.AnimalId}");
         }
     }
 }

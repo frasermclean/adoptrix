@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Adoptrix.Application.Behaviours;
 using Adoptrix.Application.Services;
 using Adoptrix.Domain.Services;
 using FluentValidation;
@@ -14,11 +13,6 @@ public static class ServiceRegistration
         var executingAssembly = Assembly.GetExecutingAssembly();
 
         return services
-            .AddMediatR(configuration =>
-            {
-                configuration.RegisterServicesFromAssembly(executingAssembly);
-                configuration.AddOpenBehavior(typeof(ValidationBehaviour<,>));
-            })
             .AddValidatorsFromAssembly(executingAssembly)
             .AddSingleton<IImageProcessor, ImageProcessor>()
             .AddScoped<IAnimalsService, AnimalsService>()
