@@ -1,6 +1,4 @@
 ﻿using Adoptrix.Application.Services;
-using Adoptrix.Domain.Models;
-using FluentResults;
 
 namespace Adoptrix.Api.Tests.Fixtures.Mocks;
 

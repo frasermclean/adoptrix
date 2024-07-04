@@ -11,7 +11,7 @@ public class UpdateAnimalEndpoint(IAnimalsService animalsService)
 {
     public override void Configure()
     {
-        Put("animals/{animalId}");
+        Put("animals/{animalId:guid}");
     }
 
     public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(UpdateAnimalRequest request,

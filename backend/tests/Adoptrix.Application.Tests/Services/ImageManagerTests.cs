@@ -56,7 +56,7 @@ public class AnimalImageManagerTests
 
     private static MemoryStream CreateRandomByteStream(int size = 1024)
     {
-        var bytes = new byte[512];
+        var bytes = new byte[size];
         Random.Shared.NextBytes(bytes);
         return new MemoryStream(bytes);
     }
