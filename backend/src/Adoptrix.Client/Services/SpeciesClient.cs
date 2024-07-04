@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using Adoptrix.Client.Extensions;
-using Adoptrix.Domain.Contracts.Requests;
 using Adoptrix.Domain.Contracts.Requests.Species;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Services;

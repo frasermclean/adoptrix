@@ -71,7 +71,7 @@ public class ProcessAnimalImageCommandHandler(
 
         image.IsProcessed = true;
 
-        await animalsRepository.UpdateAsync(animal, cancellationToken);
+        await animalsRepository.SaveChangesAsync(cancellationToken);
         return Result.Ok();
     }
 }

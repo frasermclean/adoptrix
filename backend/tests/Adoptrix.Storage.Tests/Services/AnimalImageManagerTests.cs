@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Domain.Models;
-using Adoptrix.Storage.Services;
 using Adoptrix.Storage.Tests.Fixtures;
 using Microsoft.Extensions.Logging;
 using SixLabors.ImageSharp;
@@ -10,8 +9,8 @@ namespace Adoptrix.Storage.Tests.Services;
 [Trait("Category", "Integration")]
 public class AnimalImageManagerTests(StorageEmulatorFixture fixture) : IClassFixture<StorageEmulatorFixture>
 {
-    private readonly AnimalImageManager animalImageManager = new(Mock.Of<ILogger<AnimalImageManager>>(),
-        fixture.BlobContainerClient!);
+    private readonly AnimalImageManager animalImageManager = new(Mock.Of<ILogger<AnimalImageManager>>(), Mock.Of<IAnimalsRepository>(),
+        fixture.BlobContainerManager!, Mock.Of<IEventPublisher>());
 
     [Theory]
     [InlineData("Data/lab_puppy_1.jpeg", AnimalImageCategory.Thumbnail)]

@@ -1,5 +1,4 @@
-﻿using Adoptrix.Domain.Commands.Animals;
-using Adoptrix.Domain.Contracts.Requests.Animals;
+﻿using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Contracts.Responses;
 using FluentResults;
 
@@ -15,7 +14,4 @@ public interface IAnimalsService
         CancellationToken cancellationToken = default);
 
     Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default);
-
-    Task<Result<AnimalResponse>> AddImagesAsync(AddAnimalImagesCommand command,
-        CancellationToken cancellationToken = default);
 }

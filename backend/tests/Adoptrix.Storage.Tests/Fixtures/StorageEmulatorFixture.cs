@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Application;
+using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Storage.DependencyInjection;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -20,8 +21,8 @@ public class StorageEmulatorFixture : IAsyncLifetime
 
     public IServiceProvider? ServiceProvider { get; private set; }
 
-    public BlobContainerClient? BlobContainerClient =>
-        ServiceProvider?.GetRequiredKeyedService<BlobContainerClient>(BlobContainerNames.AnimalImages);
+    public IBlobContainerManager? BlobContainerManager =>
+        ServiceProvider?.GetRequiredKeyedService<IBlobContainerManager>(BlobContainerNames.AnimalImages);
 
     public QueueClient? AnimalDeletedQueueClient =>
         ServiceProvider?.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalDeleted);

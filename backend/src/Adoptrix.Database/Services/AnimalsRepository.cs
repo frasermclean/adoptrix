@@ -6,15 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
 
-public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
-    : Repository(dbContext, batchManager), IAnimalsRepository
+public class AnimalsRepository(AdoptrixDbContext dbContext) : IAnimalsRepository
 {
     private const int SearchLimit = 10;
 
     public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken = default)
     {
-        return await DbContext.Animals
+        return await dbContext.Animals
             .AsNoTracking()
             .Where(animal => (request.Name == null || animal.Name.Contains(request.Name)) &&
                              (request.BreedId == null || animal.Breed.Id == request.BreedId) &&
@@ -42,7 +41,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
 
     public async Task<Animal?> GetByIdAsync(Guid animalId, CancellationToken cancellationToken = default)
     {
-        return await DbContext.Animals.Where(animal => animal.Id == animalId)
+        return await dbContext.Animals.Where(animal => animal.Id == animalId)
             .Include(animal => animal.Breed)
             .ThenInclude(breed => breed.Species)
             .FirstOrDefaultAsync(cancellationToken);
@@ -50,18 +49,18 @@ public class AnimalsRepository(AdoptrixDbContext dbContext, IBatchManager batchM
 
     public async Task AddAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        DbContext.Animals.Add(animal);
+        dbContext.Animals.Add(animal);
         await SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Animal animal, CancellationToken cancellationToken = default)
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        await SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DeleteAsync(Animal animal, CancellationToken cancellationToken = default)
     {
-        DbContext.Animals.Remove(animal);
+        dbContext.Animals.Remove(animal);
         await SaveChangesAsync(cancellationToken);
     }
 }

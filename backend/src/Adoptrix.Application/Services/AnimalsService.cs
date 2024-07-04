@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Application.Mapping;
-using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Errors;
@@ -111,7 +110,7 @@ public class AnimalsService(
         animal.Sex = request.Sex;
         animal.DateOfBirth = request.DateOfBirth;
 
-        await animalsRepository.UpdateAsync(animal, cancellationToken);
+        await animalsRepository.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Updated animal with ID: {AnimalId}", animal.Id);
 
@@ -135,57 +134,6 @@ public class AnimalsService(
 
         return Result.Ok();
     }
-
-    public async Task<Result<AnimalResponse>> AddImagesAsync(AddAnimalImagesCommand command,
-        CancellationToken cancellationToken = default)
-    {
-        // get animal from database
-        var animal = await animalsRepository.GetByIdAsync(command.AnimalId, cancellationToken);
-        if (animal is null)
-        {
-            return new AnimalNotFoundError(command.AnimalId);
-        }
-
-        // upload images to blob storage
-        var uploadResults = await UploadImagesAsync(command, cancellationToken);
-        if (uploadResults.Any(result => result.IsFailed))
-        {
-            logger.LogError("Failed to upload all images for animal with ID {AnimalId}", command.AnimalId);
-            return new ImageUploadError(command.AnimalId);
-        }
-
-        // update animal entity with new images
-        var images = uploadResults.Select(result => result.Value);
-        animal.Images.AddRange(images);
-        await animalsRepository.UpdateAsync(animal, cancellationToken);
-
-
-        // publish notifications
-        await Task.WhenAll(uploadResults.Select(result =>
-            eventPublisher.PublishAsync(new AnimalImageAddedEvent(command.AnimalId, result.Value.Id),
-                cancellationToken)));
-
-        return animal.ToResponse();
-    }
-
-    private async Task<Result<AnimalImage>[]> UploadImagesAsync(AddAnimalImagesCommand command,
-        CancellationToken cancellationToken) => await Task.WhenAll(command.FileData.Select(async data =>
-    {
-        var image = new AnimalImage
-        {
-            Description = data.Description,
-            OriginalFileName = data.FileName,
-            OriginalContentType = data.ContentType,
-            UploadedBy = command.UserId
-        };
-
-        var result = await imageManager.UploadImageAsync(command.AnimalId, image.Id, data.Stream,
-            data.ContentType, AnimalImageCategory.Original, cancellationToken);
-
-        return result.IsSuccess
-            ? Result.Ok(image)
-            : Result.Fail(result.Errors);
-    }));
 
     private static void SetImageUrls(AnimalImageResponse response, Guid animalId, Uri containerUri)
     {

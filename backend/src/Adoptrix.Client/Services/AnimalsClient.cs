@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using Adoptrix.Client.Extensions;
-using Adoptrix.Domain.Commands.Animals;
 using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Services;
@@ -45,12 +44,6 @@ public class AnimalsClient(HttpClient httpClient, JsonSerializerOptions serializ
     }
 
     public Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Result<AnimalResponse>> AddImagesAsync(AddAnimalImagesCommand command,
-        CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

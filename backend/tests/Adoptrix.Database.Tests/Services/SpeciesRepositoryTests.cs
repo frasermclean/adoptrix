@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Database.Tests.Fixtures;
-using Adoptrix.Domain.Contracts.Requests;
 using Adoptrix.Domain.Contracts.Requests.Species;
 using Adoptrix.Domain.Models;
 

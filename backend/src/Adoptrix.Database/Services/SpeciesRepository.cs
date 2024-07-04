@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Application.Services;
-using Adoptrix.Domain.Contracts.Requests;
 using Adoptrix.Domain.Contracts.Requests.Species;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Models;
