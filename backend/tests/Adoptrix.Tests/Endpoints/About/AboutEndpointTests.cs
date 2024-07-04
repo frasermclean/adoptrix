@@ -1,11 +1,10 @@
 ﻿using System.Net;
 using Adoptrix.Endpoints.About;
 
-namespace Adoptrix.Tests.Endpoints;
+namespace Adoptrix.Tests.Endpoints.About;
 
 public class AboutEndpointTests(App app) : TestBase<App>
 {
-
     [Fact]
     public async Task GetAbout_Should_ReturnAboutResponse()
     {

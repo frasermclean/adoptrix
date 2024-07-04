@@ -5,6 +5,11 @@ namespace Adoptrix.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {
+    public static string GetUserName(this ClaimsPrincipal principal)
+    {
+        return principal.FindFirstValue(ClaimConstants.Name) ?? string.Empty;
+    }
+
     public static Guid GetUserId(this ClaimsPrincipal principal)
     {
         var claimValue = principal.FindFirstValue(ClaimConstants.ObjectId);
