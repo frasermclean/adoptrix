@@ -24,6 +24,11 @@ public static class ServiceRegistration
     {
         services.AddAzureClients(builder =>
         {
+            builder.ConfigureDefaults(options =>
+            {
+                options.Diagnostics.IsLoggingEnabled = false;
+            });
+
             var connectionString = configuration.GetValue<string>("AzureStorage:ConnectionString");
 
             // use connection string if it is defined
