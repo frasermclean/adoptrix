@@ -60,11 +60,4 @@ public class AnimalImageManagerTests
         Random.Shared.NextBytes(bytes);
         return new MemoryStream(bytes);
     }
-
-    private static (Guid animalId, Guid imageId) CreateAnimalAndImageIds()
-    {
-        var animalId = Guid.NewGuid();
-        var imageId = Guid.NewGuid();
-        return (animalId, imageId);
-    }
 }
