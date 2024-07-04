@@ -1,0 +1,59 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - feature/blazor-frontend
+    paths:
+      - .github/workflows/cicd.yml
+      - backend/**
+  pull_request:
+    branches:
+      - main
+      - feature/blazor-frontend
+    paths:
+      - .github/workflows/cicd.yml
+      - backend/**
+
+env:
+  APP_ARTIFACT_NAME: app
+  JOBS_ARTIFACT_NAME: jobs
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    env:
+      BACKEND_DIRECTORY: ${{ github.workspace }}/backend
+      BUILD_CONFIGURATION: Release
+      TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
+    permissions:
+      checks: write
+      pull-requests: write
+    steps:
+      # Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Restore NuGet packages
+      - name: Restore packages
+        run: dotnet restore
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
+
+      # Build solution
+      - name: Build solution
+        run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIGURATION }}
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
+
+      # Run tests
+      - name: Run tests
+        run: >-
+          dotnet test
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --logger trx
+          --collect "XPlat Code Coverage"
+          --settings ${{ env.BACKEND_DIRECTORY }}/coverlet.runsettings
+          --results-directory ${{ env.TEST_RESULTS_DIRECTORY }}
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
