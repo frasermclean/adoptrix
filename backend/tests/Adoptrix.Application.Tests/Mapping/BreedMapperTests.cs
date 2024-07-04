@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Tests.Shared.Factories;
 using BreedMapper = Adoptrix.Application.Mapping.BreedMapper;
 
-namespace Adoptrix.Api.Tests.Mapping;
+namespace Adoptrix.Application.Tests.Mapping;
 
 public class BreedMapperTests
 {

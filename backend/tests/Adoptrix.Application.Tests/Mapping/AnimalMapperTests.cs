@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Tests.Shared.Factories;
 using AnimalMapper = Adoptrix.Application.Mapping.AnimalMapper;
 
-namespace Adoptrix.Api.Tests.Mapping;
+namespace Adoptrix.Application.Tests.Mapping;
 
 public class AnimalMapperTests
 {
