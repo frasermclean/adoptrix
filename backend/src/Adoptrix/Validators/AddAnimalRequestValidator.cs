@@ -1,5 +1,5 @@
-﻿using Adoptrix.Domain.Contracts.Requests.Animals;
-using Adoptrix.Domain.Models;
+﻿using Adoptrix.Domain;
+using Adoptrix.Domain.Contracts.Requests.Animals;
 using FastEndpoints;
 using FluentValidation;
 

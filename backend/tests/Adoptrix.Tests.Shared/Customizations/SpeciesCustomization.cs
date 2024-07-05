@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain.Models;
+﻿using Adoptrix.Domain;
 
 namespace Adoptrix.Tests.Shared.Customizations;
 

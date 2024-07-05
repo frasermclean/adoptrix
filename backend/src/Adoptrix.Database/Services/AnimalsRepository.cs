@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Services.Abstractions;
+using Adoptrix.Domain;
 using Adoptrix.Domain.Contracts.Requests.Animals;
 using Adoptrix.Domain.Contracts.Responses;
-using Adoptrix.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;

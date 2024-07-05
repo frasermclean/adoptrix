@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Database.Tests.Fixtures;
+using Adoptrix.Domain;
 using Adoptrix.Domain.Contracts.Requests.Species;
-using Adoptrix.Domain.Models;
 
 namespace Adoptrix.Database.Tests.Services;
 

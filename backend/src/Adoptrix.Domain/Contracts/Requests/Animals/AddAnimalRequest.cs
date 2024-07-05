@@ -1,5 +1,4 @@
-﻿using Adoptrix.Domain.Models;
-using FastEndpoints;
+﻿using FastEndpoints;
 
 namespace Adoptrix.Domain.Contracts.Requests.Animals;
 

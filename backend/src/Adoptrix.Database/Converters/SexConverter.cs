@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain.Models;
+﻿using Adoptrix.Domain;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Adoptrix.Database.Converters;

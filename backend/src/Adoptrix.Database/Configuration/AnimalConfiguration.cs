@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Database.Converters;
-using Adoptrix.Domain.Models;
+using Adoptrix.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

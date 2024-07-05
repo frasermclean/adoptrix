@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Domain.Models;
+﻿namespace Adoptrix.Domain;
 
 public class Breed : Aggregate
 {

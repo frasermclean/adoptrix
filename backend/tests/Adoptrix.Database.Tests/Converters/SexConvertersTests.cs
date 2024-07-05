@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Database.Converters;
-using Adoptrix.Domain.Models;
+using Adoptrix.Domain;
 
 namespace Adoptrix.Database.Tests.Converters;
 

@@ -1,9 +1,9 @@
 ﻿using Adoptrix.Application.Mapping;
 using Adoptrix.Application.Services.Abstractions;
+using Adoptrix.Domain;
 using Adoptrix.Domain.Contracts.Requests.Breeds;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Errors;
-using Adoptrix.Domain.Models;
 using Adoptrix.Domain.Services;
 using FluentResults;
 using Microsoft.Extensions.Logging;

@@ -1,8 +1,8 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Abstractions;
+using Adoptrix.Domain;
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Domain.Events;
-using Adoptrix.Domain.Models;
 using Adoptrix.Tests.Shared;
 using FluentResults;
 using Microsoft.Extensions.Logging;

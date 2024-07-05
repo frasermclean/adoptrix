@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Domain.Extensions;
 
-namespace Adoptrix.Domain.Models;
+namespace Adoptrix.Domain;
 
 public class Animal : Aggregate
 {

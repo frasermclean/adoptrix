@@ -1,6 +1,4 @@
-﻿using Adoptrix.Domain.Models;
-
-namespace Adoptrix.Domain.Contracts.Responses;
+﻿namespace Adoptrix.Domain.Contracts.Responses;
 
 public class AnimalResponse
 {

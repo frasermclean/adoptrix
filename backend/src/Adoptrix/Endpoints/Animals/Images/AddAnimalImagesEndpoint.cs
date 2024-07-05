@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Abstractions;
+using Adoptrix.Domain;
 using Adoptrix.Domain.Contracts.Responses;
-using Adoptrix.Domain.Models;
 using Adoptrix.Extensions;
 using FastEndpoints;
 using FluentResults;

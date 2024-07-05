@@ -1,5 +1,4 @@
-﻿using Adoptrix.Domain.Models;
-using Adoptrix.Tests.Shared.Factories;
+﻿using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Domain.Tests;
 

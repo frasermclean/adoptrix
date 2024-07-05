@@ -1,6 +1,4 @@
-﻿using Adoptrix.Domain.Models;
-
-namespace Adoptrix.Domain.Contracts.Requests.Animals;
+﻿namespace Adoptrix.Domain.Contracts.Requests.Animals;
 
 public class UpdateAnimalRequest
 {
