@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Adoptrix.Api\Adoptrix.Api.csproj"/>
+    <ProjectReference Include="..\..\src\Adoptrix\Adoptrix.csproj" />
     <ProjectReference Include="..\Adoptrix.Tests.Shared\Adoptrix.Tests.Shared.csproj" />
   </ItemGroup>
 
