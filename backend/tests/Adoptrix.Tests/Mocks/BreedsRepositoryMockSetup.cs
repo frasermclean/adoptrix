@@ -2,7 +2,7 @@
 using Adoptrix.Domain.Contracts.Responses;
 using Adoptrix.Tests.Shared.Factories;
 
-namespace Adoptrix.Api.Tests.Fixtures.Mocks;
+namespace Adoptrix.Tests.Mocks;
 
 public static class BreedsRepositoryMockSetup
 {

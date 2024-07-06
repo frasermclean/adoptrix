@@ -5,7 +5,7 @@ namespace Adoptrix.Tests.Endpoints.Users;
 
 public class GetCurrentUserEndpointTests(App app) : TestBase<App>
 {
-    private readonly HttpClient httpClient = app.TestAuthClient!;
+    private readonly HttpClient httpClient = app.BasicAuthClient;
 
     [Fact]
     public async Task GetCurrentUser_Should_ReturnExpectedResponse()

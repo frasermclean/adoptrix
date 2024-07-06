@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Domain.Events;
 
-namespace Adoptrix.Api.Tests.Fixtures.Mocks;
+namespace Adoptrix.Tests.Mocks;
 
 public static class EventPublisherMockSetup
 {
