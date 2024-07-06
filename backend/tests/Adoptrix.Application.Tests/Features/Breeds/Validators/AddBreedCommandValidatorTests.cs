@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Application.Features.Breeds.Validators;
 using Adoptrix.Application.Services.Abstractions;
-using Adoptrix.Domain;
-using Adoptrix.Domain.Contracts.Requests.Breeds;
+using Adoptrix.Core;
+using Adoptrix.Core.Contracts.Requests.Breeds;
 using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Application.Tests.Features.Breeds.Validators;

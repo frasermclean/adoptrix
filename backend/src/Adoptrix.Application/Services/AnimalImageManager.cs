@@ -1,10 +1,10 @@
 ﻿using Adoptrix.Application.Mapping;
 using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Application.Services.Support;
-using Adoptrix.Domain;
-using Adoptrix.Domain.Contracts.Responses;
-using Adoptrix.Domain.Errors;
-using Adoptrix.Domain.Events;
+using Adoptrix.Core;
+using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Core.Errors;
+using Adoptrix.Core.Events;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

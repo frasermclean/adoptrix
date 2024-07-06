@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Services.Abstractions;
-using Adoptrix.Domain.Contracts.Requests.Animals;
-using Adoptrix.Domain.Contracts.Responses;
+using Adoptrix.Core.Contracts.Requests.Animals;
+using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Tests.Mocks;

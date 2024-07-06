@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Domain", "src\Adoptrix.Domain\Adoptrix.Domain.csproj", "{2839FC19-CC0E-43CA-8B83-3245A2C47EB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Core", "src\Adoptrix.Core\Adoptrix.Core.csproj", "{2839FC19-CC0E-43CA-8B83-3245A2C47EB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Database", "src\Adoptrix.Database\Adoptrix.Database.csproj", "{5691F28D-9406-4FFF-9F2D-226F72A167FD}"
 EndProject
@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Application", "src
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4958F816-17AA-4833-819B-5D666C416361}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Domain.Tests", "tests\Adoptrix.Domain.Tests\Adoptrix.Domain.Tests.csproj", "{CF65350A-8D80-4AF2-B369-8C71A5BFB620}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Core.Tests", "tests\Adoptrix.Core.Tests\Adoptrix.Core.Tests.csproj", "{CF65350A-8D80-4AF2-B369-8C71A5BFB620}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Application.Tests", "tests\Adoptrix.Application.Tests\Adoptrix.Application.Tests.csproj", "{15A239BB-4A97-4E99-A7AB-24E97D5CFEC4}"
 EndProject

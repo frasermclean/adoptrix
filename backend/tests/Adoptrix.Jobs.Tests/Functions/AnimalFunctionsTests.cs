@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Application.Services;
-using Adoptrix.Domain.Events;
+using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Functions;
 using Adoptrix.Tests.Shared;
 using FluentResults;

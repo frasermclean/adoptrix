@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain.Events;
+﻿using Adoptrix.Core.Events;
 
 namespace Adoptrix.Application.Services.Abstractions;
 

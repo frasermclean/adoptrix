@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using Adoptrix.Application.Services;
-using Adoptrix.Domain.Services;
+using Adoptrix.Core.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 

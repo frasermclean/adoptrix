@@ -1,5 +1,5 @@
-﻿using Adoptrix.Domain.Contracts.Responses;
-using Adoptrix.Domain.Services;
+﻿using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Core.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 

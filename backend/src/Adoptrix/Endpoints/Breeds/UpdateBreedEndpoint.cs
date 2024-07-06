@@ -1,7 +1,7 @@
-﻿using Adoptrix.Domain.Contracts.Requests.Breeds;
-using Adoptrix.Domain.Contracts.Responses;
-using Adoptrix.Domain.Errors;
-using Adoptrix.Domain.Services;
+﻿using Adoptrix.Core.Contracts.Requests.Breeds;
+using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Core.Errors;
+using Adoptrix.Core.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 

@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Application.Services.Abstractions;
-using Adoptrix.Domain.Events;
+using Adoptrix.Core.Events;
 
 namespace Adoptrix.Tests.Mocks;
 

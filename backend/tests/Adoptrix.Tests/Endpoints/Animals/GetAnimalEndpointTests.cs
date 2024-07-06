@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Adoptrix.Domain.Contracts.Responses;
+using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Endpoints.Animals;
 using Adoptrix.Tests.Mocks;
 

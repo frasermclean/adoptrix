@@ -4,8 +4,8 @@
 // using Adoptrix.Api.Contracts.Requests;
 // using Adoptrix.Api.Tests.Fixtures;
 // using Adoptrix.Api.Tests.Fixtures.Mocks;
-// using Adoptrix.Domain.Contracts.Responses;
-// using Adoptrix.Domain.Models;
+// using Adoptrix.Core.Contracts.Responses;
+// using Adoptrix.Core.Models;
 // using Microsoft.AspNetCore.Http.Extensions;
 // using Microsoft.AspNetCore.Mvc;
 //

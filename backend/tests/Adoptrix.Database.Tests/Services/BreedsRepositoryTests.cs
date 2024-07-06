@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Database.Tests.Fixtures;
-using Adoptrix.Domain;
+using Adoptrix.Core;
 using Adoptrix.Tests.Shared.Factories;
 using Microsoft.EntityFrameworkCore;
 

@@ -25,7 +25,7 @@ namespace Adoptrix.Database.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Adoptrix.Domain.Animal", b =>
+            modelBuilder.Entity("Adoptrix.Core.Animal", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,7 +65,7 @@ namespace Adoptrix.Database.Migrations
                     b.ToTable("Animals");
                 });
 
-            modelBuilder.Entity("Adoptrix.Domain.Breed", b =>
+            modelBuilder.Entity("Adoptrix.Core.Breed", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -121,7 +121,7 @@ namespace Adoptrix.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Adoptrix.Domain.Species", b =>
+            modelBuilder.Entity("Adoptrix.Core.Species", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -169,15 +169,15 @@ namespace Adoptrix.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Adoptrix.Domain.Animal", b =>
+            modelBuilder.Entity("Adoptrix.Core.Animal", b =>
                 {
-                    b.HasOne("Adoptrix.Domain.Breed", "Breed")
+                    b.HasOne("Adoptrix.Core.Breed", "Breed")
                         .WithMany("Animals")
                         .HasForeignKey("BreedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Adoptrix.Domain.ImageInformation", "Images", b1 =>
+                    b.OwnsMany("Adoptrix.Core.ImageInformation", "Images", b1 =>
                         {
                             b1.Property<Guid>("AnimalId")
                                 .HasColumnType("uniqueidentifier");
@@ -224,9 +224,9 @@ namespace Adoptrix.Database.Migrations
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("Adoptrix.Domain.Breed", b =>
+            modelBuilder.Entity("Adoptrix.Core.Breed", b =>
                 {
-                    b.HasOne("Adoptrix.Domain.Species", "Species")
+                    b.HasOne("Adoptrix.Core.Species", "Species")
                         .WithMany()
                         .HasForeignKey("SpeciesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -235,7 +235,7 @@ namespace Adoptrix.Database.Migrations
                     b.Navigation("Species");
                 });
 
-            modelBuilder.Entity("Adoptrix.Domain.Breed", b =>
+            modelBuilder.Entity("Adoptrix.Core.Breed", b =>
                 {
                     b.Navigation("Animals");
                 });

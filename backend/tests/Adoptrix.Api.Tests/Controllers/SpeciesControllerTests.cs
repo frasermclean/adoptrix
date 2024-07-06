@@ -2,8 +2,8 @@
 // using System.Net.Http.Json;
 // using Adoptrix.Api.Tests.Fixtures;
 // using Adoptrix.Api.Tests.Fixtures.Mocks;
-// using Adoptrix.Domain.Contracts.Requests.Species;
-// using Adoptrix.Domain.Contracts.Responses;
+// using Adoptrix.Core.Contracts.Requests.Species;
+// using Adoptrix.Core.Contracts.Responses;
 //
 // namespace Adoptrix.Api.Tests.Controllers;
 //

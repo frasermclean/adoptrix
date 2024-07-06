@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain.Events;
+﻿using Adoptrix.Core.Events;
 using Adoptrix.Storage.Services;
 using Adoptrix.Storage.Tests.Fixtures;
 using Microsoft.Extensions.Logging;

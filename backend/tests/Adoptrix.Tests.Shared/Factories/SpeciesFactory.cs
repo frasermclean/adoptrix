@@ -1,4 +1,4 @@
-﻿using Adoptrix.Domain;
+﻿using Adoptrix.Core;
 
 namespace Adoptrix.Tests.Shared.Factories;
 

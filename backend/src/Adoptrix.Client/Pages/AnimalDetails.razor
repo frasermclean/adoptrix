@@ -1,6 +1,6 @@
 @page "/animals/{animalId:guid}"
-@using Adoptrix.Domain.Contracts.Responses
-@using Adoptrix.Domain.Services
+@using Adoptrix.Core.Contracts.Responses
+@using Adoptrix.Core.Services
 @inject IAnimalsService AnimalsService;
 
 @if (animal is null)

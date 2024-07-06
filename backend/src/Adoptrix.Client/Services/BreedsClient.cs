@@ -1,9 +1,9 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using Adoptrix.Client.Extensions;
-using Adoptrix.Domain.Contracts.Requests.Breeds;
-using Adoptrix.Domain.Contracts.Responses;
-using Adoptrix.Domain.Services;
+using Adoptrix.Core.Contracts.Requests.Breeds;
+using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Core.Services;
 using FluentResults;
 
 namespace Adoptrix.Client.Services;

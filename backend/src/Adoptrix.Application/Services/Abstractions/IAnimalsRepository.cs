@@ -1,6 +1,6 @@
-﻿using Adoptrix.Domain;
-using Adoptrix.Domain.Contracts.Requests.Animals;
-using Adoptrix.Domain.Contracts.Responses;
+﻿using Adoptrix.Core;
+using Adoptrix.Core.Contracts.Requests.Animals;
+using Adoptrix.Core.Contracts.Responses;
 
 namespace Adoptrix.Application.Services.Abstractions;
 
