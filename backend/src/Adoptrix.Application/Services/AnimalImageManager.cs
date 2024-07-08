@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Application.Mapping;
 using Adoptrix.Application.Services.Abstractions;
-using Adoptrix.Application.Services.Support;
 using Adoptrix.Core;
 using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Core.Errors;

@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Application.Services.Support;
+﻿namespace Adoptrix.Application;
 
 public sealed class ImageStreamBundle : IAsyncDisposable
 {

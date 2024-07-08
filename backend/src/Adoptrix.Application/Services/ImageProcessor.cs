@@ -1,5 +1,4 @@
-﻿using Adoptrix.Application.Services.Support;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
 namespace Adoptrix.Application.Services;
