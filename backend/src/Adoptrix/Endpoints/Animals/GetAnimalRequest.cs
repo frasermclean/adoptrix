@@ -1,6 +1,3 @@
 ﻿namespace Adoptrix.Endpoints.Animals;
 
-public struct GetAnimalRequest
-{
-    public Guid AnimalId { get; init; }
-}
+public record GetAnimalRequest(Guid AnimalId);
