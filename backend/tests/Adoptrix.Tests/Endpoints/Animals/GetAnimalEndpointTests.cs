@@ -12,7 +12,7 @@ public class GetAnimalEndpointTests(App app) : TestBase<App>
     {
         // arrange
         var animalId = Guid.NewGuid();
-        var request = new GetAnimalRequest { AnimalId = animalId };
+        var request = new GetAnimalRequest(animalId);
 
         // act
         var (message, response) =
@@ -28,7 +28,7 @@ public class GetAnimalEndpointTests(App app) : TestBase<App>
     {
         // arrange
         var animalId = AnimalsRepositoryMockSetup.UnknownAnimalId;
-        var request = new GetAnimalRequest { AnimalId = animalId };
+        var request = new GetAnimalRequest(animalId);
 
         // act
         var testResult = await app.Client.GETAsync<GetAnimalEndpoint, GetAnimalRequest, AnimalResponse>(request);
