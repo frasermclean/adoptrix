@@ -19,7 +19,7 @@ public class AddAnimalEndpoint(IAnimalsService animalsService) : Endpoint<AddAni
 
         if (result.HasError<BreedNotFoundError>())
         {
-            AddError(r => r.BreedId, "Invalid breed ID");
+            AddError(r => r.BreedId, "Breed not found");
         }
 
         ThrowIfAnyErrors();
