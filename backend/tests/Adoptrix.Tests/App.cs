@@ -10,7 +10,7 @@ namespace Adoptrix.Tests;
 [DisableWafCache]
 public class App : AppFixture<Program>
 {
-    public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; } = new Mock<IAnimalsRepository>().SetupDefaults();
+    public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; } = new();
     public Mock<IBreedsRepository> BreedsRepositoryMock { get; } = new Mock<IBreedsRepository>().SetupDefaults();
     public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; } = new Mock<ISpeciesRepository>().SetupDefaults();
     public Mock<IEventPublisher> EventPublisherMock { get; } = new Mock<IEventPublisher>().SetupDefaults();

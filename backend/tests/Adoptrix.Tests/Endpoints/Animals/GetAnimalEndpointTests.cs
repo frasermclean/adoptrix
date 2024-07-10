@@ -1,18 +1,21 @@
 ﻿using System.Net;
+using Adoptrix.Core;
 using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Endpoints.Animals;
 using Adoptrix.Tests.Mocks;
+using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Tests.Endpoints.Animals;
 
 public class GetAnimalEndpointTests(App app) : TestBase<App>
 {
-    [Fact]
-    public async Task GetAnimal_WithKnownAnimalId_ShouldReturnOk()
+    [Theory, AdoptrixAutoData]
+    public async Task GetAnimal_WithKnownAnimalId_ShouldReturnOk(GetAnimalRequest request, Animal animal)
     {
         // arrange
-        var animalId = Guid.NewGuid();
-        var request = new GetAnimalRequest(animalId);
+        app.AnimalsRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(animal);
 
         // act
         var (message, response) =
@@ -20,15 +23,16 @@ public class GetAnimalEndpointTests(App app) : TestBase<App>
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(animalId);
+        response.Id.Should().Be(animal.Id);
     }
 
-    [Fact]
-    public async Task GetAnimal_WithUnknownAnimalId_ShouldReturnNotFound()
+    [Theory, AdoptrixAutoData]
+    public async Task GetAnimal_WithUnknownAnimalId_ShouldReturnNotFound(GetAnimalRequest request)
     {
         // arrange
-        var animalId = AnimalsRepositoryMockSetup.UnknownAnimalId;
-        var request = new GetAnimalRequest(animalId);
+        app.AnimalsRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(null as Animal);
 
         // act
         var testResult = await app.Client.GETAsync<GetAnimalEndpoint, GetAnimalRequest, AnimalResponse>(request);

@@ -12,15 +12,23 @@ public class UpdateAnimalEndpointTests(App app) : TestBase<App>
     private readonly HttpClient httpClient = app.BasicAuthClient;
 
     [Theory, AdoptrixAutoData]
-    public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk(UpdateAnimalRequest request)
+    public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk(UpdateAnimalRequest request, Animal animal, Breed breed)
     {
+        // arrange
+        app.AnimalsRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(animal);
+        app.BreedsRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(breed);
+
         // act
         var (message, response) =
             await httpClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest, AnimalResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(request.AnimalId);
+        response.Id.Should().Be(animal.Id);
     }
 
     [Theory, AdoptrixAutoData]
@@ -41,9 +49,12 @@ public class UpdateAnimalEndpointTests(App app) : TestBase<App>
     }
 
     [Theory, AdoptrixAutoData]
-    public async Task UpdateAnimal_WithInvalidBreedId_ShouldReturnBadRequest(UpdateAnimalRequest request)
+    public async Task UpdateAnimal_WithInvalidBreedId_ShouldReturnBadRequest(UpdateAnimalRequest request, Animal animal)
     {
         // arrange
+        app.AnimalsRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(animal);
         app.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Breed);
