@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Adoptrix.Tests;
 
+[DisableWafCache]
 public class App : AppFixture<Program>
 {
     public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; } = new Mock<IAnimalsRepository>().SetupDefaults();
