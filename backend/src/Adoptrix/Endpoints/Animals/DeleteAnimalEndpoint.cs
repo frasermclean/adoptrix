@@ -4,17 +4,18 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Endpoints.Animals;
 
-public class DeleteAnimalEndpoint(IAnimalsService animalsService) : EndpointWithoutRequest<Results<NoContent, NotFound>>
+public class DeleteAnimalEndpoint(IAnimalsService animalsService)
+    : Endpoint<DeleteAnimalRequest, Results<NoContent, NotFound>>
 {
     public override void Configure()
     {
         Delete("animals/{animalId}");
     }
 
-    public override async Task<Results<NoContent, NotFound>> ExecuteAsync(CancellationToken cancellationToken)
+    public override async Task<Results<NoContent, NotFound>> ExecuteAsync(DeleteAnimalRequest request,
+        CancellationToken cancellationToken)
     {
-        var animalId = Route<Guid>("animalId");
-        var result = await animalsService.DeleteAsync(animalId, cancellationToken);
+        var result = await animalsService.DeleteAsync(request.AnimalId, cancellationToken);
 
         return result.IsSuccess
             ? TypedResults.NoContent()

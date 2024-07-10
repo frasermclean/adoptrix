@@ -34,6 +34,9 @@ public class App : AppFixture<Program>
             .AddScoped<IBreedsRepository>(_ => BreedsRepositoryMock.Object);
         services.RemoveAll<ISpeciesRepository>()
             .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object);
+
+        services.RemoveAll<IEventPublisher>()
+            .AddScoped<IEventPublisher>(_ => EventPublisherMock.Object);
     }
 
     protected override Task SetupAsync()
