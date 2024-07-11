@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using Adoptrix.Application;
 using Adoptrix.Application.Services.Abstractions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ public class App : AppFixture<Program>
     public Mock<IBreedsRepository> BreedsRepositoryMock { get; } = new();
     public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; } = new();
     public Mock<IEventPublisher> EventPublisherMock { get; } = new();
+    public Mock<IBlobContainerManager> AnimalImagesBlobContainerManagerMock { get; } = new();
 
     /// <summary>
     /// HTTP client pre-configured with basic test authentication.
@@ -26,19 +28,19 @@ public class App : AppFixture<Program>
         services.AddAuthentication(BasicAuthHandler.SchemeName)
             .AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>(BasicAuthHandler.SchemeName, _ => { });
 
-        // replace services with mocks
+        // remove selected services
         services.RemoveAll<IAnimalsRepository>()
-            .AddScoped<IAnimalsRepository>(_ => AnimalsRepositoryMock.Object);
-        services.RemoveAll<IBreedsRepository>()
-            .AddScoped<IBreedsRepository>(_ => BreedsRepositoryMock.Object);
-        services.RemoveAll<ISpeciesRepository>()
-            .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object);
-        services.RemoveAll<IEventPublisher>()
-            .AddScoped<IEventPublisher>(_ => EventPublisherMock.Object);
-    }
+            .RemoveAll<IBreedsRepository>()
+            .RemoveAll<ISpeciesRepository>()
+            .RemoveAll<IEventPublisher>()
+            .RemoveAll<IBlobContainerManager>();
 
-    protected override Task SetupAsync()
-    {
-        return Task.CompletedTask;
+        // replace with mocked services
+        services.AddScoped<IAnimalsRepository>(_ => AnimalsRepositoryMock.Object)
+            .AddScoped<IBreedsRepository>(_ => BreedsRepositoryMock.Object)
+            .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object)
+            .AddScoped<IEventPublisher>(_ => EventPublisherMock.Object)
+            .AddKeyedScoped<IBlobContainerManager>(BlobContainerNames.AnimalImages,
+                (_, _) => AnimalImagesBlobContainerManagerMock.Object);
     }
 }
