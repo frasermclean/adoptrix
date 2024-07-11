@@ -2,7 +2,7 @@
 using Adoptrix.Core.Contracts.Requests.Animals;
 using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Extensions;
-using Adoptrix.Storage;
+using Adoptrix.Persistence;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 

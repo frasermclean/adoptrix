@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions"/>
+    <PackageReference Include="FluentAssertions.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="Testcontainers.Azurite"/>
+    <PackageReference Include="Testcontainers.MsSql" />
+    <PackageReference Include="xunit"/>
+    <PackageReference Include="xunit.runner.visualstudio">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Adoptrix.Persistence\Adoptrix.Persistence.csproj" />
+    <ProjectReference Include="..\Adoptrix.Tests.Shared\Adoptrix.Tests.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\..\data\images\lab_puppy_1.jpeg">
+      <Link>Data\lab_puppy_1.jpeg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\data\images\lab_puppy_2.jpeg">
+      <Link>Data\lab_puppy_2.jpeg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\data\images\lab_puppy_3.jpeg">
+      <Link>Data\lab_puppy_3.jpeg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

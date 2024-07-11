@@ -1,9 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Client;
-using Adoptrix.Database.DependencyInjection;
-using Adoptrix.Database.Services;
-using Adoptrix.Storage.DependencyInjection;
+using Adoptrix.Persistence;
+using Adoptrix.Persistence.Services;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FastEndpoints;
@@ -26,7 +25,9 @@ public static class ServiceRegistration
 
         builder.Services
             .AddAuthentication(builder.Configuration)
-            .AddFastEndpoints();
+            .AddFastEndpoints()
+            .AddCommonServices()
+            .AddPersistence(builder.Configuration);
 
         // json serialization options
         builder.Services.Configure<JsonOptions>(options =>
@@ -35,10 +36,6 @@ public static class ServiceRegistration
             options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         });
-
-        builder.Services.AddCommonServices()
-            .AddDatabaseServices(builder.Configuration)
-            .AddStorageServices(builder.Configuration);
 
         // open telemetry services
         builder.Services.AddOpenTelemetry()

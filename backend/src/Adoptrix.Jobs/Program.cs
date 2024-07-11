@@ -1,6 +1,5 @@
-using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Jobs.Services;
-using Adoptrix.Storage.DependencyInjection;
+using Adoptrix.Persistence;
 using Azure.Identity;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -40,8 +39,7 @@ public static class Program
 
                 // local project services
                 services.AddSingleton<IImageProcessor, ImageProcessor>();
-                services.AddDatabaseServices(context.Configuration);
-                services.AddStorageServices(context.Configuration);
+                services.AddPersistence(context.Configuration);
             })
             .ConfigureLogging(builder =>
             {

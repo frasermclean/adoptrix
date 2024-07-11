@@ -28,8 +28,7 @@
     <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Database\Adoptrix.Database.csproj" />
-    <ProjectReference Include="..\Adoptrix.Storage\Adoptrix.Storage.csproj" />
+    <ProjectReference Include="..\Adoptrix.Persistence\Adoptrix.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
