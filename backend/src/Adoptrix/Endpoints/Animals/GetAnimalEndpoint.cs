@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Core.Abstractions;
-using Adoptrix.Mapping;
 using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Mapping;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;

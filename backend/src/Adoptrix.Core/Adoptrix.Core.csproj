@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FastEndpoints.Attributes" />
-    <PackageReference Include="FluentResults" />
-  </ItemGroup>
-
 </Project>

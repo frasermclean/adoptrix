@@ -1,5 +1,4 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Core.Abstractions;
+﻿using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Events;
 using Adoptrix.Storage;
 using Microsoft.Azure.Functions.Worker;

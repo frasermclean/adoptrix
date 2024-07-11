@@ -1,5 +1,4 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Core.Abstractions;
+﻿using Adoptrix.Core.Abstractions;
 using Adoptrix.Storage.DependencyInjection;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;

@@ -1,5 +1,4 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Core.Abstractions;
+﻿using Adoptrix.Core.Abstractions;
 using Adoptrix.Storage.Services;
 using Azure.Identity;
 using Azure.Storage.Blobs;
