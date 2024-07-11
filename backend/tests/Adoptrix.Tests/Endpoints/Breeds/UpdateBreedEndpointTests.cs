@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Requests.Breeds;
 using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Endpoints.Breeds;
 using Adoptrix.Tests.Shared;
@@ -12,10 +11,10 @@ public class UpdateBreedEndpointTests(App app) : TestBase<App>
     private readonly HttpClient httpClient = app.BasicAuthClient;
 
     [Theory, AdoptrixAutoData]
-    public async Task UpdateBreed_WithValidRequest_ShouldReturnOk(UpdateBreedRequest request, Breed breed,
-        Species species)
+    public async Task UpdateBreed_WithValidRequest_ShouldReturnOk(Breed breed, Species species)
     {
         // arrange
+        var request = CreateRequest(breed.Id, species.Id);
         app.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(breed);
@@ -33,10 +32,11 @@ public class UpdateBreedEndpointTests(App app) : TestBase<App>
         app.BreedsRepositoryMock.Verify(repository => repository.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task UpdateBreed_WithInvalidBreedId_ShouldReturnNotFound(UpdateBreedRequest request)
+    [Fact]
+    public async Task UpdateBreed_WithInvalidBreedId_ShouldReturnNotFound()
     {
         // arrange
+        var request = CreateRequest();
         app.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Breed);
@@ -49,9 +49,10 @@ public class UpdateBreedEndpointTests(App app) : TestBase<App>
     }
 
     [Theory, AdoptrixAutoData]
-    public async Task UpdateBreed_WithInvalidSpeciesId_ShouldReturnBadRequest(UpdateBreedRequest request, Breed breed)
+    public async Task UpdateBreed_WithInvalidSpeciesId_ShouldReturnBadRequest(Breed breed)
     {
         // arrange
+        var request = CreateRequest(breed.Id);
         app.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(breed);
@@ -66,4 +67,11 @@ public class UpdateBreedEndpointTests(App app) : TestBase<App>
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesId");
     }
+
+    private static UpdateBreedRequest CreateRequest(Guid? breedId = null, Guid? speciesId = null) => new()
+    {
+        Name = "Sausage Dog",
+        BreedId = breedId ?? Guid.NewGuid(),
+        SpeciesId = speciesId ?? Guid.NewGuid(),
+    };
 }

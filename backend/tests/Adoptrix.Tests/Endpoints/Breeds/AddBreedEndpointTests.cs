@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Requests.Breeds;
 using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Endpoints.Breeds;
 using Adoptrix.Tests.Shared;
@@ -12,9 +11,10 @@ public class AddBreedEndpointTests(App app) : TestBase<App>
     private readonly HttpClient httpClient = app.BasicAuthClient;
 
     [Theory, AdoptrixAutoData]
-    public async Task AddBreed_WithValidRequest_ShouldReturnCreated(AddBreedRequest request, Species species)
+    public async Task AddBreed_WithValidRequest_ShouldReturnCreated(Species species)
     {
         // arrange
+        var request = CreateRequest(species.Id);
         app.SpeciesRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(species);
@@ -30,10 +30,11 @@ public class AddBreedEndpointTests(App app) : TestBase<App>
         response.Name.Should().Be(request.Name);
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task AddBreed_WithInvalidSpeciesId_ShouldReturnBadRequest(AddBreedRequest request)
+    [Fact]
+    public async Task AddBreed_WithInvalidSpeciesId_ShouldReturnBadRequest()
     {
         // arrange
+        var request = CreateRequest();
         app.SpeciesRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Species);
@@ -46,4 +47,10 @@ public class AddBreedEndpointTests(App app) : TestBase<App>
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesId");
     }
+
+    private static AddBreedRequest CreateRequest(Guid? speciesId = null) => new()
+    {
+        Name = "Golden Retriever",
+        SpeciesId = speciesId ?? Guid.NewGuid()
+    };
 }
