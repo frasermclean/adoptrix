@@ -16,6 +16,5 @@ public static class ServiceRegistration
             })
             .AddScoped<IAnimalsRepository, AnimalsRepository>()
             .AddScoped<IBreedsRepository, BreedsRepository>()
-            .AddScoped<ISpeciesRepository, SpeciesRepository>()
-            .AddScoped<IBatchManager, BatchManager>();
+            .AddScoped<ISpeciesRepository, SpeciesRepository>();
 }

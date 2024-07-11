@@ -6,13 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
 
-public class SpeciesRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
-    : Repository(dbContext, batchManager), ISpeciesRepository
+public class SpeciesRepository(AdoptrixDbContext dbContext): ISpeciesRepository
 {
     public async Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesRequest request,
         CancellationToken cancellationToken = default)
     {
-        return await DbContext.Species
+        return await dbContext.Species
             .Select(species => new SpeciesMatch
             {
                 SpeciesId = species.Id,
@@ -27,11 +26,11 @@ public class SpeciesRepository(AdoptrixDbContext dbContext, IBatchManager batchM
 
     public async Task<Species?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await DbContext.Species.FirstOrDefaultAsync(species => species.Id == id, cancellationToken);
+        return await dbContext.Species.FirstOrDefaultAsync(species => species.Id == id, cancellationToken);
     }
 
     public async Task<Species?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        return await DbContext.Species.FirstOrDefaultAsync(species => species.Name == name, cancellationToken);
+        return await dbContext.Species.FirstOrDefaultAsync(species => species.Name == name, cancellationToken);
     }
 }
