@@ -1,6 +1,5 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Application.Services.Abstractions;
-using Adoptrix.Tests.Mocks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -12,8 +11,8 @@ public class App : AppFixture<Program>
 {
     public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; } = new();
     public Mock<IBreedsRepository> BreedsRepositoryMock { get; } = new();
-    public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; } = new Mock<ISpeciesRepository>().SetupDefaults();
-    public Mock<IEventPublisher> EventPublisherMock { get; } = new Mock<IEventPublisher>().SetupDefaults();
+    public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; } = new();
+    public Mock<IEventPublisher> EventPublisherMock { get; } = new();
 
     /// <summary>
     /// HTTP client pre-configured with basic test authentication.
@@ -27,14 +26,13 @@ public class App : AppFixture<Program>
         services.AddAuthentication(BasicAuthHandler.SchemeName)
             .AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>(BasicAuthHandler.SchemeName, _ => { });
 
-        // replace repository services with mocks
+        // replace services with mocks
         services.RemoveAll<IAnimalsRepository>()
             .AddScoped<IAnimalsRepository>(_ => AnimalsRepositoryMock.Object);
         services.RemoveAll<IBreedsRepository>()
             .AddScoped<IBreedsRepository>(_ => BreedsRepositoryMock.Object);
         services.RemoveAll<ISpeciesRepository>()
             .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object);
-
         services.RemoveAll<IEventPublisher>()
             .AddScoped<IEventPublisher>(_ => EventPublisherMock.Object);
     }

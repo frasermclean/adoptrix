@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Adoptrix.Core;
 using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Endpoints.Breeds;
 using Adoptrix.Tests.Shared;
@@ -11,7 +10,7 @@ public class AddBreedEndpointTests(App app) : TestBase<App>
     private readonly HttpClient httpClient = app.BasicAuthClient;
 
     [Theory, AdoptrixAutoData]
-    public async Task AddBreed_WithValidRequest_ShouldReturnCreated(Species species)
+    public async Task AddBreed_WithValidRequest_ShouldReturnCreated(Core.Species species)
     {
         // arrange
         var request = CreateRequest(species.Id);
@@ -37,7 +36,7 @@ public class AddBreedEndpointTests(App app) : TestBase<App>
         var request = CreateRequest();
         app.SpeciesRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Species);
+            .ReturnsAsync(null as Core.Species);
 
         // act
         var (message, response) =

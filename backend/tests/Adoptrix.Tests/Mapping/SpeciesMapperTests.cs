@@ -1,7 +1,7 @@
-﻿using Adoptrix.Tests.Shared.Factories;
-using SpeciesMapper = Adoptrix.Application.Mapping.SpeciesMapper;
+﻿using Adoptrix.Mapping;
+using Adoptrix.Tests.Shared.Factories;
 
-namespace Adoptrix.Application.Tests.Mapping;
+namespace Adoptrix.Tests.Mapping;
 
 public class SpeciesMapperTests
 {
@@ -12,7 +12,7 @@ public class SpeciesMapperTests
         var species = SpeciesFactory.Create();
 
         // act
-        var response = SpeciesMapper.ToResponse(species);
+        var response = species.ToResponse();
 
         // assert
         response.Id.Should().Be(species.Id);

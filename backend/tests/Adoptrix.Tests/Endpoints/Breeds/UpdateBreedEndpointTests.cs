@@ -11,7 +11,7 @@ public class UpdateBreedEndpointTests(App app) : TestBase<App>
     private readonly HttpClient httpClient = app.BasicAuthClient;
 
     [Theory, AdoptrixAutoData]
-    public async Task UpdateBreed_WithValidRequest_ShouldReturnOk(Breed breed, Species species)
+    public async Task UpdateBreed_WithValidRequest_ShouldReturnOk(Breed breed, Core.Species species)
     {
         // arrange
         var request = CreateRequest(breed.Id, species.Id);
@@ -58,7 +58,7 @@ public class UpdateBreedEndpointTests(App app) : TestBase<App>
             .ReturnsAsync(breed);
         app.SpeciesRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Species);
+            .ReturnsAsync(null as Core.Species);
 
         // act
         var (message, response) = await httpClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);

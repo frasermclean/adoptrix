@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Adoptrix.Application.Services;
-using Adoptrix.Core.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +13,6 @@ public static class ServiceRegistration
 
         return services
             .AddValidatorsFromAssembly(executingAssembly)
-            .AddSingleton<IImageProcessor, ImageProcessor>()
-            .AddScoped<ISpeciesService, SpeciesService>();
+            .AddSingleton<IImageProcessor, ImageProcessor>();
     }
 }

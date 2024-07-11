@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Core.Contracts;
+﻿namespace Adoptrix.Endpoints;
 
 public static class ClaimTypes
 {

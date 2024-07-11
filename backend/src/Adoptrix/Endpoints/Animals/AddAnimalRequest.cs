@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Contracts;
 using FastEndpoints;
 
 namespace Adoptrix.Endpoints.Animals;
