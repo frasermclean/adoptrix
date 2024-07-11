@@ -14,7 +14,7 @@ public class EventPublisher(ILogger<EventPublisher> logger, IServiceProvider ser
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public async Task PublishAsync<T>(T domainEvent, CancellationToken cancellationToken = default)
+    public async Task<string> PublishAsync<T>(T domainEvent, CancellationToken cancellationToken = default)
         where T : IDomainEvent
     {
         // serialize domain event
@@ -26,6 +26,8 @@ public class EventPublisher(ILogger<EventPublisher> logger, IServiceProvider ser
 
         logger.LogInformation("Published {DomainEvent} to queue: {QueueName} - Message ID: {MessageId}",
             domainEvent, queueClient.Name, response.Value.MessageId);
+
+        return response.Value.MessageId;
     }
 
     private QueueClient GetQueueClient<T>(T domainEvent) where T : IDomainEvent =>
@@ -33,6 +35,6 @@ public class EventPublisher(ILogger<EventPublisher> logger, IServiceProvider ser
         {
             AnimalDeletedEvent => serviceProvider.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalDeleted),
             AnimalImageAddedEvent => serviceProvider.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalImageAdded),
-            _ => throw new ArgumentOutOfRangeException(nameof(domainEvent))
+            _ => throw new ArgumentException("Unsupported domain event ", nameof(domainEvent))
         };
 }

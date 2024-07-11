@@ -17,16 +17,16 @@ public class StorageEmulatorFixture : IAsyncLifetime
         .WithPortBinding(TableContainerPort, true)
         .Build();
 
-    public IServiceProvider? ServiceProvider { get; private set; }
+    public IServiceProvider ServiceProvider { get; private set; } = null!;
 
-    public IBlobContainerManager? BlobContainerManager =>
-        ServiceProvider?.GetRequiredKeyedService<IBlobContainerManager>(BlobContainerNames.AnimalImages);
+    public IBlobContainerManager BlobContainerManager =>
+        ServiceProvider.GetRequiredKeyedService<IBlobContainerManager>(BlobContainerNames.AnimalImages);
 
-    public QueueClient? AnimalDeletedQueueClient =>
-        ServiceProvider?.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalDeleted);
+    public QueueClient AnimalDeletedQueueClient =>
+        ServiceProvider.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalDeleted);
 
-    public QueueClient? AnimalImageAddedQueueClient =>
-        ServiceProvider?.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalImageAdded);
+    public QueueClient AnimalImageAddedQueueClient =>
+        ServiceProvider.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalImageAdded);
 
     private const int BlobContainerPort = 10000;
     private const int QueueContainerPort = 10001;
