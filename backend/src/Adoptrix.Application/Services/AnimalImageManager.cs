@@ -1,9 +1,6 @@
-﻿using Adoptrix.Application.Mapping;
-using Adoptrix.Application.Services.Abstractions;
+﻿using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Core.Errors;
-using Adoptrix.Core.Events;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,14 +9,6 @@ namespace Adoptrix.Application.Services;
 
 public interface IAnimalImageManager
 {
-    Uri ContainerUri { get; }
-
-    Task<Result<AnimalImage>> UploadOriginalAsync(Guid animalId, Guid userId, string fileName, string description,
-        string contentType, Stream stream, CancellationToken cancellationToken = default);
-
-    Task<Result<AnimalResponse>> AddImagesToAnimalAsync(Animal animal, IReadOnlyCollection<AnimalImage> images,
-        CancellationToken cancellationToken = default);
-
     Task<Result> ProcessOriginalAsync(Guid animalId, Guid imageId, CancellationToken cancellationToken = default);
 
     Task<Result<int>> DeleteAnimalImagesAsync(Guid animalId, CancellationToken cancellationToken = default);
@@ -30,45 +19,9 @@ public sealed class AnimalImageManager(
     IAnimalsRepository animalsRepository,
     [FromKeyedServices(BlobContainerNames.AnimalImages)]
     IBlobContainerManager containerManager,
-    IEventPublisher eventPublisher,
     IImageProcessor imageProcessor)
     : IAnimalImageManager
 {
-    public Uri ContainerUri => containerManager.ContainerUri;
-
-    public async Task<Result<AnimalImage>> UploadOriginalAsync(Guid animalId, Guid userId, string fileName,
-        string description, string contentType, Stream stream, CancellationToken cancellationToken = default)
-    {
-        var image = new AnimalImage
-        {
-            Description = description,
-            OriginalFileName = fileName,
-            OriginalContentType = contentType,
-            UploadedBy = userId
-        };
-
-        var uploadResult = await UploadImageAsync(animalId, image.Id, stream, contentType, AnimalImageCategory.Original,
-            cancellationToken);
-
-        return uploadResult.IsSuccess
-            ? image
-            : uploadResult;
-    }
-
-    public async Task<Result<AnimalResponse>> AddImagesToAnimalAsync(Animal animal,
-        IReadOnlyCollection<AnimalImage> images, CancellationToken cancellationToken = default)
-    {
-        animal.Images.AddRange(images);
-        await animalsRepository.SaveChangesAsync(cancellationToken);
-
-        foreach (var image in images)
-        {
-            await eventPublisher.PublishAsync(new AnimalImageAddedEvent(animal.Id, image.Id), cancellationToken);
-        }
-
-        return new Result<AnimalResponse>(); // TODO: Map animal to response
-    }
-
     public async Task<Result> ProcessOriginalAsync(Guid animalId, Guid imageId,
         CancellationToken cancellationToken = default)
     {
@@ -135,7 +88,9 @@ public sealed class AnimalImageManager(
         AnimalImageCategory category = AnimalImageCategory.Original, CancellationToken cancellationToken = default)
     {
         var blobName = AnimalImage.GetBlobName(animalId, imageId, category);
-        return await containerManager.UploadBlobAsync(blobName, imageStream, contentType, cancellationToken);
+        await containerManager.UploadBlobAsync(blobName, imageStream, contentType, cancellationToken);
+
+        return Result.Ok();
     }
 
     private Task<Stream> GetImageReadStreamAsync(Guid animalId, Guid imageId,

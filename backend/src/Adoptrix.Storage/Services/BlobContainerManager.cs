@@ -12,7 +12,7 @@ public class BlobContainerManager(BlobServiceClient blobServiceClient, string co
     public string ContainerName => containerClient.Name;
     public Uri ContainerUri => containerClient.Uri;
 
-    public async Task<Result> UploadBlobAsync(string blobName, Stream stream, string contentType,
+    public async Task UploadBlobAsync(string blobName, Stream stream, string contentType,
         CancellationToken cancellationToken)
     {
         var blobClient = containerClient.GetBlobClient(blobName);
@@ -21,8 +21,7 @@ public class BlobContainerManager(BlobServiceClient blobServiceClient, string co
             HttpHeaders = new BlobHttpHeaders { ContentType = contentType }
         };
 
-        var response = await blobClient.UploadAsync(stream, options, cancellationToken);
-        return Result.FailIf(response.GetRawResponse().IsError, $"Blob {blobName} was not created.");
+        await blobClient.UploadAsync(stream, options, cancellationToken);
     }
 
     public async Task<IEnumerable<string>> GetBlobNamesAsync(string prefix, CancellationToken cancellationToken)

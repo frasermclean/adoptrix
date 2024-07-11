@@ -7,7 +7,7 @@ public interface IBlobContainerManager
     string ContainerName { get; }
     Uri ContainerUri { get; }
 
-    Task<Result> UploadBlobAsync(string blobName, Stream stream, string contentType,
+    Task UploadBlobAsync(string blobName, Stream stream, string contentType,
         CancellationToken cancellationToken = default);
 
     Task<IEnumerable<string>> GetBlobNamesAsync(string prefix, CancellationToken cancellationToken = default);

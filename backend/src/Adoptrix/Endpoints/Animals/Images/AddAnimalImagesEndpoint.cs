@@ -1,66 +1,72 @@
-﻿using Adoptrix.Application.Services;
+﻿using Adoptrix.Application;
 using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Core;
 using Adoptrix.Core.Contracts.Responses;
-using Adoptrix.Extensions;
+using Adoptrix.Core.Events;
+using Adoptrix.Mapping;
 using FastEndpoints;
-using FluentResults;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Endpoints.Animals.Images;
 
-public class AddAnimalImagesEndpoint(IAnimalsRepository animalsRepository, IAnimalImageManager animalImageManager)
-    : EndpointWithoutRequest<Results<Ok<AnimalResponse>, NotFound, BadRequest>>
+[HttpPost("animals/{animalId:guid}/images"), AllowFileUploads(true)]
+public class AddAnimalImagesEndpoint(
+    IAnimalsRepository animalsRepository,
+    IEventPublisher eventPublisher,
+    [FromKeyedServices(BlobContainerNames.AnimalImages)]
+    IBlobContainerManager containerManager)
+    : Endpoint<AddAnimalImagesRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>>
 {
-    public override void Configure()
+    public override async Task<Results<Ok<AnimalResponse>, NotFound, ErrorResponse>> ExecuteAsync(
+        AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
-        Post("animals/{animalId:guid}/images");
-        AllowFileUploads(true);
-    }
-
-    public override async Task<Results<Ok<AnimalResponse>, NotFound, BadRequest>> ExecuteAsync(CancellationToken cancellationToken)
-    {
-        var animalId = Route<Guid>("animalId");
-        var userId = User.GetUserId();
-
         // ensure animal exists in database
-        var animal = await animalsRepository.GetByIdAsync(animalId, cancellationToken);
+        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
         if (animal is null)
         {
             return TypedResults.NotFound();
         }
 
-        List<Result<AnimalImage>> results = [];
+        // upload original images to blob storage
+        var images = await UploadOriginalsAsync(request.AnimalId, request.UserId, cancellationToken);
+
+        // update animal entity with new images
+        animal.Images.AddRange(images);
+        await animalsRepository.SaveChangesAsync(cancellationToken);
+
+        // publish events for each image added
+        foreach (var image in images)
+        {
+            await eventPublisher.PublishAsync(new AnimalImageAddedEvent(animal.Id, image.Id), cancellationToken);
+        }
+
+        return TypedResults.Ok(animal.ToResponse());
+    }
+
+    private async Task<List<AnimalImage>> UploadOriginalsAsync(Guid animalId, Guid userId,
+        CancellationToken cancellationToken)
+    {
+        List<AnimalImage> images = [];
         await foreach (var section in FormFileSectionsAsync(cancellationToken))
         {
-            if (section is null)
+            var image = new AnimalImage
             {
-                Logger.LogWarning("Skipping null section");
-                continue;
-            }
+                Description = section!.Name,
+                OriginalFileName = section.FileName,
+                OriginalContentType = section.Section.ContentType!,
+                UploadedBy = userId,
+                AnimalId = animalId
+            };
 
-            if (section.Section.ContentType is null || section.FileStream is null)
-            {
-                Logger.LogWarning("Skipping section {Name} as it has no content type or file stream", section.Name);
-                continue;
-            }
+            var blobName = AnimalImage.GetBlobName(animalId, image.Id, AnimalImageCategory.Original);
+            await containerManager.UploadBlobAsync(blobName, section.FileStream!, section.Section.ContentType!,
+                cancellationToken);
 
-            var result = await animalImageManager.UploadOriginalAsync(animalId, userId, section.FileName, section.Name,
-                section.Section.ContentType, section.FileStream, cancellationToken);
+            Logger.LogInformation("Uploaded original image {BlobName} for animal {AnimalId}", blobName, animalId);
 
-            results.Add(result);
+            images.Add(image);
         }
 
-        if (results.Any(result => result.IsFailed))
-        {
-            return TypedResults.BadRequest();
-        }
-
-        var images = results.Select(result => result.Value).ToArray();
-        var addImagesResult = await animalImageManager.AddImagesToAnimalAsync(animal, images, cancellationToken);
-
-        return addImagesResult.IsSuccess
-            ? TypedResults.Ok(addImagesResult.Value)
-            : TypedResults.BadRequest();
+        return images;
     }
 }
