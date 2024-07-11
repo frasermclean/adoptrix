@@ -53,10 +53,8 @@ public class AnimalsRepository(AdoptrixDbContext dbContext) : IAnimalsRepository
         await SaveChangesAsync(cancellationToken);
     }
 
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        await dbContext.SaveChangesAsync(cancellationToken);
-    }
+    public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        => dbContext.SaveChangesAsync(cancellationToken);
 
     public async Task DeleteAsync(Animal animal, CancellationToken cancellationToken = default)
     {

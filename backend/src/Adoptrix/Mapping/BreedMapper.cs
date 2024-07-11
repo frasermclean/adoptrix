@@ -2,7 +2,7 @@
 using Adoptrix.Core.Contracts.Responses;
 using Riok.Mapperly.Abstractions;
 
-namespace Adoptrix.Application.Mapping;
+namespace Adoptrix.Mapping;
 
 [Mapper]
 public static partial class BreedMapper

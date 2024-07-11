@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Database.Tests.Fixtures;
 using Adoptrix.Core;
+using Adoptrix.Core.Contracts.Requests.Breeds;
 using Adoptrix.Tests.Shared.Factories;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,10 +21,13 @@ public class BreedsRepositoryTests
     }
 
     [Fact]
-    public async Task SearchAsync_WithNoParameters_ShouldReturnAllBreeds()
+    public async Task SearchAsync_WithDefaultParameters_ShouldReturnAllBreeds()
     {
+        // arrange
+        var request = new SearchBreedsRequest();
+
         // act
-        var results = await breedsRepository.SearchAsync();
+        var results = await breedsRepository.SearchAsync(request);
 
         // assert
         results.Should().HaveCountGreaterOrEqualTo(3);
@@ -88,12 +92,13 @@ public class BreedsRepositoryTests
         await breedsRepository.AddAsync(breedToAdd);
 
         // act
-        breedToAdd.Name = "Border Collie";
-        await breedsRepository.UpdateAsync(breedToAdd);
-        var breed = await breedsRepository.GetByIdAsync(breedToAdd.Id);
+        var breedToUpdate = await breedsRepository.GetByIdAsync(breedToAdd.Id);
+        breedToUpdate!.Name = "Border Collie";
+        await breedsRepository.SaveChangesAsync();
+        var breedToVerify = await breedsRepository.GetByIdAsync(breedToAdd.Id);
 
         // assert
-        breed.Should().BeOfType<Breed>().Which.Name.Should().Be("Border Collie");
+        breedToVerify.Should().BeOfType<Breed>().Which.Name.Should().Be("Border Collie");
     }
 
     [Fact]

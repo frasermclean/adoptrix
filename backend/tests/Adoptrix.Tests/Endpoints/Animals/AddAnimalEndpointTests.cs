@@ -12,8 +12,13 @@ public class AddAnimalEndpointTests(App app) : TestBase<App>
     private readonly HttpClient httpClient = app.BasicAuthClient;
 
     [Theory, AdoptrixAutoData]
-    public async Task AddAnimal_WithValidRequest_ShouldReturnCreated(AddAnimalRequest request)
+    public async Task AddAnimal_WithValidRequest_ShouldReturnCreated(AddAnimalRequest request, Breed breed)
     {
+        // arrange
+        app.BreedsRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(breed);
+
         // act
         var (message, response) =
             await httpClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);

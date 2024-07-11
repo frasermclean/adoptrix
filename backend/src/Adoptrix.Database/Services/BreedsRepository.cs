@@ -1,19 +1,19 @@
 ﻿using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Core;
+using Adoptrix.Core.Contracts.Requests.Breeds;
 using Adoptrix.Core.Contracts.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Database.Services;
 
-public class BreedsRepository(AdoptrixDbContext dbContext, IBatchManager batchManager)
-    : Repository(dbContext, batchManager), IBreedsRepository
+public class BreedsRepository(AdoptrixDbContext dbContext) : IBreedsRepository
 {
-    public async Task<IEnumerable<BreedMatch>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
+    public async Task<IEnumerable<BreedMatch>> SearchAsync(SearchBreedsRequest request,
         CancellationToken cancellationToken = default)
     {
-        return await DbContext.Breeds
-            .Where(breed => (speciesId == null || breed.Species.Id == speciesId) &&
-                            (withAnimals == null || withAnimals.Value && breed.Animals.Count > 0))
+        return await dbContext.Breeds
+            .Where(breed => (request.SpeciesId == null || breed.Species.Id == request.SpeciesId) &&
+                            (request.WithAnimals == null || request.WithAnimals.Value && breed.Animals.Count > 0))
             .Select(breed => new BreedMatch
             {
                 Id = breed.Id,
@@ -24,9 +24,10 @@ public class BreedsRepository(AdoptrixDbContext dbContext, IBatchManager batchMa
             .OrderBy(result => result.Name)
             .ToListAsync(cancellationToken);
     }
+
     public async Task<Breed?> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default)
     {
-        return await DbContext.Breeds
+        return await dbContext.Breeds
             .Include(breed => breed.Species)
             .Include(breed => breed.Animals)
             .FirstOrDefaultAsync(breed => breed.Id == breedId, cancellationToken);
@@ -34,7 +35,7 @@ public class BreedsRepository(AdoptrixDbContext dbContext, IBatchManager batchMa
 
     public async Task<Breed?> GetByNameAsync(string breedName, CancellationToken cancellationToken = default)
     {
-        return await DbContext.Breeds
+        return await dbContext.Breeds
             .Include(breed => breed.Species)
             .Include(breed => breed.Animals)
             .FirstOrDefaultAsync(breed => breed.Name == breedName, cancellationToken);
@@ -42,19 +43,16 @@ public class BreedsRepository(AdoptrixDbContext dbContext, IBatchManager batchMa
 
     public async Task AddAsync(Breed breed, CancellationToken cancellationToken = default)
     {
-        DbContext.Breeds.Add(breed);
+        dbContext.Breeds.Add(breed);
         await SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Breed breed, CancellationToken cancellationToken = default)
-    {
-        DbContext.Breeds.Update(breed);
-        await SaveChangesAsync(cancellationToken);
-    }
+    public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        => dbContext.SaveChangesAsync(cancellationToken);
 
     public async Task DeleteAsync(Breed breed, CancellationToken cancellationToken = default)
     {
-        DbContext.Breeds.Remove(breed);
+        dbContext.Breeds.Remove(breed);
         await SaveChangesAsync(cancellationToken);
     }
 }
