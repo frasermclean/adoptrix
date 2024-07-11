@@ -8,14 +8,10 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Endpoints.Animals;
 
+[HttpPost("animals")]
 public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepository breedsRepository)
     : Endpoint<AddAnimalRequest, Results<Created<AnimalResponse>, ErrorResponse>>
 {
-    public override void Configure()
-    {
-        Post("animals");
-    }
-
     public override async Task<Results<Created<AnimalResponse>, ErrorResponse>> ExecuteAsync(AddAnimalRequest request, CancellationToken cancellationToken)
     {
         var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);

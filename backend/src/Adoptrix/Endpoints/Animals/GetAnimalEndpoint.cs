@@ -2,19 +2,15 @@
 using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Core.Contracts.Responses;
 using FastEndpoints;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Endpoints.Animals;
 
+[HttpGet("animals/{animalId:guid}"), AllowAnonymous]
 public class GetAnimalEndpoint(IAnimalsRepository animalsRepository)
     : Endpoint<GetAnimalRequest, Results<Ok<AnimalResponse>, NotFound>>
 {
-    public override void Configure()
-    {
-        Get("animals/{animalId:guid}");
-        AllowAnonymous();
-    }
-
     public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(GetAnimalRequest request,
         CancellationToken cancellationToken)
     {

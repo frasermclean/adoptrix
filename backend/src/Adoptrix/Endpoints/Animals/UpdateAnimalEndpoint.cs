@@ -7,14 +7,10 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Endpoints.Animals;
 
+[HttpPut("animals/{animalId:guid}")]
 public class UpdateAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepository breedsRepository)
     : Endpoint<UpdateAnimalRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>>
 {
-    public override void Configure()
-    {
-        Put("animals/{animalId:guid}");
-    }
-
     public override async Task<Results<Ok<AnimalResponse>, NotFound, ErrorResponse>> ExecuteAsync(
         UpdateAnimalRequest request, CancellationToken cancellationToken)
     {
