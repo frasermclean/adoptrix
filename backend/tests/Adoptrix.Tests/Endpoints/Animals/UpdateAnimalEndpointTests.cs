@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Requests.Animals;
 using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Endpoints.Animals;
 using Adoptrix.Tests.Shared;

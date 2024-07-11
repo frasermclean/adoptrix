@@ -1,6 +1,8 @@
-﻿using FastEndpoints;
+﻿using Adoptrix.Core;
+using Adoptrix.Core.Contracts;
+using FastEndpoints;
 
-namespace Adoptrix.Core.Contracts.Requests.Animals;
+namespace Adoptrix.Endpoints.Animals;
 
 public class AddAnimalRequest
 {

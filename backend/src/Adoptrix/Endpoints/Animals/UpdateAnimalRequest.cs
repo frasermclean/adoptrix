@@ -1,4 +1,6 @@
-﻿namespace Adoptrix.Core.Contracts.Requests.Animals;
+﻿using Adoptrix.Core;
+
+namespace Adoptrix.Endpoints.Animals;
 
 public class UpdateAnimalRequest
 {

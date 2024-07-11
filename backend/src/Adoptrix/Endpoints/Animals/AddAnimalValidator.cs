@@ -1,13 +1,13 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Requests.Animals;
+using Adoptrix.Validators;
 using FastEndpoints;
 using FluentValidation;
 
-namespace Adoptrix.Validators;
+namespace Adoptrix.Endpoints.Animals;
 
-public class UpdateAnimalRequestValidator : Validator<UpdateAnimalRequest>
+public class AddAnimalValidator : Validator<AddAnimalRequest>
 {
-    public UpdateAnimalRequestValidator()
+    public AddAnimalValidator()
     {
         RuleFor(request => request.Name)
             .NotEmpty()
