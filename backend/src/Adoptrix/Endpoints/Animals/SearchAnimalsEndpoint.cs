@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services.Abstractions;
+﻿using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Contracts.Requests.Animals;
 using Adoptrix.Core.Contracts.Responses;
 using FastEndpoints;

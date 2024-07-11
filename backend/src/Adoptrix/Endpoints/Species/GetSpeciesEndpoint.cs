@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services.Abstractions;
+﻿using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Mapping;
 using FastEndpoints;

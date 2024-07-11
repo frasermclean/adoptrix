@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Application.Services.Abstractions;
+﻿namespace Adoptrix.Core.Abstractions;
 
 public interface IBlobContainerManager
 {

@@ -1,5 +1,5 @@
-﻿using Adoptrix.Application.Services.Abstractions;
-using Adoptrix.Core;
+﻿using Adoptrix.Core;
+using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Functions;
 using Adoptrix.Jobs.Services;

@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Application;
+﻿namespace Adoptrix.Core;
 
 public static class BlobContainerNames
 {

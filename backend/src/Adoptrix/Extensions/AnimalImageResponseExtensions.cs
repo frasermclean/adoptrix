@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Core;
 using Adoptrix.Core.Contracts.Responses;
 
-namespace Adoptrix.Application.Extensions;
+namespace Adoptrix.Extensions;
 
 public static class AnimalImageResponseExtensions
 {

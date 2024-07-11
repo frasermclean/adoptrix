@@ -1,6 +1,6 @@
-﻿using Adoptrix.Application.Services.Abstractions;
-using Adoptrix.Database.Tests.Fixtures;
+﻿using Adoptrix.Database.Tests.Fixtures;
 using Adoptrix.Core;
+using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Contracts.Requests.Species;
 
 namespace Adoptrix.Database.Tests.Services;

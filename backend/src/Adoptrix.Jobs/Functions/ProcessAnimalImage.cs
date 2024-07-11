@@ -1,6 +1,5 @@
-﻿using Adoptrix.Application;
-using Adoptrix.Application.Services.Abstractions;
-using Adoptrix.Core;
+﻿using Adoptrix.Core;
+using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Services;
 using Adoptrix.Storage;
@@ -70,12 +69,10 @@ public class ProcessAnimalImage(
         logger.LogInformation("Uploaded processed images for animal with ID: {AnimalId}", animalId);
     }
 
-    private async Task<Result> UploadImageAsync(Guid animalId, Guid imageId, Stream imageStream, string contentType,
+    private async Task UploadImageAsync(Guid animalId, Guid imageId, Stream imageStream, string contentType,
         AnimalImageCategory category = AnimalImageCategory.Original, CancellationToken cancellationToken = default)
     {
         var blobName = AnimalImage.GetBlobName(animalId, imageId, category);
         await containerManager.UploadBlobAsync(blobName, imageStream, contentType, cancellationToken);
-
-        return Result.Ok();
     }
 }

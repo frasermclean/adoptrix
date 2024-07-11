@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Adoptrix.Application.Services.Abstractions;
+using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Events;
 using Azure.Storage.Queues;
 using Microsoft.Extensions.DependencyInjection;

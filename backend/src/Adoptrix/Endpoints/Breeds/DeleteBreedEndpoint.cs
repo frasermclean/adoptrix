@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services.Abstractions;
+﻿using Adoptrix.Core.Abstractions;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 

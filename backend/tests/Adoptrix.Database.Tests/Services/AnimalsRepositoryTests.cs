@@ -1,4 +1,4 @@
-﻿using Adoptrix.Application.Services.Abstractions;
+﻿using Adoptrix.Core.Abstractions;
 using Adoptrix.Database.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
 

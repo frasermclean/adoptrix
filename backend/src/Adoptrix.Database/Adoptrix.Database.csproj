@@ -11,11 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Application\Adoptrix.Application.csproj"/>
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+    <ProjectReference Include="..\Adoptrix.Core\Adoptrix.Core.csproj" />
   </ItemGroup>
 
 </Project>
