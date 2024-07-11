@@ -1,19 +1,18 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
-using Adoptrix.Client.Extensions;
+﻿using Adoptrix.Client.Extensions;
 using Adoptrix.Core.Contracts.Requests.Animals;
 using Adoptrix.Core.Contracts.Responses;
 
 namespace Adoptrix.Client.Services;
 
-public interface IAnimalsApiClient
+public interface IAnimalsClient
 {
-    Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request, CancellationToken cancellationToken = default);
+    Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
+        CancellationToken cancellationToken = default);
 
     Task<AnimalResponse> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
 }
 
-public class AnimalsApiClient(HttpClient httpClient, JsonSerializerOptions serializerOptions) : IAnimalsApiClient
+public class AnimalsClient(HttpClient httpClient) : IAnimalsClient
 {
     public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken = default)
@@ -21,8 +20,7 @@ public class AnimalsApiClient(HttpClient httpClient, JsonSerializerOptions seria
         var message = await httpClient.GetAsync($"api/animals{request.ToQueryString()}", cancellationToken);
         message.EnsureSuccessStatusCode();
 
-        var matches =
-            await message.Content.ReadFromJsonAsync<IEnumerable<AnimalMatch>>(serializerOptions, cancellationToken);
+        var matches = await message.Content.ReadFromJsonAsync<IEnumerable<AnimalMatch>>(cancellationToken);
 
         return matches ?? [];
     }
@@ -32,7 +30,7 @@ public class AnimalsApiClient(HttpClient httpClient, JsonSerializerOptions seria
         var message = await httpClient.GetAsync($"api/animals/{animalId}", cancellationToken);
         message.EnsureSuccessStatusCode();
 
-        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(serializerOptions, cancellationToken);
+        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(cancellationToken);
 
         return response!;
     }

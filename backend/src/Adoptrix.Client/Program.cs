@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Client.Services;
-using Adoptrix.Core.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -21,8 +20,7 @@ public static class Program
 
     private static WebAssemblyHostBuilder RegisterServices(this WebAssemblyHostBuilder builder)
     {
-        builder.Services
-            .AddCommonServices();
+        builder.Services.AddCommonServices();
 
         return builder;
     }
@@ -40,13 +38,9 @@ public static class Program
                 var navigationManager = serviceProvider.GetRequiredService<NavigationManager>();
                 return new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) };
             })
-            .AddSingleton(new JsonSerializerOptions(JsonSerializerDefaults.Web)
-            {
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-            })
-            .AddScoped<IAnimalsApiClient, AnimalsApiClient>()
-            .AddScoped<IBreedsService, BreedsClient>()
-            .AddScoped<ISpeciesService, SpeciesClient>()
+            .AddScoped<IAnimalsClient, AnimalsClient>()
+            .AddScoped<IBreedsClient, BreedsClient>()
+            .AddScoped<ISpeciesClient, SpeciesClient>()
             .AddMudServices()
             .AddSingleton<AppNameProvider>()
             .AddSingleton<ThemeProvider>();

@@ -1,6 +1,6 @@
 @page "/animals/{animalId:guid}"
 @using Adoptrix.Core.Contracts.Responses
-@inject IAnimalsApiClient ApiClient;
+@inject IAnimalsClient AnimalsClient;
 
 @if (animal is null)
 {
@@ -72,7 +72,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        animal = await ApiClient.GetAsync(AnimalId);
+        animal = await AnimalsClient.GetAsync(AnimalId);
     }
 
 }
