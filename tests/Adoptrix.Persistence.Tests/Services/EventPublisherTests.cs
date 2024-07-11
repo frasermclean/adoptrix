@@ -7,7 +7,8 @@ using Moq;
 namespace Adoptrix.Persistence.Tests.Services;
 
 [Trait("Category", "Integration")]
-public class EventPublisherTests(StorageEmulatorFixture fixture) : IClassFixture<StorageEmulatorFixture>
+[Collection(nameof(StorageEmulatorCollection))]
+public class EventPublisherTests(StorageEmulatorFixture fixture)
 {
     private readonly EventPublisher eventPublisher = new(Mock.Of<ILogger<EventPublisher>>(), fixture.ServiceProvider);
 

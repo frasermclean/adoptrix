@@ -19,7 +19,7 @@ public class StorageEmulatorFixture : IAsyncLifetime
 
     public IServiceProvider ServiceProvider { get; private set; } = null!;
 
-    public IBlobContainerManager BlobContainerManager =>
+    public IBlobContainerManager AnimalImagesBlobContainerManager =>
         ServiceProvider.GetRequiredKeyedService<IBlobContainerManager>(BlobContainerNames.AnimalImages);
 
     public QueueClient AnimalDeletedQueueClient =>
@@ -63,8 +63,8 @@ public class StorageEmulatorFixture : IAsyncLifetime
 
     private static async Task InitializeBlobContainersAsync(BlobServiceClient serviceClient)
     {
-        var containerClient = serviceClient.GetBlobContainerClient(BlobContainerNames.AnimalImages);
-        await containerClient.CreateAsync(PublicAccessType.Blob);
+        var animalImagesContainerClient = serviceClient.GetBlobContainerClient(BlobContainerNames.AnimalImages);
+        await animalImagesContainerClient.CreateAsync(PublicAccessType.Blob);
     }
 
     private static async Task InitializeQueuesAsync(QueueServiceClient serviceClient)
