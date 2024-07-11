@@ -1,4 +1,5 @@
-﻿using Adoptrix.Core.Abstractions;
+﻿using Adoptrix.Core;
+using Adoptrix.Core.Abstractions;
 using Adoptrix.Persistence.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,10 +26,10 @@ public class DatabaseFixture : IAsyncLifetime
             .AddLogging()
             .BuildServiceProvider();
 
-        // ensure the database is created
-        await serviceProvider.GetRequiredService<AdoptrixDbContext>()
-            .Database
-            .EnsureCreatedAsync();
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AdoptrixDbContext>();
+
+        await AddTestDataAsync(dbContext);
     }
 
     public async Task DisposeAsync()
@@ -62,4 +63,9 @@ public class DatabaseFixture : IAsyncLifetime
                 }
             })
             .Build();
+
+    private async Task AddTestDataAsync(AdoptrixDbContext dbContext)
+    {
+        await dbContext.Database.EnsureCreatedAsync();
+    }
 }

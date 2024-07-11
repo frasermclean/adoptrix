@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Core.Abstractions;
+using Adoptrix.Core.Contracts.Requests.Animals;
 using Adoptrix.Persistence.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
 
@@ -15,6 +16,16 @@ public class AnimalsRepositoryTests
     {
         var collection = fixture.GetRepositoryCollection();
         (animalsRepository, breedsRepository, _) = collection;
+    }
+
+    [Fact]
+    public async Task SearchAsync_WithValidRequest_ShouldPass()
+    {
+        // arrange
+        var request = new SearchAnimalsRequest { Name = "Alberto" };
+
+        // act
+        var matches = await animalsRepository.SearchAsync(request);
     }
 
     [Fact]
