@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Application.Services.Abstractions;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using FluentResults;
 
 namespace Adoptrix.Storage.Services;
 
@@ -38,13 +37,11 @@ public class BlobContainerManager(BlobServiceClient blobServiceClient, string co
         return blobNames;
     }
 
-    public async Task<Result> DeleteBlobAsync(string blobName, CancellationToken cancellationToken)
+    public async Task DeleteBlobAsync(string blobName, CancellationToken cancellationToken)
     {
         var blobClient = containerClient.GetBlobClient(blobName);
-        var response = await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots,
+        await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots,
             cancellationToken: cancellationToken);
-
-        return Result.OkIf(response.Value, $"Blob {blobName} was not found.");
     }
 
     public async Task<Stream> OpenReadStreamAsync(string blobName, CancellationToken cancellationToken)

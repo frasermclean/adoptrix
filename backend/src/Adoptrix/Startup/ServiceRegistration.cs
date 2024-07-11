@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Client;
 using Adoptrix.Database.DependencyInjection;
 using Adoptrix.Database.Services;
@@ -38,7 +37,6 @@ public static class ServiceRegistration
         });
 
         builder.Services.AddCommonServices()
-            .AddApplicationServices()
             .AddDatabaseServices(builder.Configuration)
             .AddStorageServices(builder.Configuration);
 

@@ -1,5 +1,5 @@
-using Adoptrix.Application.DependencyInjection;
 using Adoptrix.Database.DependencyInjection;
+using Adoptrix.Jobs.Services;
 using Adoptrix.Storage.DependencyInjection;
 using Azure.Identity;
 using Microsoft.Azure.Functions.Worker;
@@ -39,7 +39,7 @@ public static class Program
                 services.ConfigureFunctionsApplicationInsights();
 
                 // local project services
-                services.AddApplicationServices();
+                services.AddSingleton<IImageProcessor, ImageProcessor>();
                 services.AddDatabaseServices(context.Configuration);
                 services.AddStorageServices(context.Configuration);
             })

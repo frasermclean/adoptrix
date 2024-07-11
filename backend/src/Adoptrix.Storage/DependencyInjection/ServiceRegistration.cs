@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Application;
-using Adoptrix.Application.Services;
 using Adoptrix.Application.Services.Abstractions;
 using Adoptrix.Storage.Services;
 using Azure.Identity;
@@ -15,7 +14,6 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddStorageServices(this IServiceCollection services,
         IConfiguration configuration) => services
-        .AddScoped<IAnimalImageManager, AnimalImageManager>()
         .AddSingleton<IEventPublisher, EventPublisher>()
         .AddAzureStorageServices(configuration);
 

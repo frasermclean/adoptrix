@@ -1,7 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
-namespace Adoptrix.Application.Services;
+namespace Adoptrix.Jobs.Services;
 
 public interface IImageProcessor
 {
@@ -46,5 +46,19 @@ public class ImageProcessor : IImageProcessor
         stream.Position = 0;
 
         return stream;
+    }
+}
+
+public sealed class ImageStreamBundle : IAsyncDisposable
+{
+    public required Stream ThumbnailWriteStream { get; init; }
+    public required Stream PreviewWriteStream { get; init; }
+    public required Stream FullSizeWriteStream { get; init; }
+
+    public async ValueTask DisposeAsync()
+    {
+        await ThumbnailWriteStream.DisposeAsync();
+        await PreviewWriteStream.DisposeAsync();
+        await FullSizeWriteStream.DisposeAsync();
     }
 }

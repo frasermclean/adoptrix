@@ -1,6 +1,4 @@
-﻿using FluentResults;
-
-namespace Adoptrix.Application.Services.Abstractions;
+﻿namespace Adoptrix.Application.Services.Abstractions;
 
 public interface IBlobContainerManager
 {
@@ -12,7 +10,7 @@ public interface IBlobContainerManager
 
     Task<IEnumerable<string>> GetBlobNamesAsync(string prefix, CancellationToken cancellationToken = default);
 
-    Task<Result> DeleteBlobAsync(string blobName, CancellationToken cancellationToken = default);
+    Task DeleteBlobAsync(string blobName, CancellationToken cancellationToken = default);
 
     Task<Stream> OpenReadStreamAsync(string blobName, CancellationToken cancellationToken = default);
 }
