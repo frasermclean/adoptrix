@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Client.Services;
 using Adoptrix.Core.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 
@@ -21,16 +22,7 @@ public static class Program
     private static WebAssemblyHostBuilder RegisterServices(this WebAssemblyHostBuilder builder)
     {
         builder.Services
-            .AddCommonServices()
-            .AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) })
-            .AddScoped<IAnimalsService, AnimalsClient>()
-            .AddScoped<IBreedsService, BreedsClient>()
-            .AddScoped<ISpeciesService, SpeciesClient>()
-            .AddSingleton(new JsonSerializerOptions(JsonSerializerDefaults.Web)
-            {
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-            });
-
+            .AddCommonServices();
 
         return builder;
     }
@@ -42,7 +34,20 @@ public static class Program
     /// <returns></returns>
     public static IServiceCollection AddCommonServices(this IServiceCollection services)
     {
-        services.AddMudServices()
+        services
+            .AddScoped(serviceProvider =>
+            {
+                var navigationManager = serviceProvider.GetRequiredService<NavigationManager>();
+                return new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) };
+            })
+            .AddSingleton(new JsonSerializerOptions(JsonSerializerDefaults.Web)
+            {
+                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+            })
+            .AddScoped<IAnimalsApiClient, AnimalsApiClient>()
+            .AddScoped<IBreedsService, BreedsClient>()
+            .AddScoped<ISpeciesService, SpeciesClient>()
+            .AddMudServices()
             .AddSingleton<AppNameProvider>()
             .AddSingleton<ThemeProvider>();
 

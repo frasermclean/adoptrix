@@ -1,7 +1,7 @@
-﻿using Adoptrix.Tests.Shared.Factories;
-using AnimalMapper = Adoptrix.Application.Mapping.AnimalMapper;
+﻿using Adoptrix.Mapping;
+using Adoptrix.Tests.Shared.Factories;
 
-namespace Adoptrix.Application.Tests.Mapping;
+namespace Adoptrix.Tests.Mapping;
 
 public class AnimalMapperTests
 {
@@ -12,7 +12,7 @@ public class AnimalMapperTests
         var animal = AnimalFactory.Create(imageCount: 3);
 
         // act
-        var response = AnimalMapper.ToResponse(animal);
+        var response = animal.ToResponse();
 
         // assert
         response.Id.Should().Be(animal.Id);

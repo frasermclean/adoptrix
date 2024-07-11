@@ -1,7 +1,6 @@
 @page "/animals/{animalId:guid}"
 @using Adoptrix.Core.Contracts.Responses
-@using Adoptrix.Core.Services
-@inject IAnimalsService AnimalsService;
+@inject IAnimalsApiClient ApiClient;
 
 @if (animal is null)
 {
@@ -73,15 +72,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-       var result = await AnimalsService.GetAsync(AnimalId);
-
-        if (result.IsFailed)
-        {
-        }
-        else
-        {
-            animal = result.Value;
-        }
+        animal = await ApiClient.GetAsync(AnimalId);
     }
 
 }

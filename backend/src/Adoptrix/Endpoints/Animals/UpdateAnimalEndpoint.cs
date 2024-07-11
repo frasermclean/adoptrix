@@ -1,35 +1,48 @@
-﻿using Adoptrix.Core.Contracts.Requests.Animals;
+﻿using Adoptrix.Application.Services.Abstractions;
+using Adoptrix.Core.Contracts.Requests.Animals;
 using Adoptrix.Core.Contracts.Responses;
-using Adoptrix.Core.Errors;
-using Adoptrix.Core.Services;
+using Adoptrix.Mapping;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Endpoints.Animals;
 
-public class UpdateAnimalEndpoint(IAnimalsService animalsService) : Endpoint<UpdateAnimalRequest, AnimalResponse>
+public class UpdateAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepository breedsRepository)
+    : Endpoint<UpdateAnimalRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>>
 {
     public override void Configure()
     {
         Put("animals/{animalId:guid}");
     }
 
-    public override async Task HandleAsync(UpdateAnimalRequest request,
-        CancellationToken cancellationToken)
+    public override async Task<Results<Ok<AnimalResponse>, NotFound, ErrorResponse>> ExecuteAsync(
+        UpdateAnimalRequest request, CancellationToken cancellationToken)
     {
-        var result = await animalsService.UpdateAsync(request, cancellationToken);
-
-        if (result.HasError<AnimalNotFoundError>())
+        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
+        if (animal is null)
         {
-            AddError(r => r.AnimalId, "Animal not found");
+            Logger.LogError("Animal with ID {AnimalId} was not found", request.AnimalId);
+            return TypedResults.NotFound();
         }
 
-        if (result.HasError<BreedNotFoundError>())
+        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
+        if (breed is null)
         {
+            Logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
             AddError(r => r.BreedId, "Breed not found");
+            return new ErrorResponse(ValidationFailures);
         }
 
-        ThrowIfAnyErrors();
-        await SendOkAsync(result.Value, cancellationToken);
+        animal.Name = request.Name;
+        animal.Description = request.Description;
+        animal.Breed = breed;
+        animal.Sex = request.Sex;
+        animal.DateOfBirth = request.DateOfBirth;
+
+        await animalsRepository.SaveChangesAsync(cancellationToken);
+
+        Logger.LogInformation("Updated animal with ID: {AnimalId}", animal.Id);
+
+        return TypedResults.Ok(animal.ToResponse());
     }
 }

@@ -1,30 +1,46 @@
-﻿using Adoptrix.Core.Contracts.Requests.Animals;
+﻿using Adoptrix.Application.Services.Abstractions;
+using Adoptrix.Core;
+using Adoptrix.Core.Contracts.Requests.Animals;
 using Adoptrix.Core.Contracts.Responses;
-using Adoptrix.Core.Errors;
-using Adoptrix.Core.Services;
+using Adoptrix.Mapping;
 using FastEndpoints;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Endpoints.Animals;
 
-public class AddAnimalEndpoint(IAnimalsService animalsService) : Endpoint<AddAnimalRequest, AnimalResponse>
+public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepository breedsRepository)
+    : Endpoint<AddAnimalRequest, Results<Created<AnimalResponse>, ErrorResponse>>
 {
     public override void Configure()
     {
         Post("animals");
     }
 
-    public override async Task HandleAsync(AddAnimalRequest request, CancellationToken cancellationToken)
+    public override async Task<Results<Created<AnimalResponse>, ErrorResponse>> ExecuteAsync(AddAnimalRequest request, CancellationToken cancellationToken)
     {
-        var result = await animalsService.AddAsync(request, cancellationToken);
-
-        if (result.HasError<BreedNotFoundError>())
+        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
+        if (breed is null)
         {
+            Logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
             AddError(r => r.BreedId, "Breed not found");
+            return new ErrorResponse(ValidationFailures);
         }
 
-        ThrowIfAnyErrors();
+        var animal = MapToAnimal(request, breed);
+        await animalsRepository.AddAsync(animal, cancellationToken);
 
-        await SendCreatedAtAsync<GetAnimalEndpoint>(new { AnimalId = result.Value.Id }, result.Value,
-            cancellation: cancellationToken);
+        Logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
+
+        return TypedResults.Created($"/api/animals/{animal.Id}", animal.ToResponse());
     }
+
+    private static Animal MapToAnimal(AddAnimalRequest request, Breed breed) => new()
+    {
+        Name = request.Name,
+        Description = request.Description,
+        Breed = breed,
+        Sex = request.Sex,
+        DateOfBirth = request.DateOfBirth,
+        CreatedBy = request.UserId
+    };
 }

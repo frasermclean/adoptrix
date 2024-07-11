@@ -10,7 +10,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext) : IAnimalsRepository
 {
     private const int SearchLimit = 10;
 
-    public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
+    public async Task<IReadOnlyList<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken = default)
     {
         return await dbContext.Animals

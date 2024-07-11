@@ -1,9 +1,8 @@
 ﻿@page "/animals"
 @using Adoptrix.Core.Contracts.Requests.Animals
 @using Adoptrix.Core.Contracts.Responses
-@using Adoptrix.Core.Services
 @inject AppNameProvider AppNameProvider
-@inject IAnimalsService AnimalsClient
+@inject IAnimalsApiClient ApiClient
 
 <PageTitle>Animals - @AppNameProvider.AppName</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">Search Animals</MudText>
@@ -40,12 +39,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        matches = await AnimalsClient.SearchAsync(new SearchAnimalsRequest());
+        matches = await ApiClient.SearchAsync(new SearchAnimalsRequest());
     }
 
     private async Task OnSearchDataChanged(SearchAnimalsRequest request)
     {
-        matches = await AnimalsClient.SearchAsync(request);
+        matches = await ApiClient.SearchAsync(request);
     }
 
 }

@@ -2,7 +2,6 @@
 using Adoptrix.Core;
 using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Endpoints.Animals;
-using Adoptrix.Tests.Mocks;
 using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Tests.Endpoints.Animals;

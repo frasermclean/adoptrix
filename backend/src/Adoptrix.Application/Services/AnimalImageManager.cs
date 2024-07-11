@@ -66,7 +66,7 @@ public sealed class AnimalImageManager(
             await eventPublisher.PublishAsync(new AnimalImageAddedEvent(animal.Id, image.Id), cancellationToken);
         }
 
-        return animal.ToResponse();
+        return new Result<AnimalResponse>(); // TODO: Map animal to response
     }
 
     public async Task<Result> ProcessOriginalAsync(Guid animalId, Guid imageId,

@@ -12,7 +12,8 @@ public class UpdateAnimalEndpointTests(App app) : TestBase<App>
     private readonly HttpClient httpClient = app.BasicAuthClient;
 
     [Theory, AdoptrixAutoData]
-    public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk(UpdateAnimalRequest request, Animal animal, Breed breed)
+    public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk(UpdateAnimalRequest request, Animal animal,
+        Breed breed)
     {
         // arrange
         app.AnimalsRepositoryMock
@@ -32,7 +33,7 @@ public class UpdateAnimalEndpointTests(App app) : TestBase<App>
     }
 
     [Theory, AdoptrixAutoData]
-    public async Task UpdateAnimal_WithInvalidAnimalId_ShouldReturnBadRequest(UpdateAnimalRequest request)
+    public async Task UpdateAnimal_WithInvalidAnimalId_ShouldReturnNotFound(UpdateAnimalRequest request)
     {
         // arrange
         app.AnimalsRepositoryMock
@@ -40,12 +41,10 @@ public class UpdateAnimalEndpointTests(App app) : TestBase<App>
             .ReturnsAsync(null as Animal);
 
         // act
-        var (message, response) =
-            await httpClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest, ErrorResponse>(request);
+        var message = await httpClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest>(request);
 
         // assert
-        message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        response.Errors.Should().ContainSingle().Which.Key.Should().Be("animalId");
+        message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
     [Theory, AdoptrixAutoData]
