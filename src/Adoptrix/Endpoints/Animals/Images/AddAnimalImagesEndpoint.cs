@@ -28,7 +28,7 @@ public class AddAnimalImagesEndpoint(
         }
 
         // upload original images to blob storage
-        var images = await UploadOriginalsAsync(request.AnimalId, request.UserId, cancellationToken);
+        var images = await UploadOriginalsAsync(animal.Id, request.UserId, cancellationToken);
 
         // update animal entity with new images
         animal.Images.AddRange(images);
@@ -54,8 +54,7 @@ public class AddAnimalImagesEndpoint(
                 Description = section!.Name,
                 OriginalFileName = section.FileName,
                 OriginalContentType = section.Section.ContentType!,
-                UploadedBy = userId,
-                AnimalId = animalId
+                UploadedBy = userId
             };
 
             var blobName = AnimalImage.GetBlobName(animalId, image.Id, AnimalImageCategory.Original);
