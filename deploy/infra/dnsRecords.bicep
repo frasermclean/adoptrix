@@ -6,34 +6,34 @@ param appEnv string
 @description('Domain name')
 param domainName string
 
-param apiDefaultHostname string = ''
-param apiCustomDomainVerificationId string = ''
+param mainAppDefaultHostname string = ''
+param mainAppCustomDomainVerificationId string = ''
 
 resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
   name: domainName
 
-  // API CNAME record
-  resource apiCnameRecord 'CNAME' = if (!empty(apiDefaultHostname)) {
-    name: 'api.${appEnv}'
+  // main app CNAME record
+  resource mainAppCnameRecord 'CNAME' = if (!empty(mainAppDefaultHostname)) {
+    name: appEnv
     properties: {
       TTL: 3600
       CNAMERecord: {
-        cname: apiDefaultHostname
+        cname: mainAppDefaultHostname
       }
     }
   }
 
-  // API TXT verification record
-  resource apiTxtRecord 'TXT' = if(!empty(apiCustomDomainVerificationId)) {
-    name: 'asuid.api.${appEnv}'
+  // main app TXT verification record
+  resource mainAppTxtRecord 'TXT' = if(!empty(mainAppCustomDomainVerificationId)) {
+    name: 'asuid.${appEnv}'
     properties: {
       TTL: 3600
       TXTRecords: [
-        { value: [ apiCustomDomainVerificationId ] }
+        { value: [ mainAppCustomDomainVerificationId ] }
       ]
     }
   }
 }
 
-@description('Fully qualified domain name of the API')
-output apiFqdn string = '${dnsZone::apiCnameRecord.name}.${domainName}'
+@description('Fully qualified domain name of the main application')
+output mainAppFqdn string = '${dnsZone::mainAppCnameRecord.name}.${domainName}'
