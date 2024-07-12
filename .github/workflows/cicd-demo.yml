@@ -17,7 +17,6 @@ on:
       - tests/**
 
 env:
-  API_ARTIFACT_NAME: adoptrix-api
   JOBS_ARTIFACT_NAME: jobs
 
 jobs:
@@ -128,7 +127,7 @@ jobs:
           dockerfilePath: Dockerfile.main
           acrName: ${{ vars.ACR_NAME }}
           imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-main:${{ github.sha }}
-          containerAppName: adoptrix-demo-api-ca
+          containerAppName: ${{ vars.MAIN_CONTAINER_APP_NAME }}
           resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
 
   # Deploy jobs application
