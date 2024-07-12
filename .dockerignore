@@ -12,3 +12,4 @@ README.md
 # App Settings
 **/appsettings.Development.json
 **/appsettings.Testing.json
+**/local.settings.json
