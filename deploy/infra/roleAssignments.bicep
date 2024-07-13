@@ -6,8 +6,8 @@ param adminGroupObjectId string
 @description('Prinicpal id of the main application managed identity')
 param mainAppPrincipalId string
 
-@description('Prinicpal id of the function app managed identity')
-param functionAppIdentityPrincipalId string
+@description('Prinicpal id of the jobs application managed identity')
+param jobsAppIdentityPrincipalId string
 
 @description('The name of the storage account to grant access to')
 param storageAccountName string
@@ -58,15 +58,15 @@ var roleAssignmentData = [
   }
   {
     roleDefinitionId: storageBlobDataOwnerRoleDefinition.id
-    principalId: functionAppIdentityPrincipalId
+    principalId: jobsAppIdentityPrincipalId
   }
   {
     roleDefinitionId: storageAccountContributorRoleDefinition.id
-    principalId: functionAppIdentityPrincipalId
+    principalId: jobsAppIdentityPrincipalId
   }
   {
     roleDefinitionId: storageQueueDataContributorRoleDefinition.id
-    principalId: functionAppIdentityPrincipalId
+    principalId: jobsAppIdentityPrincipalId
   }
 ]
 
@@ -89,7 +89,7 @@ var applicationInsightsRoleData = [
   }
   {
     roleDefinitionId: monitoringMetricsPublisherRoleDefinition.id
-    principalId: functionAppIdentityPrincipalId
+    principalId: jobsAppIdentityPrincipalId
   }
 ]
 

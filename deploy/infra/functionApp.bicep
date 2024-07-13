@@ -33,24 +33,24 @@ var tags = {
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
   name: storageAccountName
 
-  resource fileServices 'fileServices' = {
+  resource blobServices 'blobServices' = {
     name: 'default'
 
-    // create a share for the function app content
-    resource functionAppContentShare 'shares' = {
-      name: '${appName}-app-content'
+    resource deploymentContainer 'containers' = {
+      name: '${appName}-deployment'
     }
   }
 }
 
-// consumption app service plan
-resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
+// flex consumption app service plan
+resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${workload}-${appEnv}-${appName}-asp'
   location: location
   tags: tags
-  kind: 'functionapp'
+  kind: 'linux'
   sku: {
-    name: 'Y1'
+    name: 'FC1'
+    tier: 'FlexConsumption'
   }
   properties: {
     reserved: true
@@ -69,15 +69,12 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: true
+    publicNetworkAccess: 'Enabled'
     siteConfig: {
-      http20Enabled: true
-      ftpsState: 'FtpsOnly'
-      linuxFxVersion: 'DOTNET-ISOLATED|8.0'
-      minTlsVersion: '1.2'
       appSettings: [
         {
-          name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
+          name: 'AzureWebJobsStorage__accountName'
+          value: storageAccount.name
         }
         {
           name: 'AZURE_FUNCTIONS_ENVIRONMENT'
@@ -88,30 +85,48 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
           value: appConfigEndpoint
         }
         {
-          name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: '~4'
-        }
-        {
-          name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'dotnet-isolated'
-        }
-        {
-          name: 'WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED' // improves cold start time: https://learn.microsoft.com/en-us/azure/azure-functions/dotnet-isolated-process-guide#placeholders
-          value: '1'
-        }
-        {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: applicationInsightsConnectionString
         }
-        {
-          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
-          value: '~3'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_Mode'
-          value: 'Recommended'
-        }
       ]
+      cors: {
+        allowedOrigins: [
+          'https://portal.azure.com'
+        ]
+      }
+    }
+    functionAppConfig: {
+      deployment: {
+        storage: {
+          type: 'blobContainer'
+          value: '${storageAccount.properties.primaryEndpoints.blob}/${storageAccount::blobServices::deploymentContainer.name}'
+          authentication: {
+            type: 'SystemAssignedIdentity'
+          }
+        }
+      }
+      scaleAndConcurrency: {
+        maximumInstanceCount: 40
+        instanceMemoryMB: 2048
+      }
+      runtime: {
+        name: 'dotnet-isolated'
+        version: '8.0'
+      }
+    }
+  }
+
+  resource scmPublishingPolicy 'basicPublishingCredentialsPolicies' = {
+    name: 'scm'
+    properties: {
+      allow: true
+    }
+  }
+
+  resource ftpPublishingPolicy 'basicPublishingCredentialsPolicies' = {
+    name: 'ftp'
+    properties: {
+      allow: false
     }
   }
 }

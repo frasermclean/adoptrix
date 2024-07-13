@@ -223,7 +223,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' =
     params: {
       adminGroupObjectId: adminGroupObjectId
       mainAppPrincipalId: containerAppsModule.outputs.mainAppPrincipalId
-      functionAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
+      jobsAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
       storageAccountName: storageAccount.name
       applicationInsightsName: appInsightsModule.outputs.applicationInsightsName
     }
