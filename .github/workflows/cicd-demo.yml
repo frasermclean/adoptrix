@@ -145,12 +145,17 @@ jobs:
         with:
           name: ${{ env.JOBS_ARTIFACT_NAME }}
 
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
       # Publish application
       - name: Publish application
         uses: Azure/functions-action@v1
         with:
           app-name: ${{ vars.JOBS_APP_NAME }}
-          sku: flexconsumption
-          remote-build: true
           package: ${{ steps.download-artifact.outputs.download-path }}
-          publish-profile: ${{ secrets.JOBS_PUBLISH_PROFILE }}
