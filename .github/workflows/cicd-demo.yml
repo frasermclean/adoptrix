@@ -26,7 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_CONFIGURATION: Release
-      API_IMAGE_PATH: ${{ github.workspace }}/adoptrix-api.tar
       JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/jobs
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
     permissions:
@@ -81,7 +80,7 @@ jobs:
 
       # Publish jobs project
       - name: Publish jobs project
-        #if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         run: >-
           dotnet publish src/Adoptrix.Jobs
           --no-build
@@ -90,7 +89,7 @@ jobs:
 
       # Upload jobs artifact
       - name: Upload jobs artifact
-        #if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.JOBS_ARTIFACT_NAME }}
@@ -101,7 +100,7 @@ jobs:
     name: Deploy main application
     runs-on: ubuntu-latest
     needs: build
-    #if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request'
     permissions:
       id-token: write
       contents: read
@@ -135,7 +134,7 @@ jobs:
     name: Deploy jobs application
     runs-on: ubuntu-latest
     needs: build
-    #if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request'
     permissions:
       id-token: write
     environment: demo
