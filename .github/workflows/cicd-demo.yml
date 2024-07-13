@@ -127,7 +127,7 @@ jobs:
           dockerfilePath: Dockerfile.main
           acrName: ${{ vars.ACR_NAME }}
           imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-main:${{ github.sha }}
-          containerAppName: ${{ vars.MAIN_CONTAINER_APP_NAME }}
+          containerAppName: ${{ vars.MAIN_APP_NAME }}
           resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
 
   # Deploy jobs application
@@ -149,6 +149,8 @@ jobs:
       - name: Publish application
         uses: Azure/functions-action@v1
         with:
-          app-name: adoptrix-demo-jobs-func
+          app-name: ${{ vars.JOBS_APP_NAME }}
+          sku: flexconsumption
+          remote-build: true
           package: ${{ steps.download-artifact.outputs.download-path }}
           publish-profile: ${{ secrets.JOBS_PUBLISH_PROFILE }}
