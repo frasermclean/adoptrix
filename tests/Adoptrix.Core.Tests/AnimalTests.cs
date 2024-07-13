@@ -25,7 +25,6 @@ public class AnimalTests
         animal.Breed.Should().Be(breed);
         animal.Sex.Should().Be(sex);
         animal.DateOfBirth.Should().Be(dateOfBirth);
-        animal.Age.Should().Be("1 year, 6 months");
         animal.Images.Should().HaveCount(imageCount);
         animal.CreatedBy.Should().Be(userId);
     }
