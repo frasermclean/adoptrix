@@ -23,60 +23,48 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing
   name: applicationInsightsName
 }
 
-resource storageBlobDataOwnerRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
-  name: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+var roleIds = {
+  storageBlobDataOwner: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+  storageBlobDataContributor: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+  storageAccountContributor: '17d1049b-9a84-46fb-8f53-869881c3d3ab'
+  storageQueueDataContributor: '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
+  monitoringMetricsPublisher: '3913510d-42f4-4e42-8a64-420c390055eb'
 }
 
-resource storageBlobDataContributorRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
-  name: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
-}
-
-resource storageAccountContributorRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
-  name: '17d1049b-9a84-46fb-8f53-869881c3d3ab'
-}
-
-resource storageQueueDataContributorRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
-  name: '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
-}
-
-resource monitoringMetricsPublisherRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
-  name: '3913510d-42f4-4e42-8a64-420c390055eb'
-}
-
-var roleAssignmentData = [
+var storageAccountRoleAssignmentData = [
   {
-    roleDefinitionId: storageBlobDataOwnerRoleDefinition.id
     principalId: adminGroupObjectId
+    roleId: roleIds.storageBlobDataOwner
   }
   {
-    roleDefinitionId: storageBlobDataContributorRoleDefinition.id
     principalId: mainAppPrincipalId
+    roleId: roleIds.storageBlobDataContributor
   }
   {
-    roleDefinitionId: storageQueueDataContributorRoleDefinition.id
     principalId: mainAppPrincipalId
+    roleId: roleIds.storageQueueDataContributor
   }
   {
-    roleDefinitionId: storageBlobDataOwnerRoleDefinition.id
     principalId: jobsAppIdentityPrincipalId
+    roleId: roleIds.storageBlobDataOwner
   }
   {
-    roleDefinitionId: storageAccountContributorRoleDefinition.id
     principalId: jobsAppIdentityPrincipalId
+    roleId: roleIds.storageAccountContributor
   }
   {
-    roleDefinitionId: storageQueueDataContributorRoleDefinition.id
     principalId: jobsAppIdentityPrincipalId
+    roleId: roleIds.storageQueueDataContributor
   }
 ]
 
 // storage account role assignments
-resource storageAccountContributorRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-  for item in roleAssignmentData: {
-    name: guid(storageAccountName, item.roleDefinitionId, item.principalId)
+resource storageAccountRoleAssignments 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+  for item in storageAccountRoleAssignmentData: {
+    name: guid(storageAccountName, item.principalId, item.roleId)
     scope: storageAccount
     properties: {
-      roleDefinitionId: item.roleDefinitionId
+      roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions@2022-04-01', item.roleId)
       principalId: item.principalId
     }
   }
@@ -84,11 +72,11 @@ resource storageAccountContributorRoleAssignment 'Microsoft.Authorization/roleAs
 
 var applicationInsightsRoleData = [
   {
-    roleDefinitionId: monitoringMetricsPublisherRoleDefinition.id
+    roleId: roleIds.monitoringMetricsPublisher
     principalId: mainAppPrincipalId
   }
   {
-    roleDefinitionId: monitoringMetricsPublisherRoleDefinition.id
+    roleId: roleIds.monitoringMetricsPublisher
     principalId: jobsAppIdentityPrincipalId
   }
 ]
@@ -96,10 +84,10 @@ var applicationInsightsRoleData = [
 // application insights role assignments
 resource applicationInsightsRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
   for item in applicationInsightsRoleData: {
-    name: guid(applicationInsightsName, item.roleDefinitionId, item.principalId)
+    name: guid(applicationInsightsName, item.principalId, item.roleId)
     scope: applicationInsights
     properties: {
-      roleDefinitionId: item.roleDefinitionId
+      roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions@2022-04-01', item.roleId)
       principalId: item.principalId
     }
   }
