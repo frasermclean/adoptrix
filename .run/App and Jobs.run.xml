@@ -1,0 +1,7 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="App and Jobs" type="CompoundRunConfigurationType">
+    <toRun name="Adoptrix.Api: https" type="LaunchSettings" />
+    <toRun name="Adoptrix.Jobs" type="AzureFunctionsHost" />
+    <method v="2" />
+  </configuration>
+</component>

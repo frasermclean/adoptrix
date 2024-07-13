@@ -31,5 +31,5 @@ param appConfigurationName = 'adoptrix-shared-ac'
 
 // container apps
 param containerRegistryName = readEnvironmentVariable('CONTAINER_REGISTRY', 'snakebytecorecr')
-param apiImageName = readEnvironmentVariable('API_IMAGE_NAME', 'adoptrix-api')
-param apiImageTag = readEnvironmentVariable('API_IMAGE_TAG', 'latest')
+param mainImageName = readEnvironmentVariable('MAIN_IMAGE_NAME', 'adoptrix-main')
+param mainImageTag = readEnvironmentVariable('MAIN_IMAGE_TAG', 'latest')

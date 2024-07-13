@@ -26,16 +26,13 @@ param appConfigurationEndpoint string
 @description('Name of the Azure Container Registry')
 param containerRegistryName string
 
-@description('Name of the API container image')
-param apiImageName string
+@description('Name of the main container image')
+param mainImageName string
 
-@description('Tag of the API container image')
-param apiImageTag string
+@description('Tag of the main container image')
+param mainImageTag string
 
-@description('Array of front-end origins that are allowed to access the app service')
-param corsAllowedOrigins array
-
-@description('Flag to create a managed certificate for the API container app. Set to true on first run.')
+@description('Flag to create a managed certificates for the container apps. Set to true on first run.')
 param shouldBindManagedCertificate bool = false
 
 var tags = {
@@ -44,7 +41,7 @@ var tags = {
 }
 
 var containerRegistryLoginServer = '${containerRegistryName}${environment().suffixes.acrLoginServer}'
-var apiContainerAppName = '${workload}-${appEnv}-api-ca'
+var mainContainerAppName = '${workload}-${appEnv}-main-ca'
 
 // shared user assigned managed identity
 resource sharedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
@@ -63,13 +60,13 @@ resource appsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
     }
   }
 
-  resource commentsCertificate 'managedCertificates' =
+  resource mainCertificate 'managedCertificates' =
     if (!shouldBindManagedCertificate) {
-      name: 'api-cert'
+      name: 'main-cert'
       location: location
       tags: tags
       properties: {
-        subjectName: dnsRecordsModule.outputs.apiFqdn
+        subjectName: dnsRecordsModule.outputs.mainAppFqdn
         domainControlValidation: 'CNAME'
       }
     }
@@ -95,21 +92,21 @@ resource appsEnvironmentDiagnosticSettings 'Microsoft.Insights/diagnosticSetting
 }
 
 module dnsRecordsModule 'dnsRecords.bicep' = {
-  name: 'dnsRecords-${workload}-${appEnv}-api'
+  name: 'dnsRecords-${appEnv}-containerApps'
   scope: resourceGroup(sharedResourceGroup)
   params: {
     appEnv: appEnv
     domainName: domainName
-    apiDefaultHostname: '${apiContainerAppName}.${appsEnvironment.properties.defaultDomain}'
-    apiCustomDomainVerificationId: appsEnvironment.properties.customDomainConfiguration.customDomainVerificationId
+    mainAppDefaultHostname: '${mainContainerAppName}.${appsEnvironment.properties.defaultDomain}'
+    mainAppCustomDomainVerificationId: appsEnvironment.properties.customDomainConfiguration.customDomainVerificationId
   }
 }
 
-// adoptrix api container app
-resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
-  name: apiContainerAppName
+// main adoptrix container app
+resource mainContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
+  name: mainContainerAppName
   location: location
-  tags: union(tags, { appName: 'api' })
+  tags: union(tags, { appName: 'main' })
   identity: {
     type: 'SystemAssigned,UserAssigned'
     userAssignedIdentities: {
@@ -133,14 +130,11 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
         ]
         customDomains: [
           {
-            name: dnsRecordsModule.outputs.apiFqdn
+            name: dnsRecordsModule.outputs.mainAppFqdn
             bindingType: shouldBindManagedCertificate ? 'Disabled' : 'SniEnabled'
-            certificateId: shouldBindManagedCertificate ? null : appsEnvironment::commentsCertificate.id
+            certificateId: shouldBindManagedCertificate ? null : appsEnvironment::mainCertificate.id
           }
         ]
-        corsPolicy: {
-          allowedOrigins: corsAllowedOrigins
-        }
       }
       registries: [
         {
@@ -152,8 +146,8 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
     template: {
       containers: [
         {
-          name: apiImageName
-          image: '${containerRegistryLoginServer}/${apiImageName}:${apiImageTag}'
+          name: mainImageName
+          image: '${containerRegistryLoginServer}/${mainImageName}:${mainImageTag}'
           resources: {
             cpu: json('0.5')
             memory: '1Gi'
@@ -169,7 +163,7 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
             }
             {
               name: 'OTEL_SERVICE_NAME'
-              value: apiContainerAppName
+              value: mainContainerAppName
             }
           ]
         }
@@ -178,8 +172,8 @@ resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' = {
   }
 }
 
-@description('The name of the API container app')
-output apiAppName string = apiContainerApp.name
+@description('The name of the main container app')
+output mainAppName string = mainContainerApp.name
 
-@description('The principal ID of the API container app managed identity')
-output apiAppPrincipalId string = apiContainerApp.identity.principalId
+@description('The principal ID of the main container app managed identity')
+output mainAppPrincipalId string = mainContainerApp.identity.principalId

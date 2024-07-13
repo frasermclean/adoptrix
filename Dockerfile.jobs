@@ -1,0 +1,14 @@
+# Build project from SDK
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /app
+COPY . ./
+RUN dotnet publish ./src/Adoptrix.Jobs/Adoptrix.Jobs.csproj --configuration Release --os linux --arch x64 --output publish
+
+# Build runtime image
+FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0
+WORKDIR /home/site/wwwroot
+COPY --from=build /app/publish .
+
+ENV AzureWebJobsScriptRoot=/home/site/wwwroot
+ENV AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+ENV FUNCTIONS_WORKER_RUNTIME=dotnet-isolated

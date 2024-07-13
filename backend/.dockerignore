@@ -1,8 +1,0 @@
-tests/*
-Adoptrix.sln
-Adoptrix.DotSettings.user
-coverlet.runsettings
-
-# App Settings
-**/appsettings.Development.json
-**/appsettings.Testing.json

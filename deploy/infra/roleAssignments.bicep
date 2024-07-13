@@ -3,11 +3,11 @@ targetScope = 'resourceGroup'
 @description('The object id of the Azure AD group that will be granted admin access')
 param adminGroupObjectId string
 
-@description('Prinicpal id of the API application managed identity')
-param apiAppPrincipalId string
+@description('Prinicpal id of the main application managed identity')
+param mainAppPrincipalId string
 
-@description('Prinicpal id of the function app managed identity')
-param functionAppIdentityPrincipalId string
+@description('Prinicpal id of the jobs application managed identity')
+param jobsAppIdentityPrincipalId string
 
 @description('The name of the storage account to grant access to')
 param storageAccountName string
@@ -50,23 +50,23 @@ var roleAssignmentData = [
   }
   {
     roleDefinitionId: storageBlobDataContributorRoleDefinition.id
-    principalId: apiAppPrincipalId
+    principalId: mainAppPrincipalId
   }
   {
     roleDefinitionId: storageQueueDataContributorRoleDefinition.id
-    principalId: apiAppPrincipalId
+    principalId: mainAppPrincipalId
   }
   {
     roleDefinitionId: storageBlobDataOwnerRoleDefinition.id
-    principalId: functionAppIdentityPrincipalId
+    principalId: jobsAppIdentityPrincipalId
   }
   {
     roleDefinitionId: storageAccountContributorRoleDefinition.id
-    principalId: functionAppIdentityPrincipalId
+    principalId: jobsAppIdentityPrincipalId
   }
   {
     roleDefinitionId: storageQueueDataContributorRoleDefinition.id
-    principalId: functionAppIdentityPrincipalId
+    principalId: jobsAppIdentityPrincipalId
   }
 ]
 
@@ -85,11 +85,11 @@ resource storageAccountContributorRoleAssignment 'Microsoft.Authorization/roleAs
 var applicationInsightsRoleData = [
   {
     roleDefinitionId: monitoringMetricsPublisherRoleDefinition.id
-    principalId: apiAppPrincipalId
+    principalId: mainAppPrincipalId
   }
   {
     roleDefinitionId: monitoringMetricsPublisherRoleDefinition.id
-    principalId: functionAppIdentityPrincipalId
+    principalId: jobsAppIdentityPrincipalId
   }
 ]
 

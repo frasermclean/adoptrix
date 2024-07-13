@@ -44,11 +44,11 @@ param allowedExternalIpAddresses array
 @description('Container registry login server')
 param containerRegistryName string
 
-@description('Name of the API container image')
-param apiImageName string
+@description('Name of the main container image')
+param mainImageName string
 
-@description('Tag of the API container image')
-param apiImageTag string
+@description('Tag of the main container image')
+param mainImageTag string
 
 var tags = {
   workload: workload
@@ -156,20 +156,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-// front end static web app
-module staticWebAppModule 'staticWebApp/main.bicep' = {
-  name: 'staticWebApp-frontend${deploymentSuffix}'
-  params: {
-    workload: workload
-    appEnv: appEnv
-    appName: 'frontend'
-    domainName: domainName
-    sharedResourceGroup: sharedResourceGroup
-    #disable-next-line no-hardcoded-location // static web apps have limited locations
-    location: 'centralus'
-  }
-}
-
 module appInsightsModule 'appInsights.bicep' = {
   name: 'appInsights${deploymentSuffix}'
   params: {
@@ -183,7 +169,7 @@ module appInsightsModule 'appInsights.bicep' = {
 
 // container apps module
 module containerAppsModule './containerApps.bicep' = {
-  name: 'containerApps-backend${deploymentSuffix}'
+  name: 'containerApps${deploymentSuffix}'
   params: {
     workload: workload
     appEnv: appEnv
@@ -191,17 +177,16 @@ module containerAppsModule './containerApps.bicep' = {
     domainName: domainName
     sharedResourceGroup: sharedResourceGroup
     containerRegistryName: containerRegistryName
-    apiImageName: apiImageName
-    apiImageTag: apiImageTag
+    mainImageName: mainImageName
+    mainImageTag: mainImageTag
     logAnalyticsWorkspaceId: appInsightsModule.outputs.logAnalyticsWorkspaceId
     appConfigurationEndpoint: appConfiguration.properties.endpoint
-    corsAllowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
   }
 }
 
 // jobs function app
 module jobsAppModule './functionApp.bicep' = {
-  name: 'functionApp-jobs${deploymentSuffix}'
+  name: 'functionApp${deploymentSuffix}'
   params: {
     workload: workload
     appEnv: appEnv
@@ -215,7 +200,7 @@ module jobsAppModule './functionApp.bicep' = {
 
 // environment-specific app configuration
 module appConfigModule 'appConfig.bicep' = {
-  name: 'appConfig-${workload}-${appEnv}'
+  name: 'appConfig-${appEnv}'
   scope: resourceGroup(sharedResourceGroup)
   params: {
     appConfigurationName: appConfigurationName
@@ -226,7 +211,7 @@ module appConfigModule 'appConfig.bicep' = {
     storageAccountBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
     storageAccountQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
     databaseConnectionString: 'Server=tcp:${sqlServer.name}${environment().suffixes.sqlServerHostname};Database=${sqlServer::database.name};Authentication="Active Directory Default";'
-    containerAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
+    containerAppPrincipalId: containerAppsModule.outputs.mainAppPrincipalId
     attemptRoleAssignments: attemptRoleAssignments
   }
 }
@@ -237,8 +222,8 @@ module roleAssignmentsModule 'roleAssignments.bicep' =
     name: 'roleAssignments${deploymentSuffix}'
     params: {
       adminGroupObjectId: adminGroupObjectId
-      apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
-      functionAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
+      mainAppPrincipalId: containerAppsModule.outputs.mainAppPrincipalId
+      jobsAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
       storageAccountName: storageAccount.name
       applicationInsightsName: appInsightsModule.outputs.applicationInsightsName
     }
@@ -252,17 +237,14 @@ module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' =
     params: {
       appConfigurationName: appConfigurationName
       configurationDataReaders: [
-        containerAppsModule.outputs.apiAppPrincipalId
+        containerAppsModule.outputs.mainAppPrincipalId
         jobsAppModule.outputs.identityPrincipalId
       ]
     }
   }
 
-@description('The name of the API container app')
-output apiAppName string = containerAppsModule.outputs.apiAppName
+@description('The name of the main container app')
+output mainAppName string = containerAppsModule.outputs.mainAppName
 
 @description('Name of the jobs function app')
 output functionAppName string = jobsAppModule.outputs.functionAppName
-
-@description('Name of the static web app')
-output staticWebAppName string = staticWebAppModule.outputs.staticWebAppName

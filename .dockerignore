@@ -1,0 +1,15 @@
+# Directories
+data/*
+deps/*
+docs/*
+tests/*
+
+# Files
+Adoptrix.sln
+coverlet.runsettings
+README.md
+
+# App Settings
+**/appsettings.Development.json
+**/appsettings.Testing.json
+**/local.settings.json
