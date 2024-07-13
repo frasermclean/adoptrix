@@ -8,16 +8,13 @@ using Microsoft.AspNetCore.Authorization;
 namespace Adoptrix.Endpoints.About;
 
 [HttpGet("about"), AllowAnonymous]
-public class AboutEndpoint(
-    [FromKeyedServices(BlobContainerNames.AnimalImages)] IBlobContainerManager blobContainerManager)
-    : EndpointWithoutRequest<AboutResponse>
+public class AboutEndpoint : EndpointWithoutRequest<AboutResponse>
 {
-    private AboutResponse? response;
+    private readonly AboutResponse response;
 
-    public override Task<AboutResponse> ExecuteAsync(CancellationToken _)
+    public AboutEndpoint(
+        [FromKeyedServices(BlobContainerNames.AnimalImages)] IBlobContainerManager blobContainerManager)
     {
-        if (response is not null) return Task.FromResult(response);
-
         var buildData = GetBuildData();
         response = new AboutResponse
         {
@@ -26,9 +23,9 @@ public class AboutEndpoint(
             BuildDate = buildData.BuildDate,
             AnimalImagesBaseUrl = blobContainerManager.ContainerUri
         };
-
-        return Task.FromResult(response);
     }
+
+    public override Task<AboutResponse> ExecuteAsync(CancellationToken _) => Task.FromResult(response);
 
     private static (string Version, DateTime BuildDate) GetBuildData()
     {
