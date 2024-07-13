@@ -99,7 +99,7 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
       deployment: {
         storage: {
           type: 'blobContainer'
-          value: '${storageAccount.properties.primaryEndpoints.blob}/${storageAccount::blobServices::deploymentContainer.name}'
+          value: '${storageAccount.properties.primaryEndpoints.blob}${storageAccount::blobServices::deploymentContainer.name}'
           authentication: {
             type: 'SystemAssignedIdentity'
           }
