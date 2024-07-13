@@ -1,34 +1,33 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using Adoptrix.Core.Abstractions;
+using Adoptrix.Persistence;
 using FastEndpoints;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Adoptrix.Endpoints.About;
 
-public class AboutEndpoint : EndpointWithoutRequest<AboutResponse>
+[HttpGet("about"), AllowAnonymous]
+public class AboutEndpoint(
+    [FromKeyedServices(BlobContainerNames.AnimalImages)] IBlobContainerManager blobContainerManager)
+    : EndpointWithoutRequest<AboutResponse>
 {
-    private static readonly AboutResponse AboutResponse;
-
-    static AboutEndpoint()
-    {
-        var buildData = GetBuildData();
-
-        AboutResponse = new AboutResponse
-        {
-            Version = buildData.Version,
-            Environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown",
-            BuildDate = buildData.BuildDate
-        };
-    }
-
-    public override void Configure()
-    {
-        Get("about");
-        AllowAnonymous();
-    }
+    private AboutResponse? response;
 
     public override Task<AboutResponse> ExecuteAsync(CancellationToken _)
     {
-        return Task.FromResult(AboutResponse);
+        if (response is not null) return Task.FromResult(response);
+
+        var buildData = GetBuildData();
+        response = new AboutResponse
+        {
+            Version = buildData.Version,
+            Environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown",
+            BuildDate = buildData.BuildDate,
+            AnimalImagesBaseUrl = blobContainerManager.ContainerUri
+        };
+
+        return Task.FromResult(response);
     }
 
     private static (string Version, DateTime BuildDate) GetBuildData()

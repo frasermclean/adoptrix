@@ -8,6 +8,11 @@ public class AboutEndpointTests(App app) : TestBase<App>
     [Fact]
     public async Task GetAbout_Should_ReturnAboutResponse()
     {
+        // arrange
+        var containerUri = new Uri("https://localhost/animal-images");
+        app.AnimalImagesBlobContainerManagerMock.Setup(manager => manager.ContainerUri)
+            .Returns(containerUri);
+
         // act
         var (message, response) = await app.Client.GETAsync<AboutEndpoint, AboutResponse>();
 
@@ -16,5 +21,6 @@ public class AboutEndpointTests(App app) : TestBase<App>
         response.Version.Should().NotBeEmpty();
         response.BuildDate.Should().BeBefore(DateTime.UtcNow);
         response.Environment.Should().NotBeEmpty();
+        response.AnimalImagesBaseUrl.Should().Be(containerUri);
     }
 }
