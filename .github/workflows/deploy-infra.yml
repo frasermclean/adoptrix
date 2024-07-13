@@ -32,9 +32,9 @@ jobs:
       # Set image tag
       - name: Set image tag
         run: |
-          IMAGE_TAG=$(az acr repository show-tags --name ${{ vars.ACR_NAME }} --repository ${{ vars.API_IMAGE_NAME }} --orderby time_desc --top 1 --output tsv)
+          IMAGE_TAG=$(az acr repository show-tags --name ${{ vars.ACR_NAME }} --repository ${{ vars.MAIN_IMAGE_NAME }} --orderby time_desc --top 1 --output tsv)
           echo "Latest image tag: $IMAGE_TAG"
-          echo "API_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "MAIN_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       # Deploy Bicep template
       - name: Deploy Bicep template
@@ -42,7 +42,8 @@ jobs:
         env:
           ATTEMPT_ROLE_ASSIGNMENTS: false
           HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
-          API_IMAGE_NAME: ${{ vars.API_IMAGE_NAME }}
+          MAIN_IMAGE_NAME: ${{ vars.MAIN_IMAGE_NAME }}
+          MAIN_IMAGE_TAG: ${{ env.MAIN_IMAGE_TAG }}
         with:
           scope: resourcegroup
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
