@@ -73,6 +73,11 @@ public static class ServiceRegistration
             => new BlobContainerManager(provider.GetRequiredService<BlobServiceClient>(),
                 BlobContainerNames.AnimalImages));
 
+        // original images blob container
+        services.AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.OriginalImages, (provider, _)
+            => new BlobContainerManager(provider.GetRequiredService<BlobServiceClient>(),
+                BlobContainerNames.OriginalImages));
+
         // animal deleted queue
         services.AddKeyedSingleton<QueueClient>(QueueNames.AnimalDeleted, (provider, _)
             => provider.GetRequiredService<QueueServiceClient>()

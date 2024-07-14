@@ -4,21 +4,32 @@ using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Functions;
 using Adoptrix.Jobs.Services;
 using Adoptrix.Tests.Shared;
+using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Jobs.Tests.Functions;
 
 public class ProcessAnimalImageTests
 {
+    private readonly Mock<IAnimalsRepository> animalsRepositoryMock = new();
+    private readonly Mock<IImageProcessor> imageProcessorMock = new();
+    private readonly Mock<IBlobContainerManager> originalImagesContainerManagerMock = new();
+    private readonly Mock<IBlobContainerManager> animalImagesContainerManagerMock = new();
+    private readonly ProcessAnimalImage function;
+
+    public ProcessAnimalImageTests()
+    {
+        function = new ProcessAnimalImage(Mock.Of<ILogger<ProcessAnimalImage>>(), animalsRepositoryMock.Object,
+            imageProcessorMock.Object, originalImagesContainerManagerMock.Object,
+            animalImagesContainerManagerMock.Object);
+    }
+
     [Theory, AdoptrixAutoData]
-    public async Task ExecuteAsync_WithValidEventData_ShouldPass(Animal animal, ImageStreamBundle bundle,
-        [Frozen] Mock<IAnimalsRepository> animalsRepositoryMock,
-        [Frozen] Mock<IBlobContainerManager> blobContainerManagerMock,
-        [Frozen] Mock<IImageProcessor> imageProcessorMock,
-        ProcessAnimalImage function)
+    public async Task ExecuteAsync_WithValidEventData_ShouldPass(Animal animal, ImageStreamBundle bundle)
     {
         // arrange
         var imageId = animal.Images.First().Id;
-        var data = new AnimalImageAddedEvent(animal.Id, imageId);
+        var blobName = $"{animal.Id}/image.jpg";
+        var data = new AnimalImageAddedEvent(animal.Id, imageId, blobName);
         animalsRepositoryMock.Setup(repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(animal);
         imageProcessorMock.Setup(processor =>
@@ -31,20 +42,21 @@ public class ProcessAnimalImageTests
         // assert
         animalsRepositoryMock.Verify(repository => repository.GetByIdAsync(animal.Id, It.IsAny<CancellationToken>()),
             Times.Once);
-        blobContainerManagerMock.Verify(manager =>
-            manager.OpenReadStreamAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+        originalImagesContainerManagerMock.Verify(manager =>
+            manager.OpenReadStreamAsync(blobName, It.IsAny<CancellationToken>()), Times.Once);
         imageProcessorMock.Verify(processor => processor.ProcessOriginalAsync(It.IsAny<Stream>(),
             It.IsAny<CancellationToken>()), Times.Once);
-        blobContainerManagerMock.Verify(manager =>
+        animalImagesContainerManagerMock.Verify(manager =>
             manager.UploadBlobAsync(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
                 It.IsAny<CancellationToken>()), Times.Exactly(3));
         animalsRepositoryMock.Verify(repository => repository.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
+        originalImagesContainerManagerMock.Verify(manager =>
+            manager.DeleteBlobAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Theory, AdoptrixAutoData]
-    public async Task ExecuteAsync_WithInvalidAnimalId_ShouldThrowException(AnimalImageAddedEvent data,
-        [Frozen] Mock<IAnimalsRepository> animalsRepositoryMock, ProcessAnimalImage function)
+    public async Task ExecuteAsync_WithInvalidAnimalId_ShouldThrowException(AnimalImageAddedEvent data)
     {
         // arrange
         animalsRepositoryMock.Setup(repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()))
@@ -55,7 +67,8 @@ public class ProcessAnimalImageTests
 
         // assert
         await act.Should().ThrowAsync<InvalidOperationException>();
-        animalsRepositoryMock.Verify(repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()),
+        animalsRepositoryMock.Verify(
+            repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }

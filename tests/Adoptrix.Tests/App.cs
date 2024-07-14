@@ -15,6 +15,7 @@ public class App : AppFixture<Program>
     public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; } = new();
     public Mock<IEventPublisher> EventPublisherMock { get; } = new();
     public Mock<IBlobContainerManager> AnimalImagesBlobContainerManagerMock { get; } = new();
+    public Mock<IBlobContainerManager> OriginalImagesBlobContainerManagerMock { get; } = new();
 
     /// <summary>
     /// HTTP client pre-configured with basic test authentication.
@@ -40,7 +41,9 @@ public class App : AppFixture<Program>
             .AddScoped<IBreedsRepository>(_ => BreedsRepositoryMock.Object)
             .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object)
             .AddScoped<IEventPublisher>(_ => EventPublisherMock.Object)
-            .AddKeyedScoped<IBlobContainerManager>(BlobContainerNames.AnimalImages,
-                (_, _) => AnimalImagesBlobContainerManagerMock.Object);
+            .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages,
+                (_, _) => AnimalImagesBlobContainerManagerMock.Object)
+            .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.OriginalImages,
+            (_, _) => OriginalImagesBlobContainerManagerMock.Object);
     }
 }
