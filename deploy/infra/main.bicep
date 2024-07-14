@@ -135,11 +135,15 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   resource blobServices 'blobServices' = {
     name: 'default'
 
-    resource container 'containers' = {
+    resource animalImagesContainer 'containers' = {
       name: 'animal-images'
       properties: {
         publicAccess: 'Blob'
       }
+    }
+
+    resource originalImagesContainer 'containers' = {
+      name: 'original-images'
     }
   }
 
