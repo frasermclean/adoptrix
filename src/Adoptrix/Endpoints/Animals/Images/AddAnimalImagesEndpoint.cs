@@ -13,7 +13,7 @@ namespace Adoptrix.Endpoints.Animals.Images;
 public class AddAnimalImagesEndpoint(
     IAnimalsRepository animalsRepository,
     IEventPublisher eventPublisher,
-    [FromKeyedServices(BlobContainerNames.AnimalImages)]
+    [FromKeyedServices(BlobContainerNames.OriginalImages)]
     IBlobContainerManager containerManager)
     : Endpoint<AddAnimalImagesRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>>
 {
@@ -35,9 +35,10 @@ public class AddAnimalImagesEndpoint(
         await animalsRepository.SaveChangesAsync(cancellationToken);
 
         // publish events for each image added
-        foreach (var image in images)
+        foreach (var @event in images.Select(image =>
+                     new AnimalImageAddedEvent(animal.Id, image.Id, GetBlobName(animal.Id, image.OriginalFileName))))
         {
-            await eventPublisher.PublishAsync(new AnimalImageAddedEvent(animal.Id, image.Id), cancellationToken);
+            await eventPublisher.PublishAsync(@event, cancellationToken);
         }
 
         return TypedResults.Ok(animal.ToResponse());
@@ -57,7 +58,7 @@ public class AddAnimalImagesEndpoint(
                 UploadedBy = userId
             };
 
-            var blobName = AnimalImage.GetBlobName(animalId, image.Id, AnimalImageCategory.Original);
+            var blobName = GetBlobName(animalId, section.FileName);
             await containerManager.UploadBlobAsync(blobName, section.FileStream!, section.Section.ContentType!,
                 cancellationToken);
 
@@ -68,4 +69,6 @@ public class AddAnimalImagesEndpoint(
 
         return images;
     }
+
+    private static string GetBlobName(Guid animalId, string fileName) => $"{animalId}/{fileName}";
 }

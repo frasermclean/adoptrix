@@ -22,7 +22,7 @@ public class AddAnimalImagesEndpointTests(App app) : TestBase<App>
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        app.AnimalImagesBlobContainerManagerMock.Verify(
+        app.OriginalImagesBlobContainerManagerMock.Verify(
             manager => manager.UploadBlobAsync(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         app.AnimalsRepositoryMock.Verify(repository => repository.SaveChangesAsync(It.IsAny<CancellationToken>()),

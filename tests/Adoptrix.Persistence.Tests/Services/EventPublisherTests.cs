@@ -34,7 +34,8 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
         // arrange
         var animalId = Guid.NewGuid();
         var imageId = Guid.NewGuid();
-        var animalImageAddedEvent = new AnimalImageAddedEvent(animalId, imageId);
+        var blobName = $"{animalId}/image.jpg";
+        var animalImageAddedEvent = new AnimalImageAddedEvent(animalId, imageId, blobName);
 
         // act
         var messageId = await eventPublisher.PublishAsync(animalImageAddedEvent);
@@ -44,6 +45,7 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
         response.Value.MessageId.Should().Be(messageId);
         response.Value.MessageText.Should().Contain(animalId.ToString());
         response.Value.MessageText.Should().Contain(imageId.ToString());
+        response.Value.MessageText.Should().Contain(blobName);
     }
 
     [Fact]
