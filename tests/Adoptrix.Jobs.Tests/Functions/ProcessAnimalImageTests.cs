@@ -28,7 +28,8 @@ public class ProcessAnimalImageTests
     {
         // arrange
         var imageId = animal.Images.First().Id;
-        var data = new AnimalImageAddedEvent(animal.Id, imageId, $"{animal.Id}/image.jpg");
+        var blobName = $"{animal.Id}/image.jpg";
+        var data = new AnimalImageAddedEvent(animal.Id, imageId, blobName);
         animalsRepositoryMock.Setup(repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(animal);
         imageProcessorMock.Setup(processor =>
@@ -42,7 +43,7 @@ public class ProcessAnimalImageTests
         animalsRepositoryMock.Verify(repository => repository.GetByIdAsync(animal.Id, It.IsAny<CancellationToken>()),
             Times.Once);
         originalImagesContainerManagerMock.Verify(manager =>
-            manager.OpenReadStreamAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            manager.OpenReadStreamAsync(blobName, It.IsAny<CancellationToken>()), Times.Once);
         imageProcessorMock.Verify(processor => processor.ProcessOriginalAsync(It.IsAny<Stream>(),
             It.IsAny<CancellationToken>()), Times.Once);
         animalImagesContainerManagerMock.Verify(manager =>
