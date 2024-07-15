@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Client;
-using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;

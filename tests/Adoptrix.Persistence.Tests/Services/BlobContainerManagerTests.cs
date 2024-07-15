@@ -1,4 +1,4 @@
-﻿using Adoptrix.Core.Abstractions;
+﻿using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 
 namespace Adoptrix.Persistence.Tests.Services;

@@ -1,4 +1,4 @@
-﻿using Adoptrix.Core.Abstractions;
+﻿using Adoptrix.Persistence.Services;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Queues;

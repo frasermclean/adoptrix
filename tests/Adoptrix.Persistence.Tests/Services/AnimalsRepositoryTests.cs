@@ -1,5 +1,5 @@
-﻿using Adoptrix.Core.Abstractions;
-using Adoptrix.Core.Contracts.Requests.Animals;
+﻿using Adoptrix.Core.Contracts.Requests.Animals;
+using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
 

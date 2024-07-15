@@ -1,5 +1,4 @@
-﻿using Adoptrix.Core.Abstractions;
-using Adoptrix.Persistence.Services;
+﻿using Adoptrix.Persistence.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.MsSql;

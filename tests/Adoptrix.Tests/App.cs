@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
-using Adoptrix.Core.Abstractions;
 using Adoptrix.Persistence;
+using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

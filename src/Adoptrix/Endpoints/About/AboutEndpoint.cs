@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Reflection;
-using Adoptrix.Core.Abstractions;
 using Adoptrix.Persistence;
+using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 
