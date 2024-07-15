@@ -1,5 +1,5 @@
 using Adoptrix.Jobs.Services;
-using Adoptrix.Persistence;
+using Adoptrix.Persistence.Services;
 using Azure.Identity;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;

@@ -1,4 +1,3 @@
-using Adoptrix.Persistence.Services;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Adoptrix.Persistence;
+namespace Adoptrix.Persistence.Services;
 
 public static class ServiceRegistration
 {
