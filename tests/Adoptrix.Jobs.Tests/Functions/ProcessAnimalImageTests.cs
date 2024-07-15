@@ -1,8 +1,8 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Functions;
 using Adoptrix.Jobs.Services;
+using Adoptrix.Persistence.Services;
 using Adoptrix.Tests.Shared;
 using Microsoft.Extensions.Logging;
 

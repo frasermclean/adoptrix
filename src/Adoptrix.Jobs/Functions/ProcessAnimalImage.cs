@@ -1,8 +1,8 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Services;
 using Adoptrix.Persistence;
+using Adoptrix.Persistence.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

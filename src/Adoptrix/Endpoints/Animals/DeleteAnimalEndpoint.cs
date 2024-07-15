@@ -1,5 +1,5 @@
-﻿using Adoptrix.Core.Abstractions;
-using Adoptrix.Core.Events;
+﻿using Adoptrix.Core.Events;
+using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 

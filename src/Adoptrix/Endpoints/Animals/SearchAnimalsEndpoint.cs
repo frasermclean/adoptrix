@@ -1,8 +1,8 @@
-﻿using Adoptrix.Core.Abstractions;
-using Adoptrix.Core.Contracts.Requests.Animals;
+﻿using Adoptrix.Core.Contracts.Requests.Animals;
 using Adoptrix.Core.Contracts.Responses;
 using Adoptrix.Extensions;
 using Adoptrix.Persistence;
+using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 

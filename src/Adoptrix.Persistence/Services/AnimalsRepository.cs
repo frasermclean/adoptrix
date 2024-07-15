@@ -1,10 +1,18 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Contracts.Requests.Animals;
 using Adoptrix.Core.Contracts.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Persistence.Services;
+
+public interface IAnimalsRepository
+{
+    Task<IReadOnlyList<AnimalMatch>> SearchAsync(SearchAnimalsRequest request, CancellationToken cancellationToken = default);
+    Task<Animal?> GetByIdAsync(Guid animalId, CancellationToken cancellationToken = default);
+    Task AddAsync(Animal animal, CancellationToken cancellationToken = default);
+    Task SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task DeleteAsync(Animal animal, CancellationToken cancellationToken = default);
+}
 
 public class AnimalsRepository(AdoptrixDbContext dbContext) : IAnimalsRepository
 {

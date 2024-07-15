@@ -1,10 +1,16 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Abstractions;
 using Adoptrix.Core.Contracts.Requests.Species;
 using Adoptrix.Core.Contracts.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Persistence.Services;
+
+public interface ISpeciesRepository
+{
+    Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesRequest request, CancellationToken cancellationToken = default);
+    Task<Species?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Species?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
+}
 
 public class SpeciesRepository(AdoptrixDbContext dbContext): ISpeciesRepository
 {

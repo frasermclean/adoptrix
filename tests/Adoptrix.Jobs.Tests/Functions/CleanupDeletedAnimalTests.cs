@@ -1,6 +1,6 @@
-﻿using Adoptrix.Core.Abstractions;
-using Adoptrix.Core.Events;
+﻿using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Functions;
+using Adoptrix.Persistence.Services;
 using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Jobs.Tests.Functions;
