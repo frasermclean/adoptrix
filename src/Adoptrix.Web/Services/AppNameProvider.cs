@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Client.Services;
+﻿namespace Adoptrix.Web.Services;
 
 public class AppNameProvider
 {

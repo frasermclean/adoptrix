@@ -1,8 +1,8 @@
-﻿using Adoptrix.Client.Extensions;
-using Adoptrix.Core.Contracts.Requests.Breeds;
+﻿using Adoptrix.Core.Contracts.Requests.Breeds;
 using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Web.Extensions;
 
-namespace Adoptrix.Client.Services;
+namespace Adoptrix.Web.Services;
 
 public interface IBreedsClient
 {
@@ -18,7 +18,7 @@ public class BreedsClient(HttpClient httpClient) : IBreedsClient
         var message = await httpClient.GetAsync($"api/breeds{request.ToQueryString()}", cancellationToken);
         message.EnsureSuccessStatusCode();
 
-        var matches = await message.Content.ReadFromJsonAsync<IEnumerable<BreedMatch>>(cancellationToken);
+        var matches = await message.DeserializeJsonContentAsync<IEnumerable<BreedMatch>>(cancellationToken);
 
         return matches ?? [];
     }

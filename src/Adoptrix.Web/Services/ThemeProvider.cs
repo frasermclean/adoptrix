@@ -1,6 +1,6 @@
 ﻿using MudBlazor;
 
-namespace Adoptrix.Client.Services;
+namespace Adoptrix.Web.Services;
 
 public class ThemeProvider
 {

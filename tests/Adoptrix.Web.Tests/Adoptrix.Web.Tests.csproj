@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\Adoptrix.Client\Adoptrix.Client.csproj" />
+	  <ProjectReference Include="..\..\src\Adoptrix.Web\Adoptrix.Web.csproj" />
 	</ItemGroup>
 
 </Project>

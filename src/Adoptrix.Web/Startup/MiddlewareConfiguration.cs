@@ -1,5 +1,4 @@
-﻿using Adoptrix.Client.Pages;
-using Adoptrix.Web.Components;
+﻿using Adoptrix.Web.Components;
 
 namespace Adoptrix.Web.Startup;
 
@@ -26,9 +25,7 @@ public static class MiddlewareConfiguration
         app.UseAntiforgery();
 
         app.MapRazorComponents<App>()
-            .AddInteractiveServerRenderMode()
-            .AddInteractiveWebAssemblyRenderMode()
-            .AddAdditionalAssemblies(typeof(Home).Assembly);
+            .AddInteractiveServerRenderMode();
 
         return app;
     }

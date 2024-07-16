@@ -1,8 +1,8 @@
-﻿using Adoptrix.Client.Extensions;
-using Adoptrix.Core.Contracts.Requests.Animals;
+﻿using Adoptrix.Core.Contracts.Requests.Animals;
 using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Web.Extensions;
 
-namespace Adoptrix.Client.Services;
+namespace Adoptrix.Web.Services;
 
 public interface IAnimalsClient
 {
@@ -20,7 +20,7 @@ public class AnimalsClient(HttpClient httpClient) : IAnimalsClient
         var message = await httpClient.GetAsync($"api/animals{request.ToQueryString()}", cancellationToken);
         message.EnsureSuccessStatusCode();
 
-        var matches = await message.Content.ReadFromJsonAsync<IEnumerable<AnimalMatch>>(cancellationToken);
+        var matches = await message.DeserializeJsonContentAsync<IEnumerable<AnimalMatch>>(cancellationToken);
 
         return matches ?? [];
     }
@@ -30,7 +30,7 @@ public class AnimalsClient(HttpClient httpClient) : IAnimalsClient
         var message = await httpClient.GetAsync($"api/animals/{animalId}", cancellationToken);
         message.EnsureSuccessStatusCode();
 
-        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>(cancellationToken);
+        var response = await message.DeserializeJsonContentAsync<AnimalResponse>(cancellationToken);
 
         return response!;
     }

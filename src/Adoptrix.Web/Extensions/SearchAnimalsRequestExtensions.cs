@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Core.Contracts.Requests.Animals;
 using Microsoft.AspNetCore.Http.Extensions;
 
-namespace Adoptrix.Client.Extensions;
+namespace Adoptrix.Web.Extensions;
 
 public static class SearchAnimalsRequestExtensions
 {
