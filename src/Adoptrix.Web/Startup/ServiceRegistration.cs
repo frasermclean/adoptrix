@@ -25,12 +25,13 @@ public static class ServiceRegistration
 
     private static void AddApiClients(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHttpClient("api", client =>
+        const string apiClientName = "api";
+        services.AddHttpClient(apiClientName, client =>
         {
             client.BaseAddress = new Uri(configuration["ApiEndpoint"]!);
         });
-        services.AddHttpClient<IAnimalsClient, AnimalsClient>("api");
-        services.AddHttpClient<IBreedsClient, BreedsClient>("api");
-        services.AddHttpClient<ISpeciesClient, SpeciesClient>("api");
+        services.AddHttpClient<IAnimalsClient, AnimalsClient>(apiClientName);
+        services.AddHttpClient<IBreedsClient, BreedsClient>(apiClientName);
+        services.AddHttpClient<ISpeciesClient, SpeciesClient>(apiClientName);
     }
 }
