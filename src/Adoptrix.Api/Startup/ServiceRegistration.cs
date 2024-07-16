@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Persistence.Services;
+using Adoptrix.ServiceDefaults;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FastEndpoints;
@@ -17,6 +18,8 @@ public static class ServiceRegistration
     /// </summary>
     public static WebApplicationBuilder RegisterServices(this WebApplicationBuilder builder)
     {
+        builder.AddServiceDefaults();
+
         builder.Services
             .AddAuthentication(builder.Configuration)
             .AddFastEndpoints()

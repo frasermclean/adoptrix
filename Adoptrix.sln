@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.AppHost", "src\Ado
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.ServiceDefaults", "src\Adoptrix.ServiceDefaults\Adoptrix.ServiceDefaults.csproj", "{DFBF1EEE-9A42-4AB8-8B33-AD95A7CE368F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Initializer", "Adoptrix.Initializer\Adoptrix.Initializer.csproj", "{BFDFF9D4-D109-406D-ACD9-D8531F91A388}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +91,10 @@ Global
 		{DFBF1EEE-9A42-4AB8-8B33-AD95A7CE368F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFBF1EEE-9A42-4AB8-8B33-AD95A7CE368F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFBF1EEE-9A42-4AB8-8B33-AD95A7CE368F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFDFF9D4-D109-406D-ACD9-D8531F91A388}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFDFF9D4-D109-406D-ACD9-D8531F91A388}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFDFF9D4-D109-406D-ACD9-D8531F91A388}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFDFF9D4-D109-406D-ACD9-D8531F91A388}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

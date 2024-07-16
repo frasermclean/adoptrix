@@ -15,7 +15,7 @@ namespace Adoptrix.ServiceDefaults;
 // To learn more about using this project, see https://aka.ms/dotnet/aspire/service-defaults
 public static class Extensions
 {
-    public static WebApplicationBuilder AddServiceDefaults(this WebApplicationBuilder builder)
+    public static IHostApplicationBuilder AddServiceDefaults(this IHostApplicationBuilder builder)
     {
         builder.ConfigureOpenTelemetry()
             .AddDefaultHealthChecks();

@@ -11,6 +11,8 @@ public static class ServiceRegistration
     /// </summary>
     public static WebApplicationBuilder RegisterServices(this WebApplicationBuilder builder)
     {
+        builder.AddServiceDefaults();
+
         builder.Services.AddMudServices()
             .AddSingleton<AppNameProvider>()
             .AddSingleton<ThemeProvider>()
