@@ -13,11 +13,9 @@ public static class Program
             .AddDatabase("database", "adoptrix");
 
         var api = builder.AddProject<Projects.Adoptrix_Api>("adoptrix-api")
-            .WithHttpsEndpoint(5001)
             .WithReference(database);
 
         builder.AddProject<Projects.Adoptrix_Web>("adoptrix-web")
-            .WithHttpsEndpoint(8443)
             .WithExternalHttpEndpoints()
             .WithReference(api);
 
