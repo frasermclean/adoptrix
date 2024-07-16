@@ -27,7 +27,7 @@ public static class ServiceRegistration
     {
         services.AddDbContextFactory<AdoptrixDbContext>(optionsBuilder =>
             {
-                var connectionString = configuration.GetConnectionString("AdoptrixDb");
+                var connectionString = configuration.GetConnectionString("database");
                 optionsBuilder.UseSqlServer(connectionString);
             })
             .AddScoped<IAnimalsRepository, AnimalsRepository>()

@@ -75,7 +75,7 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
   }
 
   resource databaseConnectionStringKeyValue 'keyValues' = {
-    name: 'ConnectionStrings:AdoptrixDb$${appEnv}'
+    name: 'ConnectionStrings:database$${appEnv}'
     properties: {
       value: databaseConnectionString
       contentType: 'text/plain'

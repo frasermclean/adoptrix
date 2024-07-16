@@ -1,9 +1,26 @@
-var builder = DistributedApplication.CreateBuilder(args);
+namespace Adoptrix.AppHost;
 
-var api = builder.AddProject<Projects.Adoptrix_Api>("adoptrix-api");
+public static class Program
+{
+    public static void Main(string[] args)
+    {
+        var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddProject<Projects.Adoptrix_Web>("adoptrix-web")
-    .WithExternalHttpEndpoints()
-    .WithReference(api);
+        var sqlServerPassword = builder.AddParameter("sql-server-password");
 
-builder.Build().Run();
+        var database = builder.AddSqlServer("sql-server", sqlServerPassword)
+            .WithDataVolume("adoptrix-sql-server-data")
+            .AddDatabase("database", "adoptrix");
+
+        var api = builder.AddProject<Projects.Adoptrix_Api>("adoptrix-api")
+            .WithHttpsEndpoint(5001)
+            .WithReference(database);
+
+        builder.AddProject<Projects.Adoptrix_Web>("adoptrix-web")
+            .WithHttpsEndpoint(8443)
+            .WithExternalHttpEndpoints()
+            .WithReference(api);
+
+        builder.Build().Run();
+    }
+}

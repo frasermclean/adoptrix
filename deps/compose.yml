@@ -10,7 +10,7 @@ services:
     ports:
       - 1433:1433
     volumes:
-      - sql-server-data:/var/opt/mssql
+      - adoptrix-sql-server-data:/var/opt/mssql
 
   # Azure Storage Emulator
   azurite:
@@ -23,7 +23,7 @@ services:
       - azurite-data:/data
 
 volumes:
-  sql-server-data:
-    driver: local
+  adoptrix-sql-server-data:
+    external: true
   azurite-data:
     driver: local
