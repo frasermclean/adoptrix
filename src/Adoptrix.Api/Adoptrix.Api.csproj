@@ -10,7 +10,6 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Azure.Storage.Blobs" />
     <PackageReference Include="AspNetCore.HealthChecks.Azure.Storage.Queues" />
-    <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" />
     <PackageReference Include="FastEndpoints" />
     <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">

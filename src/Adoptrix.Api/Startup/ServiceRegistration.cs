@@ -2,8 +2,6 @@
 using System.Text.Json.Serialization;
 using Adoptrix.Persistence.Services;
 using Adoptrix.ServiceDefaults;
-using Azure.Identity;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
@@ -32,14 +30,6 @@ public static class ServiceRegistration
             options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         });
-
-        // open telemetry services
-        builder.Services.AddOpenTelemetry()
-            .UseAzureMonitor(options =>
-            {
-                options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
-                options.Credential = new DefaultAzureCredential();
-            });
 
         // health checks services
         builder.Services.AddHealthChecks()
