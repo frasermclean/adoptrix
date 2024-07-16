@@ -57,7 +57,7 @@ public class DatabaseFixture : IAsyncLifetime
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 {
-                    AdoptrixDbContext.ConnectionStringKey, connectionString
+                    "ConnectionStrings:AdoptrixDb", connectionString
                 }
             })
             .Build();
