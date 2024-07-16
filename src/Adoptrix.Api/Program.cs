@@ -1,4 +1,5 @@
 using Adoptrix.Api.Startup;
+using Adoptrix.ServiceDefaults;
 
 namespace Adoptrix.Api;
 
@@ -8,6 +9,7 @@ public class Program
     {
         var app = WebApplication.CreateBuilder(args)
             .AddAzureAppConfiguration()
+            .AddServiceDefaults()
             .RegisterServices()
             .Build()
             .ConfigureMiddleware();

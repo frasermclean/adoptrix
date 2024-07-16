@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿using Adoptrix.ServiceDefaults;
+using FastEndpoints;
 
 namespace Adoptrix.Api.Startup;
 
@@ -17,8 +18,7 @@ public static class MiddlewareConfiguration
             config.Endpoints.RoutePrefix = "api";
         });
 
-        app.MapHealthChecks("/health")
-            .AllowAnonymous();
+        app.MapDefaultEndpoints();
 
         return app;
     }

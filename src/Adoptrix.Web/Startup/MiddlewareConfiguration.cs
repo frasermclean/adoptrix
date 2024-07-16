@@ -1,4 +1,5 @@
-﻿using Adoptrix.Web.Components;
+﻿using Adoptrix.ServiceDefaults;
+using Adoptrix.Web.Components;
 
 namespace Adoptrix.Web.Startup;
 
@@ -26,6 +27,8 @@ public static class MiddlewareConfiguration
 
         app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode();
+
+        app.MapDefaultEndpoints();
 
         return app;
     }
