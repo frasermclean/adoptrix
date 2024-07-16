@@ -3,6 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="8.0.2" />
     <PackageVersion Include="AspNetCore.HealthChecks.Azure.Storage.Blobs" Version="8.0.1" />
     <PackageVersion Include="AspNetCore.HealthChecks.Azure.Storage.Queues" Version="8.0.1" />
     <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
@@ -45,13 +46,20 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.7.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.0.2" />
     <PackageVersion Include="Microsoft.Identity.Web" Version="2.20.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageVersion Include="Moq" Version="4.20.70" />
     <PackageVersion Include="MudBlazor" Version="6.20.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0" />
     <PackageVersion Include="Riok.Mapperly" Version="3.6.0" />
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.4" />
     <PackageVersion Include="Testcontainers.Azurite" Version="3.9.0" />
