@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Hosting;
+
 namespace Adoptrix.AppHost;
 
 public static class Program
@@ -12,8 +14,19 @@ public static class Program
             .WithDataVolume("adoptrix-sql-server-data")
             .AddDatabase("database", "adoptrix");
 
+        var storage = builder.AddAzureStorage("storage");
+        if (builder.Environment.IsDevelopment())
+        {
+            storage.RunAsEmulator(resourceBuilder => resourceBuilder.WithImageTag("latest"));
+        }
+
+        var blobStorage = storage.AddBlobs("blob-storage");
+        var queueStorage = storage.AddQueues("queue-storage");
+
         var api = builder.AddProject<Projects.Adoptrix_Api>("adoptrix-api")
-            .WithReference(database);
+            .WithReference(database)
+            .WithReference(blobStorage)
+            .WithReference(queueStorage);
 
         builder.AddProject<Projects.Adoptrix_Initializer>("initializer")
             .WithReference(database);

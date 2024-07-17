@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Adoptrix.Persistence.Services;
 
@@ -13,6 +14,21 @@ public static class ServiceRegistration
     /// <summary>
     /// Add database and storage services to the dependency injection container.
     /// </summary>
+    public static IHostApplicationBuilder AddPersistence(this IHostApplicationBuilder builder)
+    {
+        builder.AddSqlServerDbContext<AdoptrixDbContext>("database");
+        builder.AddAzureBlobClient("blob-storage");
+        builder.AddAzureQueueClient("queue-storage");
+
+        builder.Services
+            .AddSingleton<IEventPublisher, EventPublisher>()
+            .AddRepositories()
+            .AddBlobServices()
+            .AddQueueServices();
+
+        return builder;
+    }
+
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<IEventPublisher, EventPublisher>()
@@ -26,13 +42,12 @@ public static class ServiceRegistration
         IConfiguration configuration)
     {
         services.AddDbContextFactory<AdoptrixDbContext>(optionsBuilder =>
-            {
-                var connectionString = configuration.GetConnectionString("database");
-                optionsBuilder.UseSqlServer(connectionString);
-            })
-            .AddScoped<IAnimalsRepository, AnimalsRepository>()
-            .AddScoped<IBreedsRepository, BreedsRepository>()
-            .AddScoped<ISpeciesRepository, SpeciesRepository>();
+        {
+            var connectionString = configuration.GetConnectionString("database");
+            optionsBuilder.UseSqlServer(connectionString);
+        });
+
+        services.AddRepositories();
 
         return services;
     }
@@ -42,10 +57,7 @@ public static class ServiceRegistration
     {
         services.AddAzureClients(builder =>
         {
-            builder.ConfigureDefaults(options =>
-            {
-                options.Diagnostics.IsLoggingEnabled = false;
-            });
+            builder.ConfigureDefaults(options => { options.Diagnostics.IsLoggingEnabled = false; });
 
             var connectionString = configuration.GetValue<string>("AzureStorage:ConnectionString");
 
@@ -66,8 +78,25 @@ public static class ServiceRegistration
             builder.UseCredential(new DefaultAzureCredential());
         });
 
+        services.AddBlobServices()
+            .AddQueueServices();
+
+        return services;
+    }
+
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IAnimalsRepository, AnimalsRepository>()
+            .AddScoped<IBreedsRepository, BreedsRepository>()
+            .AddScoped<ISpeciesRepository, SpeciesRepository>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddBlobServices(this IServiceCollection services)
+    {
         // animal images blob container
-        services.AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages, (provider, _)
+        services.AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages, (provider, key)
             => new BlobContainerManager(provider.GetRequiredService<BlobServiceClient>(),
                 BlobContainerNames.AnimalImages));
 
@@ -76,6 +105,11 @@ public static class ServiceRegistration
             => new BlobContainerManager(provider.GetRequiredService<BlobServiceClient>(),
                 BlobContainerNames.OriginalImages));
 
+        return services;
+    }
+
+    private static IServiceCollection AddQueueServices(this IServiceCollection services)
+    {
         // animal deleted queue
         services.AddKeyedSingleton<QueueClient>(QueueNames.AnimalDeleted, (provider, _)
             => provider.GetRequiredService<QueueServiceClient>()

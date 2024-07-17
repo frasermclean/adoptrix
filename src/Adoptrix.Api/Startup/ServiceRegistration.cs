@@ -16,12 +16,12 @@ public static class ServiceRegistration
     /// </summary>
     public static WebApplicationBuilder RegisterServices(this WebApplicationBuilder builder)
     {
-        builder.AddServiceDefaults();
+        builder.AddServiceDefaults()
+            .AddPersistence();
 
         builder.Services
             .AddAuthentication(builder.Configuration)
-            .AddFastEndpoints()
-            .AddPersistence(builder.Configuration);
+            .AddFastEndpoints();
 
         // json serialization options
         builder.Services.Configure<JsonOptions>(options =>
@@ -30,12 +30,6 @@ public static class ServiceRegistration
             options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         });
-
-        // health checks services
-        builder.Services.AddHealthChecks()
-            .AddDbContextCheck<AdoptrixDbContext>()
-            .AddAzureBlobStorage()
-            .AddAzureQueueStorage();
 
         return builder;
     }
