@@ -1,4 +1,5 @@
-﻿using Adoptrix.Persistence.Services;
+﻿using Adoptrix.Core;
+using Adoptrix.Persistence.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Initializer.Services;
@@ -19,68 +20,82 @@ public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, AdoptrixDb
         });
     }
 
-    public async Task SeedDatabaseAsync(CancellationToken cancellationToken)
+    public async Task SeedSpeciesAsync(IReadOnlyCollection<Species> speciesCollection,
+        CancellationToken cancellationToken)
     {
-        logger.LogInformation("Seeding database");
-
         var strategy = dbContext.Database.CreateExecutionStrategy();
+
         await strategy.ExecuteAsync(async () =>
         {
             await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-            await SeedSpeciesAsync(cancellationToken);
-            await SeedBreedsAsync(cancellationToken);
-            await SeedAnimalsAsync(cancellationToken);
+            foreach (var species in speciesCollection)
+            {
+                if (await dbContext.Species.FirstOrDefaultAsync(s => s.Id == species.Id,
+                        cancellationToken: cancellationToken) != null)
+                {
+                    continue;
+                }
 
+                dbContext.Species.Add(species);
+            }
+
+            var saveCount = await dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
+
+            logger.LogInformation("Seeded {SaveCount}/{SeedDataCount} species", saveCount, speciesCollection.Count);
         });
     }
 
-    private async Task SeedSpeciesAsync(CancellationToken cancellationToken)
+    public async Task SeedBreedsAsync(IReadOnlyCollection<Breed> breeds, CancellationToken cancellationToken)
     {
-        foreach (var species in SeedData.Species)
+        var strategy = dbContext.Database.CreateExecutionStrategy();
+
+        await strategy.ExecuteAsync(async () =>
         {
-            if (await dbContext.Species.FirstOrDefaultAsync(s => s.Id == species.Id, cancellationToken: cancellationToken) != null)
+            await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+
+            foreach (var breed in breeds)
             {
-                continue;
+                if (await dbContext.Breeds.FirstOrDefaultAsync(b => b.Id == breed.Id,
+                        cancellationToken: cancellationToken) != null)
+                {
+                    continue;
+                }
+
+                dbContext.Breeds.Add(breed);
             }
 
-            dbContext.Species.Add(species);
-        }
+            var saveCount = await dbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
 
-        var saveCount = await dbContext.SaveChangesAsync(cancellationToken);
-        logger.LogInformation("Seeded {SaveCount}/{SeedDataCount} species", saveCount, SeedData.Species.Length);
+            logger.LogInformation("Seeded {SaveCount}/{SeedDataCount} breeds", saveCount, breeds.Count);
+        });
     }
 
-    private async Task SeedBreedsAsync(CancellationToken cancellationToken)
+    public async Task SeedAnimalsAsync(IReadOnlyCollection<Animal> animals, CancellationToken cancellationToken)
     {
-        foreach (var breed in SeedData.Breeds)
+        var strategy = dbContext.Database.CreateExecutionStrategy();
+
+        await strategy.ExecuteAsync(async () =>
         {
-            if (await dbContext.Breeds.FirstOrDefaultAsync(b => b.Id == breed.Id, cancellationToken: cancellationToken) != null)
+            await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+
+            foreach (var animal in animals)
             {
-                continue;
+                if (await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == animal.Id,
+                        cancellationToken: cancellationToken) != null)
+                {
+                    continue;
+                }
+
+                dbContext.Animals.Add(animal);
             }
 
-            dbContext.Breeds.Add(breed);
-        }
+            var saveCount = await dbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
 
-        var saveCount = await dbContext.SaveChangesAsync(cancellationToken);
-        logger.LogInformation("Seeded {SaveCount}/{SeedDataCount} breeds", saveCount, SeedData.Breeds.Length);
-    }
-
-    private async Task SeedAnimalsAsync(CancellationToken cancellationToken)
-    {
-        foreach (var animal in SeedData.Animals)
-        {
-            if (await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == animal.Id, cancellationToken: cancellationToken) != null)
-            {
-                continue;
-            }
-
-            dbContext.Animals.Add(animal);
-        }
-
-        var saveCount = await dbContext.SaveChangesAsync(cancellationToken);
-        logger.LogInformation("Seeded {SaveCount}/{SeedDataCount} animals", saveCount, SeedData.Animals.Length);
+            logger.LogInformation("Seeded {SaveCount}/{SeedDataCount} animals", saveCount, animals.Count);
+        });
     }
 }

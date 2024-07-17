@@ -15,7 +15,9 @@ public class WorkerService(IServiceScopeFactory serviceScopeFactory, IHostApplic
         var databaseInitializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
 
         await databaseInitializer.ApplyMigrationsAsync(cancellationToken);
-        await databaseInitializer.SeedDatabaseAsync(cancellationToken);
+        await databaseInitializer.SeedSpeciesAsync(SeedData.Species, cancellationToken);
+        await databaseInitializer.SeedBreedsAsync(SeedData.Breeds, cancellationToken);
+        await databaseInitializer.SeedAnimalsAsync(SeedData.Animals, cancellationToken);
 
         hostApplicationLifetime.StopApplication();
     }
