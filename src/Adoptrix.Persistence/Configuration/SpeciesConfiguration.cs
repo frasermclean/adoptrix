@@ -19,10 +19,5 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
             .HasColumnType("datetime2")
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
-
-        builder.HasData(
-            new { Id = SpeciesIds.Dog, Name = "Dog", CreatedBy = Guid.Empty },
-            new { Id = SpeciesIds.Cat, Name = "Cat", CreatedBy = Guid.Empty },
-            new { Id = SpeciesIds.Horse, Name = "Horse", CreatedBy = Guid.Empty });
     }
 }
