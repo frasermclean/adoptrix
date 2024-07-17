@@ -5,14 +5,14 @@ services:
   sql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      ACCEPT_EULA: 'Y'
-      MSSQL_SA_PASSWORD: 'sup3rSECRET!'
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "sup3rSECRET!"
     entrypoint: /usr/config/entrypoint.sh
     ports:
       - 1433:1433
     volumes:
       - ./scripts:/usr/config:ro
-      - sql-server-data:/var/opt/mssql
+      - adoptrix-sql-server-data:/var/opt/mssql
 
   # Azure Storage Emulator
   azurite:
@@ -22,10 +22,10 @@ services:
       - 10001:10001
       - 10002:10002
     volumes:
-      - azurite-data:/data
+      - adoptrix-storage-data:/data
 
 volumes:
-  sql-server-data:
-    driver: local
-  azurite-data:
-    driver: local
+  adoptrix-sql-server-data:
+    external: true
+  adoptrix-storage-data:
+    external: true
