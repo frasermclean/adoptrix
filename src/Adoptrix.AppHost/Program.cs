@@ -11,7 +11,9 @@ public static class Program
         var sqlServerPassword = builder.AddParameter("sql-server-password");
 
         var database = builder.AddSqlServer("sql-server", sqlServerPassword)
+            .WithBindMount("../../deps/scripts", "/usr/config")
             .WithDataVolume("adoptrix-sql-server-data")
+            .WithEntrypoint("/usr/config/entrypoint.sh")
             .AddDatabase("database", "adoptrix");
 
         var storage = builder.AddAzureStorage("storage");

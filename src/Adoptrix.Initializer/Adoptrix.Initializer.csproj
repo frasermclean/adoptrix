@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Adoptrix.ServiceDefaults\Adoptrix.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Adoptrix.Persistence\Adoptrix.Persistence.csproj" />
+    <ProjectReference Include="..\Adoptrix.ServiceDefaults\Adoptrix.ServiceDefaults.csproj" />
   </ItemGroup>
 </Project>
