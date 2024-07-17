@@ -6,7 +6,12 @@ namespace Adoptrix.Initializer.Services;
 
 public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, AdoptrixDbContext dbContext)
 {
-    public async Task ApplyMigrationsAsync(CancellationToken cancellationToken)
+    public async Task EnsureCreatedAsync(CancellationToken cancellationToken = default)
+    {
+        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+    }
+
+    public async Task ApplyMigrationsAsync(CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Applying migrations");
 
@@ -21,7 +26,7 @@ public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, AdoptrixDb
     }
 
     public async Task SeedSpeciesAsync(IReadOnlyCollection<Species> speciesCollection,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var strategy = dbContext.Database.CreateExecutionStrategy();
 
@@ -47,7 +52,7 @@ public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, AdoptrixDb
         });
     }
 
-    public async Task SeedBreedsAsync(IReadOnlyCollection<Breed> breeds, CancellationToken cancellationToken)
+    public async Task SeedBreedsAsync(IReadOnlyCollection<Breed> breeds, CancellationToken cancellationToken = default)
     {
         var strategy = dbContext.Database.CreateExecutionStrategy();
 
@@ -73,7 +78,8 @@ public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, AdoptrixDb
         });
     }
 
-    public async Task SeedAnimalsAsync(IReadOnlyCollection<Animal> animals, CancellationToken cancellationToken)
+    public async Task SeedAnimalsAsync(IReadOnlyCollection<Animal> animals,
+        CancellationToken cancellationToken = default)
     {
         var strategy = dbContext.Database.CreateExecutionStrategy();
 

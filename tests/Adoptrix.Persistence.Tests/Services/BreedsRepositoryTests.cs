@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Core;
 using Adoptrix.Core.Contracts.Requests.Breeds;
+using Adoptrix.Initializer;
 using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
@@ -13,6 +14,8 @@ public class BreedsRepositoryTests
 {
     private readonly IBreedsRepository breedsRepository;
     private readonly ISpeciesRepository speciesRepository;
+
+    private static readonly Guid DogSpeciesId = SeedData.Species["Dog"].Id;
 
     public BreedsRepositoryTests(DatabaseFixture fixture)
     {
@@ -34,11 +37,11 @@ public class BreedsRepositoryTests
     }
 
     [Theory]
-    [MemberData(nameof(GetKnownBreeds))]
-    public async Task GetByIdAsync_WithKnownId_ShouldReturnBreed(Guid breedId, string expectedName)
+    [MemberData(nameof(SeededBreeds))]
+    public async Task GetByIdAsync_WithKnownId_ShouldReturnBreed(string breedId, string expectedName)
     {
         // act
-        var breed = await breedsRepository.GetByIdAsync(breedId);
+        var breed = await breedsRepository.GetByIdAsync(Guid.Parse(breedId));
 
         // assert
         breed.Should().BeOfType<Breed>().Which.Name.Should().Be(expectedName);
@@ -58,8 +61,8 @@ public class BreedsRepositoryTests
     }
 
     [Theory]
-    [MemberData(nameof(GetKnownBreeds))]
-    public async Task GetByNameAsync_WithKnownName_ShouldReturnBreed(Guid expectedId, string breedName)
+    [MemberData(nameof(SeededBreeds))]
+    public async Task GetByNameAsync_WithKnownName_ShouldReturnBreed(string expectedId, string breedName)
     {
         // act
         var breed = await breedsRepository.GetByNameAsync(breedName);
@@ -72,7 +75,7 @@ public class BreedsRepositoryTests
     public async Task AddAsync_WithValidBreed_ShouldPass()
     {
         // arrange
-        var species = await speciesRepository.GetByIdAsync(SpeciesIds.Dog);
+        var species = await speciesRepository.GetByIdAsync(DogSpeciesId);
         var breedToAdd = BreedFactory.Create(name: "Poodle", species: species);
 
         // act
@@ -87,7 +90,7 @@ public class BreedsRepositoryTests
     public async Task UpdateAsync_WithValidBreed_ShouldPass()
     {
         // arrange
-        var species = await speciesRepository.GetByIdAsync(SpeciesIds.Dog);
+        var species = await speciesRepository.GetByIdAsync(DogSpeciesId);
         var breedToAdd = BreedFactory.Create(name: "Border-Collie", species: species);
         await breedsRepository.AddAsync(breedToAdd);
 
@@ -105,7 +108,7 @@ public class BreedsRepositoryTests
     public async Task DeleteAsync_WithKnownId_ShouldPass()
     {
         // arrange
-        var species = await speciesRepository.GetByIdAsync(SpeciesIds.Dog);
+        var species = await speciesRepository.GetByIdAsync(DogSpeciesId);
         var breedToDelete = BreedFactory.Create(name: "Pug", species: species);
         await breedsRepository.AddAsync(breedToDelete);
 
@@ -130,10 +133,10 @@ public class BreedsRepositoryTests
         await act.Should().ThrowAsync<DbUpdateConcurrencyException>();
     }
 
-    public static TheoryData<Guid, string> GetKnownBreeds() => new()
+    public static readonly TheoryData<string, string> SeededBreeds = new ()
     {
-        { BreedIds.LabradorRetriever, "Labrador Retriever" },
-        { BreedIds.GermanShepherd, "German Shepherd" },
-        { BreedIds.GoldenRetriever, "Golden Retriever" }
+        { SeedData.Breeds["Labrador Retriever"].Id.ToString(), "Labrador Retriever" },
+        { SeedData.Breeds["German Shepherd"].Id.ToString(), "German Shepherd" },
+        { SeedData.Breeds["Golden Retriever"].Id.ToString(), "Golden Retriever" }
     };
 }

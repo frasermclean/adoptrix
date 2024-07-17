@@ -57,25 +57,32 @@ public static class ServiceRegistration
     {
         services.AddAzureClients(builder =>
         {
-            builder.ConfigureDefaults(options => { options.Diagnostics.IsLoggingEnabled = false; });
+            builder.UseCredential(new DefaultAzureCredential())
+                .ConfigureDefaults(options => { options.Diagnostics.IsLoggingEnabled = false; });
 
-            var connectionString = configuration.GetValue<string>("AzureStorage:ConnectionString");
-
-            // use connection string if it is defined
-            if (connectionString is not null)
+            // add blob service client
+            var blobStorageConnectionString = configuration.GetConnectionString("blob-storage")!;
+            if (blobStorageConnectionString.StartsWith("https://"))
             {
-                builder.AddBlobServiceClient(connectionString);
-                builder.AddQueueServiceClient(connectionString)
-                    .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
-
-                return;
+                builder.AddBlobServiceClient(new Uri(blobStorageConnectionString));
+            }
+            else
+            {
+                builder.AddBlobServiceClient(blobStorageConnectionString);
             }
 
-            builder.AddBlobServiceClient(new Uri(configuration.GetValue<string>("AzureStorage:BlobEndpoint")!));
-            builder.AddQueueServiceClient(new Uri(configuration.GetValue<string>("AzureStorage:QueueEndpoint")!))
-                .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
-
-            builder.UseCredential(new DefaultAzureCredential());
+            // add queue service client
+            var queueStorageConnectionString = configuration.GetConnectionString("queue-storage")!;
+            if (queueStorageConnectionString.StartsWith("https://"))
+            {
+                builder.AddQueueServiceClient(new Uri(queueStorageConnectionString))
+                    .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
+            }
+            else
+            {
+                builder.AddQueueServiceClient(queueStorageConnectionString)
+                    .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
+            }
         });
 
         services.AddBlobServices()
@@ -96,7 +103,7 @@ public static class ServiceRegistration
     private static IServiceCollection AddBlobServices(this IServiceCollection services)
     {
         // animal images blob container
-        services.AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages, (provider, key)
+        services.AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages, (provider, _)
             => new BlobContainerManager(provider.GetRequiredService<BlobServiceClient>(),
                 BlobContainerNames.AnimalImages));
 

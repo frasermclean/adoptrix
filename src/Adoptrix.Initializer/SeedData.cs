@@ -4,58 +4,56 @@ namespace Adoptrix.Initializer;
 
 public static class SeedData
 {
-    public static readonly Species[] Species =
-    [
-        new Species
-        {
-            Id = Guid.Parse("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a"),
-            Name = "Dog"
-        },
-        new Species
-        {
-            Id = Guid.Parse("c9c1836b-1051-45c3-a2c4-0d841e69e6d3"),
-            Name = "Cat"
-        },
-        new Species
-        {
-            Id = Guid.Parse("e6d11a53-bacb-4a8b-a171-beea7e935467"),
-            Name = "Bird"
-        }
-    ];
+    public static readonly Dictionary<string, Species> Species = new()
+    {
+        { "Dog", new Species { Id = Guid.Parse("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a"), Name = "Dog" } },
+        { "Cat", new Species { Id = Guid.Parse("c9c1836b-1051-45c3-a2c4-0d841e69e6d3"), Name = "Cat" } },
+        { "Bird", new Species { Id = Guid.Parse("e6d11a53-bacb-4a8b-a171-beea7e935467"), Name = "Bird" } }
+    };
 
-    public static readonly Breed[] Breeds =
-    [
-        new Breed
+    public static readonly Dictionary<string, Breed> Breeds = new()
+    {
         {
-            Id = Guid.Parse("e719fea1-14d5-45a3-845d-404c88c4549f"),
-            Name = "Labrador Retriever",
-            Species = Species[0]
+            "Labrador Retriever", new Breed
+            {
+                Id = Guid.Parse("e719fea1-14d5-45a3-845d-404c88c4549f"),
+                Name = "Labrador Retriever",
+                Species = Species["Dog"]
+            }
         },
-        new Breed
         {
-            Id = Guid.Parse("9b2ace0b-fb18-4da4-86a5-c7404cfbf145"),
-            Name = "German Shepherd",
-            Species = Species[0]
+            "German Shepherd", new Breed
+            {
+                Id = Guid.Parse("9b2ace0b-fb18-4da4-86a5-c7404cfbf145"),
+                Name = "German Shepherd",
+                Species = Species["Dog"]
+            }
         },
-        new Breed
         {
-            Id = Guid.Parse("4fb1e168-bf13-4702-9b61-0b8df2ef0c7d"),
-            Name = "Golden Retriever",
-            Species = Species[0]
+            "Golden Retriever", new Breed
+            {
+                Id = Guid.Parse("4fb1e168-bf13-4702-9b61-0b8df2ef0c7d"),
+                Name = "Golden Retriever",
+                Species = Species["Dog"]
+            }
         },
-        new Breed
         {
-            Id = Guid.Parse("6e0392d3-1b0a-41b5-bb22-0a1bb7303cb0"),
-            Name = "Domestic Shorthair",
-            Species = Species[1]
+            "Domestic Shorthair", new Breed
+            {
+                Id = Guid.Parse("6e0392d3-1b0a-41b5-bb22-0a1bb7303cb0"),
+                Name = "Domestic Shorthair",
+                Species = Species["Cat"]
+            }
         },
-        new Breed
         {
-            Id = Guid.Parse("1d341761-ca5a-43e7-bc81-cdca149d14d9"),
-            Name = "African Grey Parrot",
-            Species = Species[2]
+            "African Grey Parrot", new Breed
+            {
+                Id = Guid.Parse("1d341761-ca5a-43e7-bc81-cdca149d14d9"),
+                Name = "African Grey Parrot",
+                Species = Species["Bird"]
+            }
         }
-    ];
+    };
 
     public static readonly Animal[] Animals =
     [
@@ -71,7 +69,7 @@ public static class SeedData
                           the one to open your heart and home to Alberto, making his dreams come true? Adopt this
                           charming ball of fur, and let the adventure of a lifetime begin! 🐾 #AdoptAlberto"
                           """,
-            Breed = Breeds[0],
+            Breed = Breeds["Labrador Retriever"],
             Sex = Sex.Male,
             DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(165)),
         },
@@ -89,7 +87,7 @@ public static class SeedData
                           Consider adopting Barry, and embark on a journey of trust, devotion, and endless
                           adventure! 🐾 #AdoptBarry
                           """,
-            Breed = Breeds[1],
+            Breed = Breeds["German Shepherd"],
             Sex = Sex.Male,
             DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * 4.1)),
         },
@@ -105,7 +103,7 @@ public static class SeedData
                           and purr her way into your heart. Are you ready to add a touch of warmth and whimsy to your
                           life? Consider adopting Ginger, and let the purr-fect companionship begin! 🐾 #AdoptGinger
                           """,
-            Breed = Breeds[3],
+            Breed = Breeds["Domestic Shorthair"],
             Sex = Sex.Female,
             DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * 2.3)),
         },
@@ -116,7 +114,7 @@ public static class SeedData
             Description = """
                           Meet Percy, a charming African Grey Parrot with a personality as colorful as his feathers.
                           """,
-            Breed = Breeds[4],
+            Breed = Breeds["African Grey Parrot"],
             Sex = Sex.Male,
             DateOfBirth = DateOnly.FromDateTime(DateTime.Today - TimeSpan.FromDays(365 * 7.5)),
         }

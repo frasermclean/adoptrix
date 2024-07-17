@@ -1,5 +1,4 @@
 using Aspire.Hosting.Azure;
-using Microsoft.Extensions.Hosting;
 
 namespace Adoptrix.AppHost;
 
