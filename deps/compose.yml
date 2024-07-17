@@ -7,10 +7,12 @@ services:
     environment:
       ACCEPT_EULA: 'Y'
       MSSQL_SA_PASSWORD: 'sup3rSECRET!'
+    entrypoint: /usr/config/entrypoint.sh
     ports:
       - 1433:1433
     volumes:
-      - adoptrix-sql-server-data:/var/opt/mssql
+      - ./scripts:/usr/config:ro
+      - sql-server-data:/var/opt/mssql
 
   # Azure Storage Emulator
   azurite:
@@ -23,7 +25,7 @@ services:
       - azurite-data:/data
 
 volumes:
-  adoptrix-sql-server-data:
-    external: true
+  sql-server-data:
+    driver: local
   azurite-data:
     driver: local
