@@ -36,6 +36,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Install .NET Aspire workload
+      - name: Install .NET Aspire workload
+        run: dotnet workload install aspire
+
       # Restore NuGet packages
       - name: Restore packages
         run: dotnet restore
