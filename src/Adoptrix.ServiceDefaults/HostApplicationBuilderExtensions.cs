@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -70,14 +71,14 @@ public static class HostApplicationBuilderExtensions
         }
 
         // use Azure Monitor exporter if Application Insights connection string is provided
-        var applicationInsightsConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+        var applicationInsightsConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
         if (!string.IsNullOrWhiteSpace(applicationInsightsConnectionString))
         {
             builder.Services.AddOpenTelemetry()
-               .UseAzureMonitor(options =>
-               {
-                   options.ConnectionString = applicationInsightsConnectionString;
-               });
+                .UseAzureMonitor(options =>
+                {
+                    options.Credential = new DefaultAzureCredential();
+                });
         }
 
         return builder;
