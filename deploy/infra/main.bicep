@@ -57,106 +57,28 @@ var tags = {
 
 var deploymentSuffix = startsWith(deployment().name, 'main-') ? replace(deployment().name, 'main-', '-') : ''
 
-var sqlDatabaseAllowedAzureServices = [
-  {
-    name: 'azure'
-    ipAddress: '0.0.0.0'
-  }
-]
+var appConfigurationEndpoint = 'https://${appConfigurationName}.azconfig.io'
 
-// app configuration (existing)
-resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
-  name: appConfigurationName
-  scope: resourceGroup(sharedResourceGroup)
-}
-
-// azure sql server
-resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
-  name: '${workload}-${appEnv}-sql'
-  location: location
-  tags: tags
-  properties: {
-    administrators: {
-      administratorType: 'ActiveDirectory'
-      azureADOnlyAuthentication: true
-      login: adminGroupName
-      sid: adminGroupObjectId
-      principalType: 'Group'
-      tenantId: subscription().tenantId
-    }
-    minimalTlsVersion: '1.2'
-    version: '12.0'
-    publicNetworkAccess: 'Enabled'
-  }
-
-  // database
-  resource database 'databases' = {
-    name: '${workload}-${appEnv}-sqldb'
+module databaseModule 'database.bicep' = {
+  name: 'database${deploymentSuffix}'
+  params: {
+    workload: workload
+    appEnv: appEnv
     location: location
     tags: tags
-    sku: {
-      name: 'S0'
-      tier: 'Standard'
-      capacity: 10
-    }
-    properties: {
-      collation: 'SQL_Latin1_General_CP1_CI_AS'
-    }
+    adminGroupName: adminGroupName
+    adminGroupObjectId: adminGroupObjectId
+    allowedExternalIpAddresses: allowedExternalIpAddresses
   }
-
-  // firewall rules
-  resource firewallRule 'firewallRules' = [
-    for item in concat(sqlDatabaseAllowedAzureServices, allowedExternalIpAddresses): if (!empty(item.ipAddress)) {
-      name: 'allow-${item.name}-rule'
-      properties: {
-        startIpAddress: item.ipAddress
-        endIpAddress: item.ipAddress
-      }
-    }
-  ]
 }
 
-// storage account
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: '${workload}${appEnv}'
-  location: location
-  tags: tags
-  kind: 'StorageV2'
-  sku: {
-    name: 'Standard_LRS'
-  }
-  properties: {
-    allowBlobPublicAccess: true
-    allowSharedKeyAccess: true
-    defaultToOAuthAuthentication: true
-    minimumTlsVersion: 'TLS1_2'
-  }
-
-  resource blobServices 'blobServices' = {
-    name: 'default'
-
-    resource animalImagesContainer 'containers' = {
-      name: 'animal-images'
-      properties: {
-        publicAccess: 'Blob'
-      }
-    }
-
-    resource originalImagesContainer 'containers' = {
-      name: 'original-images'
-    }
-  }
-
-  resource queueServices 'queueServices' = {
-    name: 'default'
-
-    resource animalDeletedQueue 'queues' = {
-      name: 'animal-deleted'
-    }
-
-    resource animalImageAddedQueue 'queues' = {
-      name: 'animal-image-added'
-    }
+module storageModule 'storage.bicep' = {
+  name: 'storage${deploymentSuffix}'
+  params: {
+    workload: workload
+    appEnv: appEnv
+    location: location
+    tags: tags
   }
 }
 
@@ -184,7 +106,7 @@ module containerAppsModule './containerApps.bicep' = {
     mainImageName: mainImageName
     mainImageTag: mainImageTag
     logAnalyticsWorkspaceId: appInsightsModule.outputs.logAnalyticsWorkspaceId
-    appConfigurationEndpoint: appConfiguration.properties.endpoint
+    appConfigurationEndpoint: appConfigurationEndpoint
   }
 }
 
@@ -196,8 +118,8 @@ module jobsAppModule './functionApp.bicep' = {
     appEnv: appEnv
     appName: 'jobs'
     location: location
-    appConfigEndpoint: appConfiguration.properties.endpoint
-    storageAccountName: storageAccount.name
+    appConfigEndpoint: appConfigurationEndpoint
+    storageAccountName: storageModule.outputs.accountName
     applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
   }
 }
@@ -212,9 +134,9 @@ module appConfigModule 'appConfig.bicep' = {
     applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
     authenticationClientId: authenticationClientId
     authenticationAudience: authenticationAudience
-    storageAccountBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
-    storageAccountQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
-    databaseConnectionString: 'Server=tcp:${sqlServer.name}${environment().suffixes.sqlServerHostname};Database=${sqlServer::database.name};Authentication="Active Directory Default";'
+    storageAccountBlobEndpoint: storageModule.outputs.blobEndpoint
+    storageAccountQueueEndpoint: storageModule.outputs.queueEndpoint
+    databaseConnectionString: databaseModule.outputs.connectionString
     containerAppPrincipalId: containerAppsModule.outputs.mainAppPrincipalId
     attemptRoleAssignments: attemptRoleAssignments
   }
@@ -228,7 +150,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' =
       adminGroupObjectId: adminGroupObjectId
       mainAppPrincipalId: containerAppsModule.outputs.mainAppPrincipalId
       jobsAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
-      storageAccountName: storageAccount.name
+      storageAccountName: storageModule.outputs.accountName
       applicationInsightsName: appInsightsModule.outputs.applicationInsightsName
     }
   }
