@@ -15,6 +15,12 @@ param tags object = {
   appEnv: appEnv
 }
 
+@description('Set to true to force authentication via Entra ID')
+param disableLocalAuth bool = false
+
+@description('An array of principal IDs to be assigned the Monitoring Metrics Publisher role')
+param monitoringMetricsPublishers array = []
+
 @maxLength(12)
 param actionGroupShortName string
 
@@ -42,9 +48,26 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   kind: 'web'
   properties: {
     Application_Type: 'web'
+    DisableLocalAuth: disableLocalAuth
     WorkspaceResourceId: logAnalyticsWorkspace.id
   }
 }
+
+var monitoringMetricsPublisherRoleId = '3913510d-42f4-4e42-8a64-420c390055eb'
+
+resource roleAssignments 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+  for principalId in monitoringMetricsPublishers: {
+    name: guid(applicationInsights.id, monitoringMetricsPublisherRoleId, principalId)
+    scope: applicationInsights
+    properties: {
+      principalId: principalId
+      roleDefinitionId: resourceId(
+        'Microsoft.Authorization/roleDefinitions@2022-04-01',
+        monitoringMetricsPublisherRoleId
+      )
+    }
+  }
+]
 
 // failure anomalies smart detector
 resource failureAnomaliesSmartDetectorRule 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
@@ -96,4 +119,3 @@ output applicationInsightsName string = applicationInsights.name
 
 @description('Log Analytics workspace resource ID')
 output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id
-

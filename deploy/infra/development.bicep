@@ -7,6 +7,7 @@ This template defines Azure resources for use in a development environment.
 param workload string
 param appEnv string
 param location string = resourceGroup().location
+param principalIds array = []
 
 @maxLength(12)
 @description('Short name for the action group')
@@ -18,6 +19,8 @@ module appInsightsModule 'appInsights.bicep' = {
     workload: workload
     appEnv: appEnv
     location: location
+    disableLocalAuth: true
+    monitoringMetricsPublishers: principalIds
     actionGroupShortName: actionGroupShortName
   }
 }
