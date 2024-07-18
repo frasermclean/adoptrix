@@ -116,47 +116,13 @@ resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
   ]
 }
 
-// storage account
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: '${workload}${appEnv}'
-  location: location
-  tags: tags
-  kind: 'StorageV2'
-  sku: {
-    name: 'Standard_LRS'
-  }
-  properties: {
-    allowBlobPublicAccess: true
-    allowSharedKeyAccess: true
-    defaultToOAuthAuthentication: true
-    minimumTlsVersion: 'TLS1_2'
-  }
-
-  resource blobServices 'blobServices' = {
-    name: 'default'
-
-    resource animalImagesContainer 'containers' = {
-      name: 'animal-images'
-      properties: {
-        publicAccess: 'Blob'
-      }
-    }
-
-    resource originalImagesContainer 'containers' = {
-      name: 'original-images'
-    }
-  }
-
-  resource queueServices 'queueServices' = {
-    name: 'default'
-
-    resource animalDeletedQueue 'queues' = {
-      name: 'animal-deleted'
-    }
-
-    resource animalImageAddedQueue 'queues' = {
-      name: 'animal-image-added'
-    }
+module storageModule 'storage.bicep' = {
+  name: 'storage${deploymentSuffix}'
+  params: {
+    workload: workload
+    appEnv: appEnv
+    location: location
+    tags: tags
   }
 }
 
@@ -197,7 +163,7 @@ module jobsAppModule './functionApp.bicep' = {
     appName: 'jobs'
     location: location
     appConfigEndpoint: appConfiguration.properties.endpoint
-    storageAccountName: storageAccount.name
+    storageAccountName: storageModule.outputs.accountName
     applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
   }
 }
@@ -212,8 +178,8 @@ module appConfigModule 'appConfig.bicep' = {
     applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
     authenticationClientId: authenticationClientId
     authenticationAudience: authenticationAudience
-    storageAccountBlobEndpoint: storageAccount.properties.primaryEndpoints.blob
-    storageAccountQueueEndpoint: storageAccount.properties.primaryEndpoints.queue
+    storageAccountBlobEndpoint: storageModule.outputs.blobEndpoint
+    storageAccountQueueEndpoint: storageModule.outputs.queueEndpoint
     databaseConnectionString: 'Server=tcp:${sqlServer.name}${environment().suffixes.sqlServerHostname};Database=${sqlServer::database.name};Authentication="Active Directory Default";'
     containerAppPrincipalId: containerAppsModule.outputs.mainAppPrincipalId
     attemptRoleAssignments: attemptRoleAssignments
@@ -228,7 +194,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' =
       adminGroupObjectId: adminGroupObjectId
       mainAppPrincipalId: containerAppsModule.outputs.mainAppPrincipalId
       jobsAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
-      storageAccountName: storageAccount.name
+      storageAccountName: storageModule.outputs.accountName
       applicationInsightsName: appInsightsModule.outputs.applicationInsightsName
     }
   }
