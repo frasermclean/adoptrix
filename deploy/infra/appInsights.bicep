@@ -10,7 +10,10 @@ param appEnv string
 param location string = resourceGroup().location
 
 @description('Tags to be applied to the resources')
-param tags object
+param tags object = {
+  workload: workload
+  appEnv: appEnv
+}
 
 @maxLength(12)
 param actionGroupShortName string
