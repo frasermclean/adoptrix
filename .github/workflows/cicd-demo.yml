@@ -101,7 +101,7 @@ jobs:
 
   # Deploy container applications
   deploy_container_apps:
-    name: Deploy main application
+    name: Deploy container applications
     runs-on: ubuntu-latest
     needs: build
     #if: github.event_name != 'pull_request'
@@ -126,6 +126,7 @@ jobs:
       - name: Deploy API app
         uses: azure/container-apps-deploy-action@v1
         with:
+          appSourcePath: ${{ github.workspace }}
           dockerfilePath: Dockerfile.api
           acrName: ${{ vars.ACR_NAME }}
           imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ github.sha }}
@@ -136,6 +137,7 @@ jobs:
       - name: Deploy web app
         uses: azure/container-apps-deploy-action@v1
         with:
+          appSourcePath: ${{ github.workspace }}
           dockerfilePath: Dockerfile.web
           acrName: ${{ vars.ACR_NAME }}
           imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-web:${{ github.sha }}
