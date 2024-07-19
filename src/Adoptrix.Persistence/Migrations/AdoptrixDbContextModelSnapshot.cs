@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Adoptrix.Database.Migrations
+namespace Adoptrix.Persistence.Migrations
 {
     [DbContext(typeof(AdoptrixDbContext))]
     partial class AdoptrixDbContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace Adoptrix.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -93,29 +93,6 @@ namespace Adoptrix.Database.Migrations
                     b.HasIndex("SpeciesId");
 
                     b.ToTable("Breeds");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("e719fea1-14d5-45a3-845d-404c88c4549f"),
-                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            Name = "Labrador Retriever",
-                            SpeciesId = new Guid("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a")
-                        },
-                        new
-                        {
-                            Id = new Guid("9b2ace0b-fb18-4da4-86a5-c7404cfbf145"),
-                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            Name = "German Shepherd",
-                            SpeciesId = new Guid("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a")
-                        },
-                        new
-                        {
-                            Id = new Guid("4fb1e168-bf13-4702-9b61-0b8df2ef0c7d"),
-                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            Name = "Golden Retriever",
-                            SpeciesId = new Guid("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a")
-                        });
                 });
 
             modelBuilder.Entity("Adoptrix.Core.Species", b =>
@@ -144,26 +121,6 @@ namespace Adoptrix.Database.Migrations
                         .IsUnique();
 
                     b.ToTable("Species");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a"),
-                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            Name = "Dog"
-                        },
-                        new
-                        {
-                            Id = new Guid("c9c1836b-1051-45c3-a2c4-0d841e69e6d3"),
-                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            Name = "Cat"
-                        },
-                        new
-                        {
-                            Id = new Guid("e6d11a53-bacb-4a8b-a171-beea7e935467"),
-                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            Name = "Horse"
-                        });
                 });
 
             modelBuilder.Entity("Adoptrix.Core.Animal", b =>
@@ -174,7 +131,7 @@ namespace Adoptrix.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Adoptrix.Core.ImageInformation", "Images", b1 =>
+                    b.OwnsMany("Adoptrix.Core.AnimalImage", "Images", b1 =>
                         {
                             b1.Property<Guid>("AnimalId")
                                 .HasColumnType("uniqueidentifier");
@@ -224,7 +181,7 @@ namespace Adoptrix.Database.Migrations
             modelBuilder.Entity("Adoptrix.Core.Breed", b =>
                 {
                     b.HasOne("Adoptrix.Core.Species", "Species")
-                        .WithMany()
+                        .WithMany("Breeds")
                         .HasForeignKey("SpeciesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -235,6 +192,11 @@ namespace Adoptrix.Database.Migrations
             modelBuilder.Entity("Adoptrix.Core.Breed", b =>
                 {
                     b.Navigation("Animals");
+                });
+
+            modelBuilder.Entity("Adoptrix.Core.Species", b =>
+                {
+                    b.Navigation("Breeds");
                 });
 #pragma warning restore 612, 618
         }

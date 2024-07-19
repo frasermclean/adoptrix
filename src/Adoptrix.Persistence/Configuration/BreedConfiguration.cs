@@ -19,29 +19,5 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
             .HasColumnType("datetime2")
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
-
-        builder.HasData(
-            new
-            {
-                Id = BreedIds.LabradorRetriever,
-                Name = "Labrador Retriever",
-                SpeciesId = SpeciesIds.Dog,
-                CreatedBy = Guid.Empty
-            },
-            new
-            {
-                Id = BreedIds.GermanShepherd,
-                Name = "German Shepherd",
-                SpeciesId = SpeciesIds.Dog,
-                CreatedBy = Guid.Empty
-            },
-            new
-            {
-                Id = BreedIds.GoldenRetriever,
-                Name = "Golden Retriever",
-                SpeciesId = SpeciesIds.Dog,
-                CreatedBy = Guid.Empty
-            }
-        );
     }
 }

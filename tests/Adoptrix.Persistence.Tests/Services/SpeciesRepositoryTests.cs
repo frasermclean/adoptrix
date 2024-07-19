@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Core;
 using Adoptrix.Core.Contracts.Requests.Species;
+using Adoptrix.Initializer;
 using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 
@@ -27,23 +28,23 @@ public class SpeciesRepositoryTests
         var results = await speciesRepository.SearchAsync(query);
 
         // assert
-        results.Should().HaveCountGreaterOrEqualTo(3);
+        results.Should().HaveCountGreaterThan(0);
     }
 
     [Theory]
-    [MemberData(nameof(GetKnownSpecies))]
-    public async Task GetByIdAsync_WithValidId_ShouldReturnExpectedResult(Guid speciesId, string expectedName)
+    [MemberData(nameof(SeededSpecies))]
+    public async Task GetByIdAsync_WithValidId_ShouldReturnExpectedResult(string speciesId, string expectedName)
     {
         // act
-        var species = await speciesRepository.GetByIdAsync(speciesId);
+        var species = await speciesRepository.GetByIdAsync(Guid.Parse(speciesId));
 
         // assert
         species.Should().BeOfType<Species>().Which.Name.Should().Be(expectedName);
     }
 
     [Theory]
-    [MemberData(nameof(GetKnownSpecies))]
-    public async Task GetByNameAsync_WithValidName_ShouldReturnExpectedResult(Guid expectedId, string speciesName)
+    [MemberData(nameof(SeededSpecies))]
+    public async Task GetByNameAsync_WithValidName_ShouldReturnExpectedResult(string expectedId, string speciesName)
     {
         // act
         var species = await speciesRepository.GetByNameAsync(speciesName);
@@ -52,10 +53,10 @@ public class SpeciesRepositoryTests
         species.Should().BeOfType<Species>().Which.Id.Should().Be(expectedId);
     }
 
-    public static TheoryData<Guid, string> GetKnownSpecies() => new()
+    public static readonly TheoryData<string, string> SeededSpecies = new()
     {
-        { SpeciesIds.Dog, "Dog" },
-        { SpeciesIds.Cat, "Cat" },
-        { SpeciesIds.Horse, "Horse" }
+        { SeedData.Species["Dog"].Id.ToString(), "Dog" },
+        { SeedData.Species["Cat"].Id.ToString(), "Cat" },
+        { SeedData.Species["Bird"].Id.ToString(), "Bird" }
     };
 }

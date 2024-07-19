@@ -33,6 +33,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Install .NET Aspire workload
+      - name: Install .NET Aspire workload
+        if: matrix.language == 'csharp'
+        run: dotnet workload install aspire
+
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3

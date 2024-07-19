@@ -44,11 +44,17 @@ param allowedExternalIpAddresses array
 @description('Container registry login server')
 param containerRegistryName string
 
-@description('Name of the main container image')
-param mainImageName string
+@description('Repository of the API container image')
+param apiImageRepository string
 
-@description('Tag of the main container image')
-param mainImageTag string
+@description('Tag of the API container image')
+param apiImageTag string
+
+@description('Repository of the web container image')
+param webImageRepository string
+
+@description('Tag of the web container image')
+param webImageTag string
 
 var tags = {
   workload: workload
@@ -89,6 +95,7 @@ module appInsightsModule 'appInsights.bicep' = {
     appEnv: appEnv
     location: location
     tags: tags
+    disableLocalAuth: false // needed for Azure Functions
     actionGroupShortName: actionGroupShortName
   }
 }
@@ -103,9 +110,12 @@ module containerAppsModule './containerApps.bicep' = {
     domainName: domainName
     sharedResourceGroup: sharedResourceGroup
     containerRegistryName: containerRegistryName
-    mainImageName: mainImageName
-    mainImageTag: mainImageTag
+    apiImageRepository: apiImageRepository
+    apiImageTag: apiImageTag
+    webImageRepository: webImageRepository
+    webImageTag: webImageTag
     logAnalyticsWorkspaceId: appInsightsModule.outputs.logAnalyticsWorkspaceId
+    applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
     appConfigurationEndpoint: appConfigurationEndpoint
   }
 }
@@ -131,13 +141,12 @@ module appConfigModule 'appConfig.bicep' = {
   params: {
     appConfigurationName: appConfigurationName
     appEnv: appEnv
-    applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
     authenticationClientId: authenticationClientId
     authenticationAudience: authenticationAudience
     storageAccountBlobEndpoint: storageModule.outputs.blobEndpoint
     storageAccountQueueEndpoint: storageModule.outputs.queueEndpoint
     databaseConnectionString: databaseModule.outputs.connectionString
-    containerAppPrincipalId: containerAppsModule.outputs.mainAppPrincipalId
+    apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
     attemptRoleAssignments: attemptRoleAssignments
   }
 }
@@ -148,7 +157,8 @@ module roleAssignmentsModule 'roleAssignments.bicep' =
     name: 'roleAssignments${deploymentSuffix}'
     params: {
       adminGroupObjectId: adminGroupObjectId
-      mainAppPrincipalId: containerAppsModule.outputs.mainAppPrincipalId
+      apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
+      webAppPrincipalId: containerAppsModule.outputs.webAppPrincipalId
       jobsAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
       storageAccountName: storageModule.outputs.accountName
       applicationInsightsName: appInsightsModule.outputs.applicationInsightsName
@@ -163,14 +173,15 @@ module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' =
     params: {
       appConfigurationName: appConfigurationName
       configurationDataReaders: [
-        containerAppsModule.outputs.mainAppPrincipalId
+        containerAppsModule.outputs.apiAppPrincipalId
+        containerAppsModule.outputs.webAppPrincipalId
         jobsAppModule.outputs.identityPrincipalId
       ]
     }
   }
 
 @description('The name of the main container app')
-output mainAppName string = containerAppsModule.outputs.mainAppName
+output apiAppName string = containerAppsModule.outputs.apiAppName
 
 @description('Name of the jobs function app')
 output functionAppName string = jobsAppModule.outputs.functionAppName

@@ -1,4 +1,5 @@
-﻿using Adoptrix.Persistence.Services;
+﻿using Adoptrix.Initializer.Services;
+using Adoptrix.Persistence.Services;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Queues;
@@ -48,37 +49,23 @@ public class StorageEmulatorFixture : IAsyncLifetime
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 {
-                    "AzureStorage:ConnectionString", connectionStringBuilder.ConnectionString
+                    "ConnectionStrings:blob-storage", connectionStringBuilder.ConnectionString
+                },
+                {
+                    "ConnectionStrings:queue-storage", connectionStringBuilder.ConnectionString
                 }
             })
             .Build();
 
         ServiceProvider = new ServiceCollection()
             .AddAzureStorageServices(configuration)
+            .AddLogging()
+            .AddSingleton<StorageInitializer>()
             .BuildServiceProvider();
 
-        await InitializeBlobContainersAsync(ServiceProvider.GetRequiredService<BlobServiceClient>());
-        await InitializeQueuesAsync(ServiceProvider.GetRequiredService<QueueServiceClient>());
-    }
+        var storageInitializer = ServiceProvider.GetRequiredService<StorageInitializer>();
 
-    private static async Task InitializeBlobContainersAsync(BlobServiceClient serviceClient)
-    {
-        var animalImagesContainerClient = serviceClient.GetBlobContainerClient(BlobContainerNames.AnimalImages);
-        await animalImagesContainerClient.CreateAsync(PublicAccessType.Blob);
-    }
-
-    private static async Task InitializeQueuesAsync(QueueServiceClient serviceClient)
-    {
-        var queuesToCreates = new[]
-        {
-            QueueNames.AnimalDeleted, QueueNames.AnimalImageAdded
-        };
-
-        foreach (var queueName in queuesToCreates)
-        {
-            var queueClient = serviceClient.GetQueueClient(queueName);
-            await queueClient.CreateAsync();
-        }
+        await storageInitializer.InitializeAsync();
     }
 
     public async Task DisposeAsync()

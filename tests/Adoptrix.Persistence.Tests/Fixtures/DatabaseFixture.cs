@@ -1,4 +1,6 @@
-﻿using Adoptrix.Persistence.Services;
+﻿using Adoptrix.Initializer;
+using Adoptrix.Initializer.Services;
+using Adoptrix.Persistence.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.MsSql;
@@ -21,13 +23,14 @@ public class DatabaseFixture : IAsyncLifetime
 
         serviceProvider = new ServiceCollection()
             .AddDatabaseServices(configuration)
+            .AddScoped<DatabaseInitializer>()
             .AddLogging()
             .BuildServiceProvider();
 
         await using var scope = serviceProvider.CreateAsyncScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<AdoptrixDbContext>();
+        var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
 
-        await AddTestDataAsync(dbContext);
+        await InitializeDatabaseAsync(initializer);
     }
 
     public async Task DisposeAsync()
@@ -57,13 +60,16 @@ public class DatabaseFixture : IAsyncLifetime
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 {
-                    AdoptrixDbContext.ConnectionStringKey, connectionString
+                    "ConnectionStrings:database", connectionString
                 }
             })
             .Build();
 
-    private async Task AddTestDataAsync(AdoptrixDbContext dbContext)
+    private static async Task InitializeDatabaseAsync(DatabaseInitializer initializer)
     {
-        await dbContext.Database.EnsureCreatedAsync();
+        await initializer.EnsureCreatedAsync();
+        await initializer.SeedSpeciesAsync(SeedData.Species.Values);
+        await initializer.SeedBreedsAsync(SeedData.Breeds.Values);
+        await initializer.SeedAnimalsAsync(SeedData.Animals);
     }
 }

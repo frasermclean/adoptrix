@@ -6,34 +6,62 @@ param appEnv string
 @description('Domain name')
 param domainName string
 
-param mainAppDefaultHostname string = ''
-param mainAppCustomDomainVerificationId string = ''
+param apiAppDefaultHostname string = ''
+param webAppDefaultHostname string = ''
+
+@description('Custom domain verification ID')
+param customDomainVerificationId string = ''
 
 resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
   name: domainName
 
-  // main app CNAME record
-  resource mainAppCnameRecord 'CNAME' = if (!empty(mainAppDefaultHostname)) {
-    name: appEnv
+  // API app CNAME record
+  resource apiAppCnameRecord 'CNAME' = if (!empty(apiAppDefaultHostname)) {
+    name: 'api.${appEnv}'
     properties: {
       TTL: 3600
       CNAMERecord: {
-        cname: mainAppDefaultHostname
+        cname: apiAppDefaultHostname
       }
     }
   }
 
-  // main app TXT verification record
-  resource mainAppTxtRecord 'TXT' = if(!empty(mainAppCustomDomainVerificationId)) {
+  // API app TXT verification record
+  resource apiAppTxtRecord 'TXT' = if(!empty(customDomainVerificationId)) {
+    name: 'asuid.api.${appEnv}'
+    properties: {
+      TTL: 3600
+      TXTRecords: [
+        { value: [ customDomainVerificationId ] }
+      ]
+    }
+  }
+
+  // web app CNAME record
+  resource webAppCnameRecord 'CNAME' = if (!empty(apiAppDefaultHostname)) {
+    name: appEnv
+    properties: {
+      TTL: 3600
+      CNAMERecord: {
+        cname: webAppDefaultHostname
+      }
+    }
+  }
+
+  // API app TXT verification record
+  resource webAppTxtRecord 'TXT' = if(!empty(customDomainVerificationId)) {
     name: 'asuid.${appEnv}'
     properties: {
       TTL: 3600
       TXTRecords: [
-        { value: [ mainAppCustomDomainVerificationId ] }
+        { value: [ customDomainVerificationId ] }
       ]
     }
   }
 }
 
-@description('Fully qualified domain name of the main application')
-output mainAppFqdn string = '${dnsZone::mainAppCnameRecord.name}.${domainName}'
+@description('Fully qualified domain name of the API application')
+output apiAppFqdn string = '${dnsZone::apiAppCnameRecord.name}.${domainName}'
+
+@description('Fully qualified domain name of the web application')
+output webAppFqdn string = '${dnsZone::webAppCnameRecord.name}.${domainName}'

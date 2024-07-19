@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Adoptrix.Persistence.Services;
 
@@ -13,6 +14,21 @@ public static class ServiceRegistration
     /// <summary>
     /// Add database and storage services to the dependency injection container.
     /// </summary>
+    public static IHostApplicationBuilder AddPersistence(this IHostApplicationBuilder builder)
+    {
+        builder.AddSqlServerDbContext<AdoptrixDbContext>("database");
+        builder.AddAzureBlobClient("blob-storage");
+        builder.AddAzureQueueClient("queue-storage");
+
+        builder.Services
+            .AddSingleton<IEventPublisher, EventPublisher>()
+            .AddRepositories()
+            .AddBlobServices()
+            .AddQueueServices();
+
+        return builder;
+    }
+
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<IEventPublisher, EventPublisher>()
@@ -26,13 +42,12 @@ public static class ServiceRegistration
         IConfiguration configuration)
     {
         services.AddDbContextFactory<AdoptrixDbContext>(optionsBuilder =>
-            {
-                var connectionString = configuration[AdoptrixDbContext.ConnectionStringKey];
-                optionsBuilder.UseSqlServer(connectionString);
-            })
-            .AddScoped<IAnimalsRepository, AnimalsRepository>()
-            .AddScoped<IBreedsRepository, BreedsRepository>()
-            .AddScoped<ISpeciesRepository, SpeciesRepository>();
+        {
+            var connectionString = configuration.GetConnectionString("database");
+            optionsBuilder.UseSqlServer(connectionString);
+        });
+
+        services.AddRepositories();
 
         return services;
     }
@@ -42,30 +57,49 @@ public static class ServiceRegistration
     {
         services.AddAzureClients(builder =>
         {
-            builder.ConfigureDefaults(options =>
+            builder.UseCredential(new DefaultAzureCredential())
+                .ConfigureDefaults(options => { options.Diagnostics.IsLoggingEnabled = false; });
+
+            // add blob service client
+            var blobStorageConnectionString = configuration.GetConnectionString("blob-storage")!;
+            if (blobStorageConnectionString.StartsWith("https://"))
             {
-                options.Diagnostics.IsLoggingEnabled = false;
-            });
-
-            var connectionString = configuration.GetValue<string>("AzureStorage:ConnectionString");
-
-            // use connection string if it is defined
-            if (connectionString is not null)
+                builder.AddBlobServiceClient(new Uri(blobStorageConnectionString));
+            }
+            else
             {
-                builder.AddBlobServiceClient(connectionString);
-                builder.AddQueueServiceClient(connectionString)
-                    .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
-
-                return;
+                builder.AddBlobServiceClient(blobStorageConnectionString);
             }
 
-            builder.AddBlobServiceClient(new Uri(configuration.GetValue<string>("AzureStorage:BlobEndpoint")!));
-            builder.AddQueueServiceClient(new Uri(configuration.GetValue<string>("AzureStorage:QueueEndpoint")!))
-                .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
-
-            builder.UseCredential(new DefaultAzureCredential());
+            // add queue service client
+            var queueStorageConnectionString = configuration.GetConnectionString("queue-storage")!;
+            if (queueStorageConnectionString.StartsWith("https://"))
+            {
+                builder.AddQueueServiceClient(new Uri(queueStorageConnectionString));
+            }
+            else
+            {
+                builder.AddQueueServiceClient(queueStorageConnectionString);
+            }
         });
 
+        services.AddBlobServices()
+            .AddQueueServices();
+
+        return services;
+    }
+
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IAnimalsRepository, AnimalsRepository>()
+            .AddScoped<IBreedsRepository, BreedsRepository>()
+            .AddScoped<ISpeciesRepository, SpeciesRepository>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddBlobServices(this IServiceCollection services)
+    {
         // animal images blob container
         services.AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages, (provider, _)
             => new BlobContainerManager(provider.GetRequiredService<BlobServiceClient>(),
@@ -76,6 +110,11 @@ public static class ServiceRegistration
             => new BlobContainerManager(provider.GetRequiredService<BlobServiceClient>(),
                 BlobContainerNames.OriginalImages));
 
+        return services;
+    }
+
+    private static IServiceCollection AddQueueServices(this IServiceCollection services)
+    {
         // animal deleted queue
         services.AddKeyedSingleton<QueueClient>(QueueNames.AnimalDeleted, (provider, _)
             => provider.GetRequiredService<QueueServiceClient>()
