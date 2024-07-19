@@ -95,7 +95,7 @@ module appInsightsModule 'appInsights.bicep' = {
     appEnv: appEnv
     location: location
     tags: tags
-    disableLocalAuth: true
+    disableLocalAuth: false // needed for Azure Functions
     actionGroupShortName: actionGroupShortName
   }
 }
