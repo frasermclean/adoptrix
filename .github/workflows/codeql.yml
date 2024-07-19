@@ -35,6 +35,7 @@ jobs:
 
       # Install .NET Aspire workload
       - name: Install .NET Aspire workload
+        if: matrix.language == 'csharp'
         run: dotnet workload install aspire
 
       # Initializes the CodeQL tools for scanning.
