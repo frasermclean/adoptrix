@@ -75,13 +75,11 @@ public static class ServiceRegistration
             var queueStorageConnectionString = configuration.GetConnectionString("queue-storage")!;
             if (queueStorageConnectionString.StartsWith("https://"))
             {
-                builder.AddQueueServiceClient(new Uri(queueStorageConnectionString))
-                    .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
+                builder.AddQueueServiceClient(new Uri(queueStorageConnectionString));
             }
             else
             {
-                builder.AddQueueServiceClient(queueStorageConnectionString)
-                    .ConfigureOptions(options => options.MessageEncoding = QueueMessageEncoding.Base64);
+                builder.AddQueueServiceClient(queueStorageConnectionString);
             }
         });
 
