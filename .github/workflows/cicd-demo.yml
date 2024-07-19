@@ -149,7 +149,7 @@ jobs:
     name: Deploy jobs application
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name != 'pull_request'
+    #if: github.event_name != 'pull_request'
     permissions:
       id-token: write
     environment: demo
