@@ -99,12 +99,12 @@ jobs:
           name: ${{ env.JOBS_ARTIFACT_NAME }}
           path: ${{ env.JOBS_PUBLISH_DIRECTORY }}/*
 
-  # Deploy main application job
-  deploy_main_app:
+  # Deploy container applications
+  deploy_container_apps:
     name: Deploy main application
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name != 'pull_request'
+    #if: github.event_name != 'pull_request'
     permissions:
       id-token: write
       contents: read
@@ -122,15 +122,24 @@ jobs:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      # Deploy Container App
-      - name: Deploy Container App
+      # Deploy API app
+      - name: Deploy API app
         uses: azure/container-apps-deploy-action@v1
         with:
-          appSourcePath: ${{ github.workspace }}
-          dockerfilePath: Dockerfile.main
+          dockerfilePath: Dockerfile.api
           acrName: ${{ vars.ACR_NAME }}
-          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-main:${{ github.sha }}
-          containerAppName: ${{ vars.MAIN_APP_NAME }}
+          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ github.sha }}
+          containerAppName: adoptrix-demo-api-ca
+          resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
+
+      # Deploy web app
+      - name: Deploy web app
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          dockerfilePath: Dockerfile.web
+          acrName: ${{ vars.ACR_NAME }}
+          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-web:${{ github.sha }}
+          containerAppName: adoptrix-demo-web-ca
           resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
 
   # Deploy jobs application
