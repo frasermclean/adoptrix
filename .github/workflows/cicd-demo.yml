@@ -84,7 +84,7 @@ jobs:
 
       # Publish jobs project
       - name: Publish jobs project
-        if: github.event_name != 'pull_request'
+        #if: github.event_name != 'pull_request'
         run: >-
           dotnet publish src/Adoptrix.Jobs
           --no-build
@@ -93,7 +93,7 @@ jobs:
 
       # Upload jobs artifact
       - name: Upload jobs artifact
-        if: github.event_name != 'pull_request'
+        #if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.JOBS_ARTIFACT_NAME }}
