@@ -12,7 +12,7 @@ services:
       - 1433:1433
     volumes:
       - ./scripts:/usr/config:ro
-      - adoptrix-sql-server-data:/var/opt/mssql
+      - sql-server-data:/var/opt/mssql
 
   # Azure Storage Emulator
   azurite:
@@ -22,10 +22,10 @@ services:
       - 10001:10001
       - 10002:10002
     volumes:
-      - adoptrix-storage-data:/data
+      - storage-data:/data
 
 volumes:
-  adoptrix-sql-server-data:
-    external: true
-  adoptrix-storage-data:
-    external: true
+  sql-server-data:
+    driver: local
+  storage-data:
+    driver: local
