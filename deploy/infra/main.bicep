@@ -44,11 +44,17 @@ param allowedExternalIpAddresses array
 @description('Container registry login server')
 param containerRegistryName string
 
-@description('Repository of the main container image')
+@description('Repository of the API container image')
 param apiImageRepository string
 
-@description('Tag of the main container image')
+@description('Tag of the API container image')
 param apiImageTag string
+
+@description('Repository of the web container image')
+param webImageRepository string
+
+@description('Tag of the web container image')
+param webImageTag string
 
 var tags = {
   workload: workload
@@ -89,6 +95,7 @@ module appInsightsModule 'appInsights.bicep' = {
     appEnv: appEnv
     location: location
     tags: tags
+    disableLocalAuth: true
     actionGroupShortName: actionGroupShortName
   }
 }
@@ -105,6 +112,8 @@ module containerAppsModule './containerApps.bicep' = {
     containerRegistryName: containerRegistryName
     apiImageRepository: apiImageRepository
     apiImageTag: apiImageTag
+    webImageRepository: webImageRepository
+    webImageTag: webImageTag
     logAnalyticsWorkspaceId: appInsightsModule.outputs.logAnalyticsWorkspaceId
     applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
     appConfigurationEndpoint: appConfigurationEndpoint
@@ -149,6 +158,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' =
     params: {
       adminGroupObjectId: adminGroupObjectId
       apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
+      webAppPrincipalId: containerAppsModule.outputs.webAppPrincipalId
       jobsAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
       storageAccountName: storageModule.outputs.accountName
       applicationInsightsName: appInsightsModule.outputs.applicationInsightsName
@@ -164,6 +174,7 @@ module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' =
       appConfigurationName: appConfigurationName
       configurationDataReaders: [
         containerAppsModule.outputs.apiAppPrincipalId
+        containerAppsModule.outputs.webAppPrincipalId
         jobsAppModule.outputs.identityPrincipalId
       ]
     }

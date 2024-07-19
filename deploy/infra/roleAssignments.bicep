@@ -6,6 +6,9 @@ param adminGroupObjectId string
 @description('Prinicpal id of the API application managed identity')
 param apiAppPrincipalId string
 
+@description('Prinicpal id of the API application managed identity')
+param webAppPrincipalId string
+
 @description('Prinicpal id of the jobs application managed identity')
 param jobsAppIdentityPrincipalId string
 
@@ -74,6 +77,10 @@ var applicationInsightsRoleData = [
   {
     roleId: roleIds.monitoringMetricsPublisher
     principalId: apiAppPrincipalId
+  }
+  {
+    roleId: roleIds.monitoringMetricsPublisher
+    principalId: webAppPrincipalId
   }
   {
     roleId: roleIds.monitoringMetricsPublisher

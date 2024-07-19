@@ -35,6 +35,12 @@ param apiImageRepository string
 @description('Tag of the API container image')
 param apiImageTag string
 
+@description('Repository of the web container image')
+param webImageRepository string
+
+@description('Tag of the web container image')
+param webImageTag string
+
 @description('Flag to create a managed certificates for the container apps. Set to true on first run.')
 param shouldBindManagedCertificate bool = false
 
@@ -45,6 +51,7 @@ var tags = {
 
 var containerRegistryLoginServer = '${containerRegistryName}${environment().suffixes.acrLoginServer}'
 var apiContainerAppName = '${workload}-${appEnv}-api-ca'
+var webContainerAppName = '${workload}-${appEnv}-web-ca'
 
 // shared user assigned managed identity
 resource sharedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
@@ -63,16 +70,25 @@ resource appsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
     }
   }
 
-  resource apiCertificate 'managedCertificates' =
-    if (!shouldBindManagedCertificate) {
-      name: 'api-cert'
-      location: location
-      tags: tags
-      properties: {
-        subjectName: dnsRecordsModule.outputs.apiAppFqdn
-        domainControlValidation: 'CNAME'
-      }
+  resource apiCertificate 'managedCertificates' = if (!shouldBindManagedCertificate) {
+    name: 'api-cert'
+    location: location
+    tags: tags
+    properties: {
+      subjectName: dnsRecordsModule.outputs.apiAppFqdn
+      domainControlValidation: 'CNAME'
     }
+  }
+
+  resource webCertificate 'managedCertificates' = if (!shouldBindManagedCertificate) {
+    name: 'web-cert'
+    location: location
+    tags: tags
+    properties: {
+      subjectName: dnsRecordsModule.outputs.webAppFqdn
+      domainControlValidation: 'CNAME'
+    }
+  }
 }
 
 // container apps environment diagnostic settings
@@ -101,6 +117,7 @@ module dnsRecordsModule 'dnsRecords.bicep' = {
     appEnv: appEnv
     domainName: domainName
     apiAppDefaultHostname: '${apiContainerAppName}.${appsEnvironment.properties.defaultDomain}'
+    webAppDefaultHostname: '${webContainerAppName}.${appsEnvironment.properties.defaultDomain}'
     customDomainVerificationId: appsEnvironment.properties.customDomainConfiguration.customDomainVerificationId
   }
 }
@@ -179,8 +196,93 @@ resource apiContainerApp 'Microsoft.App/containerApps@2024-03-01' = {
   }
 }
 
+// web container app
+resource webContainerApp 'Microsoft.App/containerApps@2024-03-01' = {
+  name: webContainerAppName
+  location: location
+  tags: union(tags, { appName: 'web' })
+  identity: {
+    type: 'SystemAssigned,UserAssigned'
+    userAssignedIdentities: {
+      '${sharedIdentity.id}': {}
+    }
+  }
+  properties: {
+    environmentId: appsEnvironment.id
+    configuration: {
+      activeRevisionsMode: 'Single'
+      maxInactiveRevisions: 3
+      ingress: {
+        external: true
+        targetPort: 8080
+        allowInsecure: false
+        traffic: [
+          {
+            latestRevision: true
+            weight: 100
+          }
+        ]
+        customDomains: [
+          {
+            name: dnsRecordsModule.outputs.webAppFqdn
+            bindingType: shouldBindManagedCertificate ? 'Disabled' : 'SniEnabled'
+            certificateId: shouldBindManagedCertificate ? null : appsEnvironment::webCertificate.id
+          }
+        ]
+      }
+      registries: [
+        {
+          server: containerRegistryLoginServer
+          identity: sharedIdentity.id
+        }
+      ]
+    }
+    template: {
+      containers: [
+        {
+          name: webImageRepository
+          image: '${containerRegistryLoginServer}/${webImageRepository}:${webImageTag}'
+          resources: {
+            cpu: json('0.5')
+            memory: '1Gi'
+          }
+          env: [
+            {
+              name: 'ASPNETCORE_ENVIRONMENT'
+              value: appEnv
+            }
+            {
+              name: 'APP_CONFIG_ENDPOINT'
+              value: appConfigurationEndpoint
+            }
+            {
+              name: 'OTEL_SERVICE_NAME'
+              value: webContainerAppName
+            }
+            {
+              name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+              value: applicationInsightsConnectionString
+            }
+            {
+              name: 'services__adoptrix-api__http__0'
+              value: 'http://${apiContainerAppName}'
+            }
+            {
+              name: 'services__adoptrix-api__https__0'
+              value: 'https://${apiContainerAppName}'
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+
 @description('The name of the API container app')
 output apiAppName string = apiContainerApp.name
 
 @description('The principal ID of the API container app managed identity')
 output apiAppPrincipalId string = apiContainerApp.identity.principalId
+
+@description('The principal ID of the web container app managed identity')
+output webAppPrincipalId string = webContainerApp.identity.principalId

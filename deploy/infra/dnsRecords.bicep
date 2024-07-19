@@ -7,6 +7,7 @@ param appEnv string
 param domainName string
 
 param apiAppDefaultHostname string = ''
+param webAppDefaultHostname string = ''
 
 @description('Custom domain verification ID')
 param customDomainVerificationId string = ''
@@ -35,7 +36,32 @@ resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
       ]
     }
   }
+
+  // web app CNAME record
+  resource webAppCnameRecord 'CNAME' = if (!empty(apiAppDefaultHostname)) {
+    name: appEnv
+    properties: {
+      TTL: 3600
+      CNAMERecord: {
+        cname: webAppDefaultHostname
+      }
+    }
+  }
+
+  // API app TXT verification record
+  resource webAppTxtRecord 'TXT' = if(!empty(customDomainVerificationId)) {
+    name: 'asuid.${appEnv}'
+    properties: {
+      TTL: 3600
+      TXTRecords: [
+        { value: [ customDomainVerificationId ] }
+      ]
+    }
+  }
 }
 
 @description('Fully qualified domain name of the API application')
 output apiAppFqdn string = '${dnsZone::apiAppCnameRecord.name}.${domainName}'
+
+@description('Fully qualified domain name of the web application')
+output webAppFqdn string = '${dnsZone::webAppCnameRecord.name}.${domainName}'
