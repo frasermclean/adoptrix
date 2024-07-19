@@ -19,7 +19,9 @@ public static class Program
             .WithReference(appInsights);
 
         builder.AddProject<Projects.Adoptrix_Initializer>("initializer")
-            .WithReference(database);
+            .WithReference(database)
+            .WithReference(blobStorage)
+            .WithReference(queueStorage);
 
         builder.AddProject<Projects.Adoptrix_Web>("adoptrix-web")
             .WithExternalHttpEndpoints()
@@ -36,9 +38,7 @@ public static class Program
         var sqlServerPassword = builder.AddParameter("sql-server-password");
 
         database = builder.AddSqlServer("sql-server", sqlServerPassword)
-            .WithBindMount("../../deps/scripts", "/usr/config")
             .WithDataVolume("adoptrix-sql-server-data")
-            .WithEntrypoint("/usr/config/entrypoint.sh")
             .AddDatabase("database", "adoptrix");
 
         return builder;

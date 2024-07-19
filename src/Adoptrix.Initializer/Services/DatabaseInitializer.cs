@@ -8,10 +8,18 @@ public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, AdoptrixDb
 {
     public async Task EnsureCreatedAsync(CancellationToken cancellationToken = default)
     {
-        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+        var wasCreated = await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+        if (wasCreated)
+        {
+            logger.LogInformation("New database created");
+            return;
+        }
+
+        logger.LogInformation("Database already exists, will attempt to apply migrations");
+        await ApplyMigrationsAsync(cancellationToken);
     }
 
-    public async Task ApplyMigrationsAsync(CancellationToken cancellationToken = default)
+    private async Task ApplyMigrationsAsync(CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Applying migrations");
 
