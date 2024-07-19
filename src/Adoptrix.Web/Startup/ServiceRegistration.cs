@@ -27,7 +27,7 @@ public static class ServiceRegistration
     private static void AddApiClients(this IServiceCollection services, IConfiguration configuration)
     {
         const string apiClientName = "api";
-        services.AddHttpClient(apiClientName, client => client.BaseAddress = new Uri(configuration["ApiEndpoint"]!));
+        services.AddHttpClient(apiClientName, client => client.BaseAddress = new Uri("http://adoptrix-api"));
         services.AddHttpClient<IAnimalsClient, AnimalsClient>(apiClientName);
         services.AddHttpClient<IBreedsClient, BreedsClient>(apiClientName);
         services.AddHttpClient<ISpeciesClient, SpeciesClient>(apiClientName);
