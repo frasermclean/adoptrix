@@ -11,10 +11,10 @@ public static class SearchBreedsQueryExtensions
 
         if (request.SpeciesId.HasValue)
         {
-            builder.Add("speciesId", request.SpeciesId.ToString());
+            builder.Add("speciesId", request.SpeciesId.ToString()!);
         }
 
-        if (request.WithAnimals.HasValue)
+        if (request.WithAnimals.HasValue && request.WithAnimals.Value)
         {
             builder.Add("withAnimals", "true");
         }
