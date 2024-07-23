@@ -1,7 +1,5 @@
 ﻿using Adoptrix.Initializer.Services;
 using Adoptrix.Persistence.Services;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
 using Azure.Storage.Queues;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

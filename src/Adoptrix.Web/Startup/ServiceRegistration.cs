@@ -17,9 +17,8 @@ public static class ServiceRegistration
     {
         builder.AddServiceDefaults();
 
-        builder.AddMicrosoftIdentityPlatform();
-
-        builder.Services.AddMudServices()
+        builder.Services.AddMicrosoftIdentityPlatform(builder.Configuration)
+            .AddMudServices()
             .AddSingleton<AppNameProvider>()
             .AddSingleton<ThemeProvider>()
             .AddApiClients();
@@ -30,18 +29,18 @@ public static class ServiceRegistration
         return builder;
     }
 
-    private static WebApplicationBuilder AddMicrosoftIdentityPlatform(this WebApplicationBuilder builder)
+    private static IServiceCollection AddMicrosoftIdentityPlatform(this IServiceCollection services, IConfiguration configuration)
     {
         // ensure claims are mapped correctly
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
-        builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApp(builder.Configuration, "Authentication");
+        services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApp(configuration, "Authentication");
 
-        builder.Services.AddControllersWithViews()
+        services.AddControllersWithViews()
             .AddMicrosoftIdentityUI();
 
-        return builder;
+        return services;
     }
 
     private static void AddApiClients(this IServiceCollection services)

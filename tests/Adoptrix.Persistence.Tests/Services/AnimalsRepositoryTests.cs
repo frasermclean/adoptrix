@@ -27,6 +27,9 @@ public class AnimalsRepositoryTests
 
         // act
         var matches = await animalsRepository.SearchAsync(request);
+
+        // assert
+        matches.Should().NotBeEmpty();
     }
 
     [Fact]
