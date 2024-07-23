@@ -22,7 +22,7 @@ public static class ServiceRegistration
         builder.Services.AddMudServices()
             .AddSingleton<AppNameProvider>()
             .AddSingleton<ThemeProvider>()
-            .AddApiClients(builder.Configuration);
+            .AddApiClients();
 
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
@@ -44,7 +44,7 @@ public static class ServiceRegistration
         return builder;
     }
 
-    private static void AddApiClients(this IServiceCollection services, IConfiguration configuration)
+    private static void AddApiClients(this IServiceCollection services)
     {
         const string apiClientName = "api";
         services.AddHttpClient(apiClientName, client => client.BaseAddress = new Uri("http://adoptrix-api"));
