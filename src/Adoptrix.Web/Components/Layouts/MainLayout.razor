@@ -2,6 +2,7 @@
 @inject AppNameProvider AppNameProvider
 @inject ThemeProvider ThemeProvider
 
+<MudPopoverProvider/>
 <MudThemeProvider Theme="@ThemeProvider.Theme" @ref="mudThemeProvider" @bind-IsDarkMode="@isDarkMode"/>
 <MudLayout>
     <MudAppBar Elevation="1">
