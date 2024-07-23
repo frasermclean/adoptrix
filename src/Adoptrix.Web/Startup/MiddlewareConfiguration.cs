@@ -28,6 +28,7 @@ public static class MiddlewareConfiguration
         app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode();
 
+        app.MapControllers();
         app.MapDefaultEndpoints();
 
         return app;

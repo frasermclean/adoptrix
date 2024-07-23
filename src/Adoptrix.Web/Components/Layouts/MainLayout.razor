@@ -8,7 +8,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle"/>
         <MudText Typo="Typo.h5" Class="ml-3">@AppNameProvider.AppName</MudText>
         <MudSpacer/>
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End"/>
+        <UserMenu />
     </MudAppBar>
     <MudDrawer @bind-Open="isDrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu/>
