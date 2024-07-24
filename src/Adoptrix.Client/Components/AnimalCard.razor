@@ -1,4 +1,5 @@
 ﻿@using Adoptrix.Contracts.Responses
+@inject ImageUrlResolver ImageUrlResolver
 
 <MudCard Style="width: 240px">
     <MudCardHeader>
@@ -10,7 +11,7 @@
             <MudText Typo="Typo.subtitle1">@Match.BreedName</MudText>
         </CardHeaderContent>
     </MudCardHeader>
-    @* <MudCardMedia Height="240" Image="@(Match.Image?.PreviewUrl)"/> *@
+    <MudCardMedia Height="240" Image="@(ImageUrlResolver.GetPreviewUrl(Match.Id, Match.Image.Id))"/>
     <MudCardActions>
         <MudButton Href="@($"/animals/{Match.Id}")">View Details</MudButton>
         <MudSpacer></MudSpacer>

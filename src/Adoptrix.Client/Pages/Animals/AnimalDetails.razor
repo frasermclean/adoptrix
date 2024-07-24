@@ -1,6 +1,7 @@
 @page "/animals/{animalId:guid}"
 @using Adoptrix.Contracts.Responses
 @inject IAnimalsClient AnimalsClient;
+@inject ImageUrlResolver ImageUrlResolver;
 
 @if (animal is null)
 {
@@ -21,7 +22,7 @@ else
                 <div class="d-flex gap-2 flex-wrap justify-center">
                     @foreach (var image in animal.Images)
                     {
-                        @* <MudImage Src="@image.ThumbnailUrl" Width="160" Height="160" Class="rounded-lg"/> *@
+                        <MudImage Src="@(ImageUrlResolver.GetThumbUrl(animal.Id, image.Id))" Width="160" Height="160" Class="rounded-lg"/>
                     }
                 </div>
             </DetailsBlock>

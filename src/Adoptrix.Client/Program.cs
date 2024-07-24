@@ -31,7 +31,8 @@ public static class Program
 
         services.AddMudServices()
             .AddApiClients(builder.Configuration["AdoptrixApi:BaseUrl"]!)
-            .AddSingleton<ThemeProvider>();
+            .AddSingleton<ThemeProvider>()
+            .AddSingleton(new ImageUrlResolver(builder.Configuration["BlobStorage:AnimalsImagesBaseUrl"]!));
 
         return builder;
     }
