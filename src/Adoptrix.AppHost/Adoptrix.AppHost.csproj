@@ -18,7 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Adoptrix.Api\Adoptrix.Api.csproj" />
     <ProjectReference Include="..\Adoptrix.Initializer\Adoptrix.Initializer.csproj" />
-    <ProjectReference Include="..\Adoptrix.Web\Adoptrix.Web.csproj" />
   </ItemGroup>  
 
 </Project>

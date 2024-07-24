@@ -16,5 +16,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Adoptrix.Contracts\Adoptrix.Contracts.csproj" />
   </ItemGroup>
-
+  
 </Project>

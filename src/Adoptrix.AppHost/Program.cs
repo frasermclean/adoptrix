@@ -23,11 +23,6 @@ public static class Program
             .WithReference(blobStorage)
             .WithReference(queueStorage);
 
-        builder.AddProject<Projects.Adoptrix_Web>("adoptrix-web")
-            .WithExternalHttpEndpoints()
-            .WithReference(api)
-            .WithReference(appInsights);
-
         builder.Build().Run();
     }
 

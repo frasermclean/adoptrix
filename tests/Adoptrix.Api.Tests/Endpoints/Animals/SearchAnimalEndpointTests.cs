@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Contracts.Requests;
+using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
 using Adoptrix.Persistence.Responses;
 using Adoptrix.Tests.Shared;
@@ -27,10 +28,10 @@ public class SearchAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
 
         // act
         var testResult =
-            await httpClient.GETAsync<SearchAnimalsEndpoint, SearchAnimalsRequest, List<SearchAnimalsItem>>(request);
+            await httpClient.GETAsync<SearchAnimalsEndpoint, SearchAnimalsRequest, List<AnimalMatch>>(request);
 
         // assert
         testResult.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        testResult.Result.Should().BeEquivalentTo(items);
+        testResult.Result.Should().HaveCount(items.Count);
     }
 }

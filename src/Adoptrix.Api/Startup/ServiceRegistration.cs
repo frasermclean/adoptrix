@@ -31,6 +31,16 @@ public static class ServiceRegistration
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         });
 
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policyBuilder => policyBuilder
+                    .WithOrigins(["http://localhost:5157", "https://localhost:7157"])
+                    .AllowAnyMethod());
+            });
+        }
+
         return builder;
     }
 

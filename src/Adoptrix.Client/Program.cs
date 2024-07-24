@@ -29,13 +29,22 @@ public static class Program
     {
         var services = builder.Services;
 
-        services.AddMudServices();
-        services.AddSingleton<ThemeProvider>();
-
-        // add api clients
-        var apiBaseUrl = builder.Configuration["AdoptrixApi:BaseUrl"]!;
-        services.AddHttpClient("ApiClient", client => client.BaseAddress = new Uri(apiBaseUrl));
+        services.AddMudServices()
+            .AddApiClients(builder.Configuration["AdoptrixApi:BaseUrl"]!)
+            .AddSingleton<ThemeProvider>();
 
         return builder;
+    }
+
+    private static IServiceCollection AddApiClients(this IServiceCollection services, string baseUrl)
+    {
+        const string apiClientName = "ApiClient";
+
+        services.AddHttpClient(apiClientName, client => client.BaseAddress = new Uri(baseUrl));
+        services.AddHttpClient<IAnimalsClient, AnimalsClient>(apiClientName);
+        services.AddHttpClient<IBreedsClient, BreedsClient>(apiClientName);
+        services.AddHttpClient<ISpeciesClient, SpeciesClient>(apiClientName);
+
+        return services;
     }
 }

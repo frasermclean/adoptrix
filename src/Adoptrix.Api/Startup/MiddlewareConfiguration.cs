@@ -13,6 +13,11 @@ public static class MiddlewareConfiguration
         app.UseHttpsRedirection();
         app.UseHsts();
 
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseCors();
+        }
+
         app.UseFastEndpoints(config =>
         {
             config.Endpoints.RoutePrefix = "api";
