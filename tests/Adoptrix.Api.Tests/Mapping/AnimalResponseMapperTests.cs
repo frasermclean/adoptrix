@@ -3,7 +3,7 @@ using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Api.Tests.Mapping;
 
-public class AnimalMapperTests
+public class AnimalResponseMapperTests
 {
     [Fact]
     public void MappingAnimalToAnimalResponse_Should_ReturnExpectedValues()
@@ -22,7 +22,7 @@ public class AnimalMapperTests
         response.SpeciesName.Should().Be(animal.Breed.Species.Name);
         response.BreedId.Should().Be(animal.Breed.Id);
         response.BreedName.Should().Be(animal.Breed.Name);
-        response.Sex.Should().Be(animal.Sex);
+        response.Sex.Should().Be(animal.Sex.ToString());
         response.DateOfBirth.Should().Be(animal.DateOfBirth);
         response.CreatedAt.Should().Be(animal.CreatedAt.ToUniversalTime());
         response.Images.Should().HaveCount(animal.Images.Count).And.AllSatisfy(imageResponse =>

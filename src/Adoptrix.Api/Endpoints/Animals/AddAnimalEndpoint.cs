@@ -1,9 +1,9 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Contracts.Responses;
+using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
-using AnimalMapper = Adoptrix.Api.Mapping.AnimalMapper;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
@@ -26,7 +26,7 @@ public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepo
 
         Logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
 
-        return TypedResults.Created($"/api/animals/{animal.Id}", AnimalMapper.ToResponse(animal));
+        return TypedResults.Created($"/api/animals/{animal.Id}", AnimalResponseMapper.ToResponse(animal));
     }
 
     private static Animal MapToAnimal(AddAnimalRequest request, Breed breed) => new()

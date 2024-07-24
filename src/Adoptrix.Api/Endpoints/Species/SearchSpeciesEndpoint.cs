@@ -1,5 +1,5 @@
-﻿using Adoptrix.Core.Contracts.Requests.Species;
-using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Contracts.Requests;
+using Adoptrix.Persistence.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 namespace Adoptrix.Api.Endpoints.Species;
 
 [HttpGet("species"), AllowAnonymous]
-public class SearchSpeciesEndpoint(ISpeciesRepository speciesRepository) : Endpoint<SearchSpeciesRequest, IEnumerable<SpeciesMatch>>
+public class SearchSpeciesEndpoint(ISpeciesRepository speciesRepository) : Endpoint<SearchSpeciesRequest, IEnumerable<SearchSpeciesItem>>
 {
-    public override async Task<IEnumerable<SpeciesMatch>> ExecuteAsync(SearchSpeciesRequest request,
+    public override async Task<IEnumerable<SearchSpeciesItem>> ExecuteAsync(SearchSpeciesRequest request,
         CancellationToken cancellationToken)
     {
-        return await speciesRepository.SearchAsync(request, cancellationToken);
+        return await speciesRepository.SearchAsync(request.WithAnimals, cancellationToken);
     }
 }

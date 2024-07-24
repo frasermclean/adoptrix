@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Species;
-using Adoptrix.Core.Contracts.Requests.Species;
-using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Contracts.Requests;
+using Adoptrix.Persistence.Responses;
 using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Species;
@@ -12,17 +12,16 @@ public class SearchSpeciesEndpointTests(ApiFixture fixture) : TestBase<ApiFixtur
 
     [Theory, AdoptrixAutoData]
     public async Task SearchSpecies_WithValidRequest_ShouldReturnOk(SearchSpeciesRequest request,
-        List<SpeciesMatch> matchesToReturn)
+        List<SearchSpeciesItem> matchesToReturn)
     {
         // arrange
         fixture.SpeciesRepositoryMock
-            .Setup(repository =>
-                repository.SearchAsync(It.IsAny<SearchSpeciesRequest>(), It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.SearchAsync(It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(matchesToReturn);
 
         // act
         var testResult =
-            await httpClient.GETAsync<SearchSpeciesEndpoint, SearchSpeciesRequest, List<SpeciesMatch>>(request);
+            await httpClient.GETAsync<SearchSpeciesEndpoint, SearchSpeciesRequest, List<SearchSpeciesItem>>(request);
 
         // assert
         testResult.Response.StatusCode.Should().Be(HttpStatusCode.OK);

@@ -3,7 +3,7 @@ using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Api.Tests.Mapping;
 
-public class SpeciesMapperTests
+public class SpeciesResponseMapperTests
 {
     [Fact]
     public void MappingSpeciesToSpeciesResponse_Should_ReturnExpectedValues()

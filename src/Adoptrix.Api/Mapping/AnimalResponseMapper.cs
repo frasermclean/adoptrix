@@ -1,12 +1,12 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Contracts.Responses;
+using Adoptrix.Core;
 using Riok.Mapperly.Abstractions;
 
 namespace Adoptrix.Api.Mapping;
 
 [Mapper]
-[UseStaticMapper(typeof(AnimalImageMapper))]
-public static partial class AnimalMapper
+[UseStaticMapper(typeof(AnimalImageResponseMapper))]
+public static partial class AnimalResponseMapper
 {
     [MapProperty("Breed.Species.Id", "SpeciesId")]
     [MapProperty("Breed.Species.Name", "SpeciesName")]

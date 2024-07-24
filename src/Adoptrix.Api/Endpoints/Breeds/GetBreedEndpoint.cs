@@ -1,9 +1,9 @@
-﻿using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
-using BreedMapper = Adoptrix.Api.Mapping.BreedMapper;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
@@ -17,7 +17,7 @@ public class GetBreedEndpoint(IBreedsRepository breedsRepository)
         var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
 
         return breed is not null
-            ? TypedResults.Ok(BreedMapper.ToResponse(breed))
+            ? TypedResults.Ok(BreedResponseMapper.ToResponse(breed))
             : TypedResults.NotFound();
     }
 }

@@ -1,9 +1,9 @@
-﻿using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
-using SpeciesMapper = Adoptrix.Api.Mapping.SpeciesMapper;
 
 namespace Adoptrix.Api.Endpoints.Species;
 
@@ -17,7 +17,7 @@ public class GetSpeciesEndpoint(ISpeciesRepository speciesRepository)
         var species = await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken);
 
         return species is not null
-            ? TypedResults.Ok(SpeciesMapper.ToResponse(species))
+            ? TypedResults.Ok(SpeciesResponseMapper.ToResponse(species))
             : TypedResults.NotFound();
     }
 }

@@ -1,5 +1,4 @@
-﻿using Adoptrix.Core.Contracts.Requests.Animals;
-using Adoptrix.Initializer;
+﻿using Adoptrix.Initializer;
 using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
@@ -23,10 +22,10 @@ public class AnimalsRepositoryTests
     public async Task SearchAsync_WithValidRequest_ShouldPass()
     {
         // arrange
-        var request = new SearchAnimalsRequest { Name = "Alberto" };
+        const string name = "Alberto";
 
         // act
-        var matches = await animalsRepository.SearchAsync(request);
+        var matches = await animalsRepository.SearchAsync(name);
 
         // assert
         matches.Should().NotBeEmpty();

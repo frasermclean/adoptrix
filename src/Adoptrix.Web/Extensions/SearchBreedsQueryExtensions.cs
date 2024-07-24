@@ -1,4 +1,4 @@
-﻿using Adoptrix.Core.Contracts.Requests.Breeds;
+﻿using Adoptrix.Contracts.Requests;
 using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Adoptrix.Web.Extensions;

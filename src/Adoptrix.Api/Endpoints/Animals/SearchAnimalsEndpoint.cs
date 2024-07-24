@@ -1,7 +1,7 @@
-﻿using Adoptrix.Api.Extensions;
-using Adoptrix.Core.Contracts.Requests.Animals;
-using Adoptrix.Core.Contracts.Responses;
-using Adoptrix.Persistence;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Contracts.Requests;
+using Adoptrix.Contracts.Responses;
+using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -9,21 +9,19 @@ using Microsoft.AspNetCore.Authorization;
 namespace Adoptrix.Api.Endpoints.Animals;
 
 [HttpGet("animals"), AllowAnonymous]
-public class SearchAnimalsEndpoint(
-    IAnimalsRepository animalsRepository,
-    [FromKeyedServices(BlobContainerNames.AnimalImages)] IBlobContainerManager blobContainerManager)
+public class SearchAnimalsEndpoint(IAnimalsRepository animalsRepository)
     : Endpoint<SearchAnimalsRequest, IEnumerable<AnimalMatch>>
 {
     public override async Task<IEnumerable<AnimalMatch>> ExecuteAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken)
     {
-        var matches = await animalsRepository.SearchAsync(request, cancellationToken);
+        Sex? sex = Enum.TryParse<Sex>(request.Sex, true, out var value)
+            ? value
+            : null;
 
-        foreach (var match in matches)
-        {
-            match.Image?.SetImageUrls(match.Id, blobContainerManager.ContainerUri);
-        }
+        var items = await animalsRepository.SearchAsync(request.Name, request.BreedId, request.SpeciesId, sex,
+            request.Limit, cancellationToken);
 
-        return matches;
+        return items.Select(item => item.ToMatch());
     }
 }

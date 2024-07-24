@@ -1,4 +1,4 @@
-﻿using Adoptrix.Core.Contracts.Requests.Species;
+﻿using Adoptrix.Contracts.Requests;
 using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Adoptrix.Web.Extensions;
@@ -9,7 +9,7 @@ public static class SearchSpeciesQueryExtensions
     {
         var builder = new QueryBuilder();
 
-        if (request.WithAnimals)
+        if (request.WithAnimals.HasValue && request.WithAnimals.Value)
         {
             builder.Add("withAnimals", "true");
         }

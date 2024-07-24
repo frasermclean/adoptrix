@@ -1,5 +1,5 @@
 ﻿using System;
-using Adoptrix.Core.Contracts.Requests.Breeds;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Web.Extensions;
 using FluentAssertions;
 using Xunit;

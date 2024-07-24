@@ -3,7 +3,7 @@ using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Api.Tests.Mapping;
 
-public class AnimalImageMapperTests
+public class AnimalImageResponseMapperTests
 {
     [Fact]
     public void Mapping_ImageInformation_To_ImageResponse_Should_Return_ExpectedValues()

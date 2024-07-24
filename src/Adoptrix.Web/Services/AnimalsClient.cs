@@ -1,5 +1,5 @@
-﻿using Adoptrix.Core.Contracts.Requests.Animals;
-using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Contracts.Requests;
+using Adoptrix.Contracts.Responses;
 using Adoptrix.Web.Extensions;
 
 namespace Adoptrix.Web.Services;

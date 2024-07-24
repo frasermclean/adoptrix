@@ -1,11 +1,11 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Contracts.Responses;
+using Adoptrix.Core;
 using Adoptrix.Core.Events;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
-using AnimalMapper = Adoptrix.Api.Mapping.AnimalMapper;
 
 namespace Adoptrix.Api.Endpoints.Animals.Images;
 
@@ -41,7 +41,7 @@ public class AddAnimalImagesEndpoint(
             await eventPublisher.PublishAsync(@event, cancellationToken);
         }
 
-        return TypedResults.Ok(AnimalMapper.ToResponse(animal));
+        return TypedResults.Ok(AnimalResponseMapper.ToResponse(animal));
     }
 
     private async Task<List<AnimalImage>> UploadOriginalsAsync(Guid animalId, Guid userId,

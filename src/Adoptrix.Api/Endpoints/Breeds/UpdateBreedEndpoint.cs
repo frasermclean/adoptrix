@@ -1,8 +1,8 @@
-﻿using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
-using BreedMapper = Adoptrix.Api.Mapping.BreedMapper;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
@@ -33,6 +33,6 @@ public class UpdateBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesRep
         breed.Species = species;
         await breedsRepository.SaveChangesAsync(cancellationToken);
 
-        return TypedResults.Ok(BreedMapper.ToResponse(breed));
+        return TypedResults.Ok(BreedResponseMapper.ToResponse(breed));
     }
 }

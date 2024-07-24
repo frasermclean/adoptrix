@@ -1,4 +1,4 @@
-﻿using Adoptrix.Core.Contracts.Requests.Animals;
+﻿using Adoptrix.Contracts.Requests;
 using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Adoptrix.Web.Extensions;
@@ -24,9 +24,9 @@ public static class SearchAnimalsRequestExtensions
             builder.Add("speciesId", request.SpeciesId.ToString()!);
         }
 
-        if (request.Sex.HasValue)
+        if (request.Sex is not null)
         {
-            builder.Add("sex", request.Sex.ToString()!);
+            builder.Add("sex", request.Sex);
         }
 
         if (request.Limit.HasValue)

@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Core.Contracts.Responses;
+﻿namespace Adoptrix.Contracts.Responses;
 
 public class SpeciesResponse
 {

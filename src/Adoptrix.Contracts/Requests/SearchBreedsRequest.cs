@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Core.Contracts.Requests.Breeds;
+﻿namespace Adoptrix.Contracts.Requests;
 
 public class SearchBreedsRequest
 {

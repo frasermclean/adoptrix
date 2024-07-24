@@ -3,7 +3,7 @@ using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Api.Tests.Mapping;
 
-public class BreedMapperTests
+public class BreedResponseMapperTests
 {
     [Fact]
     public void MappingBreedToBreedResponse_Should_ReturnExpectedValues()
