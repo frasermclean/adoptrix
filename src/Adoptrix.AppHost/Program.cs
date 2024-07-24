@@ -18,6 +18,9 @@ public static class Program
             .WithReference(queueStorage)
             .WithReference(appInsights);
 
+        builder.AddProject<Projects.Adoptrix_Client>("adoptrix-client")
+            .WithReference(api);
+
         builder.AddProject<Projects.Adoptrix_Initializer>("initializer")
             .WithReference(database)
             .WithReference(blobStorage)
