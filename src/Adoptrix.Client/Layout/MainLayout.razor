@@ -1,0 +1,38 @@
+﻿@inherits LayoutComponentBase
+@inject ThemeProvider ThemeProvider
+
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+<MudThemeProvider Theme="@ThemeProvider.Theme" @ref="mudThemeProvider" @bind-IsDarkMode="@isDarkMode"/>
+
+<MudLayout>
+    <AppBar MenuClick="DrawerToggle"/>
+    <MudDrawer @bind-Open="isDrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <NavMenu/>
+    </MudDrawer>
+    <MudMainContent Class="mt-16 pa-4">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool isDrawerOpen;
+    private bool isDarkMode;
+    private MudThemeProvider? mudThemeProvider;
+
+    private void DrawerToggle()
+    {
+        isDrawerOpen = !isDrawerOpen;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isDarkMode = await mudThemeProvider!.GetSystemPreference();
+            StateHasChanged();
+        }
+    }
+
+}
