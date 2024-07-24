@@ -6,5 +6,5 @@ public class AnimalMatch
     public required string Name { get; init; }
     public required string SpeciesName { get; init; }
     public required string BreedName { get; init; }
-    public required AnimalImageResponse Image { get; init; }
+    public AnimalImageResponse? Image { get; init; }
 }
