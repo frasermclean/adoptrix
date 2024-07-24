@@ -24,18 +24,28 @@ public static class ServiceRegistration
             .AddApiClients();
 
         builder.Services.AddRazorComponents()
-            .AddInteractiveServerComponents();
+            .AddInteractiveServerComponents()
+            .AddMicrosoftIdentityConsentHandler();
 
         return builder;
     }
 
-    private static IServiceCollection AddMicrosoftIdentityPlatform(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddMicrosoftIdentityPlatform(this IServiceCollection services,
+        IConfiguration configuration)
     {
         // ensure claims are mapped correctly
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
+        var initialScopes = new[]
+        {
+            "api://7e86487e-ac55-4988-8c1e-941d543cb376/.default"
+        };
+
         services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApp(configuration, "Authentication");
+            .AddMicrosoftIdentityWebApp(configuration, "Authentication")
+            .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
+            .AddDownstreamApi("AdoptrixApi", configuration.GetSection("AdoptrixApi"))
+            .AddInMemoryTokenCaches();
 
         services.AddControllersWithViews()
             .AddMicrosoftIdentityUI();
