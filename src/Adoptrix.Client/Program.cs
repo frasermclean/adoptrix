@@ -31,7 +31,10 @@ public static class Program
 
         services.AddMudServices();
         services.AddSingleton<ThemeProvider>();
-        services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+        // add api clients
+        var apiBaseUrl = builder.Configuration["AdoptrixApi:BaseUrl"]!;
+        services.AddHttpClient("ApiClient", client => client.BaseAddress = new Uri(apiBaseUrl));
 
         return builder;
     }
