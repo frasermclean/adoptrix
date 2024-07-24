@@ -29,6 +29,11 @@ public static class Program
     {
         var services = builder.Services;
 
+        services.AddMsalAuthentication(options =>
+        {
+            builder.Configuration.Bind("Authentication", options.ProviderOptions.Authentication);
+        });
+
         services.AddMudServices()
             .AddApiClients(builder.Configuration["AdoptrixApi:BaseUrl"]!)
             .AddSingleton<ThemeProvider>()

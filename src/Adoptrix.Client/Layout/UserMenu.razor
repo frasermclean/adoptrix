@@ -1,1 +1,26 @@
-﻿<MudButton Href="MicrosoftIdentity/Account/SignIn" Variant="Variant.Filled" Color="Color.Secondary">Sign In</MudButton>
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+    <Authorized>
+        <MudButton OnClick="NavigateToLogout" Variant="Variant.Filled" Color="Color.Secondary" EndIcon="@Icons.Material.Filled.Logout">Log Out</MudButton>
+    </Authorized>
+    <NotAuthorized>
+        <MudButton OnClick="NavigateToLogin" Variant="Variant.Filled" Color="Color.Secondary" EndIcon="@Icons.Material.Filled.Login">Log In</MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateToLogin("/authentication/login");
+    }
+
+    private void NavigateToLogout()
+    {
+        NavigationManager.NavigateToLogout("/authentication/logout");
+    }
+
+}
