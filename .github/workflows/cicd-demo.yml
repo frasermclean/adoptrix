@@ -17,7 +17,8 @@ on:
       - tests/**
 
 env:
-  JOBS_ARTIFACT_NAME: jobs
+  JOBS_ARTIFACT_NAME: jobs-${{ github.run_id }}
+  CLIENT_ARTIFACT_NAME: client-${{ github.run_id }}
 
 jobs:
   # Build, test and publish API job
@@ -27,6 +28,7 @@ jobs:
     env:
       BUILD_CONFIGURATION: Release
       JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/jobs
+      CLIENT_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/client
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
     permissions:
       checks: write
@@ -36,9 +38,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install .NET Aspire workload
-      - name: Install .NET Aspire workload
-        run: dotnet workload install aspire
+      # Install .NET workloads
+      - name: Install .NET workloads
+        run: dotnet workload install aspire wasm-tools
 
       # Restore NuGet packages
       - name: Restore packages
@@ -91,6 +93,15 @@ jobs:
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --output ${{ env.JOBS_PUBLISH_DIRECTORY }}
 
+      # Publish client project
+      - name: Publish client project
+        #if: github.event_name != 'pull_request'
+        run: >-
+          dotnet publish src/Adoptrix.Client
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --output ${{ env.CLIENT_PUBLISH_DIRECTORY }}
+
       # Upload jobs artifact
       - name: Upload jobs artifact
         if: github.event_name != 'pull_request'
@@ -98,6 +109,14 @@ jobs:
         with:
           name: ${{ env.JOBS_ARTIFACT_NAME }}
           path: ${{ env.JOBS_PUBLISH_DIRECTORY }}/*
+
+      # Upload client artifact
+      - name: Upload client artifact
+        #if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.CLIENT_ARTIFACT_NAME }}
+          path: ${{ env.CLIENT_PUBLISH_DIRECTORY }}/*
 
   # Deploy container applications
   deploy_container_apps:
@@ -131,17 +150,6 @@ jobs:
           acrName: ${{ vars.ACR_NAME }}
           imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-api:${{ github.sha }}
           containerAppName: adoptrix-demo-api-ca
-          resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
-
-      # Deploy web app
-      - name: Deploy web app
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          appSourcePath: ${{ github.workspace }}
-          dockerfilePath: Dockerfile.web
-          acrName: ${{ vars.ACR_NAME }}
-          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/adoptrix-web:${{ github.sha }}
-          containerAppName: adoptrix-demo-web-ca
           resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
 
   # Deploy jobs application
