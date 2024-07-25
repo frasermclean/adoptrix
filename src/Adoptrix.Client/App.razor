@@ -5,9 +5,7 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="typeof(MainLayout)">
                 <NotAuthorized>
-                    <LayoutView Layout="@typeof(MainLayout)">
-                        <p>You're not authorized to view this page.</p>
-                    </LayoutView>
+                    <AccessDenied />
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
