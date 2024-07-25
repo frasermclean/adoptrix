@@ -32,6 +32,7 @@ public static class Program
         services.AddMsalAuthentication(options =>
         {
             builder.Configuration.Bind("Authentication", options.ProviderOptions.Authentication);
+            options.ProviderOptions.Cache.CacheLocation = "localStorage";
             options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/User.Read");
         });
 
