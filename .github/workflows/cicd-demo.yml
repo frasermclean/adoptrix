@@ -207,7 +207,7 @@ jobs:
           action: upload
           production_branch: main
           azure_static_web_apps_api_token: ${{ secrets.CLIENT_DEPLOYMENT_TOKEN }}
-          app_location: ${{ steps.download-artifact.outputs.download-path }}/wwwroot
+          app_location: ${{ steps.download-artifact.outputs.download-path }}
           skip_app_build: true
           skip_api_build: true
 
