@@ -5,14 +5,14 @@ on:
     branches:
       - main
     paths:
-      - .github/workflows/cicd.yml
+      - .github/workflows/cicd-demo.yml
       - src/**
       - tests/**
   pull_request:
     branches:
       - main
     paths:
-      - .github/workflows/cicd.yml
+      - .github/workflows/cicd-demo.yml
       - src/**
       - tests/**
 
@@ -210,3 +210,12 @@ jobs:
           app_location: ${{ steps.download-artifact.outputs.download-path }}/wwwroot
           skip_app_build: true
           skip_api_build: true
+
+       # Remove the preview environment when the pull request is closed
+      - name: Remove preview environment
+        uses: Azure/static-web-apps-deploy@v1
+        if: github.event_name == 'pull_request' && github.event.action == 'closed'
+        with:
+          action: close
+          azure_static_web_apps_api_token: ${{ secrets.CLIENT_DEPLOYMENT_TOKEN }}
+          app_location: null # Unused in close pr step
