@@ -121,6 +121,7 @@ module containerAppsModule './containerApps.bicep' = {
     containerRegistryName: containerRegistryName
     apiImageRepository: apiImageRepository
     apiImageTag: apiImageTag
+    apiAllowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
     logAnalyticsWorkspaceId: appInsightsModule.outputs.logAnalyticsWorkspaceId
     applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
     appConfigurationEndpoint: appConfigurationEndpoint

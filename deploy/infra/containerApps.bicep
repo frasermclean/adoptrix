@@ -35,6 +35,9 @@ param apiImageRepository string
 @description('Tag of the API container image')
 param apiImageTag string
 
+@description('Allowed HTTP origins for the API container app')
+param apiAllowedOrigins array = []
+
 @description('Flag to create a managed certificates for the container apps. Set to true on first run.')
 param shouldBindManagedCertificate bool = false
 
@@ -137,6 +140,9 @@ resource apiContainerApp 'Microsoft.App/containerApps@2024-03-01' = {
             certificateId: shouldBindManagedCertificate ? null : appsEnvironment::apiCertificate.id
           }
         ]
+        corsPolicy: {
+          allowedOrigins: apiAllowedOrigins
+        }
       }
       registries: [
         {
