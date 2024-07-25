@@ -1,0 +1,38 @@
+﻿@page "/profile"
+@attribute [Authorize]
+@inject IGraphApiClient GraphApiClient
+
+<PageTitle>User Profile - Adoptrix</PageTitle>
+
+<MudText Typo="Typo.h3">User Profile</MudText>
+
+<ErrorBoundary>
+    <ChildContent>
+        @if (user is null)
+        {
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body1">First name: @user.FirstName</MudText>
+            <MudText Typo="Typo.body1">Last name: @user.LastName</MudText>
+            <MudText Typo="Typo.body1">Display name: @user.DisplayName</MudText>
+            <MudText Typo="Typo.body1">Email address: @user.EmailAddress</MudText>
+            <MudText Typo="Typo.body1">Identifier: @user.Id</MudText>
+        }
+    </ChildContent>
+    <ErrorContent>
+        <MudText>Could not load user profile at this time.</MudText>
+    </ErrorContent>
+</ErrorBoundary>
+
+
+@code {
+    private User? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await GraphApiClient.GetCurrentUserAsync();
+    }
+
+}

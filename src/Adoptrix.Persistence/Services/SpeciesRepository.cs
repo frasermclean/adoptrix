@@ -1,31 +1,30 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Requests.Species;
-using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Persistence.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Persistence.Services;
 
 public interface ISpeciesRepository
 {
-    Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesRequest request, CancellationToken cancellationToken = default);
+    Task<IEnumerable<SearchSpeciesItem>> SearchAsync(bool? withAnimals = null, CancellationToken cancellationToken = default);
     Task<Species?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Species?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
 }
 
 public class SpeciesRepository(AdoptrixDbContext dbContext): ISpeciesRepository
 {
-    public async Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesRequest request,
+    public async Task<IEnumerable<SearchSpeciesItem>> SearchAsync(bool? withAnimals,
         CancellationToken cancellationToken = default)
     {
         return await dbContext.Species
-            .Select(species => new SpeciesMatch
+            .Select(species => new SearchSpeciesItem
             {
-                SpeciesId = species.Id,
-                SpeciesName = species.Name,
+                Id = species.Id,
+                Name = species.Name,
                 BreedCount = species.Breeds.Count,
                 AnimalCount = species.Breeds.Count(breed => breed.Animals.Count > 0)
             })
-            .Where(match => !request.WithAnimals || match.AnimalCount > 0)
+            .Where(match => withAnimals == null || !withAnimals.Value || match.AnimalCount > 0)
             .OrderByDescending(match => match.AnimalCount)
             .ToListAsync(cancellationToken);
     }

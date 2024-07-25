@@ -18,15 +18,13 @@ public static class Program
             .WithReference(queueStorage)
             .WithReference(appInsights);
 
+        builder.AddProject<Projects.Adoptrix_Client>("adoptrix-client")
+            .WithReference(api);
+
         builder.AddProject<Projects.Adoptrix_Initializer>("initializer")
             .WithReference(database)
             .WithReference(blobStorage)
             .WithReference(queueStorage);
-
-        builder.AddProject<Projects.Adoptrix_Web>("adoptrix-web")
-            .WithExternalHttpEndpoints()
-            .WithReference(api)
-            .WithReference(appInsights);
 
         builder.Build().Run();
     }

@@ -1,5 +1,6 @@
-﻿using Adoptrix.Core.Contracts.Requests.Breeds;
-using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Contracts.Requests;
+using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +14,8 @@ public class SearchBreedsEndpoint(IBreedsRepository breedsRepository)
     public override async Task<IEnumerable<BreedMatch>> ExecuteAsync(SearchBreedsRequest request,
         CancellationToken cancellationToken)
     {
-        return await breedsRepository.SearchAsync(request, cancellationToken);
+        var items = await breedsRepository.SearchAsync(request.SpeciesId, request.WithAnimals, cancellationToken);
+
+        return items.Select(item => item.ToMatch());
     }
 }

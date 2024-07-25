@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
-using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Contracts.Responses;
 using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;

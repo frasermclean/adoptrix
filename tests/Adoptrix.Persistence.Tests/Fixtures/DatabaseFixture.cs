@@ -1,6 +1,7 @@
 ﻿using Adoptrix.Initializer;
 using Adoptrix.Initializer.Services;
 using Adoptrix.Persistence.Services;
+using DotNet.Testcontainers.Builders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.MsSql;
@@ -11,6 +12,8 @@ public class DatabaseFixture : IAsyncLifetime
 {
     private readonly MsSqlContainer container = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+        .WithWaitStrategy(Wait.ForUnixContainer() // needed until https://github.com/testcontainers/testcontainers-dotnet/issues/1220 is resolved
+            .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;"))
         .Build();
 
     private IServiceProvider? serviceProvider;

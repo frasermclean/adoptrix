@@ -1,8 +1,8 @@
-﻿using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
-using AnimalMapper = Adoptrix.Api.Mapping.AnimalMapper;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
@@ -38,6 +38,6 @@ public class UpdateAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsR
 
         Logger.LogInformation("Updated animal with ID: {AnimalId}", animal.Id);
 
-        return TypedResults.Ok(AnimalMapper.ToResponse(animal));
+        return TypedResults.Ok(AnimalResponseMapper.ToResponse(animal));
     }
 }

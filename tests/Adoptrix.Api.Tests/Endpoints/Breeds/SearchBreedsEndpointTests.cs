@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
-using Adoptrix.Core.Contracts.Requests.Breeds;
-using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Contracts.Requests;
+using Adoptrix.Persistence.Responses;
 using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
@@ -12,20 +12,20 @@ public class SearchBreedsEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
 
     [Theory, AdoptrixAutoData]
     public async Task SearchBreeds_WithValidRequest_ShouldReturnOk(SearchBreedsRequest request,
-        List<BreedMatch> matchesToReturn)
+        List<SearchBreedsItem> items)
     {
         // arrange
         fixture.BreedsRepositoryMock
             .Setup(repository =>
-                repository.SearchAsync(It.IsAny<SearchBreedsRequest>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(matchesToReturn);
+                repository.SearchAsync(It.IsAny<Guid?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(items);
 
         // act
         var testResult =
-            await httpClient.GETAsync<SearchBreedsEndpoint, SearchBreedsRequest, List<BreedMatch>>(request);
+            await httpClient.GETAsync<SearchBreedsEndpoint, SearchBreedsRequest, List<SearchBreedsItem>>(request);
 
         // assert
         testResult.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        testResult.Result.Should().BeEquivalentTo(matchesToReturn);
+        testResult.Result.Should().BeEquivalentTo(items);
     }
 }

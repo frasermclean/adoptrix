@@ -1,7 +1,9 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
-using Adoptrix.Core.Contracts.Requests.Animals;
-using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Contracts.Requests;
+using Adoptrix.Contracts.Responses;
+using Adoptrix.Core;
+using Adoptrix.Persistence.Responses;
 using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
@@ -11,14 +13,18 @@ public class SearchAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
     private readonly HttpClient httpClient = fixture.Client;
 
     [Theory, AdoptrixAutoData]
-    public async Task SearchAnimals_WithValidRequest_ShouldReturnOk(SearchAnimalsRequest request,
-        List<AnimalMatch> matchesToReturn)
+    public async Task SearchAnimals_WithValidRequest_ShouldReturnOk(List<SearchAnimalsItem> items)
     {
         // arrange
+        var request = new SearchAnimalsRequest
+        {
+            BreedId = Guid.NewGuid(),
+            Sex = "Female"
+        };
         fixture.AnimalsRepositoryMock
-            .Setup(repository =>
-                repository.SearchAsync(It.IsAny<SearchAnimalsRequest>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(matchesToReturn);
+            .Setup(repository => repository.SearchAsync(It.IsAny<string?>(), It.IsAny<Guid?>(), It.IsAny<Guid?>(),
+                It.IsAny<Sex?>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(items);
 
         // act
         var testResult =
@@ -26,6 +32,6 @@ public class SearchAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
 
         // assert
         testResult.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        testResult.Result.Should().BeEquivalentTo(matchesToReturn);
+        testResult.Result.Should().HaveCount(items.Count);
     }
 }

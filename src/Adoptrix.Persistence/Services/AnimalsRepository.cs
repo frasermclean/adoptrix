@@ -1,13 +1,14 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Requests.Animals;
-using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Persistence.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Persistence.Services;
 
 public interface IAnimalsRepository
 {
-    Task<IReadOnlyList<AnimalMatch>> SearchAsync(SearchAnimalsRequest request, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<SearchAnimalsItem>> SearchAsync(string? name = null, Guid? breedId = null,
+        Guid? speciesId = null, Sex? sex = null, int? limit = null, CancellationToken cancellationToken = default);
+
     Task<Animal?> GetByIdAsync(Guid animalId, CancellationToken cancellationToken = default);
     Task AddAsync(Animal animal, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
@@ -16,19 +17,17 @@ public interface IAnimalsRepository
 
 public class AnimalsRepository(AdoptrixDbContext dbContext) : IAnimalsRepository
 {
-    private const int SearchLimit = 10;
-
-    public async Task<IReadOnlyList<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
-        CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<SearchAnimalsItem>> SearchAsync(string? name, Guid? breedId, Guid? speciesId,
+        Sex? sex, int? limit, CancellationToken cancellationToken = default)
     {
         return await dbContext.Animals
             .AsNoTracking()
-            .Where(animal => (request.Name == null || animal.Name.Contains(request.Name)) &&
-                             (request.BreedId == null || animal.Breed.Id == request.BreedId) &&
-                             (request.SpeciesId == null || animal.Breed.Species.Id == request.SpeciesId) &&
-                             (request.Sex == null || animal.Sex == request.Sex))
-            .Take(request.Limit ?? SearchLimit)
-            .Select(animal => new AnimalMatch
+            .Where(animal => (name == null || animal.Name.Contains(name)) &&
+                             (breedId == null || animal.Breed.Id == breedId) &&
+                             (speciesId == null || animal.Breed.Species.Id == speciesId) &&
+                             (sex == null || animal.Sex == sex))
+            .Take(limit ?? 10)
+            .Select(animal => new SearchAnimalsItem
             {
                 Id = animal.Id,
                 Name = animal.Name,
@@ -37,11 +36,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext) : IAnimalsRepository
                 Sex = animal.Sex,
                 DateOfBirth = animal.DateOfBirth,
                 CreatedAt = animal.CreatedAt,
-                Image = animal.Images.Select(image => new AnimalImageResponse
-                    {
-                        Id = image.Id, Description = image.Description, IsProcessed = image.IsProcessed
-                    })
-                    .FirstOrDefault(),
+                Image = animal.Images.FirstOrDefault(),
             })
             .OrderBy(animal => animal.Name)
             .ToListAsync(cancellationToken);

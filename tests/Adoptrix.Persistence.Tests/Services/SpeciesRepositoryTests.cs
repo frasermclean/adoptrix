@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Requests.Species;
 using Adoptrix.Initializer;
 using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
@@ -21,11 +20,8 @@ public class SpeciesRepositoryTests
     [Fact]
     public async Task SearchAsync_WithEmptyQuery_ShouldReturnAllSpecies()
     {
-        // arrange
-        var query = new SearchSpeciesRequest();
-
         // act
-        var results = await speciesRepository.SearchAsync(query);
+        var results = await speciesRepository.SearchAsync();
 
         // assert
         results.Should().HaveCountGreaterThan(0);

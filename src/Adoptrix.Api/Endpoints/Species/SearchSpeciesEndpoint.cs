@@ -1,5 +1,6 @@
-﻿using Adoptrix.Core.Contracts.Requests.Species;
-using Adoptrix.Core.Contracts.Responses;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Contracts.Requests;
+using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,8 @@ public class SearchSpeciesEndpoint(ISpeciesRepository speciesRepository) : Endpo
     public override async Task<IEnumerable<SpeciesMatch>> ExecuteAsync(SearchSpeciesRequest request,
         CancellationToken cancellationToken)
     {
-        return await speciesRepository.SearchAsync(request, cancellationToken);
+        var items = await speciesRepository.SearchAsync(request.WithAnimals, cancellationToken);
+
+        return items.Select(item => item.ToMatch());
     }
 }

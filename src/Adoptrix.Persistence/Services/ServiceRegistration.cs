@@ -113,7 +113,7 @@ public static class ServiceRegistration
         return services;
     }
 
-    private static IServiceCollection AddQueueServices(this IServiceCollection services)
+    private static void AddQueueServices(this IServiceCollection services)
     {
         // animal deleted queue
         services.AddKeyedSingleton<QueueClient>(QueueNames.AnimalDeleted, (provider, _)
@@ -124,7 +124,5 @@ public static class ServiceRegistration
         services.AddKeyedSingleton<QueueClient>(QueueNames.AnimalImageAdded, (provider, _)
             => provider.GetRequiredService<QueueServiceClient>()
                 .GetQueueClient(QueueNames.AnimalImageAdded));
-
-        return services;
     }
 }

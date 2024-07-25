@@ -1,13 +1,12 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Requests.Breeds;
-using Adoptrix.Core.Contracts.Responses;
+using Adoptrix.Persistence.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Persistence.Services;
 
 public interface IBreedsRepository
 {
-    Task<IEnumerable<BreedMatch>> SearchAsync(SearchBreedsRequest request,
+    Task<IEnumerable<SearchBreedsItem>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
         CancellationToken cancellationToken = default);
 
     Task<Breed?> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default);
@@ -19,13 +18,13 @@ public interface IBreedsRepository
 
 public class BreedsRepository(AdoptrixDbContext dbContext) : IBreedsRepository
 {
-    public async Task<IEnumerable<BreedMatch>> SearchAsync(SearchBreedsRequest request,
+    public async Task<IEnumerable<SearchBreedsItem>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
         CancellationToken cancellationToken = default)
     {
         return await dbContext.Breeds
-            .Where(breed => (request.SpeciesId == null || breed.Species.Id == request.SpeciesId) &&
-                            (request.WithAnimals == null || request.WithAnimals.Value && breed.Animals.Count > 0))
-            .Select(breed => new BreedMatch
+            .Where(breed => (speciesId == null || breed.Species.Id == speciesId) &&
+                            (withAnimals == null || withAnimals.Value && breed.Animals.Count > 0))
+            .Select(breed => new SearchBreedsItem
             {
                 Id = breed.Id,
                 Name = breed.Name,

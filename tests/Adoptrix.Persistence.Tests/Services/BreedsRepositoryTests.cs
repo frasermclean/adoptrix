@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Contracts.Requests.Breeds;
 using Adoptrix.Initializer;
 using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
@@ -26,11 +25,8 @@ public class BreedsRepositoryTests
     [Fact]
     public async Task SearchAsync_WithDefaultParameters_ShouldReturnAllBreeds()
     {
-        // arrange
-        var request = new SearchBreedsRequest();
-
         // act
-        var results = await breedsRepository.SearchAsync(request);
+        var results = await breedsRepository.SearchAsync();
 
         // assert
         results.Should().HaveCountGreaterOrEqualTo(3);
