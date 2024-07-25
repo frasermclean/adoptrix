@@ -1,6 +1,7 @@
 ﻿@using System.Security.Cryptography
 @using System.Text
 @using Microsoft.AspNetCore.Components.Authorization
+@inject GravatarUrlGenerator GravatarUrlGenerator
 
 <MudAvatar Size="@Size" Class="@Class">
     <MudImage Src="@avatarUrl" Alt="User Gravatar"/>
@@ -21,18 +22,9 @@
         }
 
         var authenticationState = await AuthenticationStateTask;
+        var emailAddress = authenticationState.User.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value ?? string.Empty;
 
-        var emailAddress = authenticationState.User.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value;
-        var hash = CreateEmailHash(emailAddress ?? string.Empty);
-
-        avatarUrl = $"https://gravatar.com/avatar/{hash}?d=wavatar&s=32";
-    }
-
-    private static string CreateEmailHash(string emailAddress)
-    {
-        using var sha256 = SHA256.Create();
-        var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(emailAddress.Trim()));
-        return Convert.ToHexString(bytes).ToLower();
+        avatarUrl = GravatarUrlGenerator.GetGravatarUrl(emailAddress);
     }
 
 }

@@ -40,6 +40,7 @@ public static class Program
             .AddGraphApiClient(builder.Configuration)
             .AddApiClients(builder.Configuration["AdoptrixApi:BaseUrl"]!)
             .AddSingleton<ThemeProvider>()
+            .AddSingleton<GravatarUrlGenerator>()
             .AddSingleton(new ImageUrlResolver(builder.Configuration["BlobStorage:AnimalsImagesBaseUrl"]!));
 
         return builder;

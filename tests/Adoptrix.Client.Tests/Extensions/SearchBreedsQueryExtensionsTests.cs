@@ -1,8 +1,6 @@
 ﻿using System;
 using Adoptrix.Client.Extensions;
 using Adoptrix.Contracts.Requests;
-using FluentAssertions;
-using Xunit;
 
 namespace Adoptrix.Web.Tests.Extensions;
 
