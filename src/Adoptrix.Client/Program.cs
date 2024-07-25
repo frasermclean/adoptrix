@@ -32,14 +32,26 @@ public static class Program
         services.AddMsalAuthentication(options =>
         {
             builder.Configuration.Bind("Authentication", options.ProviderOptions.Authentication);
+            options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/User.Read");
         });
 
         services.AddMudServices()
+            .AddGraphApiClient(builder.Configuration)
             .AddApiClients(builder.Configuration["AdoptrixApi:BaseUrl"]!)
             .AddSingleton<ThemeProvider>()
             .AddSingleton(new ImageUrlResolver(builder.Configuration["BlobStorage:AnimalsImagesBaseUrl"]!));
 
         return builder;
+    }
+
+    private static IServiceCollection AddGraphApiClient(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddTransient<GraphApiAuthorizationMessageHandler>();
+        services.AddHttpClient<IGraphApiClient, GraphApiClient>(client =>
+                client.BaseAddress = new Uri(configuration["MicrosoftGraph:BaseUrl"]!))
+            .AddHttpMessageHandler<GraphApiAuthorizationMessageHandler>();
+
+        return services;
     }
 
     private static IServiceCollection AddApiClients(this IServiceCollection services, string baseUrl)
