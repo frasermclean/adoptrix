@@ -5,8 +5,17 @@
 <AuthorizeView>
     <Authorized>
         <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Open user menu">
-            <MudMenuItem Icon="@Icons.Material.Filled.AccountCircle" Href="/profile">Profile</MudMenuItem>
-            <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="NavigateToLogout">Logout</MudMenuItem>
+            <ActivatorContent>
+                <MudTooltip Text="Open user menu">
+                    <MudButton EndIcon="@Icons.Material.Filled.MoreVert">
+                        <Gravatar Class="mr-1"/>
+                    </MudButton>
+                </MudTooltip>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem Icon="@Icons.Material.Filled.AccountCircle" Href="/profile">Profile</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="NavigateToLogout">Logout</MudMenuItem>
+            </ChildContent>
         </MudMenu>
     </Authorized>
     <NotAuthorized>

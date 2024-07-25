@@ -1,0 +1,38 @@
+﻿@using System.Security.Cryptography
+@using System.Text
+@using Microsoft.AspNetCore.Components.Authorization
+
+<MudAvatar Size="@Size" Class="@Class">
+    <MudImage Src="@avatarUrl" Alt="User Gravatar"/>
+</MudAvatar>
+
+@code {
+    private string? avatarUrl;
+
+    [Parameter] public Size Size { get; set; } = Size.Medium;
+    [Parameter] public string? Class { get; set; }
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthenticationStateTask is null)
+        {
+            return;
+        }
+
+        var authenticationState = await AuthenticationStateTask;
+
+        var emailAddress = authenticationState.User.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value;
+        var hash = CreateEmailHash(emailAddress ?? string.Empty);
+
+        avatarUrl = $"https://gravatar.com/avatar/{hash}?d=wavatar&s=32";
+    }
+
+    private static string CreateEmailHash(string emailAddress)
+    {
+        using var sha256 = SHA256.Create();
+        var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(emailAddress.Trim()));
+        return Convert.ToHexString(bytes).ToLower();
+    }
+
+}
