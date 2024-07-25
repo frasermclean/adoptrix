@@ -50,12 +50,6 @@ param apiImageRepository string
 @description('Tag of the API container image')
 param apiImageTag string
 
-@description('Repository of the web container image')
-param webImageRepository string
-
-@description('Tag of the web container image')
-param webImageTag string
-
 var tags = {
   workload: workload
   appEnv: appEnv
@@ -100,6 +94,21 @@ module appInsightsModule 'appInsights.bicep' = {
   }
 }
 
+// client static web app module
+module staticWebAppModule 'staticWebApp.bicep' = {
+  name: 'staticWebApp${deploymentSuffix}'
+  params: {
+    workload: workload
+    appEnv: appEnv
+    location: 'eastasia'
+    tags: tags
+    appName: 'client'
+    domainName: domainName
+    sharedResourceGroup: sharedResourceGroup
+    deploymentSuffix: deploymentSuffix
+  }
+}
+
 // container apps module
 module containerAppsModule './containerApps.bicep' = {
   name: 'containerApps${deploymentSuffix}'
@@ -112,8 +121,6 @@ module containerAppsModule './containerApps.bicep' = {
     containerRegistryName: containerRegistryName
     apiImageRepository: apiImageRepository
     apiImageTag: apiImageTag
-    webImageRepository: webImageRepository
-    webImageTag: webImageTag
     logAnalyticsWorkspaceId: appInsightsModule.outputs.logAnalyticsWorkspaceId
     applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
     appConfigurationEndpoint: appConfigurationEndpoint
@@ -158,7 +165,6 @@ module roleAssignmentsModule 'roleAssignments.bicep' =
     params: {
       adminGroupObjectId: adminGroupObjectId
       apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
-      webAppPrincipalId: containerAppsModule.outputs.webAppPrincipalId
       jobsAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
       storageAccountName: storageModule.outputs.accountName
       applicationInsightsName: appInsightsModule.outputs.applicationInsightsName
@@ -174,7 +180,6 @@ module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' =
       appConfigurationName: appConfigurationName
       configurationDataReaders: [
         containerAppsModule.outputs.apiAppPrincipalId
-        containerAppsModule.outputs.webAppPrincipalId
         jobsAppModule.outputs.identityPrincipalId
       ]
     }
