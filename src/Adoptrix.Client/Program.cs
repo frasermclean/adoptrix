@@ -33,7 +33,7 @@ public static class Program
         {
             builder.Configuration.Bind("Authentication", options.ProviderOptions.Authentication);
             options.ProviderOptions.Cache.CacheLocation = "localStorage";
-            options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/User.Read");
+            options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/user.read");
         });
 
         services.AddMudServices()
