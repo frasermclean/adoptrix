@@ -2,9 +2,11 @@
 using System.Text.Json.Serialization;
 using Adoptrix.Persistence.Services;
 using Adoptrix.ServiceDefaults;
+using Azure.Identity;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Graph;
 using Microsoft.Identity.Web;
 
 namespace Adoptrix.Api.Startup;
@@ -21,7 +23,8 @@ public static class ServiceRegistration
 
         builder.Services
             .AddAuthentication(builder.Configuration)
-            .AddFastEndpoints();
+            .AddFastEndpoints()
+            .AddGraphServiceClient(builder.Configuration);
 
         // json serialization options
         builder.Services.Configure<JsonOptions>(options =>
@@ -57,5 +60,28 @@ public static class ServiceRegistration
             .AddDefaultPolicy("DefaultPolicy", builder => { builder.RequireScope("access"); });
 
         return services;
+    }
+
+    private static IServiceCollection AddGraphServiceClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        // read values from configuration
+        var instance = configuration["Authentication:Instance"];
+        var tenantId = configuration["Authentication:TenantId"];
+        var clientId = configuration["UserManager:ClientId"];
+        var clientSecret = configuration["UserManager:ClientSecret"];
+
+        var credential = new ClientSecretCredential(tenantId, clientId, clientSecret, new ClientSecretCredentialOptions
+        {
+            AuthorityHost = new Uri(instance!)
+        });
+
+        return services.AddSingleton(serviceProvider =>
+        {
+            var httpClient = serviceProvider.GetRequiredService<IHttpClientFactory>()
+                .CreateClient(nameof(GraphServiceClient));
+
+            return new GraphServiceClient(httpClient, credential);
+        });
     }
 }

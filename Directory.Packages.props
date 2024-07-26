@@ -55,6 +55,7 @@
     <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.1.0" />
+    <PackageVersion Include="Microsoft.Graph" Version="5.56.0" />
     <PackageVersion Include="Microsoft.Identity.Web" Version="3.0.1" />
     <PackageVersion Include="Microsoft.Identity.Web.DownstreamApi" Version="3.0.1" />
     <PackageVersion Include="Microsoft.Identity.Web.UI" Version="3.0.1" />
