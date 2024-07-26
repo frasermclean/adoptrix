@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Adoptrix.Contracts.Requests;
+﻿using Adoptrix.Contracts.Requests;
 
 namespace Adoptrix.Client.Extensions;
 
