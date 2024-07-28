@@ -8,5 +8,4 @@ public class UserResponse
     public string? DisplayName { get; init; }
     public string? EmailAddress { get; init; }
     public string? Role { get; init; }
-    public bool IsCurrentUser { get; init; }
 }

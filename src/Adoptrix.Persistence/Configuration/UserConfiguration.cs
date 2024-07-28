@@ -9,6 +9,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
+        builder.Ignore(user => user.FirstName)
+            .Ignore(user => user.LastName)
+            .Ignore(user => user.DisplayName)
+            .Ignore(user => user.EmailAddress);
+
         builder.Property(user => user.Role)
             .HasConversion<UserRoleConverter>();
 

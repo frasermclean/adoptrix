@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using Adoptrix.Api.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -16,6 +17,7 @@ public class ApiFixture : AppFixture<Program>
     public Mock<IEventPublisher> EventPublisherMock { get; } = new();
     public Mock<IBlobContainerManager> AnimalImagesBlobContainerManagerMock { get; } = new();
     public Mock<IBlobContainerManager> OriginalImagesBlobContainerManagerMock { get; } = new();
+    public Mock<IUsersService> UsersServiceMock { get; } = new();
 
     /// <summary>
     /// HTTP client pre-configured with basic test authentication.
@@ -34,7 +36,8 @@ public class ApiFixture : AppFixture<Program>
             .RemoveAll<IBreedsRepository>()
             .RemoveAll<ISpeciesRepository>()
             .RemoveAll<IEventPublisher>()
-            .RemoveAll<IBlobContainerManager>();
+            .RemoveAll<IBlobContainerManager>()
+            .RemoveAll<IUsersService>();
 
         // replace with mocked services
         services.AddScoped<IAnimalsRepository>(_ => AnimalsRepositoryMock.Object)
@@ -44,6 +47,7 @@ public class ApiFixture : AppFixture<Program>
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages,
                 (_, _) => AnimalImagesBlobContainerManagerMock.Object)
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.OriginalImages,
-            (_, _) => OriginalImagesBlobContainerManagerMock.Object);
+                (_, _) => OriginalImagesBlobContainerManagerMock.Object)
+            .AddScoped<IUsersService>(_ => UsersServiceMock.Object);
     }
 }
