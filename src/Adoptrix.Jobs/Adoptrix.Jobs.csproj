@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.Azure.AppConfiguration.Functions.Worker" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker"/>
     <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Storage.Queues" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" />
     <PackageReference Include="SixLabors.ImageSharp" />
