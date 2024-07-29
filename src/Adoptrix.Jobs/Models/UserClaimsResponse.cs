@@ -7,7 +7,7 @@ public class UserClaimsResponse
 {
     public required DataModel Data { get; init; }
 
-    public static UserClaimsResponse Create(User user)
+    public static UserClaimsResponse Create(User user, Guid correlationId)
     {
         return new UserClaimsResponse
         {
@@ -19,7 +19,8 @@ public class UserClaimsResponse
                     {
                         Claims = new ClaimsModel
                         {
-                            Role = user.Role
+                            Role = user.Role,
+                            CorrelationId = correlationId
                         }
                     }
                 ]
@@ -45,5 +46,6 @@ public class UserClaimsResponse
     public class ClaimsModel
     {
         public required UserRole Role { get; init; }
+        public required Guid CorrelationId { get; init; }
     }
 }

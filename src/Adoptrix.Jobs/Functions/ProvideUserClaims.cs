@@ -11,13 +11,18 @@ public class ProvideUserClaims(ILogger<ProvideUserClaims> logger, IUsersReposito
 {
     [Function(nameof(ProvideUserClaims))]
     public async Task<HttpResponseData> ExecuteAsync(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user-claims")]
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "user-claims")]
         HttpRequestData httpRequestData,
         [FromBody] UserClaimsRequest claimsRequest,
         CancellationToken cancellationToken)
     {
-        // get or create user from the repository
+        // extract values from the request
         var userId = claimsRequest.Data.AuthenticationContext.User.Id;
+        var correlationId = claimsRequest.Data.AuthenticationContext.CorrelationId;
+        logger.LogInformation("Providing claims for user with ID {UserId}, correlation ID {CorrelationId}", userId,
+            correlationId);
+
+        // get or create user from the repository
         var user = await usersRepository.GetByIdAsync(userId, cancellationToken);
         if (user is null)
         {
@@ -27,7 +32,7 @@ public class ProvideUserClaims(ILogger<ProvideUserClaims> logger, IUsersReposito
         }
 
         // create response object and write it to the http response
-        var claimsResponse = UserClaimsResponse.Create(user);
+        var claimsResponse = UserClaimsResponse.Create(user, correlationId);
         var httpResponseData = httpRequestData.CreateResponse();
         await httpResponseData.WriteAsJsonAsync(claimsResponse, cancellationToken);
 
