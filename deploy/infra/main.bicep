@@ -136,6 +136,8 @@ module jobsAppModule './functionApp.bicep' = {
     appEnv: appEnv
     appName: 'jobs'
     location: location
+    domainName: domainName
+    sharedResourceGroup: sharedResourceGroup
     appConfigEndpoint: appConfigurationEndpoint
     storageAccountName: storageModule.outputs.accountName
     applicationInsightsConnectionString: appInsightsModule.outputs.connectionString

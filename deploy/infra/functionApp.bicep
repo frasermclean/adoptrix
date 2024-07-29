@@ -15,6 +15,12 @@ param appName string = 'jobs'
 @description('Azure region for the non-global resources')
 param location string = resourceGroup().location
 
+@description('Domain name')
+param domainName string
+
+@description('Name of the shared resource group')
+param sharedResourceGroup string
+
 @description('The endpoint for the Azure App Configuration instance')
 param appConfigEndpoint string
 
@@ -24,11 +30,16 @@ param storageAccountName string
 @description('Application Insights connection string')
 param applicationInsightsConnectionString string
 
+@description('Flag to create a managed certificate for the function app. Set to true on first run.')
+param shouldCreateManagedCertificate bool = false
+
 var tags = {
   workload: workload
   appEnv: appEnv
   appName: appName
 }
+
+var customDomainName = 'jobs.${appEnv}.${domainName}'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
   name: storageAccountName
@@ -116,6 +127,18 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     }
   }
 
+  // custom domain binding
+  resource hostNameBinding 'hostNameBindings' = {
+    name: customDomainName
+    properties: {
+      hostNameType: 'Verified'
+      sslState: shouldCreateManagedCertificate ? 'Disabled' : 'SniEnabled'
+      customHostNameDnsRecordType: 'CName'
+      siteName: functionApp.name
+      thumbprint: shouldCreateManagedCertificate ? null : customDomainCertificate.properties.thumbprint
+    }
+  }
+
   resource scmPublishingPolicy 'basicPublishingCredentialsPolicies' = {
     name: 'scm'
     properties: {
@@ -128,6 +151,29 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     properties: {
       allow: false
     }
+  }
+}
+
+// dns records
+module dnsRecords 'dnsRecords.bicep' = {
+  name: 'dnsRecords-${appEnv}-jobs'
+  scope: resourceGroup(sharedResourceGroup)
+  params: {
+    domainName: domainName
+    appEnv: appEnv
+    jobsAppDefaultHostname: functionApp.properties.defaultHostName
+    customDomainVerificationId: functionApp.properties.customDomainVerificationId
+  }
+}
+
+// managed certificate
+resource customDomainCertificate 'Microsoft.Web/certificates@2023-12-01' = if (shouldCreateManagedCertificate) {
+  name: 'jobs-cert'
+  location: location
+  dependsOn: [dnsRecords]
+  properties: {
+    serverFarmId: appServicePlan.id
+    canonicalName: customDomainName
   }
 }
 

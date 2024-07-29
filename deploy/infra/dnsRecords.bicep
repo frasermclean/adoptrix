@@ -12,6 +12,9 @@ param apiAppDefaultHostname string = ''
 @description('Default hostname of the client app')
 param clientAppDefaultHostname string = ''
 
+@description('Default hostname of the jobs app')
+param jobsAppDefaultHostname string = ''
+
 @description('Custom domain verification ID')
 param customDomainVerificationId string = ''
 
@@ -50,8 +53,33 @@ resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
       }
     }
   }
+
+  // jobs app CNAME record
+  resource jobsAppCnameRecord 'CNAME' = if (!empty(jobsAppDefaultHostname)) {
+    name: 'jobs.${appEnv}'
+    properties: {
+      TTL: 3600
+      CNAMERecord: {
+        cname: jobsAppDefaultHostname
+      }
+    }
+  }
+
+  // jobs app TXT verification record
+  resource jobsAppTxtRecord 'TXT' = if (!empty(customDomainVerificationId)) {
+    name: 'asuid.jobs.${appEnv}'
+    properties: {
+      TTL: 3600
+      TXTRecords: [
+        { value: [customDomainVerificationId] }
+      ]
+    }
+  }
 }
 
 @description('Fully qualified domain name of the API application')
 output apiAppFqdn string = '${dnsZone::apiAppCnameRecord.name}.${domainName}'
+
+@description('Fully qualified domain name of the jobs application')
+output jobsAppFqdn string = '${dnsZone::jobsAppCnameRecord.name}.${domainName}'
 

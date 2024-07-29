@@ -7,7 +7,7 @@ param hostname string
 @description('Thumbprint of the certificate to use for SSL')
 param certificateThumbprint string
 
-resource site 'Microsoft.Web/sites@2022-09-01' existing = {
+resource site 'Microsoft.Web/sites@2023-12-01' existing = {
   name: siteName
 
   resource hostNameBinding 'hostNameBindings' = {
