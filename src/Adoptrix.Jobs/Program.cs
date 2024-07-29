@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Adoptrix.Jobs.Services;
 using Adoptrix.Persistence.Services;
 using Azure.Identity;
@@ -40,6 +42,13 @@ public static class Program
                 // local project services
                 services.AddSingleton<IImageProcessor, ImageProcessor>();
                 services.AddPersistence(context.Configuration);
+
+                // configure JSON serialization options
+                services.Configure<JsonSerializerOptions>(options =>
+                {
+                    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.Converters.Add(new JsonStringEnumConverter());
+                });
             })
             .ConfigureLogging(builder =>
             {
