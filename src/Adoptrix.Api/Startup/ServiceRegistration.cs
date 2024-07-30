@@ -50,11 +50,23 @@ public static class ServiceRegistration
 
     private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped<ITokenEnricher, TokenEnricher>();
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(jwtBearerOptions =>
             {
                 configuration.Bind("Authentication", jwtBearerOptions);
                 jwtBearerOptions.TokenValidationParameters.NameClaimType = ClaimConstants.Name;
+                jwtBearerOptions.TokenValidationParameters.RoleClaimType = ClaimConstants.Roles;
+
+                jwtBearerOptions.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        var tokenEnricher = context.HttpContext.RequestServices.GetRequiredService<ITokenEnricher>();
+                        await tokenEnricher.EnrichAsync(context.Principal!);
+                    }
+                };
             }, microsoftIdentityOptions => { configuration.Bind("Authentication", microsoftIdentityOptions); });
 
         services.AddAuthorizationBuilder()
@@ -74,10 +86,11 @@ public static class ServiceRegistration
             var clientId = configuration["UserManager:ClientId"];
             var clientSecret = configuration["UserManager:ClientSecret"];
 
-            var credential = new ClientSecretCredential(tenantId, clientId, clientSecret, new ClientSecretCredentialOptions
-            {
-                AuthorityHost = new Uri(instance!)
-            });
+            var credential = new ClientSecretCredential(tenantId, clientId, clientSecret,
+                new ClientSecretCredentialOptions
+                {
+                    AuthorityHost = new Uri(instance!)
+                });
 
             var httpClient = serviceProvider.GetRequiredService<IHttpClientFactory>()
                 .CreateClient(nameof(GraphServiceClient));
