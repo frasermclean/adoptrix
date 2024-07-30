@@ -34,7 +34,7 @@ jobs:
         run: |
           IMAGE_TAG=$(az acr repository show-tags --name ${{ vars.ACR_NAME }} --repository ${{ vars.API_REPOSITORY_NAME }} --orderby time_desc --top 1 --output tsv)
           echo "Latest API image tag: $IMAGE_TAG"
-          echo "API_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "ADOPTRIX_API_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       # Deploy Bicep template
       - name: Deploy Bicep template
@@ -42,8 +42,8 @@ jobs:
         env:
           ATTEMPT_ROLE_ASSIGNMENTS: false
           HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
-          API_IMAGE_REPOSITORY: ${{ vars.API_REPOSITORY_NAME }}
-          API_IMAGE_TAG: ${{ env.API_IMAGE_TAG }}
+          ADOPTRIX_API_IMAGE_REPOSITORY: ${{ vars.API_REPOSITORY_NAME }}
+          ADOPTRIX_API_IMAGE_TAG: ${{ env.ADOPTRIX_API_IMAGE_TAG }}
         with:
           scope: resourcegroup
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
