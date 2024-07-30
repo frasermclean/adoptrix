@@ -5,10 +5,15 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-[HttpDelete("animals/{animalId:guid}")]
 public class DeleteAnimalEndpoint(IAnimalsRepository animalsRepository, IEventPublisher eventPublisher)
     : Endpoint<DeleteAnimalRequest, Results<NoContent, NotFound>>
 {
+    public override void Configure()
+    {
+        Delete("animals/{animalId:guid}");
+        Permissions(PermissionNames.AnimalsWrite);
+    }
+
     public override async Task<Results<NoContent, NotFound>> ExecuteAsync(DeleteAnimalRequest request,
         CancellationToken cancellationToken)
     {

@@ -1,4 +1,5 @@
-﻿using Adoptrix.ServiceDefaults;
+﻿using Adoptrix.Api.Endpoints;
+using Adoptrix.ServiceDefaults;
 using FastEndpoints;
 
 namespace Adoptrix.Api.Startup;
@@ -21,6 +22,7 @@ public static class MiddlewareConfiguration
         app.UseFastEndpoints(config =>
         {
             config.Endpoints.RoutePrefix = "api";
+            config.Security.PermissionsClaimType = ClaimTypes.Permission;
         });
 
         app.MapDefaultEndpoints();

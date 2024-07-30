@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
 using System.Text.Encodings.Web;
+using Adoptrix.Api.Endpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
+using ClaimTypes = Adoptrix.Api.Endpoints.ClaimTypes;
 
 namespace Adoptrix.Api.Tests;
 
@@ -14,8 +16,6 @@ public class BasicAuthHandler(
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     public const string SchemeName = "BasicAuthScheme";
-    public const string UserName = "Bob Jones";
-    public static readonly Guid UserId = Guid.NewGuid();
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -26,9 +26,13 @@ public class BasicAuthHandler(
 
         var claims = new[]
         {
-            new Claim(ClaimConstants.Name, UserName),
-            new Claim(ClaimConstants.ObjectId, UserId.ToString()),
-            new Claim(ClaimConstants.Scope, "access")
+            new Claim(ClaimConstants.Name, "Bob Jones"),
+            new Claim(ClaimConstants.ObjectId, Guid.NewGuid().ToString()),
+            new Claim(ClaimConstants.Scope, "access"),
+            new Claim(ClaimTypes.Permission, PermissionNames.AnimalsWrite),
+            new Claim(ClaimTypes.Permission, PermissionNames.BreedsWrite),
+            new Claim(ClaimTypes.Permission, PermissionNames.SpeciesWrite),
+
         };
         var identity = new ClaimsIdentity(claims, "Test");
         var principal = new ClaimsPrincipal(identity);

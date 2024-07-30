@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
 using Adoptrix.Api.Endpoints;
 using Adoptrix.Api.Extensions;
+using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using Microsoft.Identity.Web;
+using ClaimTypes = Adoptrix.Api.Endpoints.ClaimTypes;
 
 namespace Adoptrix.Api.Services;
 
@@ -25,6 +27,32 @@ public class TokenEnricher(ILogger<TokenEnricher> logger, IUsersRepository users
         }
 
         var claimsIdentity = claimsPrincipal.Identity as ClaimsIdentity;
-        claimsIdentity!.AddClaim(new Claim(ClaimConstants.Roles, RoleNames.FromRole(user.Role)));
+        claimsIdentity!.AddClaim(new Claim(ClaimConstants.Roles, GetRoleName(user.Role)));
+
+        // add permissions
+        var permissions = GetPermissions(user.Role);
+        foreach (var permission in permissions)
+        {
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Permission, permission));
+        }
     }
+
+    private static string GetRoleName(UserRole role) => role switch
+    {
+        UserRole.Administrator => RoleNames.Administrator,
+        _ => RoleNames.User
+    };
+
+    private static readonly string[] AdministratorPermissions =
+    [
+        PermissionNames.AnimalsWrite,
+        PermissionNames.BreedsWrite,
+        PermissionNames.SpeciesWrite
+    ];
+
+    private static string[] GetPermissions(UserRole role) => role switch
+    {
+        UserRole.Administrator => AdministratorPermissions,
+        _ => []
+    };
 }
