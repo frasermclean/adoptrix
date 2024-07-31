@@ -12,7 +12,7 @@ public static class ClaimsPrincipalExtensions
 
     public static Guid GetUserId(this ClaimsPrincipal principal)
     {
-        var claimValue = principal.FindFirstValue(ClaimConstants.ObjectId);
+        var claimValue = principal.FindFirstValue(ClaimConstants.Oid);
 
         return Guid.TryParse(claimValue, out var userId)
             ? userId

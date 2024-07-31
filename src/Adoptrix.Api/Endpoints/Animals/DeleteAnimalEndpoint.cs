@@ -1,4 +1,5 @@
-﻿using Adoptrix.Core.Events;
+﻿using Adoptrix.Api.Security;
+using Adoptrix.Core.Events;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;

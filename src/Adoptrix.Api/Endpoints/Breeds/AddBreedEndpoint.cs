@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
 using Adoptrix.Persistence.Services;

@@ -1,6 +1,6 @@
-﻿using Adoptrix.Api.Endpoints;
-using Adoptrix.ServiceDefaults;
+﻿using Adoptrix.ServiceDefaults;
 using FastEndpoints;
+using Microsoft.Identity.Web;
 
 namespace Adoptrix.Api.Startup;
 
@@ -22,7 +22,8 @@ public static class MiddlewareConfiguration
         app.UseFastEndpoints(config =>
         {
             config.Endpoints.RoutePrefix = "api";
-            config.Security.PermissionsClaimType = ClaimTypes.Permission;
+            config.Security.RoleClaimType = ClaimConstants.Roles;
+            config.Security.PermissionsClaimType = "permissions";
         });
 
         app.MapDefaultEndpoints();

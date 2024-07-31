@@ -1,10 +1,12 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using Adoptrix.Api.Security;
 using Adoptrix.Api.Services;
 using Adoptrix.Persistence.Services;
 using Adoptrix.ServiceDefaults;
 using Azure.Identity;
 using FastEndpoints;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Graph;
@@ -50,24 +52,16 @@ public static class ServiceRegistration
 
     private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<ITokenEnricher, TokenEnricher>();
-
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(jwtBearerOptions =>
             {
                 configuration.Bind("Authentication", jwtBearerOptions);
+                jwtBearerOptions.MapInboundClaims = false;
                 jwtBearerOptions.TokenValidationParameters.NameClaimType = ClaimConstants.Name;
                 jwtBearerOptions.TokenValidationParameters.RoleClaimType = ClaimConstants.Roles;
-
-                jwtBearerOptions.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = async context =>
-                    {
-                        var tokenEnricher = context.HttpContext.RequestServices.GetRequiredService<ITokenEnricher>();
-                        await tokenEnricher.EnrichAsync(context.Principal!);
-                    }
-                };
             }, microsoftIdentityOptions => { configuration.Bind("Authentication", microsoftIdentityOptions); });
+
+        services.AddTransient<IClaimsTransformation, PermissionsClaimsTransformation>();
 
         services.AddAuthorizationBuilder()
             .AddDefaultPolicy("DefaultPolicy", builder => { builder.RequireScope("access"); });
@@ -75,7 +69,7 @@ public static class ServiceRegistration
         return services;
     }
 
-    private static IServiceCollection AddUsersService(this IServiceCollection services,
+    private static void AddUsersService(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddSingleton(serviceProvider =>
@@ -98,6 +92,6 @@ public static class ServiceRegistration
             return new GraphServiceClient(httpClient, credential);
         });
 
-        return services.AddScoped<IUsersService, UsersService>();
+        services.AddScoped<IUsersService, UsersService>();
     }
 }

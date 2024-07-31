@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Api.Endpoints;
+﻿namespace Adoptrix.Api.Security;
 
 public static class PermissionNames
 {

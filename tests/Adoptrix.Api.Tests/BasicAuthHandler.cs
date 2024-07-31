@@ -1,11 +1,10 @@
 ﻿using System.Security.Claims;
 using System.Text.Encodings.Web;
-using Adoptrix.Api.Endpoints;
+using Adoptrix.Api.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
-using ClaimTypes = Adoptrix.Api.Endpoints.ClaimTypes;
 
 namespace Adoptrix.Api.Tests;
 
@@ -27,12 +26,9 @@ public class BasicAuthHandler(
         var claims = new[]
         {
             new Claim(ClaimConstants.Name, "Bob Jones"),
-            new Claim(ClaimConstants.ObjectId, Guid.NewGuid().ToString()),
+            new Claim(ClaimConstants.Oid, Guid.NewGuid().ToString()),
             new Claim(ClaimConstants.Scope, "access"),
-            new Claim(ClaimTypes.Permission, PermissionNames.AnimalsWrite),
-            new Claim(ClaimTypes.Permission, PermissionNames.BreedsWrite),
-            new Claim(ClaimTypes.Permission, PermissionNames.SpeciesWrite),
-
+            new Claim(ClaimConstants.Roles, RoleNames.Administrator)
         };
         var identity = new ClaimsIdentity(claims, "Test");
         var principal = new ClaimsPrincipal(identity);
