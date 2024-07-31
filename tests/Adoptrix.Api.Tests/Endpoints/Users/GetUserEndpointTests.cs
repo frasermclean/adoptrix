@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Users;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
 using FluentResults;
 
 namespace Adoptrix.Api.Tests.Endpoints.Users;
@@ -17,7 +16,7 @@ public class GetUserEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         var userId = Guid.NewGuid();
         var request = new GetUserRequest(userId);
         fixture.UsersServiceMock.Setup(service => service.GetUserAsync(userId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new User { Id = userId });
+            .ReturnsAsync(new UserResponse { Id = userId });
 
         // act
         var (message, response) = await httpClient.GETAsync<GetUserEndpoint, GetUserRequest, UserResponse>(request);
@@ -34,7 +33,7 @@ public class GetUserEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         var userId = Guid.NewGuid();
         var request = new GetUserRequest(userId);
         fixture.UsersServiceMock.Setup(service => service.GetUserAsync(userId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Fail<User>("User not found"));
+            .ReturnsAsync(Result.Fail<UserResponse>("User not found"));
 
         // act
         var message = await httpClient.GETAsync<GetUserEndpoint, GetUserRequest>(request);

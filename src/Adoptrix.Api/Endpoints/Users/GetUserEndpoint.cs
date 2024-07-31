@@ -1,5 +1,4 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Services;
+﻿using Adoptrix.Api.Services;
 using Adoptrix.Contracts.Responses;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -15,7 +14,7 @@ public class GetUserEndpoint(IUsersService usersService) : Endpoint<GetUserReque
         var result = await usersService.GetUserAsync(request.UserId, cancellationToken);
 
         return result.IsSuccess
-            ? TypedResults.Ok(result.Value.ToResponse())
+            ? TypedResults.Ok(result.Value)
             : TypedResults.NotFound();
     }
 }

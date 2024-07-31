@@ -1,5 +1,4 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Services;
+﻿using Adoptrix.Api.Services;
 using Adoptrix.Contracts.Responses;
 using FastEndpoints;
 
@@ -12,6 +11,6 @@ public class GetUsersEndpoint(IUsersService usersService) : EndpointWithoutReque
     {
         var users = await usersService.GetAllUsersAsync(cancellationToken);
 
-        return users.Select(user => user.ToResponse());
+        return users;
     }
 }
