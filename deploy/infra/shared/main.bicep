@@ -66,7 +66,7 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-
 }
 
 // app configuration
-resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-03-01' = {
+resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-09-01-preview' = {
   name: '${workload}-${category}-ac'
   location: location
   tags: tags
@@ -74,7 +74,10 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
     name: 'Free'
   }
   properties: {
-    disableLocalAuth: false
+    disableLocalAuth: true
+    dataPlaneProxy: {
+      authenticationMode: 'Pass-through'
+    }
   }
 
   resource authenticationInstanceKeyValue 'keyValues' = {
