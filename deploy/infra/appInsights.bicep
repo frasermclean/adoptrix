@@ -15,6 +15,9 @@ param tags object = {
   appEnv: appEnv
 }
 
+@description('Log Analytics workspace ID - if empty, a new workspace will be created')
+param logAnalyticsWorkspaceId string = ''
+
 @description('Set to true to force authentication via Entra ID')
 param disableLocalAuth bool = false
 
@@ -25,7 +28,7 @@ param monitoringMetricsPublishers array = []
 param actionGroupShortName string
 
 // log analytics workspace
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = if (empty(logAnalyticsWorkspaceId)) {
   name: '${workload}-${appEnv}-law'
   location: location
   tags: tags
@@ -49,7 +52,7 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   properties: {
     Application_Type: 'web'
     DisableLocalAuth: disableLocalAuth
-    WorkspaceResourceId: logAnalyticsWorkspace.id
+    WorkspaceResourceId: empty(logAnalyticsWorkspaceId) ? logAnalyticsWorkspace.id : logAnalyticsWorkspaceId
   }
 }
 
@@ -118,4 +121,4 @@ output connectionString string = applicationInsights.properties.ConnectionString
 output applicationInsightsName string = applicationInsights.name
 
 @description('Log Analytics workspace resource ID')
-output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id
+output logAnalyticsWorkspaceId string = applicationInsights.properties.WorkspaceResourceId
