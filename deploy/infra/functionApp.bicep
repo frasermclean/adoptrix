@@ -30,9 +30,6 @@ param storageAccountName string
 @description('Application Insights connection string')
 param applicationInsightsConnectionString string
 
-@description('Flag to create a managed certificate for the function app. Set to true on first run.')
-param shouldCreateManagedCertificate bool = false
-
 var tags = {
   workload: workload
   appEnv: appEnv
@@ -130,12 +127,11 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   // custom domain binding
   resource hostNameBinding 'hostNameBindings' = {
     name: customDomainName
+    dependsOn: [dnsRecords]
     properties: {
       hostNameType: 'Verified'
-      sslState: shouldCreateManagedCertificate ? 'Disabled' : 'SniEnabled'
+      sslState: 'Disabled'
       customHostNameDnsRecordType: 'CName'
-      siteName: functionApp.name
-      thumbprint: shouldCreateManagedCertificate ? null : customDomainCertificate.properties.thumbprint
     }
   }
 
@@ -167,13 +163,22 @@ module dnsRecords 'dnsRecords.bicep' = {
 }
 
 // managed certificate
-resource customDomainCertificate 'Microsoft.Web/certificates@2023-12-01' = if (shouldCreateManagedCertificate) {
+resource customDomainCertificate 'Microsoft.Web/certificates@2023-12-01' = {
   name: 'jobs-cert'
   location: location
-  dependsOn: [dnsRecords]
   properties: {
     serverFarmId: appServicePlan.id
-    canonicalName: customDomainName
+    canonicalName: functionApp::hostNameBinding.name
+  }
+}
+
+// enable SNI binding for the custom domain
+module siteSniEnable 'modules/siteSniEnable.bicep' = {
+  name: 'siteSniEnable'
+  params: {
+    siteName: functionApp.name
+    hostname: customDomainName
+    certificateThumbprint: customDomainCertificate.properties.thumbprint
   }
 }
 
