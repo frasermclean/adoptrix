@@ -2,14 +2,17 @@ on:
   workflow_call:
     inputs:
       environment:
-        required: true
         type: string
+        required: true
       resourceGroup:
-        required: true
         type: string
+        required: true
       apiAppName:
-        required: true
         type: string
+        required: true
+      clientArtifactName:
+        type: string
+        default: client
 
 jobs:
   # Deploy container applications
@@ -43,3 +46,29 @@ jobs:
           imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ github.sha }}
           containerAppName: ${{ inputs.apiAppName }}
           resourceGroup: ${{ inputs.resourceGroup }}
+
+  # Deploy client application
+  deploy_client_app:
+    name: Deploy client application
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment: demo
+    steps:
+      # Download artifact
+      - name: Download artifact
+        id: download-artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.clientArtifactName }}
+
+      # Deploy to Azure Static Web App
+      - name: Deploy to Azure Static Web App
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          action: upload
+          production_branch: main
+          azure_static_web_apps_api_token: ${{ secrets.CLIENT_DEPLOYMENT_TOKEN }}
+          app_location: ${{ steps.download-artifact.outputs.download-path }}/wwwroot
+          skip_app_build: true
+          skip_api_build: true
