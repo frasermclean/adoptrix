@@ -127,6 +127,7 @@ jobs:
       environment: demo
       resourceGroup: adoptrix-demo-rg
       apiAppName: adoptrix-demo-api-ca
+    secrets: inherit
 
   # Deploy jobs application
   deploy_jobs_app:
