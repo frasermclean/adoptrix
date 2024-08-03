@@ -10,6 +10,12 @@ on:
       apiAppName:
         type: string
         required: true
+      jobsAppName:
+        type: string
+        required: true
+      jobsArtifactName:
+        type: string
+        default: jobs
       clientArtifactName:
         type: string
         default: client
@@ -47,13 +53,43 @@ jobs:
           containerAppName: ${{ inputs.apiAppName }}
           resourceGroup: ${{ inputs.resourceGroup }}
 
+  # Deploy jobs application
+  deploy_jobs_app:
+    name: Deploy jobs application
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment: ${{ inputs.environment }}
+    steps:
+      # Download artifact
+      - name: Download artifact
+        id: download-artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.jobsArtifactName }}
+
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Publish application
+      - name: Publish application
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ inputs.jobsAppName }}
+          package: ${{ steps.download-artifact.outputs.download-path }}
+
   # Deploy client application
   deploy_client_app:
     name: Deploy client application
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-    environment: demo
+    environment: ${{ inputs.environment }}
     steps:
       # Download artifact
       - name: Download artifact
