@@ -1,0 +1,54 @@
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      azureTenantId:
+        required: true
+        type: string
+      azureClientId:
+        required: true
+        type: string
+      azureSubscriptionId:
+        required: true
+        type: string
+      resourceGroup:
+        required: true
+        type: string
+      apiAppName:
+        required: true
+        type: string
+
+jobs:
+  # Deploy container applications
+  deploy_container_apps:
+    name: Deploy container applications
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    environment: ${{ inputs.environment }}
+    steps:
+      # Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ inputs.azureTenantId }}
+          client-id: ${{ inputs.azureClientId }}
+          subscription-id: ${{ inputs.azureSubscriptionId }}
+
+      # Deploy API app
+      - name: Deploy API app
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }}
+          dockerfilePath: Dockerfile.api
+          acrName: ${{ vars.ACR_NAME }}
+          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ github.sha }}
+          containerAppName: ${{ inputs.apiAppName }}
+          resourceGroup: ${{ inputs.resourceGroup }}
