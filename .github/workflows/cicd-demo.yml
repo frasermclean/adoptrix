@@ -119,49 +119,14 @@ jobs:
 
   # Deploy demo apps
   deploy_demo_apps:
+    name: Deploy demo apps
     uses: ./.github/workflows/deploy-apps.yml
     #if: github.event_name != 'pull_request'
+    needs: build
     with:
       environment: demo
-      azureTenantId: e543ece2-5d77-452e-a3bf-61c45da951af
-      azureClientId: 18c6a99b-93b5-4f0a-aad2-9c02d7e76c53
-      azureSubscriptionId: 01cf7c6d-b11c-44ec-831f-55e56402ad6e
       resourceGroup: adoptrix-demo-rg
       apiAppName: adoptrix-demo-api-ca
-
-  # Deploy container applications
-  deploy_container_apps:
-    name: Deploy container applications
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name != 'pull_request'
-    permissions:
-      id-token: write
-      contents: read
-    environment: demo
-    steps:
-      # Check out the repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Login to Azure
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-
-      # Deploy API app
-      - name: Deploy API app
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          appSourcePath: ${{ github.workspace }}
-          dockerfilePath: Dockerfile.api
-          acrName: ${{ vars.ACR_NAME }}
-          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ github.sha }}
-          containerAppName: ${{ vars.API_APP_NAME }}
-          resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
 
   # Deploy jobs application
   deploy_jobs_app:
@@ -184,9 +149,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       # Publish application
       - name: Publish application

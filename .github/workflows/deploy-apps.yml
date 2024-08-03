@@ -4,15 +4,6 @@ on:
       environment:
         required: true
         type: string
-      azureTenantId:
-        required: true
-        type: string
-      azureClientId:
-        required: true
-        type: string
-      azureSubscriptionId:
-        required: true
-        type: string
       resourceGroup:
         required: true
         type: string
@@ -38,9 +29,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          tenant-id: ${{ inputs.azureTenantId }}
-          client-id: ${{ inputs.azureClientId }}
-          subscription-id: ${{ inputs.azureSubscriptionId }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       # Deploy API app
       - name: Deploy API app
