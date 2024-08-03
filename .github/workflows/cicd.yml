@@ -66,14 +66,6 @@ jobs:
           check_name: Solution test results
           action_fail: true
 
-      # Upload test results
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: ${{ env.TEST_RESULTS_DIRECTORY }}
-
       # Upload coverage reports
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
@@ -82,7 +74,7 @@ jobs:
 
       # Publish jobs project
       - name: Publish jobs project
-        #if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         run: >-
           dotnet publish src/Adoptrix.Jobs
           --no-build
@@ -91,7 +83,7 @@ jobs:
 
       # Upload jobs artifact
       - name: Upload jobs artifact
-        #if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: jobs
@@ -99,7 +91,7 @@ jobs:
 
       # Publish client project
       - name: Publish client project
-        #if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         run: >-
           dotnet publish src/Adoptrix.Client
           --configuration ${{ env.BUILD_CONFIGURATION }}
@@ -107,7 +99,7 @@ jobs:
 
       # Upload client artifact
       - name: Upload client artifact
-        #if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: client
@@ -117,7 +109,7 @@ jobs:
   deploy_demo_apps:
     name: Deploy demo apps
     uses: ./.github/workflows/deploy-apps.yml
-    #if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request'
     needs: build
     with:
       environment: demo
