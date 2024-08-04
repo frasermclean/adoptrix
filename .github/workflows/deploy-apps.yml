@@ -60,7 +60,7 @@ jobs:
           deploymentName: adoptrix-${{ inputs.environment }}${{ env.DEPLOYMENT_SUFFIX }}
           region: AustraliaEast
           template: ${{ github.workspace }}/deploy/infra/main.bicep
-          parameters: ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
+          parameters: ${{ github.workspace }}/deploy/infra/main.${{ inputs.environment }}.bicepparam
 
   # Deploy container applications
   deploy_container_apps:
