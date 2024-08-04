@@ -11,9 +11,6 @@ on:
         type: string
         default: client
 
-env:
-  RESOURCE_GROUP: "adoptrix-${{ inputs.environment }}-rg"
-
 jobs:
   # Deploy infrastructure
   deploy_infra:
@@ -24,6 +21,7 @@ jobs:
       id-token: write
       contents: read
     outputs:
+      appResourceGroup: ${{ steps.deploy_template.outputs.appResourceGroup }}
       apiAppName: ${{ steps.deploy_template.outputs.apiAppName }}
       functionAppName: ${{ steps.deploy_template.outputs.functionAppName }}
     steps:
@@ -95,7 +93,7 @@ jobs:
           acrName: ${{ vars.ACR_NAME }}
           imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ github.sha }}
           containerAppName: ${{ needs.deploy_infra.outputs.apiAppName }}
-          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          resourceGroup: ${{ needs.deploy_infra.outputs.appResourceGroup }}
 
   # Deploy jobs application
   deploy_jobs_app:

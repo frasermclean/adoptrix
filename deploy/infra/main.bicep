@@ -102,3 +102,12 @@ module appResources 'apps/main.bicep' = {
     deploymentSuffix: deploymentSuffix
   }
 }
+
+@description('The name of the app resource group')
+output appResourceGroup string = appResourceGroup.name
+
+@description('The name of the API container app')
+output apiAppName string = appResources.outputs.apiAppName
+
+@description('Name of the jobs function app')
+output functionAppName string = appResources.outputs.functionAppName
