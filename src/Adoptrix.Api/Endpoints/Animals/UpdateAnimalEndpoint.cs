@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
@@ -6,10 +7,15 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-[HttpPut("animals/{animalId:guid}")]
 public class UpdateAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepository breedsRepository)
     : Endpoint<UpdateAnimalRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>>
 {
+    public override void Configure()
+    {
+        Put("animals/{animalId:guid}");
+        Permissions(PermissionNames.AnimalsWrite);
+    }
+
     public override async Task<Results<Ok<AnimalResponse>, NotFound, ErrorResponse>> ExecuteAsync(
         UpdateAnimalRequest request, CancellationToken cancellationToken)
     {
@@ -38,6 +44,6 @@ public class UpdateAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsR
 
         Logger.LogInformation("Updated animal with ID: {AnimalId}", animal.Id);
 
-        return TypedResults.Ok(AnimalResponseMapper.ToResponse(animal));
+        return TypedResults.Ok(animal.ToResponse());
     }
 }

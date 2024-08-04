@@ -7,7 +7,7 @@ namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
 public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.BasicAuthClient;
+    private readonly HttpClient httpClient = fixture.AdminClient;
 
     [Theory, AdoptrixAutoData]
     public async Task AddBreed_WithValidRequest_ShouldReturnCreated(Core.Species species)

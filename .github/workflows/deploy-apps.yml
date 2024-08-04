@@ -1,0 +1,169 @@
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+      jobsArtifactName:
+        type: string
+        default: jobs
+      clientArtifactName:
+        type: string
+        default: client
+
+jobs:
+  # Deploy infrastructure
+  deploy_infra:
+    name: Deploy infrastructure
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      appResourceGroup: ${{ steps.deploy_template.outputs.appResourceGroup }}
+      apiAppName: ${{ steps.deploy_template.outputs.apiAppName }}
+      functionAppName: ${{ steps.deploy_template.outputs.functionAppName }}
+    steps:
+      # Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Get latest API image tag
+      - name: Get latest API image tag
+        run: |
+          IMAGE_TAG=$(az acr repository show-tags --name ${{ vars.ACR_NAME }} --repository ${{ vars.API_REPOSITORY_NAME }} --orderby time_desc --top 1 --output tsv)
+          echo "Latest API image tag: $IMAGE_TAG"
+          echo "ADOPTRIX_API_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      # Deploy Bicep template
+      - name: Deploy Bicep template
+        uses: azure/arm-deploy@v2
+        id: deploy_template
+        env:
+          ATTEMPT_ROLE_ASSIGNMENTS: false
+          HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
+          ACR_NAME: ${{ vars.ACR_NAME }}
+          ADOPTRIX_API_IMAGE_REPOSITORY: ${{ vars.API_REPOSITORY_NAME }}
+          ADOPTRIX_API_IMAGE_TAG: ${{ env.ADOPTRIX_API_IMAGE_TAG }}
+          DEPLOYMENT_SUFFIX: -cicd-${{ github.run_number }}
+        with:
+          scope: subscription
+          deploymentName: adoptrix-${{ inputs.environment }}${{ env.DEPLOYMENT_SUFFIX }}
+          region: AustraliaEast
+          template: ${{ github.workspace }}/deploy/infra/main.bicep
+          parameters: ${{ github.workspace }}/deploy/infra/main.${{ inputs.environment }}.bicepparam
+
+  # Deploy container applications
+  deploy_container_apps:
+    name: Deploy container applications
+    runs-on: ubuntu-latest
+    needs: deploy_infra
+    permissions:
+      id-token: write
+      contents: read
+    environment: ${{ inputs.environment }}
+    steps:
+      # Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Deploy API app
+      - name: Deploy API app
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }}
+          dockerfilePath: Dockerfile.api
+          acrName: ${{ vars.ACR_NAME }}
+          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ github.sha }}
+          containerAppName: ${{ needs.deploy_infra.outputs.apiAppName }}
+          resourceGroup: ${{ needs.deploy_infra.outputs.appResourceGroup }}
+
+  # Deploy jobs application
+  deploy_jobs_app:
+    name: Deploy jobs application
+    runs-on: ubuntu-latest
+    needs: deploy_infra
+    permissions:
+      id-token: write
+    environment: ${{ inputs.environment }}
+    steps:
+      # Download artifact
+      - name: Download artifact
+        id: download-artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.jobsArtifactName }}
+
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Publish application
+      - name: Publish application
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ needs.deploy_infra.outputs.functionAppName }}
+          package: ${{ steps.download-artifact.outputs.download-path }}
+
+  # Deploy client application
+  deploy_client_app:
+    name: Deploy client application
+    runs-on: ubuntu-latest
+    needs: deploy_infra
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    permissions:
+      id-token: write
+    environment: ${{ inputs.environment }}
+    steps:
+      # Download artifact
+      - name: Download artifact
+        id: download-artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.clientArtifactName }}
+
+      # Deploy to Azure Static Web App
+      - name: Deploy to Azure Static Web App
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          action: upload
+          production_branch: main
+          azure_static_web_apps_api_token: ${{ secrets.CLIENT_DEPLOYMENT_TOKEN }}
+          app_location: ${{ steps.download-artifact.outputs.download-path }}/wwwroot
+          skip_app_build: true
+          skip_api_build: true
+
+  # Close pull request
+  close_pr:
+    name: Close pull request
+    runs-on: ubuntu-latest
+    needs: deploy_infra
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    steps:
+      - name: Remove preview environment
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          action: close
+          azure_static_web_apps_api_token: ${{ secrets.CLIENT_DEPLOYMENT_TOKEN }}
+          app_location: null

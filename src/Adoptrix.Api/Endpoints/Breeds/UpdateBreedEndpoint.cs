@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
@@ -12,6 +13,7 @@ public class UpdateBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesRep
     public override void Configure()
     {
         Put("breeds/{breedId:guid}");
+        Permissions(PermissionNames.BreedsWrite);
     }
 
     public override async Task<Results<Ok<BreedResponse>, NotFound, ErrorResponse>> ExecuteAsync(UpdateBreedRequest request, CancellationToken cancellationToken)
@@ -33,6 +35,6 @@ public class UpdateBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesRep
         breed.Species = species;
         await breedsRepository.SaveChangesAsync(cancellationToken);
 
-        return TypedResults.Ok(BreedResponseMapper.ToResponse(breed));
+        return TypedResults.Ok(breed.ToResponse());
     }
 }

@@ -1,24 +1,13 @@
-targetScope = 'resourceGroup'
+targetScope = 'subscription'
 
-@minLength(3)
 @description('Name of the workload')
 param workload string
 
-@minLength(3)
+@description('Location of the resources')
+param location string = deployment().location
+
 @description('Application environment')
 param appEnv string
-
-@description('Azure region for the non-global resources')
-param location string = resourceGroup().location
-
-@description('Name of the shared resource group')
-param sharedResourceGroup string
-
-@description('Domain name')
-param domainName string
-
-@maxLength(12)
-param actionGroupShortName string
 
 @description('Azure AD B2C application client ID')
 param authenticationClientId string
@@ -26,23 +15,17 @@ param authenticationClientId string
 @description('Azure AD B2C audience')
 param authenticationAudience string
 
-@description('Name of the Azure App Configuration instance')
-param appConfigurationName string
-
 @description('Application administrator group name')
 param adminGroupName string
 
 @description('Application administrator group object ID')
 param adminGroupObjectId string
 
-@description('Whether to attempt role assignments (requires appropriate permissions)')
-param attemptRoleAssignments bool
-
-@description('Array of allowed external IP addresses. Needs to be an array of objects with name and ipAddress properties.')
-param allowedExternalIpAddresses array
-
-@description('Container registry login server')
+@description('Container registry name')
 param containerRegistryName string
+
+@description('Container registry resource group')
+param containerRegistryResourceGroup string
 
 @description('Repository of the API container image')
 param apiImageRepository string
@@ -50,144 +33,81 @@ param apiImageRepository string
 @description('Tag of the API container image')
 param apiImageTag string
 
-var tags = {
-  workload: workload
-  appEnv: appEnv
-}
+@description('Suffix for child deployments')
+param deploymentSuffix string = ''
 
-var deploymentSuffix = startsWith(deployment().name, 'main-') ? replace(deployment().name, 'main-', '-') : ''
+@description('Whether to attempt role assignments (requires appropriate permissions)')
+param attemptRoleAssignments bool
 
-var appConfigurationEndpoint = 'https://${appConfigurationName}.azconfig.io'
+@description('Array of allowed external IP addresses. Needs to be an array of objects with name and ipAddress properties.')
+param allowedExternalIpAddresses array = []
 
-module databaseModule 'database.bicep' = {
-  name: 'database${deploymentSuffix}'
-  params: {
+// shared resource group
+resource sharedResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = {
+  name: '${workload}-shared-rg'
+  location: location
+  tags: {
     workload: workload
-    appEnv: appEnv
-    location: location
-    tags: tags
-    adminGroupName: adminGroupName
-    adminGroupObjectId: adminGroupObjectId
-    allowedExternalIpAddresses: allowedExternalIpAddresses
+    category: 'shared'
   }
 }
 
-module storageModule 'storage.bicep' = {
-  name: 'storage${deploymentSuffix}'
+// shared resources
+module sharedResources 'shared/main.bicep' = {
+  name: 'sharedResources${deploymentSuffix}'
+  scope: resourceGroup(sharedResourceGroup.name)
   params: {
     workload: workload
-    appEnv: appEnv
+    category: 'shared'
     location: location
-    tags: tags
-  }
-}
-
-module appInsightsModule 'appInsights.bicep' = {
-  name: 'appInsights${deploymentSuffix}'
-  params: {
-    workload: workload
-    appEnv: appEnv
-    location: location
-    tags: tags
-    disableLocalAuth: false // needed for Azure Functions
-    actionGroupShortName: actionGroupShortName
-  }
-}
-
-// client static web app module
-module staticWebAppModule 'staticWebApp.bicep' = {
-  name: 'staticWebApp${deploymentSuffix}'
-  params: {
-    workload: workload
-    appEnv: appEnv
-    location: 'eastasia'
-    tags: tags
-    appName: 'client'
-    domainName: domainName
-    sharedResourceGroup: sharedResourceGroup
+    containerRegistryName: containerRegistryName
+    containerRegistryResourceGroup: containerRegistryResourceGroup
+    attemptRoleAssignments: attemptRoleAssignments
     deploymentSuffix: deploymentSuffix
   }
 }
 
-// container apps module
-module containerAppsModule './containerApps.bicep' = {
-  name: 'containerApps${deploymentSuffix}'
-  params: {
+// app environment resource group
+resource appResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = {
+  name: '${workload}-${appEnv}-rg'
+  location: location
+  tags: {
     workload: workload
-    appEnv: appEnv
-    location: location
-    domainName: domainName
-    sharedResourceGroup: sharedResourceGroup
-    containerRegistryName: containerRegistryName
-    apiImageRepository: apiImageRepository
-    apiImageTag: apiImageTag
-    apiAllowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
-    logAnalyticsWorkspaceId: appInsightsModule.outputs.logAnalyticsWorkspaceId
-    applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
-    appConfigurationEndpoint: appConfigurationEndpoint
+    category: 'app'
+    environment: appEnv
   }
 }
 
-// jobs function app
-module jobsAppModule './functionApp.bicep' = {
-  name: 'functionApp${deploymentSuffix}'
+// app environment resources
+module appResources 'apps/main.bicep' = {
+  name: 'appResources${deploymentSuffix}'
+  scope: resourceGroup(appResourceGroup.name)
   params: {
     workload: workload
-    appEnv: appEnv
-    appName: 'jobs'
     location: location
-    appConfigEndpoint: appConfigurationEndpoint
-    storageAccountName: storageModule.outputs.accountName
-    applicationInsightsConnectionString: appInsightsModule.outputs.connectionString
-  }
-}
-
-// environment-specific app configuration
-module appConfigModule 'appConfig.bicep' = {
-  name: 'appConfig-${appEnv}'
-  scope: resourceGroup(sharedResourceGroup)
-  params: {
-    appConfigurationName: appConfigurationName
     appEnv: appEnv
-    authenticationClientId: authenticationClientId
+    domainName: sharedResources.outputs.dnsZoneName
+    actionGroupShortName: 'AdoptrixDemo'
     authenticationAudience: authenticationAudience
-    storageAccountBlobEndpoint: storageModule.outputs.blobEndpoint
-    storageAccountQueueEndpoint: storageModule.outputs.queueEndpoint
-    databaseConnectionString: databaseModule.outputs.connectionString
-    apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
+    authenticationClientId: authenticationClientId
+    sharedResourceGroup: sharedResourceGroup.name
+    appConfigurationName: sharedResources.outputs.appConfigurationName
+    adminGroupName: adminGroupName
+    adminGroupObjectId: adminGroupObjectId
+    containerRegistryName: containerRegistryName
+    apiImageTag: apiImageTag
+    apiImageRepository: apiImageRepository
     attemptRoleAssignments: attemptRoleAssignments
+    allowedExternalIpAddresses: allowedExternalIpAddresses
+    deploymentSuffix: deploymentSuffix
   }
 }
 
-// role assignments
-module roleAssignmentsModule 'roleAssignments.bicep' =
-  if (attemptRoleAssignments) {
-    name: 'roleAssignments${deploymentSuffix}'
-    params: {
-      adminGroupObjectId: adminGroupObjectId
-      apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
-      jobsAppIdentityPrincipalId: jobsAppModule.outputs.identityPrincipalId
-      storageAccountName: storageModule.outputs.accountName
-      applicationInsightsName: appInsightsModule.outputs.applicationInsightsName
-    }
-  }
+@description('The name of the app resource group')
+output appResourceGroup string = appResourceGroup.name
 
-// shared resource role assignments
-module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' =
-  if (attemptRoleAssignments) {
-    name: 'roleAssignments-${appEnv}${deploymentSuffix}'
-    scope: resourceGroup(sharedResourceGroup)
-    params: {
-      appConfigurationName: appConfigurationName
-      configurationDataReaders: [
-        containerAppsModule.outputs.apiAppPrincipalId
-        jobsAppModule.outputs.identityPrincipalId
-      ]
-    }
-  }
-
-@description('The name of the main container app')
-output apiAppName string = containerAppsModule.outputs.apiAppName
+@description('The name of the API container app')
+output apiAppName string = appResources.outputs.apiAppName
 
 @description('Name of the jobs function app')
-output functionAppName string = jobsAppModule.outputs.functionAppName
+output functionAppName string = appResources.outputs.functionAppName

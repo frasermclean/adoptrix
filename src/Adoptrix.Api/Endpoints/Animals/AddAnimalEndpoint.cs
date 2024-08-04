@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
@@ -7,10 +8,15 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-[HttpPost("animals")]
 public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepository breedsRepository)
     : Endpoint<AddAnimalRequest, Results<Created<AnimalResponse>, ErrorResponse>>
 {
+    public override void Configure()
+    {
+        Post("animals");
+        Permissions(PermissionNames.AnimalsWrite);
+    }
+
     public override async Task<Results<Created<AnimalResponse>, ErrorResponse>> ExecuteAsync(AddAnimalRequest request, CancellationToken cancellationToken)
     {
         var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
@@ -26,7 +32,7 @@ public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepo
 
         Logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
 
-        return TypedResults.Created($"/api/animals/{animal.Id}", AnimalResponseMapper.ToResponse(animal));
+        return TypedResults.Created($"/api/animals/{animal.Id}", animal.ToResponse());
     }
 
     private static Animal MapToAnimal(AddAnimalRequest request, Breed breed) => new()

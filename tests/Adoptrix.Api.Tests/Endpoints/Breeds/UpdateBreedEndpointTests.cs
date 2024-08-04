@@ -8,7 +8,7 @@ namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
 public class UpdateBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.BasicAuthClient;
+    private readonly HttpClient httpClient = fixture.AdminClient;
 
     [Theory, AdoptrixAutoData]
     public async Task UpdateBreed_WithValidRequest_ShouldReturnOk(Breed breed, Core.Species species)

@@ -15,6 +15,12 @@ param appName string = 'jobs'
 @description('Azure region for the non-global resources')
 param location string = resourceGroup().location
 
+@description('Domain name')
+param domainName string
+
+@description('Name of the shared resource group')
+param sharedResourceGroup string
+
 @description('The endpoint for the Azure App Configuration instance')
 param appConfigEndpoint string
 
@@ -29,6 +35,8 @@ var tags = {
   appEnv: appEnv
   appName: appName
 }
+
+var customDomainName = 'jobs.${appEnv}.${domainName}'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
   name: storageAccountName
@@ -116,6 +124,17 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     }
   }
 
+  // custom domain binding
+  resource hostNameBinding 'hostNameBindings' = {
+    name: customDomainName
+    dependsOn: [dnsRecords]
+    properties: {
+      hostNameType: 'Verified'
+      sslState: 'Disabled'
+      customHostNameDnsRecordType: 'CName'
+    }
+  }
+
   resource scmPublishingPolicy 'basicPublishingCredentialsPolicies' = {
     name: 'scm'
     properties: {
@@ -128,6 +147,38 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     properties: {
       allow: false
     }
+  }
+}
+
+// dns records
+module dnsRecords 'dnsRecords.bicep' = {
+  name: 'dnsRecords-${appEnv}-jobs'
+  scope: resourceGroup(sharedResourceGroup)
+  params: {
+    domainName: domainName
+    appEnv: appEnv
+    jobsAppDefaultHostname: functionApp.properties.defaultHostName
+    customDomainVerificationId: functionApp.properties.customDomainVerificationId
+  }
+}
+
+// managed certificate
+resource customDomainCertificate 'Microsoft.Web/certificates@2023-12-01' = {
+  name: 'jobs-cert'
+  location: location
+  properties: {
+    serverFarmId: appServicePlan.id
+    canonicalName: functionApp::hostNameBinding.name
+  }
+}
+
+// enable SNI binding for the custom domain
+module siteSniEnable 'siteSniEnable.bicep' = {
+  name: 'siteSniEnable'
+  params: {
+    siteName: functionApp.name
+    hostname: customDomainName
+    certificateThumbprint: customDomainCertificate.properties.thumbprint
   }
 }
 

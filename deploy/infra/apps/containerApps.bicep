@@ -157,8 +157,8 @@ resource apiContainerApp 'Microsoft.App/containerApps@2024-03-01' = {
           name: apiImageRepository
           image: '${containerRegistryLoginServer}/${apiImageRepository}:${apiImageTag}'
           resources: {
-            cpu: json('0.5')
-            memory: '1Gi'
+            cpu: json('0.25')
+            memory: '0.5Gi'
           }
           env: [
             {
@@ -180,6 +180,20 @@ resource apiContainerApp 'Microsoft.App/containerApps@2024-03-01' = {
           ]
         }
       ]
+      scale: {
+        minReplicas: 1
+        maxReplicas: 3
+        rules: [
+          {
+            name: 'http-scale-rule'
+            http: {
+              metadata: {
+                concurrentRequests: '20'
+              }
+            }
+          }
+        ]
+      }
     }
   }
 }

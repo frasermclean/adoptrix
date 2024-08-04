@@ -7,7 +7,7 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals.Images;
 
 public class AddAnimalImagesEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.BasicAuthClient;
+    private readonly HttpClient httpClient = fixture.AdminClient;
 
     [Theory, AdoptrixAutoData]
     public async Task AddAnimalImages_WithValidRequest_ShouldReturnOk(Animal animal)

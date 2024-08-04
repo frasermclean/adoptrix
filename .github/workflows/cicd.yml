@@ -1,0 +1,116 @@
+name: Continuous Integration / Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/cicd.yml
+      - src/**
+      - tests/**
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/cicd.yml
+      - src/**
+      - tests/**
+
+jobs:
+  # Build, test and publish API job
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    env:
+      BUILD_CONFIGURATION: Release
+      JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/jobs
+      CLIENT_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/client
+      TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
+    permissions:
+      checks: write
+      pull-requests: write
+    steps:
+      # Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install .NET workloads
+      - name: Install .NET workloads
+        run: dotnet workload install aspire wasm-tools
+
+      # Restore NuGet packages
+      - name: Restore packages
+        run: dotnet restore
+
+      # Build solution
+      - name: Build solution
+        run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIGURATION }}
+
+      # Run tests
+      - name: Run tests
+        run: >-
+          dotnet test
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --logger trx
+          --collect "XPlat Code Coverage"
+          --settings coverlet.runsettings
+          --results-directory ${{ env.TEST_RESULTS_DIRECTORY }}
+
+      # Publish test results
+      - name: Publish test results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: ${{ env.TEST_RESULTS_DIRECTORY }}/*.trx
+          check_name: Solution test results
+          action_fail: true
+
+      # Upload coverage reports
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      # Publish jobs project
+      - name: Publish jobs project
+        if: github.event_name != 'pull_request'
+        run: >-
+          dotnet publish src/Adoptrix.Jobs
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --output ${{ env.JOBS_PUBLISH_DIRECTORY }}
+
+      # Upload jobs artifact
+      - name: Upload jobs artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: jobs
+          path: ${{ env.JOBS_PUBLISH_DIRECTORY }}/*
+
+      # Publish client project
+      - name: Publish client project
+        if: github.event_name != 'pull_request'
+        run: >-
+          dotnet publish src/Adoptrix.Client
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --output ${{ env.CLIENT_PUBLISH_DIRECTORY }}
+
+      # Upload client artifact
+      - name: Upload client artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: client
+          path: ${{ env.CLIENT_PUBLISH_DIRECTORY }}/*
+
+  # Deploy demo apps
+  deploy_demo_apps:
+    name: Deploy demo apps
+    uses: ./.github/workflows/deploy-apps.yml
+    if: github.event_name != 'pull_request'
+    needs: build
+    with:
+      environment: demo
+    secrets: inherit

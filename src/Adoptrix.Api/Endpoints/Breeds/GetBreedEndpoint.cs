@@ -17,7 +17,7 @@ public class GetBreedEndpoint(IBreedsRepository breedsRepository)
         var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
 
         return breed is not null
-            ? TypedResults.Ok(BreedResponseMapper.ToResponse(breed))
+            ? TypedResults.Ok(breed.ToResponse())
             : TypedResults.NotFound();
     }
 }
