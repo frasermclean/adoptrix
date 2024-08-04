@@ -8,7 +8,7 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
 public class DeleteAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.BasicAuthClient;
+    private readonly HttpClient httpClient = fixture.AdminClient;
 
     [Theory, AdoptrixAutoData]
     public async Task DeleteAnimal_WithValidRequest_ShouldReturnNoContent(DeleteAnimalRequest request, Animal animal)

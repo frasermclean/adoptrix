@@ -8,7 +8,7 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
 public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.BasicAuthClient;
+    private readonly HttpClient httpClient = fixture.AdminClient;
 
     [Theory, AdoptrixAutoData]
     public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk(UpdateAnimalRequest request, Animal animal,

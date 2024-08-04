@@ -7,7 +7,7 @@ namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
 public class DeleteBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.BasicAuthClient;
+    private readonly HttpClient httpClient = fixture.AdminClient;
 
     [Theory, AdoptrixAutoData]
     public async Task DeleteBreed_WithValidRequest_ShouldReturnNoContent(DeleteBreedRequest request, Breed breed)

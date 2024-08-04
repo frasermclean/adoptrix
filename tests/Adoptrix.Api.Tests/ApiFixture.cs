@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using Adoptrix.Api.Security;
 using Adoptrix.Api.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
@@ -19,17 +20,19 @@ public class ApiFixture : AppFixture<Program>
     public Mock<IBlobContainerManager> OriginalImagesBlobContainerManagerMock { get; } = new();
     public Mock<IUsersService> UsersServiceMock { get; } = new();
 
-    /// <summary>
-    /// HTTP client pre-configured with basic test authentication.
-    /// </summary>
-    public HttpClient BasicAuthClient => CreateClient(options =>
-        options.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(BasicAuthHandler.SchemeName));
+    public HttpClient UserClient => CreateClient(httpClient =>
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{RoleNames.User}"));
+
+    public HttpClient AdminClient => CreateClient(httpClient =>
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{RoleNames.Administrator}"));
 
     protected override void ConfigureServices(IServiceCollection services)
     {
         // add test auth handler
-        services.AddAuthentication(BasicAuthHandler.SchemeName)
-            .AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>(BasicAuthHandler.SchemeName, _ => { });
+        services.AddAuthentication(TestAuthHandler.SchemeName)
+            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.SchemeName, _ => { });
 
         // remove selected services
         services.RemoveAll<IAnimalsRepository>()

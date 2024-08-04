@@ -6,7 +6,7 @@ namespace Adoptrix.Api.Tests.Endpoints.Users;
 
 public class GetUsersEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
-    private readonly HttpClient httpClient = fixture.BasicAuthClient;
+    private readonly HttpClient httpClient = fixture.AdminClient;
 
     [Fact]
     public async Task GetUsers_ShouldReturnOk()
