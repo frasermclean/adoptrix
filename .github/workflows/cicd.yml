@@ -1,4 +1,4 @@
-name: CI/CD
+name: Continuous Integration / Deployment
 
 on:
   push:
@@ -109,12 +109,8 @@ jobs:
   deploy_demo_apps:
     name: Deploy demo apps
     uses: ./.github/workflows/deploy-apps.yml
-    if: github.event_name != 'pull_request'
+    #if: github.event_name != 'pull_request'
     needs: build
     with:
       environment: demo
-      resourceGroup: adoptrix-demo-rg
-      apiAppName: adoptrix-demo-api-ca
-      jobsAppName: adoptrix-demo-jobs-func
     secrets: inherit
-

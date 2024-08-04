@@ -4,15 +4,6 @@ on:
       environment:
         type: string
         required: true
-      resourceGroup:
-        type: string
-        required: true
-      apiAppName:
-        type: string
-        required: true
-      jobsAppName:
-        type: string
-        required: true
       jobsArtifactName:
         type: string
         default: jobs
@@ -20,11 +11,62 @@ on:
         type: string
         default: client
 
+env:
+  RESOURCE_GROUP: "adoptrix-${{ inputs.environment }}-rg"
+
 jobs:
+  # Deploy infrastructure
+  deploy_infra:
+    name: Deploy infrastructure
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      apiAppName: ${{ steps.deploy_template.outputs.apiAppName }}
+      functionAppName: ${{ steps.deploy_template.outputs.functionAppName }}
+    steps:
+      # Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Get latest API image tag
+      - name: Get latest API image tag
+        run: |
+          IMAGE_TAG=$(az acr repository show-tags --name ${{ vars.ACR_NAME }} --repository ${{ vars.API_REPOSITORY_NAME }} --orderby time_desc --top 1 --output tsv)
+          echo "Latest API image tag: $IMAGE_TAG"
+          echo "ADOPTRIX_API_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      # Deploy Bicep template
+      - name: Deploy Bicep template
+        uses: azure/arm-deploy@v2
+        id: deploy_template
+        env:
+          ATTEMPT_ROLE_ASSIGNMENTS: false
+          HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
+          ADOPTRIX_API_IMAGE_REPOSITORY: ${{ vars.API_REPOSITORY_NAME }}
+          ADOPTRIX_API_IMAGE_TAG: ${{ env.ADOPTRIX_API_IMAGE_TAG }}
+        with:
+          scope: resourcegroup
+          resourceGroupName: ${{ env.RESOURCE_GROUP }}
+          deploymentName: main-deploy-${{ github.run_number }}
+          template: ${{ github.workspace }}/deploy/infra/main.bicep
+          parameters: ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
+
   # Deploy container applications
   deploy_container_apps:
     name: Deploy container applications
     runs-on: ubuntu-latest
+    needs: deploy_infra
     permissions:
       id-token: write
       contents: read
@@ -50,13 +92,14 @@ jobs:
           dockerfilePath: Dockerfile.api
           acrName: ${{ vars.ACR_NAME }}
           imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ github.sha }}
-          containerAppName: ${{ inputs.apiAppName }}
-          resourceGroup: ${{ inputs.resourceGroup }}
+          containerAppName: ${{ needs.deploy_infra.outputs.apiAppName }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
 
   # Deploy jobs application
   deploy_jobs_app:
     name: Deploy jobs application
     runs-on: ubuntu-latest
+    needs: deploy_infra
     permissions:
       id-token: write
     environment: ${{ inputs.environment }}
@@ -80,13 +123,14 @@ jobs:
       - name: Publish application
         uses: Azure/functions-action@v1
         with:
-          app-name: ${{ inputs.jobsAppName }}
+          app-name: ${{ needs.deploy_infra.outputs.functionAppName }}
           package: ${{ steps.download-artifact.outputs.download-path }}
 
   # Deploy client application
   deploy_client_app:
     name: Deploy client application
     runs-on: ubuntu-latest
+    needs: deploy_infra
     permissions:
       id-token: write
     environment: ${{ inputs.environment }}
