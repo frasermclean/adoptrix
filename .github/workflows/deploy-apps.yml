@@ -58,7 +58,7 @@ jobs:
         with:
           scope: resourcegroup
           resourceGroupName: ${{ env.RESOURCE_GROUP }}
-          deploymentName: main-deploy-${{ github.run_number }}
+          deploymentName: main-cicd-${{ github.run_number }}
           template: ${{ github.workspace }}/deploy/infra/main.bicep
           parameters: ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
 
