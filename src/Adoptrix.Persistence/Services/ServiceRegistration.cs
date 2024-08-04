@@ -93,8 +93,7 @@ public static class ServiceRegistration
     {
         services.AddScoped<IAnimalsRepository, AnimalsRepository>()
             .AddScoped<IBreedsRepository, BreedsRepository>()
-            .AddScoped<ISpeciesRepository, SpeciesRepository>()
-            .AddScoped<IUsersRepository, UsersRepository>();
+            .AddScoped<ISpeciesRepository, SpeciesRepository>();
 
         return services;
     }
