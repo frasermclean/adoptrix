@@ -175,7 +175,7 @@ module roleAssignmentsModule 'roleAssignments.bicep' =
   }
 
 // shared resource role assignments
-module sharedRoleAssignmentsModule 'shared/roleAssignments.bicep' =
+module sharedRoleAssignmentsModule '../shared/roleAssignments.bicep' =
   if (attemptRoleAssignments) {
     name: 'roleAssignments-${appEnv}${deploymentSuffix}'
     scope: resourceGroup(sharedResourceGroup)

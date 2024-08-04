@@ -173,7 +173,7 @@ resource customDomainCertificate 'Microsoft.Web/certificates@2023-12-01' = {
 }
 
 // enable SNI binding for the custom domain
-module siteSniEnable 'modules/siteSniEnable.bicep' = {
+module siteSniEnable 'siteSniEnable.bicep' = {
   name: 'siteSniEnable'
   params: {
     siteName: functionApp.name
