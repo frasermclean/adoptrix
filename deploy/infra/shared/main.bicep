@@ -25,6 +25,9 @@ param containerRegistryName string
 @description('Container registry resource group')
 param containerRegistryResourceGroup string
 
+@description('Whether to attempt role assignments (requires appropriate permissions)')
+param attemptRoleAssignments bool
+
 @description('Suffix for child deployments')
 param deploymentSuffix string = ''
 
@@ -100,7 +103,7 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
   }
 }
 
-module roleAssignments 'roleAssignments.bicep' = {
+module roleAssignments 'roleAssignments.bicep' = if (attemptRoleAssignments) {
   name: 'roleAssignments${deploymentSuffix}'
   params: {
     appConfigurationName: appConfiguration.name
@@ -109,7 +112,7 @@ module roleAssignments 'roleAssignments.bicep' = {
   }
 }
 
-module containerRegistryRoleAssingmentModule 'containerRegistryRoleAssignment.bicep' = {
+module containerRegistryRoleAssingmentModule 'containerRegistryRoleAssignment.bicep' = if (attemptRoleAssignments) {
   name: 'containerRegistryRoleAssingment-${workload}-${category}${deploymentSuffix}'
   scope: resourceGroup(containerRegistryResourceGroup)
   params: {

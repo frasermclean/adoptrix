@@ -37,7 +37,7 @@ param apiImageTag string
 param deploymentSuffix string = ''
 
 @description('Whether to attempt role assignments (requires appropriate permissions)')
-param attemptRoleAssignments bool = false
+param attemptRoleAssignments bool
 
 @description('Array of allowed external IP addresses. Needs to be an array of objects with name and ipAddress properties.')
 param allowedExternalIpAddresses array = []
@@ -62,6 +62,7 @@ module sharedResources 'shared/main.bicep' = {
     location: location
     containerRegistryName: containerRegistryName
     containerRegistryResourceGroup: containerRegistryResourceGroup
+    attemptRoleAssignments: attemptRoleAssignments
     deploymentSuffix: deploymentSuffix
   }
 }
