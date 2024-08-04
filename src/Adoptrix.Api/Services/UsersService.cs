@@ -16,7 +16,7 @@ public class UsersService(GraphServiceClient serviceClient) : IUsersService
 {
     private static readonly string[] QueryParameters = ["id", "givenName", "surname", "displayName", "mail"];
 
-    public async Task<IEnumerable<UserResponse>> GetAllUsersAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<UserResponse>> GetAllUsersAsync(CancellationToken cancellationToken = default)
     {
         var response = await serviceClient.Users.GetAsync(configuration =>
         {
@@ -27,11 +27,11 @@ public class UsersService(GraphServiceClient serviceClient) : IUsersService
         return response?.Value?.Select(MapToResponse) ?? [];
     }
 
-    public async Task<Result<UserResponse>> GetUserAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<Result<UserResponse>> GetUserAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         try
         {
-            var user =await serviceClient.Users[userId.ToString()]
+            var user = await serviceClient.Users[userId.ToString()]
                 .GetAsync(request => request.QueryParameters.Select = QueryParameters, cancellationToken);
             return MapToResponse(user!);
         }
