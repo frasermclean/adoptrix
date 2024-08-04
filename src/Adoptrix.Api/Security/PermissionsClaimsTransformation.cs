@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Adoptrix.Api.Extensions;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Identity.Web;
 
 namespace Adoptrix.Api.Security;
 
@@ -9,8 +8,7 @@ public class PermissionsClaimsTransformation(ILogger<PermissionsClaimsTransforma
 {
     public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
     {
-        var role = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimConstants.Roles)?.Value;
-
+        var role = principal.GetRole();
         var userId = principal.GetUserId();
         var claimsIdentity = principal.Identity as ClaimsIdentity;
 
