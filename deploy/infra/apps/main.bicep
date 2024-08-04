@@ -50,12 +50,13 @@ param apiImageRepository string
 @description('Tag of the API container image')
 param apiImageTag string
 
+@description('Suffix for child deployments')
+param deploymentSuffix string = ''
+
 var tags = {
   workload: workload
   appEnv: appEnv
 }
-
-var deploymentSuffix = startsWith(deployment().name, 'main-') ? replace(deployment().name, 'main-', '-') : ''
 
 var appConfigurationEndpoint = 'https://${appConfigurationName}.azconfig.io'
 

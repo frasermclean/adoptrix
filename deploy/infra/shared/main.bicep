@@ -11,7 +11,7 @@ param category string
 param location string = resourceGroup().location
 
 @description('Domain name')
-param domainName string
+param domainName string = 'adoptrix.com'
 
 @description('Array of prinicpal IDs that have read and write access to the configuration data')
 param configurationDataOwners array = []
@@ -24,6 +24,9 @@ param containerRegistryName string
 
 @description('Container registry resource group')
 param containerRegistryResourceGroup string
+
+@description('Suffix for child deployments')
+param deploymentSuffix string = ''
 
 var tags = {
   workload: workload
@@ -98,7 +101,7 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
 }
 
 module roleAssignments 'roleAssignments.bicep' = {
-  name: 'roleAssignments'
+  name: 'roleAssignments${deploymentSuffix}'
   params: {
     appConfigurationName: appConfiguration.name
     configurationDataOwners: configurationDataOwners
@@ -107,7 +110,7 @@ module roleAssignments 'roleAssignments.bicep' = {
 }
 
 module containerRegistryRoleAssingmentModule 'containerRegistryRoleAssignment.bicep' = {
-  name: 'containerRegistryRoleAssingment-${workload}-${category}'
+  name: 'containerRegistryRoleAssingment-${workload}-${category}${deploymentSuffix}'
   scope: resourceGroup(containerRegistryResourceGroup)
   params: {
     containerRegistryName: containerRegistryName
@@ -115,4 +118,6 @@ module containerRegistryRoleAssingmentModule 'containerRegistryRoleAssignment.bi
   }
 }
 
-output dnsZoneNameServers array = dnsZone.properties.nameServers
+output dnsZoneName string = dnsZone.name
+
+output appConfigurationName string = appConfiguration.name

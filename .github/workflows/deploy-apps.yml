@@ -53,12 +53,14 @@ jobs:
         env:
           ATTEMPT_ROLE_ASSIGNMENTS: false
           HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
+          ACR_NAME: ${{ vars.ACR_NAME }}
           ADOPTRIX_API_IMAGE_REPOSITORY: ${{ vars.API_REPOSITORY_NAME }}
           ADOPTRIX_API_IMAGE_TAG: ${{ env.ADOPTRIX_API_IMAGE_TAG }}
+          DEPLOYMENT_SUFFIX: -cicd-${{ github.run_number }}
         with:
-          scope: resourcegroup
-          resourceGroupName: ${{ env.RESOURCE_GROUP }}
-          deploymentName: main-cicd-${{ github.run_number }}
+          scope: subscription
+          deploymentName: adoptrix-${{ inputs.environment }}${{ env.DEPLOYMENT_SUFFIX }}
+          region: AustraliaEast
           template: ${{ github.workspace }}/deploy/infra/main.bicep
           parameters: ${{ github.workspace }}/deploy/infra/main.demo.bicepparam
 
