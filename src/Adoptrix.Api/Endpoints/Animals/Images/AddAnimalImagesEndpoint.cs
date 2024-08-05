@@ -41,7 +41,7 @@ public class AddAnimalImagesEndpoint(
             await eventPublisher.PublishAsync(@event, cancellationToken);
         }
 
-        return TypedResults.Ok(AnimalResponseMapper.ToResponse(animal));
+        return TypedResults.Ok(animal.ToResponse());
     }
 
     private async Task<List<AnimalImage>> UploadOriginalsAsync(int animalId, Guid userId,
@@ -55,7 +55,7 @@ public class AddAnimalImagesEndpoint(
                 Description = section!.Name,
                 OriginalFileName = section.FileName,
                 OriginalContentType = section.Section.ContentType!,
-                UploadedBy = userId
+                CreatedBy = userId
             };
 
             var blobName = GetBlobName(animalId, section.FileName);

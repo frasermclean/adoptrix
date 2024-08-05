@@ -15,6 +15,9 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
 
+        builder.Property(animal => animal.CreatedBy)
+            .HasDefaultValue(Guid.Empty);
+
         builder.HasIndex(breed => breed.Name)
             .IsUnique();
 

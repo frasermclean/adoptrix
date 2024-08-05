@@ -19,6 +19,9 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
 
+        builder.Property(animal => animal.CreatedBy)
+            .HasDefaultValue(Guid.Empty);
+
         builder.HasQueryFilter(animal => !animal.IsDeleted);
 
         builder.HasData(InitialData);
@@ -31,7 +34,7 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 
     private static void ConfigureAnimalImagesTable(OwnedNavigationBuilder<Animal, AnimalImage> builder)
     {
-        builder.Property(imageInformation => imageInformation.UploadedAt)
+        builder.Property(imageInformation => imageInformation.CreatedAt)
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
 

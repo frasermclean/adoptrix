@@ -33,7 +33,7 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
     {
         // arrange
         var animalId = Random.Shared.Next();
-        var imageId = Guid.NewGuid();
+        var imageId = Random.Shared.Next();
         var blobName = $"{animalId}/image.jpg";
         var animalImageAddedEvent = new AnimalImageAddedEvent(animalId, imageId, blobName);
 

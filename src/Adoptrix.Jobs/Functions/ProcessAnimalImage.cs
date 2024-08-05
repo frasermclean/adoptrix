@@ -1,5 +1,4 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Core.Events;
+﻿using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
@@ -49,21 +48,21 @@ public class ProcessAnimalImage(
             data.ImageId, data.AnimalId);
     }
 
-    private async Task UploadProcessedBundleAsync(int animalId, Guid imageId, ImageStreamBundle bundle,
+    private async Task UploadProcessedBundleAsync(int animalId, int imageId, ImageStreamBundle bundle,
         CancellationToken cancellationToken)
     {
         await Task.WhenAll(
-            UploadImageAsync(bundle.ThumbnailWriteStream, AnimalImageCategory.Thumbnail),
-            UploadImageAsync(bundle.PreviewWriteStream, AnimalImageCategory.Preview),
-            UploadImageAsync(bundle.FullSizeWriteStream, AnimalImageCategory.FullSize)
+            UploadImageAsync(bundle.PreviewWriteStream, "preview"),
+            UploadImageAsync(bundle.ThumbnailWriteStream, "thumb"),
+            UploadImageAsync(bundle.FullSizeWriteStream, "full")
         );
 
         logger.LogInformation("Uploaded processed images for animal with ID: {AnimalId}", animalId);
         return;
 
-        async Task UploadImageAsync(Stream stream, AnimalImageCategory category)
+        async Task UploadImageAsync(Stream stream, string size)
         {
-            var blobName = AnimalImage.GetBlobName(animalId, imageId, category);
+            var blobName = $"{animalId}/{imageId}/{size}.webp";
             await animalImagesContainerManager.UploadBlobAsync(blobName, stream, ImageProcessor.OutputContentType,
                 cancellationToken);
         }

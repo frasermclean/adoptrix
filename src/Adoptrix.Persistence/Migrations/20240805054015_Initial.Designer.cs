@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adoptrix.Persistence.Migrations
 {
     [DbContext(typeof(AdoptrixDbContext))]
-    [Migration("20240805043732_Initial")]
+    [Migration("20240805054015_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -42,8 +42,10 @@ namespace Adoptrix.Persistence.Migrations
                         .HasColumnType("datetime2(2)")
                         .HasDefaultValueSql("getutcdate()");
 
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<Guid>("CreatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
@@ -125,8 +127,10 @@ namespace Adoptrix.Persistence.Migrations
                         .HasColumnType("datetime2(2)")
                         .HasDefaultValueSql("getutcdate()");
 
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<Guid>("CreatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -191,8 +195,10 @@ namespace Adoptrix.Persistence.Migrations
                         .HasColumnType("datetime2(2)")
                         .HasDefaultValueSql("getutcdate()");
 
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<Guid>("CreatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
                     b.HasKey("Name");
 
@@ -202,17 +208,20 @@ namespace Adoptrix.Persistence.Migrations
                         new
                         {
                             Name = "Dog",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             Name = "Cat",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
                         {
                             Name = "Bird",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000")
                         });
                 });
 
@@ -229,8 +238,19 @@ namespace Adoptrix.Persistence.Migrations
                             b1.Property<int>("AnimalId")
                                 .HasColumnType("int");
 
-                            b1.Property<Guid>("Id")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .ValueGeneratedOnAdd()
+                                .HasPrecision(2)
+                                .HasColumnType("datetime2(2)")
+                                .HasDefaultValueSql("getutcdate()");
+
+                            b1.Property<Guid>("CreatedBy")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Description")
@@ -248,15 +268,6 @@ namespace Adoptrix.Persistence.Migrations
                                 .IsRequired()
                                 .HasMaxLength(512)
                                 .HasColumnType("nvarchar(512)");
-
-                            b1.Property<DateTime>("UploadedAt")
-                                .ValueGeneratedOnAdd()
-                                .HasPrecision(2)
-                                .HasColumnType("datetime2(2)")
-                                .HasDefaultValueSql("getutcdate()");
-
-                            b1.Property<Guid?>("UploadedBy")
-                                .HasColumnType("uniqueidentifier");
 
                             b1.HasKey("AnimalId", "Id");
 

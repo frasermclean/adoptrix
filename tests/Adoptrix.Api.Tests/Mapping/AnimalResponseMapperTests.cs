@@ -6,7 +6,7 @@ namespace Adoptrix.Api.Tests.Mapping;
 public class AnimalResponseMapperTests
 {
     [Fact]
-    public void MappingAnimalToAnimalResponse_Should_ReturnExpectedValues()
+    public void ToResponse_WithValidInput_ShouldReturnExpectedValues()
     {
         // arrange
         var animal = AnimalFactory.Create(imageCount: 3);
@@ -26,7 +26,6 @@ public class AnimalResponseMapperTests
         response.CreatedAt.Should().Be(animal.CreatedAt.ToUniversalTime());
         response.Images.Should().HaveCount(animal.Images.Count).And.AllSatisfy(imageResponse =>
         {
-            imageResponse.Id.Should().NotBeEmpty();
             imageResponse.Description.Should().NotBeEmpty();
         });
     }
