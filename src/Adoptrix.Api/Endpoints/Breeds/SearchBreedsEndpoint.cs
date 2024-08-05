@@ -14,7 +14,7 @@ public class SearchBreedsEndpoint(IBreedsRepository breedsRepository)
     public override async Task<IEnumerable<BreedMatch>> ExecuteAsync(SearchBreedsRequest request,
         CancellationToken cancellationToken)
     {
-        var items = await breedsRepository.SearchAsync(request.SpeciesId, request.WithAnimals, cancellationToken);
+        var items = await breedsRepository.SearchAsync(request.SpeciesName, request.WithAnimals, cancellationToken);
 
         return items.Select(item => item.ToMatch());
     }

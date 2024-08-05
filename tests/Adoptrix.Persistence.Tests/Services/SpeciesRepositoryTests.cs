@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Initializer;
 using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 
@@ -27,32 +26,15 @@ public class SpeciesRepositoryTests
         results.Should().HaveCountGreaterThan(0);
     }
 
-    [Theory]
-    [MemberData(nameof(SeededSpecies))]
-    public async Task GetByIdAsync_WithValidId_ShouldReturnExpectedResult(string speciesId, string expectedName)
-    {
-        // act
-        var species = await speciesRepository.GetByIdAsync(Guid.Parse(speciesId));
-
-        // assert
-        species.Should().BeOfType<Species>().Which.Name.Should().Be(expectedName);
-    }
 
     [Theory]
-    [MemberData(nameof(SeededSpecies))]
-    public async Task GetByNameAsync_WithValidName_ShouldReturnExpectedResult(string expectedId, string speciesName)
+    [InlineData("Dog")]
+    public async Task GetAsync_WithValidName_ShouldReturnExpectedResult(string speciesName)
     {
         // act
-        var species = await speciesRepository.GetByNameAsync(speciesName);
+        var species = await speciesRepository.GetAsync(speciesName);
 
         // assert
-        species.Should().BeOfType<Species>().Which.Id.Should().Be(expectedId);
+        species.Should().BeOfType<Species>().Which.Name.Should().Be(speciesName);
     }
-
-    public static readonly TheoryData<string, string> SeededSpecies = new()
-    {
-        { SeedData.Species["Dog"].Id.ToString(), "Dog" },
-        { SeedData.Species["Cat"].Id.ToString(), "Cat" },
-        { SeedData.Species["Bird"].Id.ToString(), "Bird" }
-    };
 }

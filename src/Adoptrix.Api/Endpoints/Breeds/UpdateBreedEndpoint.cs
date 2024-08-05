@@ -24,10 +24,10 @@ public class UpdateBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesRep
             return TypedResults.NotFound();
         }
 
-        var species = await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken);
+        var species = await speciesRepository.GetAsync(request.SpeciesName, cancellationToken);
         if (species is null)
         {
-            AddError(r => r.SpeciesId, "Invalid species ID");
+            AddError(r => r.SpeciesName, "Invalid species name");
             return new ErrorResponse(ValidationFailures);
         }
 

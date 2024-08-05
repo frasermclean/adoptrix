@@ -19,7 +19,7 @@ public class SearchAnimalsEndpoint(IAnimalsRepository animalsRepository)
             ? value
             : null;
 
-        var items = await animalsRepository.SearchAsync(request.Name, request.BreedId, request.SpeciesId, sex,
+        var items = await animalsRepository.SearchAsync(request.Name, request.BreedId, request.SpeciesName, sex,
             request.Limit, cancellationToken);
 
         return items.Select(item => item.ToMatch());

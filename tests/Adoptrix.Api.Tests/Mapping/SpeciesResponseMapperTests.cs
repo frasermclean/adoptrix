@@ -15,7 +15,6 @@ public class SpeciesResponseMapperTests
         var response = species.ToResponse();
 
         // assert
-        response.Id.Should().Be(species.Id);
         response.Name.Should().Be(species.Name);
     }
 }

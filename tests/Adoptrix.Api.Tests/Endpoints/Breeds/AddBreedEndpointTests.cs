@@ -13,9 +13,9 @@ public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
     public async Task AddBreed_WithValidRequest_ShouldReturnCreated(Core.Species species)
     {
         // arrange
-        var request = CreateRequest(species.Id);
+        var request = CreateRequest(species.Name);
         fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetAsync(species.Name, It.IsAny<CancellationToken>()))
             .ReturnsAsync(species);
 
         // act
@@ -30,12 +30,12 @@ public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
     }
 
     [Fact]
-    public async Task AddBreed_WithInvalidSpeciesId_ShouldReturnBadRequest()
+    public async Task AddBreed_WithInvalidSpeciesName_ShouldReturnBadRequest()
     {
         // arrange
         var request = CreateRequest();
         fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetAsync(request.SpeciesName, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Core.Species);
 
         // act
@@ -44,12 +44,12 @@ public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesId");
+        response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesName");
     }
 
-    private static AddBreedRequest CreateRequest(Guid? speciesId = null) => new()
+    private static AddBreedRequest CreateRequest(string? speciesName = null) => new()
     {
         Name = "Golden Retriever",
-        SpeciesId = speciesId ?? Guid.NewGuid()
+        SpeciesName = speciesName ?? "Dog"
     };
 }

@@ -10,11 +10,11 @@ public class GetSpeciesEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
     private readonly HttpClient httpClient = fixture.Client;
 
     [Theory, AdoptrixAutoData]
-    public async Task GetSpecies_WithKnownSpeciesId_ShouldReturnOk(GetSpeciesRequest request, Core.Species species)
+    public async Task GetSpecies_WithKnownSpeciesName_ShouldReturnOk(GetSpeciesRequest request, Core.Species species)
     {
         // arrange
         fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(species);
 
         // act
@@ -22,6 +22,6 @@ public class GetSpeciesEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(species.Id);
+        response.Name.Should().Be(species.Name);
     }
 }

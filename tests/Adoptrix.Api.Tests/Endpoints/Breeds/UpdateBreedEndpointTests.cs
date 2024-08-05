@@ -14,12 +14,12 @@ public class UpdateBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
     public async Task UpdateBreed_WithValidRequest_ShouldReturnOk(Breed breed, Core.Species species)
     {
         // arrange
-        var request = CreateRequest(breed.Id, species.Id);
+        var request = CreateRequest(breed.Id, species.Name);
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(breed);
         fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetAsync(request.SpeciesName, It.IsAny<CancellationToken>()))
             .ReturnsAsync(species);
 
         // act
@@ -49,7 +49,7 @@ public class UpdateBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
     }
 
     [Theory, AdoptrixAutoData]
-    public async Task UpdateBreed_WithInvalidSpeciesId_ShouldReturnBadRequest(Breed breed)
+    public async Task UpdateBreed_WithInvalidSpeciesName_ShouldReturnBadRequest(Breed breed)
     {
         // arrange
         var request = CreateRequest(breed.Id);
@@ -57,7 +57,7 @@ public class UpdateBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(breed);
         fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetAsync(request.SpeciesName, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Core.Species);
 
         // act
@@ -65,13 +65,13 @@ public class UpdateBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesId");
+        response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesName");
     }
 
-    private static UpdateBreedRequest CreateRequest(Guid? breedId = null, Guid? speciesId = null) => new()
+    private static UpdateBreedRequest CreateRequest(Guid? breedId = null, string? speciesName = null) => new()
     {
         Name = "Sausage Dog",
         BreedId = breedId ?? Guid.NewGuid(),
-        SpeciesId = speciesId ?? Guid.NewGuid(),
+        SpeciesName = speciesName ?? "Dog"
     };
 }

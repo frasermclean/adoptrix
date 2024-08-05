@@ -7,8 +7,7 @@ namespace Adoptrix.Persistence.Services;
 public interface ISpeciesRepository
 {
     Task<IEnumerable<SearchSpeciesItem>> SearchAsync(bool? withAnimals = null, CancellationToken cancellationToken = default);
-    Task<Species?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<Species?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
+    Task<Species?> GetAsync(string name, CancellationToken cancellationToken = default);
 }
 
 public class SpeciesRepository(AdoptrixDbContext dbContext): ISpeciesRepository
@@ -19,7 +18,6 @@ public class SpeciesRepository(AdoptrixDbContext dbContext): ISpeciesRepository
         return await dbContext.Species
             .Select(species => new SearchSpeciesItem
             {
-                Id = species.Id,
                 Name = species.Name,
                 BreedCount = species.Breeds.Count,
                 AnimalCount = species.Breeds.Count(breed => breed.Animals.Count > 0)
@@ -29,12 +27,8 @@ public class SpeciesRepository(AdoptrixDbContext dbContext): ISpeciesRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Species?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await dbContext.Species.FirstOrDefaultAsync(species => species.Id == id, cancellationToken);
-    }
 
-    public async Task<Species?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+    public async Task<Species?> GetAsync(string name, CancellationToken cancellationToken = default)
     {
         return await dbContext.Species.FirstOrDefaultAsync(species => species.Name == name, cancellationToken);
     }

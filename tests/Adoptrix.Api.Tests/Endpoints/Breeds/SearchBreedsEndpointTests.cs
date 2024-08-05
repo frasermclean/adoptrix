@@ -17,7 +17,7 @@ public class SearchBreedsEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
         // arrange
         fixture.BreedsRepositoryMock
             .Setup(repository =>
-                repository.SearchAsync(It.IsAny<Guid?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
+                repository.SearchAsync(It.IsAny<string?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(items);
 
         // act

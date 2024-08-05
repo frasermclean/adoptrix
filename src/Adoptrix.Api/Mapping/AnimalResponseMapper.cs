@@ -8,7 +8,6 @@ namespace Adoptrix.Api.Mapping;
 [UseStaticMapper(typeof(AnimalImageResponseMapper))]
 public static partial class AnimalResponseMapper
 {
-    [MapProperty("Breed.Species.Id", "SpeciesId")]
     [MapProperty("Breed.Species.Name", "SpeciesName")]
     [MapProperty("DateOfBirth", "Age", Use = nameof(MapAge))]
     public static partial AnimalResponse ToResponse(this Animal animal);

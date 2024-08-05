@@ -22,7 +22,7 @@ public class SearchAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
             Sex = "Female"
         };
         fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.SearchAsync(It.IsAny<string?>(), It.IsAny<Guid?>(), It.IsAny<Guid?>(),
+            .Setup(repository => repository.SearchAsync(It.IsAny<string?>(), It.IsAny<Guid?>(), It.IsAny<string?>(),
                 It.IsAny<Sex?>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(items);
 

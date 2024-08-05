@@ -44,7 +44,7 @@ public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, AdoptrixDb
 
             foreach (var species in speciesCollection)
             {
-                if (await dbContext.Species.FirstOrDefaultAsync(s => s.Id == species.Id,
+                if (await dbContext.Species.FirstOrDefaultAsync(s => s.Name == species.Name,
                         cancellationToken: cancellationToken) != null)
                 {
                     continue;

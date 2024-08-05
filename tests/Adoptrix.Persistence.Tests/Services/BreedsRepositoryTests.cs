@@ -14,8 +14,6 @@ public class BreedsRepositoryTests
     private readonly IBreedsRepository breedsRepository;
     private readonly ISpeciesRepository speciesRepository;
 
-    private static readonly Guid DogSpeciesId = SeedData.Species["Dog"].Id;
-
     public BreedsRepositoryTests(DatabaseFixture fixture)
     {
         var collection = fixture.GetRepositoryCollection();
@@ -71,7 +69,7 @@ public class BreedsRepositoryTests
     public async Task AddAsync_WithValidBreed_ShouldPass()
     {
         // arrange
-        var species = await speciesRepository.GetByIdAsync(DogSpeciesId);
+        var species = await speciesRepository.GetAsync("Dog");
         var breedToAdd = BreedFactory.Create(name: "Poodle", species: species);
 
         // act
@@ -86,7 +84,7 @@ public class BreedsRepositoryTests
     public async Task UpdateAsync_WithValidBreed_ShouldPass()
     {
         // arrange
-        var species = await speciesRepository.GetByIdAsync(DogSpeciesId);
+        var species = await speciesRepository.GetAsync("Dog");
         var breedToAdd = BreedFactory.Create(name: "Border-Collie", species: species);
         await breedsRepository.AddAsync(breedToAdd);
 
@@ -104,7 +102,7 @@ public class BreedsRepositoryTests
     public async Task DeleteAsync_WithKnownId_ShouldPass()
     {
         // arrange
-        var species = await speciesRepository.GetByIdAsync(DogSpeciesId);
+        var species = await speciesRepository.GetAsync("Dog");
         var breedToDelete = BreedFactory.Create(name: "Pug", species: species);
         await breedsRepository.AddAsync(breedToDelete);
 

@@ -6,9 +6,9 @@ public static class SeedData
 {
     public static readonly Dictionary<string, Species> Species = new()
     {
-        { "Dog", new Species { Id = Guid.Parse("f2d44dc6-6c6c-41d0-ad8d-e6c814b09c1a"), Name = "Dog" } },
-        { "Cat", new Species { Id = Guid.Parse("c9c1836b-1051-45c3-a2c4-0d841e69e6d3"), Name = "Cat" } },
-        { "Bird", new Species { Id = Guid.Parse("e6d11a53-bacb-4a8b-a171-beea7e935467"), Name = "Bird" } }
+        { "Dog", new Species { Name = "Dog" } },
+        { "Cat", new Species { Name = "Cat" } },
+        { "Bird", new Species { Name = "Bird" } }
     };
 
     public static readonly Dictionary<string, Breed> Breeds = new()
