@@ -12,14 +12,14 @@ public class UpdateAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsR
 {
     public override void Configure()
     {
-        Put("animals/{animalId:guid}");
+        Put("animals/{animalId:int}");
         Permissions(PermissionNames.AnimalsWrite);
     }
 
     public override async Task<Results<Ok<AnimalResponse>, NotFound, ErrorResponse>> ExecuteAsync(
         UpdateAnimalRequest request, CancellationToken cancellationToken)
     {
-        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
+        var animal = await animalsRepository.GetAsync(request.AnimalId, cancellationToken);
         if (animal is null)
         {
             Logger.LogError("Animal with ID {AnimalId} was not found", request.AnimalId);

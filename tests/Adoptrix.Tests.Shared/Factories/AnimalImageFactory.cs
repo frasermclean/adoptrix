@@ -15,7 +15,7 @@ public static class AnimalImageFactory
         IsProcessed = isProcessed,
         UploadedBy = uploadedBy ?? Guid.NewGuid(),
         UploadedAt = uploadedAt ?? DateTime.UtcNow,
-        AnimalId = Guid.NewGuid()
+        AnimalId = Random.Shared.Next()
     };
 
     public static IEnumerable<AnimalImage> CreateMany(int count) => Enumerable.Range(0, count).Select(_ => Create());

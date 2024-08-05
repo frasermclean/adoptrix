@@ -14,7 +14,7 @@ public class AddAnimalImagesEndpointTests(ApiFixture fixture) : TestBase<ApiFixt
     {
         // arrange
         using var content = CreateMultipartFormDataContent();
-        fixture.AnimalsRepositoryMock.Setup(repository => repository.GetByIdAsync(animal.Id, It.IsAny<CancellationToken>()))
+        fixture.AnimalsRepositoryMock.Setup(repository => repository.GetAsync(animal.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(animal);
 
         // act
@@ -30,11 +30,11 @@ public class AddAnimalImagesEndpointTests(ApiFixture fixture) : TestBase<ApiFixt
     }
 
     [Theory, AdoptrixAutoData]
-    public async Task AddAnimalImages_WithInvalidAnimalId_ReturnsNotFound(Guid animalId)
+    public async Task AddAnimalImages_WithInvalidAnimalId_ReturnsNotFound(int animalId)
     {
         // arrange
         using var content = CreateMultipartFormDataContent();
-        fixture.AnimalsRepositoryMock.Setup(repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()))
+        fixture.AnimalsRepositoryMock.Setup(repository => repository.GetAsync(animalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Animal);
 
         // act

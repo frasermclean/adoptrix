@@ -9,7 +9,7 @@ public interface IAnimalsRepository
     Task<IReadOnlyList<SearchAnimalsItem>> SearchAsync(string? name = null, int? breedId = null,
         string? speciesName = null, Sex? sex = null, int? limit = null, CancellationToken cancellationToken = default);
 
-    Task<Animal?> GetByIdAsync(Guid animalId, CancellationToken cancellationToken = default);
+    Task<Animal?> GetAsync(int animalId, CancellationToken cancellationToken = default);
     Task AddAsync(Animal animal, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
     Task DeleteAsync(Animal animal, CancellationToken cancellationToken = default);
@@ -42,7 +42,7 @@ public class AnimalsRepository(AdoptrixDbContext dbContext) : IAnimalsRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Animal?> GetByIdAsync(Guid animalId, CancellationToken cancellationToken = default)
+    public async Task<Animal?> GetAsync(int animalId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Animals.Where(animal => animal.Id == animalId)
             .Include(animal => animal.Breed)

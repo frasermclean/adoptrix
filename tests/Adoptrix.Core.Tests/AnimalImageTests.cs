@@ -26,7 +26,7 @@ public class AnimalImageTests
         string expectedSuffix)
     {
         // arrange
-        var animalId = Guid.NewGuid();
+        var animalId = Random.Shared.Next();
         var imageId = Guid.NewGuid();
 
         // act

@@ -9,7 +9,7 @@ public interface IAnimalsClient
     Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken = default);
 
-    Task<AnimalResponse> GetAsync(Guid animalId, CancellationToken cancellationToken = default);
+    Task<AnimalResponse> GetAsync(int animalId, CancellationToken cancellationToken = default);
 }
 
 public class AnimalsClient(HttpClient httpClient) : IAnimalsClient
@@ -25,7 +25,7 @@ public class AnimalsClient(HttpClient httpClient) : IAnimalsClient
         return matches ?? [];
     }
 
-    public async Task<AnimalResponse> GetAsync(Guid animalId, CancellationToken cancellationToken = default)
+    public async Task<AnimalResponse> GetAsync(int animalId, CancellationToken cancellationToken = default)
     {
         var message = await httpClient.GetAsync($"api/animals/{animalId}", cancellationToken);
         message.EnsureSuccessStatusCode();

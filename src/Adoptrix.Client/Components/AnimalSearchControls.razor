@@ -20,11 +20,11 @@
     @if (speciesName is not null)
     {
         <MudText Typo="Typo.h6">Breed</MudText>
-        <MudChipSet T="Guid?" CheckMark Class="mb-2" SelectedValue="breedId" SelectedValueChanged="OnBreedChanged" SelectionMode="SelectionMode.ToggleSelection">
+        <MudChipSet T="int?" CheckMark Class="mb-2" SelectedValue="breedId" SelectedValueChanged="OnBreedChanged" SelectionMode="SelectionMode.ToggleSelection">
             @foreach (var match in breedMatches)
             {
                 <MudBadge Content="@match.AnimalCount" Overlap="true" Color="Color.Secondary" Class="mr-2">
-                    <MudChip T="Guid?" Value="@match.Id" Color="Color.Primary">@match.Name</MudChip>
+                    <MudChip T="int?" Value="@match.Id" Color="Color.Primary">@match.Name</MudChip>
                 </MudBadge>
             }
         </MudChipSet>
@@ -48,7 +48,7 @@
     private IEnumerable<SpeciesMatch> speciesMatches = [];
     private IEnumerable<BreedMatch> breedMatches = [];
     private string? speciesName;
-    private Guid? breedId;
+    private int? breedId;
     private string? sex;
 
     [Parameter] public EventCallback<SearchAnimalsRequest> DataChanged { get; set; }
@@ -72,7 +72,7 @@
         RaiseDataChanged();
     }
 
-    private void OnBreedChanged(Guid? value)
+    private void OnBreedChanged(int? value)
     {
         breedId = value;
         RaiseDataChanged();

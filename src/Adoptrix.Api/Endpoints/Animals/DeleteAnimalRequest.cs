@@ -1,3 +1,6 @@
 ﻿namespace Adoptrix.Api.Endpoints.Animals;
 
-public record DeleteAnimalRequest(Guid AnimalId);
+public class DeleteAnimalRequest
+{
+    public int AnimalId { get; init; }
+}

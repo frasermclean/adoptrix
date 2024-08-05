@@ -23,7 +23,7 @@ public class ProcessAnimalImage(
         CancellationToken cancellationToken = default)
     {
         // ensure animal exists in database
-        var animal = await animalsRepository.GetByIdAsync(data.AnimalId, cancellationToken);
+        var animal = await animalsRepository.GetAsync(data.AnimalId, cancellationToken);
         if (animal is null)
         {
             throw new InvalidOperationException($"Could not find animal with ID {data.AnimalId}");
@@ -49,7 +49,7 @@ public class ProcessAnimalImage(
             data.ImageId, data.AnimalId);
     }
 
-    private async Task UploadProcessedBundleAsync(Guid animalId, Guid imageId, ImageStreamBundle bundle,
+    private async Task UploadProcessedBundleAsync(int animalId, Guid imageId, ImageStreamBundle bundle,
         CancellationToken cancellationToken)
     {
         await Task.WhenAll(

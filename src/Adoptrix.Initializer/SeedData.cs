@@ -59,7 +59,7 @@ public static class SeedData
     [
         new Animal
         {
-            Id = Guid.Parse("cebf1276-43cf-45be-874e-2f6648731208"),
+            Id = 1,
             Name = "Alberto",
             Description = """
                           Meet Alberto, a delightful Labrador puppy searching for his forever home. With a golden coat
@@ -75,7 +75,7 @@ public static class SeedData
         },
         new Animal
         {
-            Id = Guid.Parse("e6d7caf3-eebe-479a-8079-fe3e1980abe0"),
+            Id = 2,
             Name = "Barry",
             Description = """
                           Meet Barry, a majestic German Shepherd with a heart as loyal as his gaze. At four years old,
@@ -93,7 +93,7 @@ public static class SeedData
         },
         new Animal
         {
-            Id = Guid.Parse("9f53d176-6810-4268-962e-2395994e4f50"),
+            Id = 3,
             Name = "Ginger",
             Description = """
                           Introducing Ginger, a beautiful, captivating feline with a coat as fiery as her playful
@@ -109,7 +109,7 @@ public static class SeedData
         },
         new Animal
         {
-            Id = Guid.Parse("bcc5d7b8-60f4-4ec4-8115-b5f776cacc9b"),
+            Id = 4,
             Name = "Percy",
             Description = """
                           Meet Percy, a charming African Grey Parrot with a personality as colorful as his feathers.

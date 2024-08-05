@@ -16,7 +16,7 @@ public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
     {
         // arrange
         fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetAsync(request.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(animal);
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
@@ -36,7 +36,7 @@ public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
     {
         // arrange
         fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetAsync(request.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Animal);
 
         // act
@@ -51,7 +51,7 @@ public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
     {
         // arrange
         fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetAsync(request.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(animal);
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))

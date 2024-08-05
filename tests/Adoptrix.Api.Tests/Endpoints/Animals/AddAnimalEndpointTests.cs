@@ -23,7 +23,6 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         message.Headers.Location.Should().NotBeNull();
-        response.Id.Should().NotBeEmpty();
         response.Name.Should().Be(request.Name);
     }
 

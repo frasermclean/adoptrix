@@ -12,7 +12,7 @@ public class AnimalMatchMapperTests
         // arrange
         var item = new SearchAnimalsItem
         {
-            Id = Guid.NewGuid(),
+            Id = 3,
             Name = "Shaggy",
             SpeciesName = "Dog",
             BreedName = "Golden Retriever",

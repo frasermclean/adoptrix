@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals.Images;
 
-[HttpPost("animals/{animalId:guid}/images"), AllowFileUploads(true)]
+[HttpPost("animals/{animalId:int}/images"), AllowFileUploads(true)]
 public class AddAnimalImagesEndpoint(
     IAnimalsRepository animalsRepository,
     IEventPublisher eventPublisher,
@@ -21,7 +21,7 @@ public class AddAnimalImagesEndpoint(
         AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
         // ensure animal exists in database
-        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
+        var animal = await animalsRepository.GetAsync(request.AnimalId, cancellationToken);
         if (animal is null)
         {
             return TypedResults.NotFound();
@@ -44,7 +44,7 @@ public class AddAnimalImagesEndpoint(
         return TypedResults.Ok(AnimalResponseMapper.ToResponse(animal));
     }
 
-    private async Task<List<AnimalImage>> UploadOriginalsAsync(Guid animalId, Guid userId,
+    private async Task<List<AnimalImage>> UploadOriginalsAsync(int animalId, Guid userId,
         CancellationToken cancellationToken)
     {
         List<AnimalImage> images = [];
@@ -70,5 +70,5 @@ public class AddAnimalImagesEndpoint(
         return images;
     }
 
-    private static string GetBlobName(Guid animalId, string fileName) => $"{animalId}/{fileName}";
+    private static string GetBlobName(int animalId, string fileName) => $"{animalId}/{fileName}";
 }

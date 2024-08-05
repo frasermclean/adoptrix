@@ -35,10 +35,10 @@ public class AnimalsRepositoryTests
     public async Task GetByIdAsync_WithInvalidId_ShouldFail()
     {
         // arrange
-        var animalId = Guid.Empty;
+        const int animalId = -1;
 
         // act
-        var animal = await animalsRepository.GetByIdAsync(animalId);
+        var animal = await animalsRepository.GetAsync(animalId);
 
         // assert
         animal.Should().BeNull();
@@ -48,16 +48,16 @@ public class AnimalsRepositoryTests
     public async Task AddAsync_WithValidAnimal_ShouldPass()
     {
         // arrange
-        var breed = await breedsRepository.GetByIdAsync(SeedData.Breeds["German Shepherd"].Id);
+        var breed = await breedsRepository.GetByIdAsync(1);
         var animalToAdd = AnimalFactory.Create(breed: breed);
 
         // act
         await animalsRepository.AddAsync(animalToAdd);
-        var animal = await animalsRepository.GetByIdAsync(animalToAdd.Id);
+        var animal = await animalsRepository.GetAsync(animalToAdd.Id);
 
         // assert
         animal.Should().NotBeNull();
-        animal!.Id.Should().NotBeEmpty();
+        animal!.Id.Should().BePositive();
         animal.Name.Should().Be(animalToAdd.Name);
         animal.Description.Should().Be(animalToAdd.Description);
         animal.Breed.Should().Be(breed);
@@ -70,13 +70,13 @@ public class AnimalsRepositoryTests
     public async Task DeleteAsync_WithValidAnimal_ShouldPass()
     {
         // arrange
-        var breed = await breedsRepository.GetByIdAsync(SeedData.Breeds["Golden Retriever"].Id);
+        var breed = await breedsRepository.GetByIdAsync(1);
         var animalToAdd = AnimalFactory.Create(breed: breed);
         await animalsRepository.AddAsync(animalToAdd);
 
         // act
         await animalsRepository.DeleteAsync(animalToAdd);
-        var animal = await animalsRepository.GetByIdAsync(animalToAdd.Id);
+        var animal = await animalsRepository.GetAsync(animalToAdd.Id);
 
         // assert
         animal.Should().BeNull();

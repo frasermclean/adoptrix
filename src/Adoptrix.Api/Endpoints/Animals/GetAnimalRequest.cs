@@ -1,3 +1,3 @@
 ﻿namespace Adoptrix.Api.Endpoints.Animals;
 
-public record GetAnimalRequest(Guid AnimalId);
+public record GetAnimalRequest(int AnimalId);

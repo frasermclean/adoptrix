@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adoptrix.Persistence.Migrations
 {
     [DbContext(typeof(AdoptrixDbContext))]
-    [Migration("20240805031701_Initial")]
+    [Migration("20240805043732_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -27,9 +27,11 @@ namespace Adoptrix.Persistence.Migrations
 
             modelBuilder.Entity("Adoptrix.Core.Animal", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BreedId")
                         .HasColumnType("int");
@@ -37,10 +39,10 @@ namespace Adoptrix.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(2)
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime2(2)")
                         .HasDefaultValueSql("getutcdate()");
 
-                    b.Property<Guid>("CreatedBy")
+                    b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateOnly>("DateOfBirth")
@@ -49,20 +51,64 @@ namespace Adoptrix.Persistence.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<char>("Sex")
-                        .HasMaxLength(1)
-                        .HasColumnType("char");
+                        .HasColumnType("nvarchar(1)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BreedId");
 
                     b.ToTable("Animals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BreedId = 1,
+                            DateOfBirth = new DateOnly(2024, 2, 14),
+                            Description = "Meet Alberto, a delightful Labrador puppy searching for his forever home. With a golden coat that's as soft as his heart, Alberto's playful spirit is infectious. From chasing butterflies to fetching balls, his days are filled with joy and curiosity. This lovable pup dreams of a family to call his own, where he can share his boundless love and enthusiasm. Could you be the one to open your heart and home to Alberto, making his dreams come true? Adopt this charming ball of fur, and let the adventure of a lifetime begin! 🐾 #AdoptAlberto",
+                            IsDeleted = false,
+                            Name = "Alberto",
+                            Sex = "M"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BreedId = 2,
+                            DateOfBirth = new DateOnly(2020, 4, 19),
+                            Description = "Meet Barry, a majestic German Shepherd with a heart as loyal as his gaze. At four years old, Barry embodies both strength and gentleness in equal measure. His rich, dark coat gleams in the sunlight as he explores the world with curiosity and confidence. From romping through fields to standing guard with unwavering vigilance, Barry is the epitome of loyalty and companionship. This noble canine seeks a forever home where he can shower his family with unconditional love and protection. Ready to welcome a steadfast friend into your life? Consider adopting Barry, and embark on a journey of trust, devotion, and endless adventure! 🐾 #AdoptBarry",
+                            IsDeleted = false,
+                            Name = "Barry",
+                            Sex = "M"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BreedId = 4,
+                            DateOfBirth = new DateOnly(2022, 9, 30),
+                            Description = "Introducing Ginger, a beautiful, captivating feline with a coat as fiery as her playful spirit. This adorable cat enchants everyone with her graceful moves and amber-colored eyes. From chasing sunbeams to batting at toys, Ginger's days are a whimsical blend of elegance and mischief. This charming kitty yearns for a loving home, where she can curl up on a cozy spot and purr her way into your heart. Are you ready to add a touch of warmth and whimsy to your life? Consider adopting Ginger, and let the purr-fect companionship begin! 🐾 #AdoptGinger",
+                            IsDeleted = false,
+                            Name = "Ginger",
+                            Sex = "F"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BreedId = 5,
+                            DateOfBirth = new DateOnly(2017, 4, 11),
+                            Description = "Meet Percy, a charming African Grey Parrot with a personality as colorful as his feathers.",
+                            IsDeleted = false,
+                            Name = "Percy",
+                            Sex = "M"
+                        });
                 });
 
             modelBuilder.Entity("Adoptrix.Core.Breed", b =>
@@ -112,6 +158,24 @@ namespace Adoptrix.Persistence.Migrations
                             Id = 2,
                             Name = "German Shepherd",
                             SpeciesName = "Dog"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Golden Retriever",
+                            SpeciesName = "Dog"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Domestic Shorthair",
+                            SpeciesName = "Cat"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "African Grey Parrot",
+                            SpeciesName = "Bird"
                         });
                 });
 
@@ -162,8 +226,8 @@ namespace Adoptrix.Persistence.Migrations
 
                     b.OwnsMany("Adoptrix.Core.AnimalImage", "Images", b1 =>
                         {
-                            b1.Property<Guid>("AnimalId")
-                                .HasColumnType("uniqueidentifier");
+                            b1.Property<int>("AnimalId")
+                                .HasColumnType("int");
 
                             b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
@@ -178,12 +242,12 @@ namespace Adoptrix.Persistence.Migrations
                             b1.Property<string>("OriginalContentType")
                                 .IsRequired()
                                 .HasMaxLength(50)
-                                .HasColumnType("varchar");
+                                .HasColumnType("nvarchar(50)");
 
                             b1.Property<string>("OriginalFileName")
                                 .IsRequired()
                                 .HasMaxLength(512)
-                                .HasColumnType("nvarchar");
+                                .HasColumnType("nvarchar(512)");
 
                             b1.Property<DateTime>("UploadedAt")
                                 .ValueGeneratedOnAdd()

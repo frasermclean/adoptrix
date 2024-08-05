@@ -1,4 +1,4 @@
-@page "/animals/{animalId:guid}"
+@page "/animals/{animalId:int}"
 @using Adoptrix.Contracts.Responses
 @inject IAnimalsClient AnimalsClient;
 @inject ImageUrlResolver ImageUrlResolver;
@@ -69,7 +69,7 @@ else
 
     private AnimalResponse? animal;
 
-    [Parameter] public Guid AnimalId { get; set; }
+    [Parameter] public int AnimalId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

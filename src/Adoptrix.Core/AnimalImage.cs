@@ -10,11 +10,11 @@ public class AnimalImage : Entity
     public bool IsProcessed { get; set; }
     public required Guid? UploadedBy { get; init; }
     public DateTime UploadedAt { get; init; }
-    public Guid AnimalId { get; init; }
+    public int AnimalId { get; init; }
 
     public string GetBlobName(AnimalImageCategory category) => GetBlobName(AnimalId, Id, category);
 
-    public static string GetBlobName(Guid animalId, Guid imageId, AnimalImageCategory category)
+    public static string GetBlobName(int animalId, Guid imageId, AnimalImageCategory category)
     {
         var suffix = category switch
         {
