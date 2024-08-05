@@ -1,9 +1,7 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Initializer;
 using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Persistence.Tests.Services;
 
@@ -31,11 +29,12 @@ public class BreedsRepositoryTests
     }
 
     [Theory]
-    [MemberData(nameof(SeededBreeds))]
-    public async Task GetByIdAsync_WithKnownId_ShouldReturnBreed(string breedId, string expectedName)
+    [InlineData(1, "Labrador Retriever")]
+    [InlineData(2, "German Shepherd")]
+    public async Task GetByIdAsync_WithKnownId_ShouldReturnBreed(int breedId, string expectedName)
     {
         // act
-        var breed = await breedsRepository.GetByIdAsync(Guid.Parse(breedId));
+        var breed = await breedsRepository.GetByIdAsync(breedId);
 
         // assert
         breed.Should().BeOfType<Breed>().Which.Name.Should().Be(expectedName);
@@ -45,7 +44,7 @@ public class BreedsRepositoryTests
     public async Task GetByIdAsync_WithUnknownId_ShouldReturnNull()
     {
         // arrange
-        var unknownId = Guid.Empty;
+        const int unknownId = -1;
 
         // act
         var breed = await breedsRepository.GetByIdAsync(unknownId);
@@ -55,8 +54,9 @@ public class BreedsRepositoryTests
     }
 
     [Theory]
-    [MemberData(nameof(SeededBreeds))]
-    public async Task GetByNameAsync_WithKnownName_ShouldReturnBreed(string expectedId, string breedName)
+    [InlineData("Labrador Retriever", 1)]
+    [InlineData("German Shepherd", 2)]
+    public async Task GetByNameAsync_WithKnownName_ShouldReturnBreed(string breedName, int expectedId)
     {
         // act
         var breed = await breedsRepository.GetByNameAsync(breedName);
@@ -115,22 +115,12 @@ public class BreedsRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_WithUnknownId_ShouldThrowException()
+    public async Task DeleteAsync_WithUnknownId_ShouldPass()
     {
         // arrange
-        var unknownBreed = BreedFactory.Create();
+        const int unknownBreedId = -1;
 
         // act
-        var act = async () => await breedsRepository.DeleteAsync(unknownBreed);
-
-        // assert
-        await act.Should().ThrowAsync<DbUpdateConcurrencyException>();
+        await breedsRepository.DeleteAsync(unknownBreedId);
     }
-
-    public static readonly TheoryData<string, string> SeededBreeds = new ()
-    {
-        { SeedData.Breeds["Labrador Retriever"].Id.ToString(), "Labrador Retriever" },
-        { SeedData.Breeds["German Shepherd"].Id.ToString(), "German Shepherd" },
-        { SeedData.Breeds["Golden Retriever"].Id.ToString(), "Golden Retriever" }
-    };
 }

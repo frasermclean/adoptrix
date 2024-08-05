@@ -16,7 +16,7 @@ public static class SeedData
         {
             "Labrador Retriever", new Breed
             {
-                Id = Guid.Parse("e719fea1-14d5-45a3-845d-404c88c4549f"),
+                Id = 1,
                 Name = "Labrador Retriever",
                 Species = Species["Dog"]
             }
@@ -24,7 +24,7 @@ public static class SeedData
         {
             "German Shepherd", new Breed
             {
-                Id = Guid.Parse("9b2ace0b-fb18-4da4-86a5-c7404cfbf145"),
+                Id = 2,
                 Name = "German Shepherd",
                 Species = Species["Dog"]
             }
@@ -32,7 +32,7 @@ public static class SeedData
         {
             "Golden Retriever", new Breed
             {
-                Id = Guid.Parse("4fb1e168-bf13-4702-9b61-0b8df2ef0c7d"),
+                Id = 3,
                 Name = "Golden Retriever",
                 Species = Species["Dog"]
             }
@@ -40,7 +40,7 @@ public static class SeedData
         {
             "Domestic Shorthair", new Breed
             {
-                Id = Guid.Parse("6e0392d3-1b0a-41b5-bb22-0a1bb7303cb0"),
+                Id = 4,
                 Name = "Domestic Shorthair",
                 Species = Species["Cat"]
             }
@@ -48,7 +48,7 @@ public static class SeedData
         {
             "African Grey Parrot", new Breed
             {
-                Id = Guid.Parse("1d341761-ca5a-43e7-bc81-cdca149d14d9"),
+                Id = 5,
                 Name = "African Grey Parrot",
                 Species = Species["Bird"]
             }

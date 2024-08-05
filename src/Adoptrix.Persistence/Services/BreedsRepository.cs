@@ -9,11 +9,12 @@ public interface IBreedsRepository
     Task<IEnumerable<SearchBreedsItem>> SearchAsync(string? speciesName = null, bool? withAnimals = null,
         CancellationToken cancellationToken = default);
 
-    Task<Breed?> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default);
+    Task<Breed?> GetByIdAsync(int breedId, CancellationToken cancellationToken = default);
     Task<Breed?> GetByNameAsync(string breedName, CancellationToken cancellationToken = default);
     Task AddAsync(Breed breed, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
     Task DeleteAsync(Breed breed, CancellationToken cancellationToken = default);
+    Task DeleteAsync(int breedId, CancellationToken cancellationToken = default);
 }
 
 public class BreedsRepository(AdoptrixDbContext dbContext) : IBreedsRepository
@@ -35,7 +36,7 @@ public class BreedsRepository(AdoptrixDbContext dbContext) : IBreedsRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Breed?> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default)
+    public async Task<Breed?> GetByIdAsync(int breedId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Breeds
             .Include(breed => breed.Species)
@@ -62,6 +63,18 @@ public class BreedsRepository(AdoptrixDbContext dbContext) : IBreedsRepository
 
     public async Task DeleteAsync(Breed breed, CancellationToken cancellationToken = default)
     {
+        dbContext.Breeds.Remove(breed);
+        await SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(int breedId, CancellationToken cancellationToken = default)
+    {
+        var breed = await GetByIdAsync(breedId, cancellationToken);
+        if (breed is null)
+        {
+            return;
+        }
+
         dbContext.Breeds.Remove(breed);
         await SaveChangesAsync(cancellationToken);
     }

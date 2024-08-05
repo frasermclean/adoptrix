@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Core;
+using Adoptrix.Persistence.Configuration;
 using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 
@@ -28,7 +29,7 @@ public class SpeciesRepositoryTests
 
 
     [Theory]
-    [InlineData("Dog")]
+    [MemberData(nameof(InitialSpeciesNames))]
     public async Task GetAsync_WithValidName_ShouldReturnExpectedResult(string speciesName)
     {
         // act
@@ -37,4 +38,7 @@ public class SpeciesRepositoryTests
         // assert
         species.Should().BeOfType<Species>().Which.Name.Should().Be(speciesName);
     }
+
+    public static TheoryData<string> InitialSpeciesNames =>
+        new(SpeciesConfiguration.InitialData.Select(species => species.Name));
 }

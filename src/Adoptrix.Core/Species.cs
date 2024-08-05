@@ -6,6 +6,6 @@ public class Species
 
     public required string Name { get; init; }
     public List<Breed> Breeds { get; } = [];
-    public Guid CreatedBy { get; init; }
+    public Guid? CreatedBy { get; init; }
     public DateTime CreatedAt { get; init; }
 }

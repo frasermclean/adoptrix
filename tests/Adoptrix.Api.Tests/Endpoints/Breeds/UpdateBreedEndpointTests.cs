@@ -68,10 +68,10 @@ public class UpdateBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesName");
     }
 
-    private static UpdateBreedRequest CreateRequest(Guid? breedId = null, string? speciesName = null) => new()
+    private static UpdateBreedRequest CreateRequest(int? breedId = null, string? speciesName = null) => new()
     {
         Name = "Sausage Dog",
-        BreedId = breedId ?? Guid.NewGuid(),
+        BreedId = breedId ?? Random.Shared.Next(),
         SpeciesName = speciesName ?? "Dog"
     };
 }

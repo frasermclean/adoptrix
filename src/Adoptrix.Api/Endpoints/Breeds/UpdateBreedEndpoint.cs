@@ -12,7 +12,7 @@ public class UpdateBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesRep
 {
     public override void Configure()
     {
-        Put("breeds/{breedId:guid}");
+        Put("breeds/{breedId:int}");
         Permissions(PermissionNames.BreedsWrite);
     }
 

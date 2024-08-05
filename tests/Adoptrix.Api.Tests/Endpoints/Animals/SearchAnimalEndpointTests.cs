@@ -18,11 +18,11 @@ public class SearchAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
         // arrange
         var request = new SearchAnimalsRequest
         {
-            BreedId = Guid.NewGuid(),
+            BreedId = 2,
             Sex = "Female"
         };
         fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.SearchAsync(It.IsAny<string?>(), It.IsAny<Guid?>(), It.IsAny<string?>(),
+            .Setup(repository => repository.SearchAsync(It.IsAny<string?>(), It.IsAny<int?>(), It.IsAny<string?>(),
                 It.IsAny<Sex?>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(items);
 

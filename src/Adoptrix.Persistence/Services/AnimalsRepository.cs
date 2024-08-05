@@ -6,7 +6,7 @@ namespace Adoptrix.Persistence.Services;
 
 public interface IAnimalsRepository
 {
-    Task<IReadOnlyList<SearchAnimalsItem>> SearchAsync(string? name = null, Guid? breedId = null,
+    Task<IReadOnlyList<SearchAnimalsItem>> SearchAsync(string? name = null, int? breedId = null,
         string? speciesName = null, Sex? sex = null, int? limit = null, CancellationToken cancellationToken = default);
 
     Task<Animal?> GetByIdAsync(Guid animalId, CancellationToken cancellationToken = default);
@@ -17,7 +17,7 @@ public interface IAnimalsRepository
 
 public class AnimalsRepository(AdoptrixDbContext dbContext) : IAnimalsRepository
 {
-    public async Task<IReadOnlyList<SearchAnimalsItem>> SearchAsync(string? name, Guid? breedId, string? speciesName,
+    public async Task<IReadOnlyList<SearchAnimalsItem>> SearchAsync(string? name, int? breedId, string? speciesName,
         Sex? sex, int? limit, CancellationToken cancellationToken = default)
     {
         return await dbContext.Animals

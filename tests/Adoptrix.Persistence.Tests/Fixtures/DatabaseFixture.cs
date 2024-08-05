@@ -1,5 +1,4 @@
-﻿using Adoptrix.Initializer;
-using Adoptrix.Initializer.Services;
+﻿using Adoptrix.Initializer.Services;
 using Adoptrix.Persistence.Services;
 using DotNet.Testcontainers.Builders;
 using Microsoft.Extensions.Configuration;
@@ -71,8 +70,8 @@ public class DatabaseFixture : IAsyncLifetime
     private static async Task InitializeDatabaseAsync(DatabaseInitializer initializer)
     {
         await initializer.EnsureCreatedAsync();
-        await initializer.SeedSpeciesAsync(SeedData.Species.Values);
-        await initializer.SeedBreedsAsync(SeedData.Breeds.Values);
-        await initializer.SeedAnimalsAsync(SeedData.Animals);
+        //await initializer.SeedSpeciesAsync(SeedData.Species.Values);
+        //await initializer.SeedBreedsAsync(SeedData.Breeds.Values);
+        //await initializer.SeedAnimalsAsync(SeedData.Animals);
     }
 }

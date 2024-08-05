@@ -25,8 +25,8 @@ public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         message.Headers.Location.Should().NotBeNull();
-        response.Id.Should().NotBeEmpty();
         response.Name.Should().Be(request.Name);
+        response.SpeciesName.Should().Be(species.Name);
     }
 
     [Fact]

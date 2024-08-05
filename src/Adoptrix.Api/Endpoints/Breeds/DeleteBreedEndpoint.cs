@@ -10,7 +10,7 @@ public class DeleteBreedEndpoint(IBreedsRepository breedsRepository)
 {
     public override void Configure()
     {
-        Delete("breeds/{breedId:guid}");
+        Delete("breeds/{breedId:int}");
         Permissions(PermissionNames.BreedsWrite);
     }
 

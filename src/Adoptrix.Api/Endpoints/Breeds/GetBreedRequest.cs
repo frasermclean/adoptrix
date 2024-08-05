@@ -1,3 +1,6 @@
 ﻿namespace Adoptrix.Api.Endpoints.Breeds;
 
-public record GetBreedRequest(Guid BreedId);
+public class GetBreedRequest
+{
+    public required int BreedId { get; init; }
+}

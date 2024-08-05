@@ -16,5 +16,14 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
             .HasDefaultValueSql("getutcdate()");
 
         builder.HasKey(species => species.Name);
+
+        builder.HasData(InitialData);
     }
+
+    internal static readonly Species[] InitialData =
+    [
+        new Species { Name = "Dog" },
+        new Species { Name = "Cat" },
+        new Species { Name = "Bird" }
+    ];
 }

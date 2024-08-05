@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-[HttpGet("breeds/{breedId:guid}"), AllowAnonymous]
+[HttpGet("breeds/{breedId:int}"), AllowAnonymous]
 public class GetBreedEndpoint(IBreedsRepository breedsRepository)
     : Endpoint<GetBreedRequest, Results<Ok<BreedResponse>, NotFound>>
 {

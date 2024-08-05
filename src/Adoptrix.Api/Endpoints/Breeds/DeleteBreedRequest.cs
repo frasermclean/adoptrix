@@ -1,3 +1,6 @@
 ﻿namespace Adoptrix.Api.Endpoints.Breeds;
 
-public record DeleteBreedRequest(Guid BreedId);
+public class DeleteBreedRequest
+{
+    public int BreedId { get; init; }
+}
