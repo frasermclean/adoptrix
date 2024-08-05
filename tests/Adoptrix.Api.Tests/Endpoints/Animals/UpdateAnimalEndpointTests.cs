@@ -11,12 +11,12 @@ public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
     private readonly HttpClient httpClient = fixture.AdminClient;
 
     [Theory, AdoptrixAutoData]
-    public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk(UpdateAnimalRequest request, Animal animal,
-        Breed breed)
+    public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk(Animal animal, Breed breed)
     {
         // arrange
+        var request = CreateRequest();
         fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(animal);
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
@@ -31,12 +31,13 @@ public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
         response.Id.Should().Be(animal.Id);
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task UpdateAnimal_WithInvalidAnimalId_ShouldReturnNotFound(UpdateAnimalRequest request)
+    [Fact]
+    public async Task UpdateAnimal_WithInvalidAnimalId_ShouldReturnNotFound()
     {
         // arrange
+        var request = CreateRequest();
         fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Animal);
 
         // act
@@ -47,11 +48,12 @@ public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
     }
 
     [Theory, AdoptrixAutoData]
-    public async Task UpdateAnimal_WithInvalidBreedId_ShouldReturnBadRequest(UpdateAnimalRequest request, Animal animal)
+    public async Task UpdateAnimal_WithInvalidBreedId_ShouldReturnBadRequest(Animal animal)
     {
         // arrange
+        var request = CreateRequest();
         fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(animal);
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
@@ -65,4 +67,14 @@ public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("breedId");
     }
+
+    private static UpdateAnimalRequest CreateRequest() => new()
+    {
+        AnimalId = 1,
+        Name = "Bobby",
+        Description = null,
+        BreedId = 3,
+        Sex = Sex.Female,
+        DateOfBirth = new DateOnly(2022, 1, 3)
+    };
 }

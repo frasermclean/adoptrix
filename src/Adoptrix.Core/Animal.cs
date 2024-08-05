@@ -2,8 +2,9 @@
 
 public class Animal : IUserCreatedEntity
 {
-    public const int NameMaxLength = 50;
+    public const int NameMaxLength = 30;
     public const int DescriptionMaxLength = 2000;
+    public const int SlugMaxLength = 60;
 
     public int Id { get; init; }
     public required string Name { get; set; }
@@ -11,6 +12,7 @@ public class Animal : IUserCreatedEntity
     public required Breed Breed { get; set; }
     public required Sex Sex { get; set; }
     public required DateOnly DateOfBirth { get; set; }
+    public required string Slug { get; init; }
     public List<AnimalImage> Images { get; init; } = [];
     public Guid CreatedBy { get; init; }
     public DateTime CreatedAt { get; init; }

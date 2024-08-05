@@ -14,6 +14,7 @@ public static class AnimalFactory
         Breed = breed ?? BreedFactory.Create(),
         Sex = sex,
         DateOfBirth = dateOfBirth ?? DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 2)),
+        Slug = Guid.NewGuid().ToString(),
         Images = AnimalImageFactory.CreateMany(imageCount).ToList(),
         CreatedBy = createdBy ?? Guid.NewGuid()
     };

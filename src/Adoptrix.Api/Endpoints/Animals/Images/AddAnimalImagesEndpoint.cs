@@ -21,7 +21,7 @@ public class AddAnimalImagesEndpoint(
         AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
         // ensure animal exists in database
-        var animal = await animalsRepository.GetAsync(request.AnimalId, cancellationToken);
+        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
         if (animal is null)
         {
             return TypedResults.NotFound();

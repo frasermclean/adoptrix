@@ -22,7 +22,7 @@ public class ProcessAnimalImage(
         CancellationToken cancellationToken = default)
     {
         // ensure animal exists in database
-        var animal = await animalsRepository.GetAsync(data.AnimalId, cancellationToken);
+        var animal = await animalsRepository.GetByIdAsync(data.AnimalId, cancellationToken);
         if (animal is null)
         {
             throw new InvalidOperationException($"Could not find animal with ID {data.AnimalId}");

@@ -18,6 +18,7 @@ public class AnimalMatchMapperTests
             BreedName = "Golden Retriever",
             Sex = Sex.Male,
             DateOfBirth = DateOnly.FromDateTime(DateTime.Today),
+            Slug = "shaggy-123",
             CreatedAt = DateTime.UtcNow,
             Image = null
         };
@@ -27,6 +28,7 @@ public class AnimalMatchMapperTests
 
         // assert
         match.Id.Should().Be(item.Id);
+        match.Slug.Should().Be(item.Slug);
         match.Name.Should().Be(item.Name);
         match.SpeciesName.Should().Be(item.SpeciesName);
         match.BreedName.Should().Be(item.BreedName);

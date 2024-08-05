@@ -12,6 +12,9 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
         builder.Property(animal => animal.Name)
             .HasMaxLength(Animal.NameMaxLength);
 
+        builder.Property(animal => animal.Description)
+            .HasMaxLength(Animal.DescriptionMaxLength);
+
         builder.Property(animal => animal.Sex)
             .HasConversion<SexConverter>();
 
@@ -21,6 +24,11 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 
         builder.Property(animal => animal.CreatedBy)
             .HasDefaultValue(Guid.Empty);
+
+        builder.Property(animal => animal.Slug)
+            .HasMaxLength(Animal.SlugMaxLength);
+
+        builder.HasAlternateKey(animal => animal.Slug);
 
         builder.HasQueryFilter(animal => !animal.IsDeleted);
 
@@ -56,6 +64,7 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             BreedId = 1,
             Sex = Sex.Male,
             DateOfBirth = new DateOnly(2024, 02, 14),
+            Slug = "alberto-2024-02-14",
             IsDeleted = false
         },
         new
@@ -67,6 +76,7 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             BreedId = 2,
             Sex = Sex.Male,
             DateOfBirth = new DateOnly(2020, 04, 19),
+            Slug = "barry-2020-04-19",
             IsDeleted = false
         },
         new
@@ -78,6 +88,7 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             BreedId = 4,
             Sex = Sex.Female,
             DateOfBirth = new DateOnly(2022, 09, 30),
+            Slug = "ginger-2022-09-30",
             IsDeleted = false
         },
         new
@@ -88,6 +99,7 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             BreedId = 5,
             Sex = Sex.Male,
             DateOfBirth = new DateOnly(2017, 04, 11),
+            Slug = "percy-2017-04-11",
             IsDeleted = false
         }
     ];

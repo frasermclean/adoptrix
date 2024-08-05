@@ -10,6 +10,7 @@ public class AnimalResponse
     public required string BreedName { get; init; }
     public required string Sex { get; init; }
     public required DateOnly DateOfBirth { get; init; }
+    public required string Slug { get; init; }
     public required string Age { get; init; }
     public required DateTime CreatedAt { get; init; }
     public required IEnumerable<AnimalImageResponse> Images { get; init; }

@@ -18,7 +18,7 @@ public class DeleteAnimalEndpoint(IAnimalsRepository animalsRepository, IEventPu
     public override async Task<Results<NoContent, NotFound>> ExecuteAsync(DeleteAnimalRequest request,
         CancellationToken cancellationToken)
     {
-        var animal = await animalsRepository.GetAsync(request.AnimalId, cancellationToken);
+        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
         if (animal is null)
         {
             Logger.LogError("Could not find animal with ID: {AnimalId} to delete", request.AnimalId);
@@ -30,7 +30,7 @@ public class DeleteAnimalEndpoint(IAnimalsRepository animalsRepository, IEventPu
 
         Logger.LogInformation("Marked animal with ID: {AnimalId} as deleted", request.AnimalId);
 
-        await eventPublisher.PublishAsync(new AnimalDeletedEvent(request.AnimalId), cancellationToken);
+        await eventPublisher.PublishAsync(new AnimalDeletedEvent(animal.Id), cancellationToken);
 
         return TypedResults.NoContent();
     }

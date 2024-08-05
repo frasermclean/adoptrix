@@ -37,7 +37,7 @@ public class AnimalsRepositoryTests
         const int animalId = -1;
 
         // act
-        var animal = await animalsRepository.GetAsync(animalId);
+        var animal = await animalsRepository.GetByIdAsync(animalId);
 
         // assert
         animal.Should().BeNull();
@@ -52,7 +52,7 @@ public class AnimalsRepositoryTests
 
         // act
         await animalsRepository.AddAsync(animalToAdd);
-        var animal = await animalsRepository.GetAsync(animalToAdd.Id);
+        var animal = await animalsRepository.GetByIdAsync(animalToAdd.Id);
 
         // assert
         animal.Should().NotBeNull();
@@ -75,7 +75,7 @@ public class AnimalsRepositoryTests
 
         // act
         await animalsRepository.DeleteAsync(animalToAdd);
-        var animal = await animalsRepository.GetAsync(animalToAdd.Id);
+        var animal = await animalsRepository.GetByIdAsync(animalToAdd.Id);
 
         // assert
         animal.Should().BeNull();

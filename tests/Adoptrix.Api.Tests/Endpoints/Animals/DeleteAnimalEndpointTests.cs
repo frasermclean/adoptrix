@@ -15,7 +15,7 @@ public class DeleteAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
     {
         // arrange
         fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(animal);
 
         // act
@@ -33,7 +33,7 @@ public class DeleteAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
     {
         // arrange
         fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetAsync(request.AnimalId, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Animal);
 
         // act

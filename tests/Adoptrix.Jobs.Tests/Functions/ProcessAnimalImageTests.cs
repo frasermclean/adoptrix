@@ -30,7 +30,7 @@ public class ProcessAnimalImageTests
         var imageId = animal.Images.First().Id;
         var blobName = $"{animal.Id}/image.jpg";
         var data = new AnimalImageAddedEvent(animal.Id, imageId, blobName);
-        animalsRepositoryMock.Setup(repository => repository.GetAsync(data.AnimalId, It.IsAny<CancellationToken>()))
+        animalsRepositoryMock.Setup(repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(animal);
         imageProcessorMock.Setup(processor =>
                 processor.ProcessOriginalAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
@@ -40,7 +40,7 @@ public class ProcessAnimalImageTests
         await function.ExecuteAsync(data);
 
         // assert
-        animalsRepositoryMock.Verify(repository => repository.GetAsync(animal.Id, It.IsAny<CancellationToken>()),
+        animalsRepositoryMock.Verify(repository => repository.GetByIdAsync(animal.Id, It.IsAny<CancellationToken>()),
             Times.Once);
         originalImagesContainerManagerMock.Verify(manager =>
             manager.OpenReadStreamAsync(blobName, It.IsAny<CancellationToken>()), Times.Once);
@@ -59,7 +59,7 @@ public class ProcessAnimalImageTests
     public async Task ExecuteAsync_WithInvalidAnimalId_ShouldThrowException(AnimalImageAddedEvent data)
     {
         // arrange
-        animalsRepositoryMock.Setup(repository => repository.GetAsync(data.AnimalId, It.IsAny<CancellationToken>()))
+        animalsRepositoryMock.Setup(repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Animal);
 
         // act
@@ -68,7 +68,7 @@ public class ProcessAnimalImageTests
         // assert
         await act.Should().ThrowAsync<InvalidOperationException>();
         animalsRepositoryMock.Verify(
-            repository => repository.GetAsync(data.AnimalId, It.IsAny<CancellationToken>()),
+            repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }

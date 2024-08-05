@@ -17,7 +17,8 @@ public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepo
         Permissions(PermissionNames.AnimalsWrite);
     }
 
-    public override async Task<Results<Created<AnimalResponse>, ErrorResponse>> ExecuteAsync(AddAnimalRequest request, CancellationToken cancellationToken)
+    public override async Task<Results<Created<AnimalResponse>, ErrorResponse>> ExecuteAsync(AddAnimalRequest request,
+        CancellationToken cancellationToken)
     {
         var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
         if (breed is null)
@@ -42,6 +43,7 @@ public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepo
         Breed = breed,
         Sex = request.Sex,
         DateOfBirth = request.DateOfBirth,
+        Slug = $"{request.Name.ToLower()}-{request.DateOfBirth:O}",
         CreatedBy = request.UserId
     };
 }

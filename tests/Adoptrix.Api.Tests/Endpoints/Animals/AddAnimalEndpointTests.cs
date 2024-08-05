@@ -9,9 +9,10 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals;
 public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
     [Theory, AdoptrixAutoData]
-    public async Task AddAnimal_WithValidRequest_ShouldReturnCreated(AddAnimalRequest request, Breed breed)
+    public async Task AddAnimal_WithValidRequest_ShouldReturnCreated(Breed breed)
     {
         // arrange
+        var request = CreateRequest();
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(breed);
@@ -24,12 +25,16 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         message.Headers.Location.Should().NotBeNull();
         response.Name.Should().Be(request.Name);
+        response.DateOfBirth.Should().Be(request.DateOfBirth);
+        response.Slug.Should().StartWith("buddy-");
+        response.Age.Should().NotBeEmpty();
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task AddAnimal_WithInvalidBreedId_ShouldReturnBadRequest(AddAnimalRequest request)
+    [Fact]
+    public async Task AddAnimal_WithInvalidBreedId_ShouldReturnBadRequest()
     {
         // arrange
+        var request = CreateRequest();
         fixture.BreedsRepositoryMock
             .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as Breed);
@@ -44,7 +49,7 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
     }
 
     [Theory, AdoptrixAutoData]
-    public async Task AddAnimal_InvalidRole_ShouldReturnForbidden(AddAnimalRequest request, Breed breed)
+    public async Task AddAnimal_WithInvalidRole_ShouldReturnForbidden(AddAnimalRequest request, Breed breed)
     {
         // arrange
         fixture.BreedsRepositoryMock
@@ -58,4 +63,14 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         // assert
         testResult.Response.Should().HaveStatusCode(HttpStatusCode.Forbidden);
     }
+
+    private static AddAnimalRequest CreateRequest() => new()
+    {
+        Name = "Buddy",
+        Description = null,
+        BreedId = 4,
+        Sex = Sex.Male,
+        DateOfBirth = new DateOnly(2019, 1, 1),
+        UserId = Guid.NewGuid()
+    };
 }
