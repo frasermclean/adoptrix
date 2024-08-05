@@ -2,6 +2,7 @@
 using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Persistence.Tests.Services;
 
@@ -115,12 +116,15 @@ public class BreedsRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_WithUnknownId_ShouldPass()
+    public async Task DeleteAsync_WithInvalidBreed_ShouldThrow()
     {
         // arrange
-        const int unknownBreedId = -1;
+        var invalidBreed = BreedFactory.Create(id: 713);
 
         // act
-        await breedsRepository.DeleteAsync(unknownBreedId);
+        var act = async () => await breedsRepository.DeleteAsync(invalidBreed);
+
+        // assert
+        await act.Should().ThrowAsync<DbUpdateConcurrencyException>();
     }
 }
