@@ -1,5 +1,4 @@
-﻿using Adoptrix.Initializer;
-using Adoptrix.Persistence.Services;
+﻿using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
 
