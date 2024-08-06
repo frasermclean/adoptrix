@@ -1,5 +1,7 @@
-﻿using Adoptrix.Api.Mapping;
+﻿using System.Linq.Expressions;
+using Adoptrix.Api.Mapping;
 using Adoptrix.Contracts.Responses;
+using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -21,28 +23,19 @@ public class GetAnimalEndpoint(AdoptrixDbContext dbContext)
         var animalId = Route<int?>("animalId", false);
         var animalSlug = Route<string>("animalSlug", false);
 
-        var response = animalId.HasValue
-            ? await GetByIdAsync(animalId.Value, cancellationToken)
-            : await GetBySlugAsync(animalSlug, cancellationToken);
+        Expression<Func<Animal, bool>> wherePredicate = animalId.HasValue
+            ? animal => animal.Id == animalId.Value
+            : animal => animal.Slug == animalSlug;
+
+        var response = await dbContext.Animals.Where(wherePredicate)
+            .AsNoTracking()
+            .Include(animal => animal.Breed)
+            .ThenInclude(breed => breed.Species)
+            .Select(animal => animal.ToResponse())
+            .FirstOrDefaultAsync(cancellationToken);
 
         return response is not null
             ? TypedResults.Ok(response)
             : TypedResults.NotFound();
     }
-
-    private async Task<AnimalResponse?> GetByIdAsync(int animalId, CancellationToken cancellationToken) =>
-        await dbContext.Animals.Where(animal => animal.Id == animalId)
-            .AsNoTracking()
-            .Include(animal => animal.Breed)
-            .ThenInclude(breed => breed.Species)
-            .Select(animal => animal.ToResponse())
-            .FirstOrDefaultAsync(cancellationToken);
-
-    private async Task<AnimalResponse?> GetBySlugAsync(string? animalSlug, CancellationToken cancellationToken) =>
-        await dbContext.Animals.Where(animal => animal.Slug == animalSlug)
-            .AsNoTracking()
-            .Include(animal => animal.Breed)
-            .ThenInclude(breed => breed.Species)
-            .Select(animal => animal.ToResponse())
-            .FirstOrDefaultAsync(cancellationToken);
 }
