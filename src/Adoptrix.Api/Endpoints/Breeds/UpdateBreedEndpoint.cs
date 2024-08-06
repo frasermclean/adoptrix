@@ -4,10 +4,11 @@ using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-public class UpdateBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesRepository speciesRepository)
+public class UpdateBreedEndpoint(AdoptrixDbContext dbContext)
     : Endpoint<UpdateBreedRequest, Results<Ok<BreedResponse>, NotFound, ErrorResponse>>
 {
     public override void Configure()
@@ -16,24 +17,27 @@ public class UpdateBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesRep
         Permissions(PermissionNames.BreedsWrite);
     }
 
-    public override async Task<Results<Ok<BreedResponse>, NotFound, ErrorResponse>> ExecuteAsync(UpdateBreedRequest request, CancellationToken cancellationToken)
+    public override async Task<Results<Ok<BreedResponse>, NotFound, ErrorResponse>> ExecuteAsync(
+        UpdateBreedRequest request, CancellationToken cancellationToken)
     {
-        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
-        if (breed is null)
-        {
-            return TypedResults.NotFound();
-        }
+        var species = await dbContext.Species.FirstOrDefaultAsync(species => species.Name == request.SpeciesName,
+            cancellationToken);
 
-        var species = await speciesRepository.GetAsync(request.SpeciesName, cancellationToken);
         if (species is null)
         {
             AddError(r => r.SpeciesName, "Invalid species name");
             return new ErrorResponse(ValidationFailures);
         }
 
+        var breed = await dbContext.Breeds.FirstOrDefaultAsync(breed => breed.Id == request.BreedId, cancellationToken);
+        if (breed is null)
+        {
+            return TypedResults.NotFound();
+        }
+
         breed.Name = request.Name;
         breed.Species = species;
-        await breedsRepository.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return TypedResults.Ok(breed.ToResponse());
     }

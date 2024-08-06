@@ -1,22 +1,20 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
     private readonly HttpClient httpClient = fixture.AdminClient;
 
-    [Theory, AdoptrixAutoData]
-    public async Task AddBreed_WithValidRequest_ShouldReturnCreated(Core.Species species)
+    [Fact]
+    public async Task AddBreed_WithValidRequest_ShouldReturnCreated()
     {
         // arrange
-        var request = CreateRequest(species.Name);
-        fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetAsync(species.Name, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(species);
+        var request = CreateRequest("Bruno", "Dog");
 
         // act
         var (message, response) =
@@ -25,18 +23,15 @@ public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         message.Headers.Location.Should().NotBeNull();
-        response.Name.Should().Be(request.Name);
-        response.SpeciesName.Should().Be(species.Name);
+        response.Name.Should().Be("Bruno");
+        response.SpeciesName.Should().Be("Dog");
     }
 
     [Fact]
     public async Task AddBreed_WithInvalidSpeciesName_ShouldReturnBadRequest()
     {
         // arrange
-        var request = CreateRequest();
-        fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetAsync(request.SpeciesName, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Core.Species);
+        var request = CreateRequest("It", "Spaghetti Monster");
 
         // act
         var (message, response) =
@@ -47,9 +42,24 @@ public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesName");
     }
 
-    private static AddBreedRequest CreateRequest(string? speciesName = null) => new()
+    [Fact]
+    public async Task AddBreed_WithExistingBreed_ShouldReturnConflict()
     {
-        Name = "Golden Retriever",
+        // arrange
+        var request = CreateRequest();
+
+        // act
+        var (message, response) =
+            await httpClient.POSTAsync<AddBreedEndpoint, AddBreedRequest, ErrorResponse>(request);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.Conflict);
+        response.Errors.Should().ContainSingle().Which.Key.Should().Be("name");
+    }
+
+    private static AddBreedRequest CreateRequest(string? name = null, string? speciesName = null) => new()
+    {
+        Name = name ?? "Golden Retriever",
         SpeciesName = speciesName ?? "Dog"
     };
 }

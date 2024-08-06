@@ -1,39 +1,35 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
-using Adoptrix.Core;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class DeleteBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
     private readonly HttpClient httpClient = fixture.AdminClient;
 
-    [Theory, AdoptrixAutoData]
-    public async Task DeleteBreed_WithValidRequest_ShouldReturnNoContent(DeleteBreedRequest request, Breed breed)
+    [Fact]
+    public async Task DeleteBreed_WithValidRequest_ShouldReturnNoContent()
     {
         // arrange
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(breed);
+        const int breedId = 3;
 
         // act
-        var message = await httpClient.DELETEAsync<DeleteBreedEndpoint, DeleteBreedRequest>(request);
+        var message = await httpClient.DeleteAsync($"/api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NoContent);
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task DeleteBreed_WithInvalidAnimalId_ShouldReturnNotFound(DeleteBreedRequest request)
+    [Fact]
+    public async Task DeleteBreed_WithInvalidAnimalId_ShouldReturnNotFound()
     {
         // arrange
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Breed);
+        const int breedId = -1;
 
         // act
-        var message = await httpClient.DELETEAsync<DeleteBreedEndpoint, DeleteBreedRequest>(request);
+        var message = await httpClient.DeleteAsync($"/api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);

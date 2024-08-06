@@ -2,11 +2,12 @@
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-public class DeleteBreedEndpoint(IBreedsRepository breedsRepository)
-    : Endpoint<DeleteBreedRequest, Results<NoContent, NotFound>>
+public class DeleteBreedEndpoint(AdoptrixDbContext dbContext)
+    : EndpointWithoutRequest<Results<NoContent, NotFound>>
 {
     public override void Configure()
     {
@@ -14,18 +15,25 @@ public class DeleteBreedEndpoint(IBreedsRepository breedsRepository)
         Permissions(PermissionNames.BreedsWrite);
     }
 
-    public override async Task<Results<NoContent, NotFound>> ExecuteAsync(DeleteBreedRequest request,
-        CancellationToken cancellationToken)
+    public override async Task<Results<NoContent, NotFound>> ExecuteAsync(CancellationToken cancellationToken)
     {
-        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
+        var breedId = Route<int>("breedId");
+
+        var breed = await dbContext.Breeds
+            .Include(breed => breed.Species)
+            .Include(breed => breed.Animals)
+            .FirstOrDefaultAsync(breed => breed.Id == breedId, cancellationToken);
+
         if (breed is null)
         {
-            Logger.LogError("Could not delete breed with ID {BreedId} because it was not found", request.BreedId);
+            Logger.LogError("Could not delete breed with ID {BreedId} because it was not found", breedId);
             return TypedResults.NotFound();
         }
 
-        await breedsRepository.DeleteAsync(breed, cancellationToken);
-        Logger.LogInformation("Breed with ID {BreedId} was deleted", request.BreedId);
+        dbContext.Breeds.Remove(breed);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        Logger.LogInformation("Breed with ID {BreedId} was deleted", breedId);
 
         return TypedResults.NoContent();
     }

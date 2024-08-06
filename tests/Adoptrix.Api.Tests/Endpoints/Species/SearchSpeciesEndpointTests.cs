@@ -2,8 +2,6 @@
 using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Persistence.Responses;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Species;
 

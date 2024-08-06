@@ -1,23 +1,38 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Contracts.Responses;
+﻿using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-[HttpGet("breeds/{breedId:int}"), AllowAnonymous]
-public class GetBreedEndpoint(IBreedsRepository breedsRepository)
-    : Endpoint<GetBreedRequest, Results<Ok<BreedResponse>, NotFound>>
+public class GetBreedEndpoint(AdoptrixDbContext dbContext)
+    : EndpointWithoutRequest<Results<Ok<BreedResponse>, NotFound>>
 {
-    public override async Task<Results<Ok<BreedResponse>, NotFound>> ExecuteAsync(GetBreedRequest request,
+    public override void Configure()
+    {
+        Get("breeds/{breedId:int}");
+        AllowAnonymous();
+    }
+
+    public override async Task<Results<Ok<BreedResponse>, NotFound>> ExecuteAsync(
         CancellationToken cancellationToken)
     {
-        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
+        var breedId = Route<int>("breedId");
 
-        return breed is not null
-            ? TypedResults.Ok(breed.ToResponse())
+        var response = await dbContext.Breeds
+            .AsNoTracking()
+            .Where(breed => breed.Id == breedId)
+            .Select(breed => new BreedResponse
+            {
+                Id = breed.Id,
+                Name = breed.Name,
+                SpeciesName = breed.Species.Name
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return response is not null
+            ? TypedResults.Ok(response)
             : TypedResults.NotFound();
     }
 }

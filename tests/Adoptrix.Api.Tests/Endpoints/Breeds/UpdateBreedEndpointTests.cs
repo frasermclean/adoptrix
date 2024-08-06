@@ -1,26 +1,20 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class UpdateBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
     private readonly HttpClient httpClient = fixture.AdminClient;
 
-    [Theory, AdoptrixAutoData]
-    public async Task UpdateBreed_WithValidRequest_ShouldReturnOk(Breed breed, Core.Species species)
+    [Fact]
+    public async Task UpdateBreed_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var request = CreateRequest(breed.Id, species.Name);
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(breed);
-        fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetAsync(request.SpeciesName, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(species);
+        var request = CreateRequest(speciesName: "Bird");
 
         // act
         var (message, response) =
@@ -28,18 +22,16 @@ public class UpdateBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(breed.Id);
-        fixture.BreedsRepositoryMock.Verify(repository => repository.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        response.Id.Should().Be(5);
+        response.Name.Should().Be("Budgerigar");
+        response.SpeciesName.Should().Be("Bird");
     }
 
     [Fact]
     public async Task UpdateBreed_WithInvalidBreedId_ShouldReturnNotFound()
     {
         // arrange
-        var request = CreateRequest();
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Breed);
+        var request = CreateRequest(breedId: -1);
 
         // act
         var message = await httpClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest>(request);
@@ -48,17 +40,11 @@ public class UpdateBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task UpdateBreed_WithInvalidSpeciesName_ShouldReturnBadRequest(Breed breed)
+    [Fact]
+    public async Task UpdateBreed_WithInvalidSpeciesName_ShouldReturnBadRequest()
     {
         // arrange
-        var request = CreateRequest(breed.Id);
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(breed);
-        fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetAsync(request.SpeciesName, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Core.Species);
+        var request = CreateRequest(speciesName: "Spaghetti Monster");
 
         // act
         var (message, response) = await httpClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
@@ -68,10 +54,11 @@ public class UpdateBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesName");
     }
 
-    private static UpdateBreedRequest CreateRequest(int? breedId = null, string? speciesName = null) => new()
+    private static UpdateBreedRequest CreateRequest(string name = "Budgerigar", int breedId = 5, string speciesName = "Dog") => new()
     {
-        Name = "Sausage Dog",
-        BreedId = breedId ?? Random.Shared.Next(),
-        SpeciesName = speciesName ?? "Dog"
+        Name = name,
+        BreedId = breedId,
+        SpeciesName = speciesName,
+        UserId = Guid.NewGuid()
     };
 }

@@ -23,7 +23,6 @@ public class ApiFixture : AppFixture<Program>
 
     public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; } = new();
     public Mock<IBreedsRepository> BreedsRepositoryMock { get; } = new();
-    public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; } = new();
     public Mock<IEventPublisher> EventPublisherMock { get; } = new();
     public Mock<IBlobContainerManager> AnimalImagesBlobContainerManagerMock { get; } = new();
     public Mock<IBlobContainerManager> OriginalImagesBlobContainerManagerMock { get; } = new();
@@ -56,7 +55,6 @@ public class ApiFixture : AppFixture<Program>
         // remove selected services
         services.RemoveAll<IAnimalsRepository>()
             .RemoveAll<IBreedsRepository>()
-            .RemoveAll<ISpeciesRepository>()
             .RemoveAll<IEventPublisher>()
             .RemoveAll<IBlobContainerManager>()
             .RemoveAll<IUsersService>();
@@ -64,7 +62,6 @@ public class ApiFixture : AppFixture<Program>
         // replace with mocked services
         services.AddScoped<IAnimalsRepository>(_ => AnimalsRepositoryMock.Object)
             .AddScoped<IBreedsRepository>(_ => BreedsRepositoryMock.Object)
-            .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object)
             .AddScoped<IEventPublisher>(_ => EventPublisherMock.Object)
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages,
                 (_, _) => AnimalImagesBlobContainerManagerMock.Object)
