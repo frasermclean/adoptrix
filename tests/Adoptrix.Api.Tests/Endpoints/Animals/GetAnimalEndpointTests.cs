@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
 using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
@@ -6,77 +7,43 @@ using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class GetAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
-    [Theory, AdoptrixAutoData]
-    public async Task GetAnimal_WithKnownAnimalId_ShouldReturnOk(Animal animal)
+    [Fact]
+    public async Task GetAnimal_WithKnownAnimalSlug_ShouldReturnOk()
     {
         // arrange
-        const int animalId = 23;
-        var request = new GetAnimalRequest(animalId.ToString());
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(animal);
+        const string animalSlug = "alberto-2024-02-14";
 
         // act
-        var (message, response) =
-            await fixture.Client.GETAsync<GetAnimalEndpoint, GetAnimalRequest, AnimalResponse>(request);
+        var message = await fixture.Client.GetAsync($"api/animals/{animalSlug}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(animal.Id);
-        response.Name.Should().Be(animal.Name);
-        response.Description.Should().Be(animal.Description);
-        response.SpeciesName.Should().Be(animal.Breed.Species.Name);
-        response.BreedId.Should().Be(animal.Breed.Id);
-        response.BreedName.Should().Be(animal.Breed.Name);
-        response.Sex.Should().Be(animal.Sex.ToString());
-        response.DateOfBirth.Should().Be(animal.DateOfBirth);
+        var response = await message.Content.ReadFromJsonAsync<AnimalResponse>();
+        response!.Id.Should().Be(1);
+        response.Name.Should().Be("Alberto");
+        response.Description.Should().NotBeEmpty();
+        response.SpeciesName.Should().Be("Dog");
+        response.BreedId.Should().Be(1);
+        response.BreedName.Should().Be("Labrador Retriever");
+        response.Sex.Should().Be("Male");
+        response.DateOfBirth.Should().Be(new DateOnly(2024, 2, 14));
         response.Age.Should().NotBeEmpty();
-        fixture.AnimalsRepositoryMock.Verify(
-            repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()), Times.Once);
-    }
-    [Theory, AdoptrixAutoData]
-    public async Task GetAnimal_WithKnownAnimalSlug_ShouldReturnOk(Animal animal)
-    {
-        // arrange
-        const string animalSlug = "bobby-2020-12-12";
-        var request = new GetAnimalRequest(animalSlug);
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetBySlugAsync(animalSlug, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(animal);
-
-        // act
-        var (message, response) =
-            await fixture.Client.GETAsync<GetAnimalEndpoint, GetAnimalRequest, AnimalResponse>(request);
-
-        // assert
-        message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(animal.Id);
-        response.Name.Should().Be(animal.Name);
-        response.Description.Should().Be(animal.Description);
-        response.SpeciesName.Should().Be(animal.Breed.Species.Name);
-        response.BreedId.Should().Be(animal.Breed.Id);
-        response.BreedName.Should().Be(animal.Breed.Name);
-        response.Sex.Should().Be(animal.Sex.ToString());
-        response.DateOfBirth.Should().Be(animal.DateOfBirth);
-        response.Age.Should().NotBeEmpty();
-        fixture.AnimalsRepositoryMock.Verify(
-            repository => repository.GetBySlugAsync(animalSlug, It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task GetAnimal_WithUnknownAnimalId_ShouldReturnNotFound(GetAnimalRequest request)
+    [Fact]
+    public async Task GetAnimal_WithUnknownAnimalSlug_ShouldReturnNotFound()
     {
         // arrange
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetBySlugAsync(request.AnimalIdOrSlug, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Animal);
+        const string animalSlug = "unknown-animal";
 
         // act
-        var testResult = await fixture.Client.GETAsync<GetAnimalEndpoint, GetAnimalRequest, AnimalResponse>(request);
+        var message = await fixture.Client.GetAsync($"api/animals/{animalSlug}");
 
         // assert
-        testResult.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        message.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

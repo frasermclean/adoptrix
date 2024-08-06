@@ -8,30 +8,24 @@ using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class SearchAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
     private readonly HttpClient httpClient = fixture.Client;
 
-    [Theory, AdoptrixAutoData]
-    public async Task SearchAnimals_WithValidRequest_ShouldReturnOk(List<SearchAnimalsItem> items)
+    [Fact]
+    public async Task SearchAnimals_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var request = new SearchAnimalsRequest
-        {
-            BreedId = 2,
-            Sex = "Female"
-        };
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.SearchAsync(It.IsAny<string?>(), It.IsAny<int?>(), It.IsAny<string?>(),
-                It.IsAny<Sex?>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(items);
+        var request = new SearchAnimalsRequest();
 
         // act
-        var testResult =
+        var (message, matches) =
             await httpClient.GETAsync<SearchAnimalsEndpoint, SearchAnimalsRequest, List<AnimalMatch>>(request);
 
         // assert
-        testResult.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        testResult.Result.Should().HaveCount(items.Count);
+        message.StatusCode.Should().Be(HttpStatusCode.OK);
+        matches.Should().NotBeEmpty();
     }
 }

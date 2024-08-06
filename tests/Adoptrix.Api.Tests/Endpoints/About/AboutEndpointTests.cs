@@ -3,6 +3,8 @@ using Adoptrix.Api.Endpoints.About;
 
 namespace Adoptrix.Api.Tests.Endpoints.About;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class AboutEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
     [Fact]

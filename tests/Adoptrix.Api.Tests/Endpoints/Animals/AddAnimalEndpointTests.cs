@@ -6,16 +6,15 @@ using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
-    [Theory, AdoptrixAutoData]
-    public async Task AddAnimal_WithValidRequest_ShouldReturnCreated(Breed breed)
+    [Fact]
+    public async Task AddAnimal_WithValidRequest_ShouldReturnCreated()
     {
         // arrange
-        var request = CreateRequest();
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(breed);
+        var request = CreateRequest("Sasha", "What a great dog", 2, Sex.Female);
 
         // act
         var (message, response) =
@@ -24,9 +23,10 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         message.Headers.Location.Should().NotBeNull();
-        response.Name.Should().Be(request.Name);
+        response.Name.Should().Be("Sasha");
+        response.Sex.Should().Be("Female");
         response.DateOfBirth.Should().Be(request.DateOfBirth);
-        response.Slug.Should().StartWith("buddy-");
+        response.Slug.Should().Be("sasha-2020-01-01");
         response.Age.Should().NotBeEmpty();
     }
 
@@ -34,10 +34,7 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
     public async Task AddAnimal_WithInvalidBreedId_ShouldReturnBadRequest()
     {
         // arrange
-        var request = CreateRequest();
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Breed);
+        var request = CreateRequest(breedId: -1);
 
         // act
         var (message, response) =
@@ -48,13 +45,11 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("breedId");
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task AddAnimal_WithInvalidRole_ShouldReturnForbidden(AddAnimalRequest request, Breed breed)
+    [Fact]
+    public async Task AddAnimal_WithInvalidRole_ShouldReturnForbidden()
     {
         // arrange
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(breed);
+        var request = CreateRequest();
 
         // act
         var testResult =
@@ -64,13 +59,14 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         testResult.Response.Should().HaveStatusCode(HttpStatusCode.Forbidden);
     }
 
-    private static AddAnimalRequest CreateRequest() => new()
+    private static AddAnimalRequest CreateRequest(string name = "Buddy", string? description = null, int breedId = 1,
+        Sex sex = Sex.Male, DateOnly? dateOfBirth = null, Guid? userId = null) => new()
     {
-        Name = "Buddy",
-        Description = null,
-        BreedId = 4,
-        Sex = Sex.Male,
-        DateOfBirth = new DateOnly(2019, 1, 1),
-        UserId = Guid.NewGuid()
+        Name = name,
+        Description = description,
+        BreedId = breedId,
+        Sex = sex,
+        DateOfBirth = dateOfBirth ?? new DateOnly(2020, 1, 1),
+        UserId = userId ?? Guid.NewGuid()
     };
 }

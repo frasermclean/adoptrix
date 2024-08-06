@@ -6,12 +6,13 @@ using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals.Images;
 
 [HttpPost("animals/{animalId:int}/images"), AllowFileUploads(true)]
 public class AddAnimalImagesEndpoint(
-    IAnimalsRepository animalsRepository,
+    AdoptrixDbContext dbContext,
     IEventPublisher eventPublisher,
     [FromKeyedServices(BlobContainerNames.OriginalImages)]
     IBlobContainerManager containerManager)
@@ -21,7 +22,11 @@ public class AddAnimalImagesEndpoint(
         AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
         // ensure animal exists in database
-        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
+        var animal = await dbContext.Animals.Where(animal => animal.Id == request.AnimalId)
+            .Include(animal => animal.Breed)
+            .ThenInclude(breed => breed.Species)
+            .FirstOrDefaultAsync(a => a.Id == request.AnimalId, cancellationToken);
+
         if (animal is null)
         {
             return TypedResults.NotFound();
@@ -32,7 +37,7 @@ public class AddAnimalImagesEndpoint(
 
         // update animal entity with new images
         animal.Images.AddRange(images);
-        await animalsRepository.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         // publish events for each image added
         foreach (var @event in images.Select(image =>

@@ -4,6 +4,8 @@ using Adoptrix.Contracts.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Users;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class GetUsersEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
     private readonly HttpClient httpClient = fixture.AdminClient;

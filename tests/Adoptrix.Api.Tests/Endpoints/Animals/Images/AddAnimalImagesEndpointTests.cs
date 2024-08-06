@@ -5,37 +5,32 @@ using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals.Images;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class AddAnimalImagesEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
     private readonly HttpClient httpClient = fixture.AdminClient;
 
-    [Theory, AdoptrixAutoData]
-    public async Task AddAnimalImages_WithValidRequest_ShouldReturnOk(Animal animal)
+    [Fact]
+    public async Task AddAnimalImages_WithValidRequest_ShouldReturnOk()
     {
         // arrange
+        const int animalId = 1;
         using var content = CreateMultipartFormDataContent();
-        fixture.AnimalsRepositoryMock.Setup(repository => repository.GetByIdAsync(animal.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(animal);
 
         // act
-        var message = await httpClient.PostAsync($"api/animals/{animal.Id}/images", content);
+        var message = await httpClient.PostAsync($"api/animals/{animalId}/images", content);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        fixture.OriginalImagesBlobContainerManagerMock.Verify(
-            manager => manager.UploadBlobAsync(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
-                It.IsAny<CancellationToken>()), Times.Once);
-        fixture.AnimalsRepositoryMock.Verify(repository => repository.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.Once);
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task AddAnimalImages_WithInvalidAnimalId_ReturnsNotFound(int animalId)
+    [Fact]
+    public async Task AddAnimalImages_WithInvalidAnimalId_ReturnsNotFound()
     {
         // arrange
+        const int animalId = -1;
         using var content = CreateMultipartFormDataContent();
-        fixture.AnimalsRepositoryMock.Setup(repository => repository.GetByIdAsync(animalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Animal);
 
         // act
         var message = await httpClient.PostAsync($"api/animals/{animalId}/images", content);

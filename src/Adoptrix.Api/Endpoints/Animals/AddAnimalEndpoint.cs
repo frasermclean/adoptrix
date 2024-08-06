@@ -5,10 +5,11 @@ using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepository breedsRepository)
+public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
     : Endpoint<AddAnimalRequest, Results<Created<AnimalResponse>, ErrorResponse>>
 {
     public override void Configure()
@@ -20,7 +21,11 @@ public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepo
     public override async Task<Results<Created<AnimalResponse>, ErrorResponse>> ExecuteAsync(AddAnimalRequest request,
         CancellationToken cancellationToken)
     {
-        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
+        var breed = await dbContext.Breeds.Where(breed => breed.Id == request.BreedId)
+            .Include(breed => breed.Animals)
+            .Include(breed => breed.Species)
+            .FirstOrDefaultAsync(cancellationToken);
+
         if (breed is null)
         {
             Logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
@@ -29,7 +34,8 @@ public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepo
         }
 
         var animal = MapToAnimal(request, breed);
-        await animalsRepository.AddAsync(animal, cancellationToken);
+        breed.Animals.Add(animal);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         Logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
 

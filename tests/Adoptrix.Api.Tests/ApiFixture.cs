@@ -21,8 +21,6 @@ public class ApiFixture : AppFixture<Program>
             .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;"))
         .Build();
 
-    public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; } = new();
-    public Mock<IBreedsRepository> BreedsRepositoryMock { get; } = new();
     public Mock<IEventPublisher> EventPublisherMock { get; } = new();
     public Mock<IBlobContainerManager> AnimalImagesBlobContainerManagerMock { get; } = new();
     public Mock<IBlobContainerManager> OriginalImagesBlobContainerManagerMock { get; } = new();
@@ -53,16 +51,12 @@ public class ApiFixture : AppFixture<Program>
             .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.SchemeName, _ => { });
 
         // remove selected services
-        services.RemoveAll<IAnimalsRepository>()
-            .RemoveAll<IBreedsRepository>()
-            .RemoveAll<IEventPublisher>()
+        services.RemoveAll<IEventPublisher>()
             .RemoveAll<IBlobContainerManager>()
             .RemoveAll<IUsersService>();
 
         // replace with mocked services
-        services.AddScoped<IAnimalsRepository>(_ => AnimalsRepositoryMock.Object)
-            .AddScoped<IBreedsRepository>(_ => BreedsRepositoryMock.Object)
-            .AddScoped<IEventPublisher>(_ => EventPublisherMock.Object)
+        services.AddScoped<IEventPublisher>(_ => EventPublisherMock.Object)
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages,
                 (_, _) => AnimalImagesBlobContainerManagerMock.Object)
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.OriginalImages,

@@ -5,6 +5,8 @@ using FluentResults;
 
 namespace Adoptrix.Api.Tests.Endpoints.Users;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class GetUserEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
     private readonly HttpClient httpClient = fixture.AdminClient;
