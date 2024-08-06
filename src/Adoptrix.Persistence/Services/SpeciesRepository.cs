@@ -6,11 +6,14 @@ namespace Adoptrix.Persistence.Services;
 
 public interface ISpeciesRepository
 {
-    Task<IEnumerable<SearchSpeciesItem>> SearchAsync(bool? withAnimals = null, CancellationToken cancellationToken = default);
+    Task<IEnumerable<SearchSpeciesItem>> SearchAsync(bool? withAnimals = null,
+        CancellationToken cancellationToken = default);
+
     Task<Species?> GetAsync(string name, CancellationToken cancellationToken = default);
+    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
-public class SpeciesRepository(AdoptrixDbContext dbContext): ISpeciesRepository
+public class SpeciesRepository(AdoptrixDbContext dbContext) : ISpeciesRepository
 {
     public async Task<IEnumerable<SearchSpeciesItem>> SearchAsync(bool? withAnimals,
         CancellationToken cancellationToken = default)
@@ -27,9 +30,13 @@ public class SpeciesRepository(AdoptrixDbContext dbContext): ISpeciesRepository
             .ToListAsync(cancellationToken);
     }
 
-
     public async Task<Species?> GetAsync(string name, CancellationToken cancellationToken = default)
     {
-        return await dbContext.Species.FirstOrDefaultAsync(species => species.Name == name, cancellationToken);
+        return await dbContext.Species.Where(species => species.Name == name)
+            .Include(species => species.Breeds)
+            .FirstOrDefaultAsync(cancellationToken);
     }
+
+    public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
+        dbContext.SaveChangesAsync(cancellationToken);
 }

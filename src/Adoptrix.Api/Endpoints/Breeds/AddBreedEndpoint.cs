@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-public class AddBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesRepository speciesRepository)
+public class AddBreedEndpoint(ISpeciesRepository speciesRepository)
     : Endpoint<AddBreedRequest, Results<Created<BreedResponse>, ErrorResponse>>
 {
     public override void Configure()
@@ -27,8 +27,15 @@ public class AddBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesReposi
             return new ErrorResponse(ValidationFailures);
         }
 
+        if (species.Breeds.Any(b => b.Name == request.Name))
+        {
+            AddError(r => r.Name, "Breed already exists");
+            return new ErrorResponse(ValidationFailures);
+        }
+
         var breed = MapToBreed(request, species);
-        await breedsRepository.AddAsync(breed, cancellationToken);
+        species.Breeds.Add(breed);
+        await speciesRepository.SaveChangesAsync(cancellationToken);
 
         return TypedResults.Created($"/api/breeds/{breed.Id}", breed.ToResponse());
     }
