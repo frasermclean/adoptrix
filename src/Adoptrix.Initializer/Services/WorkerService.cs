@@ -1,3 +1,5 @@
+using Adoptrix.Persistence.Services;
+
 namespace Adoptrix.Initializer.Services;
 
 public class WorkerService(
@@ -14,11 +16,8 @@ public class WorkerService(
         await using var scope = serviceScopeFactory.CreateAsyncScope();
 
         // initialize database
-        var databaseInitializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
-        await databaseInitializer.EnsureCreatedAsync(cancellationToken);
-        await databaseInitializer.SeedSpeciesAsync(SeedData.Species.Values, cancellationToken);
-        await databaseInitializer.SeedBreedsAsync(SeedData.Breeds.Values, cancellationToken);
-        await databaseInitializer.SeedAnimalsAsync(SeedData.Animals, cancellationToken);
+        var dbContext = scope.ServiceProvider.GetRequiredService<AdoptrixDbContext>();
+        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
 
         // initialize storage
         await storageInitializer.InitializeAsync(cancellationToken);

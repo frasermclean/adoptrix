@@ -16,7 +16,7 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
     public async Task PublishAsync_WithAnimalDeletedEvent_ShouldReturnSuccess()
     {
         // arrange
-        var animalId = Guid.NewGuid();
+        var animalId = Random.Shared.Next();
         var animalDeletedEvent = new AnimalDeletedEvent(animalId);
 
         // act
@@ -32,8 +32,8 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
     public async Task PublishAsync_WithAnimalImageAddedEvent_ShouldReturnSuccess()
     {
         // arrange
-        var animalId = Guid.NewGuid();
-        var imageId = Guid.NewGuid();
+        var animalId = Random.Shared.Next();
+        var imageId = Random.Shared.Next();
         var blobName = $"{animalId}/image.jpg";
         var animalImageAddedEvent = new AnimalImageAddedEvent(animalId, imageId, blobName);
 

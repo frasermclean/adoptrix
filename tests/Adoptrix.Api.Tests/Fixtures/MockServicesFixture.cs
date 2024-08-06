@@ -7,26 +7,19 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Adoptrix.Api.Tests;
+namespace Adoptrix.Api.Tests.Fixtures;
 
 [DisableWafCache]
-public class ApiFixture : AppFixture<Program>
+public class MockServicesFixture : AppFixture<Program>
 {
-    public Mock<IAnimalsRepository> AnimalsRepositoryMock { get; } = new();
-    public Mock<IBreedsRepository> BreedsRepositoryMock { get; } = new();
-    public Mock<ISpeciesRepository> SpeciesRepositoryMock { get; } = new();
     public Mock<IEventPublisher> EventPublisherMock { get; } = new();
     public Mock<IBlobContainerManager> AnimalImagesBlobContainerManagerMock { get; } = new();
     public Mock<IBlobContainerManager> OriginalImagesBlobContainerManagerMock { get; } = new();
     public Mock<IUsersService> UsersServiceMock { get; } = new();
 
-    public HttpClient UserClient => CreateClient(httpClient =>
+    public HttpClient CreateClient(string role = RoleNames.Administrator) => CreateClient(httpClient =>
         httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{RoleNames.User}"));
-
-    public HttpClient AdminClient => CreateClient(httpClient =>
-        httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{RoleNames.Administrator}"));
+            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{role}"));
 
     protected override void ConfigureServices(IServiceCollection services)
     {
@@ -35,18 +28,12 @@ public class ApiFixture : AppFixture<Program>
             .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.SchemeName, _ => { });
 
         // remove selected services
-        services.RemoveAll<IAnimalsRepository>()
-            .RemoveAll<IBreedsRepository>()
-            .RemoveAll<ISpeciesRepository>()
-            .RemoveAll<IEventPublisher>()
+        services.RemoveAll<IEventPublisher>()
             .RemoveAll<IBlobContainerManager>()
             .RemoveAll<IUsersService>();
 
         // replace with mocked services
-        services.AddScoped<IAnimalsRepository>(_ => AnimalsRepositoryMock.Object)
-            .AddScoped<IBreedsRepository>(_ => BreedsRepositoryMock.Object)
-            .AddScoped<ISpeciesRepository>(_ => SpeciesRepositoryMock.Object)
-            .AddScoped<IEventPublisher>(_ => EventPublisherMock.Object)
+        services.AddScoped<IEventPublisher>(_ => EventPublisherMock.Object)
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages,
                 (_, _) => AnimalImagesBlobContainerManagerMock.Object)
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.OriginalImages,

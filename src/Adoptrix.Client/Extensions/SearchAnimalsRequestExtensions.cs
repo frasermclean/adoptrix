@@ -14,7 +14,7 @@ public static class SearchAnimalsRequestExtensions
     {
         { "name", request.Name },
         { "breedId", request.BreedId?.ToString() },
-        { "speciesId", request.SpeciesId?.ToString() },
+        { "speciesName", request.SpeciesName },
         { "sex", request.Sex },
         { "limit", request.Limit?.ToString()}
     };

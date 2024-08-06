@@ -1,9 +1,11 @@
 ﻿namespace Adoptrix.Core;
 
-public class Species : Aggregate
+public class Species : IUserCreatedEntity
 {
     public const int NameMaxLength = 20;
 
-    public string Name { get; init; } = string.Empty;
-    public ICollection<Breed> Breeds { get; } = new List<Breed>();
+    public required string Name { get; init; }
+    public List<Breed> Breeds { get; } = [];
+    public Guid CreatedBy { get; init; }
+    public DateTime CreatedAt { get; init; }
 }

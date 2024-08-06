@@ -1,3 +1,3 @@
 ﻿namespace Adoptrix.Api.Endpoints.Species;
 
-public record GetSpeciesRequest(Guid SpeciesId);
+public record GetSpeciesRequest(string SpeciesName);

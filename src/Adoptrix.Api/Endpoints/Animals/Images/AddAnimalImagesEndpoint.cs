@@ -6,12 +6,13 @@ using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals.Images;
 
-[HttpPost("animals/{animalId:guid}/images"), AllowFileUploads(true)]
+[HttpPost("animals/{animalId:int}/images"), AllowFileUploads(true)]
 public class AddAnimalImagesEndpoint(
-    IAnimalsRepository animalsRepository,
+    AdoptrixDbContext dbContext,
     IEventPublisher eventPublisher,
     [FromKeyedServices(BlobContainerNames.OriginalImages)]
     IBlobContainerManager containerManager)
@@ -21,7 +22,11 @@ public class AddAnimalImagesEndpoint(
         AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
         // ensure animal exists in database
-        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
+        var animal = await dbContext.Animals.Where(animal => animal.Id == request.AnimalId)
+            .Include(animal => animal.Breed)
+            .ThenInclude(breed => breed.Species)
+            .FirstOrDefaultAsync(a => a.Id == request.AnimalId, cancellationToken);
+
         if (animal is null)
         {
             return TypedResults.NotFound();
@@ -32,7 +37,7 @@ public class AddAnimalImagesEndpoint(
 
         // update animal entity with new images
         animal.Images.AddRange(images);
-        await animalsRepository.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         // publish events for each image added
         foreach (var @event in images.Select(image =>
@@ -41,10 +46,10 @@ public class AddAnimalImagesEndpoint(
             await eventPublisher.PublishAsync(@event, cancellationToken);
         }
 
-        return TypedResults.Ok(AnimalResponseMapper.ToResponse(animal));
+        return TypedResults.Ok(animal.ToResponse());
     }
 
-    private async Task<List<AnimalImage>> UploadOriginalsAsync(Guid animalId, Guid userId,
+    private async Task<List<AnimalImage>> UploadOriginalsAsync(int animalId, Guid userId,
         CancellationToken cancellationToken)
     {
         List<AnimalImage> images = [];
@@ -55,7 +60,7 @@ public class AddAnimalImagesEndpoint(
                 Description = section!.Name,
                 OriginalFileName = section.FileName,
                 OriginalContentType = section.Section.ContentType!,
-                UploadedBy = userId
+                CreatedBy = userId
             };
 
             var blobName = GetBlobName(animalId, section.FileName);
@@ -70,5 +75,5 @@ public class AddAnimalImagesEndpoint(
         return images;
     }
 
-    private static string GetBlobName(Guid animalId, string fileName) => $"{animalId}/{fileName}";
+    private static string GetBlobName(int animalId, string fileName) => $"{animalId}/{fileName}";
 }

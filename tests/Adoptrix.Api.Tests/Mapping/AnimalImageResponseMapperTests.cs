@@ -6,16 +6,16 @@ namespace Adoptrix.Api.Tests.Mapping;
 public class AnimalImageResponseMapperTests
 {
     [Fact]
-    public void Mapping_ImageInformation_To_ImageResponse_Should_Return_ExpectedValues()
+    public void ToResponse_WithValidAnimalImage_ShouldReturnExpectedValues()
     {
         // arrange
-        var animalImage = AnimalImageFactory.Create();
+        var animalImage = AnimalImageFactory.Create(1);
 
         // act
         var response = animalImage.ToResponse();
 
         // assert
-        response.Id.Should().Be(animalImage.Id);
+        response.Id.Should().Be(1);
         response.Description.Should().Be(animalImage.Description);
         response.IsProcessed.Should().Be(animalImage.IsProcessed);
     }

@@ -8,7 +8,7 @@ public class AnimalTests
     public void CreateAnimal_WithSpecifiedValues_ShouldReturnExpectedResult()
     {
         // arrange
-        var id = Guid.NewGuid();
+        var id = Random.Shared.Next();
         const string name = "Susie";
         var breed = BreedFactory.Create();
         const Sex sex = Sex.Female;
@@ -30,10 +30,10 @@ public class AnimalTests
     }
 
     [Fact]
-    public void TwoEntities_WithSameIds_Should_BeEqual()
+    public void TwoAnimals_WithSameIds_Should_BeEqual()
     {
         // arrange
-        var id = Guid.NewGuid();
+        const int id = 5;
         var max = AnimalFactory.Create(id, "Max");
         var felix = AnimalFactory.Create(id, "Felix");
         var otherObject = new object();
@@ -44,28 +44,5 @@ public class AnimalTests
         max.GetHashCode().Should().Be(felix.GetHashCode());
         max.Id.Should().Be(id);
         max.Name.Should().Be("Max");
-    }
-
-    [Fact]
-    public void AddImage_Should_AddImage()
-    {
-        // arrange
-        var animal = AnimalFactory.Create(name: "Fido");
-        const string fileName = "DSC0001.jpg";
-        const string contentType = "image/jpeg";
-        const string description = "Fido in the park";
-        var userId = Guid.NewGuid();
-
-        // act
-        var image = animal.AddImage(fileName, contentType, description, userId);
-        var action = () => animal.AddImage(fileName, contentType);
-
-        // assert
-        image.OriginalFileName.Should().Be(fileName);
-        image.OriginalContentType.Should().Be(contentType);
-        image.Description.Should().Be(description);
-        image.UploadedBy.Should().Be(userId);
-        animal.Images.Should().ContainSingle().Which.OriginalFileName.Should().Be(fileName);
-        action.Should().Throw<ArgumentException>().WithMessage("Image with the same name already exists*");
     }
 }

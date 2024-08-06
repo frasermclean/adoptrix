@@ -17,6 +17,6 @@ public class BreedResponseMapperTests
         // assert
         response.Id.Should().Be(breed.Id);
         response.Name.Should().Be(breed.Name);
-        response.SpeciesId.Should().Be(breed.Species.Id);
+        response.SpeciesName.Should().Be(breed.Species.Name);
     }
 }

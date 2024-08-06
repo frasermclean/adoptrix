@@ -1,27 +1,40 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Species;
+using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Species;
 
-public class GetSpeciesEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+[Collection(nameof(TestContainersCollection))]
+[Trait("Category", "Integration")]
+public class GetSpeciesEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
     private readonly HttpClient httpClient = fixture.Client;
 
-    [Theory, AdoptrixAutoData]
-    public async Task GetSpecies_WithKnownSpeciesId_ShouldReturnOk(GetSpeciesRequest request, Core.Species species)
+    [Fact]
+    public async Task GetSpecies_WithKnownSpeciesName_ShouldReturnOk()
     {
         // arrange
-        fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(species);
+        var request = new GetSpeciesRequest("Dog");
 
         // act
         var (message, response) = await httpClient.GETAsync<GetSpeciesEndpoint, GetSpeciesRequest, SpeciesResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(species.Id);
+        response.Name.Should().Be("Dog");
+    }
+
+    [Fact]
+    public async Task GetSpecies_WithUnknownSpeciesName_ShouldReturnNotFound()
+    {
+        // arrange
+        var request = new GetSpeciesRequest("Unknown");
+
+        // act
+        var message = await httpClient.GETAsync<GetSpeciesEndpoint, GetSpeciesRequest>(request);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 }

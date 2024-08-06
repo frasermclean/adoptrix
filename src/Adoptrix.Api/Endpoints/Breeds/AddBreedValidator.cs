@@ -12,7 +12,7 @@ public class AddBreedValidator : Validator<AddBreedRequest>
             .NotEmpty()
             .MaximumLength(Breed.NameMaxLength);
 
-        RuleFor(request => request.SpeciesId)
+        RuleFor(request => request.SpeciesName)
             .NotEmpty();
     }
 }

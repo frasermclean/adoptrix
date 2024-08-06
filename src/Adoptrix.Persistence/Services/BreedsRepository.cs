@@ -6,10 +6,10 @@ namespace Adoptrix.Persistence.Services;
 
 public interface IBreedsRepository
 {
-    Task<IEnumerable<SearchBreedsItem>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
+    Task<IEnumerable<SearchBreedsItem>> SearchAsync(string? speciesName = null, bool? withAnimals = null,
         CancellationToken cancellationToken = default);
 
-    Task<Breed?> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default);
+    Task<Breed?> GetByIdAsync(int breedId, CancellationToken cancellationToken = default);
     Task<Breed?> GetByNameAsync(string breedName, CancellationToken cancellationToken = default);
     Task AddAsync(Breed breed, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
@@ -18,24 +18,24 @@ public interface IBreedsRepository
 
 public class BreedsRepository(AdoptrixDbContext dbContext) : IBreedsRepository
 {
-    public async Task<IEnumerable<SearchBreedsItem>> SearchAsync(Guid? speciesId = null, bool? withAnimals = null,
+    public async Task<IEnumerable<SearchBreedsItem>> SearchAsync(string? speciesName = null, bool? withAnimals = null,
         CancellationToken cancellationToken = default)
     {
         return await dbContext.Breeds
-            .Where(breed => (speciesId == null || breed.Species.Id == speciesId) &&
+            .Where(breed => (speciesName == null || breed.Species.Name == speciesName) &&
                             (withAnimals == null || withAnimals.Value && breed.Animals.Count > 0))
             .Select(breed => new SearchBreedsItem
             {
                 Id = breed.Id,
                 Name = breed.Name,
-                SpeciesId = breed.Species.Id,
+                SpeciesName = breed.Species.Name,
                 AnimalCount = breed.Animals.Count(animal => animal.Breed.Id == breed.Id)
             })
             .OrderBy(result => result.Name)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Breed?> GetByIdAsync(Guid breedId, CancellationToken cancellationToken = default)
+    public async Task<Breed?> GetByIdAsync(int breedId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Breeds
             .Include(breed => breed.Species)

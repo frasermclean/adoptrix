@@ -1,23 +1,41 @@
-﻿using Adoptrix.Api.Mapping;
+﻿using System.Linq.Expressions;
+using Adoptrix.Api.Mapping;
 using Adoptrix.Contracts.Responses;
+using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-[HttpGet("animals/{animalId:guid}"), AllowAnonymous]
-public class GetAnimalEndpoint(IAnimalsRepository animalsRepository)
-    : Endpoint<GetAnimalRequest, Results<Ok<AnimalResponse>, NotFound>>
+public class GetAnimalEndpoint(AdoptrixDbContext dbContext)
+    : EndpointWithoutRequest<Results<Ok<AnimalResponse>, NotFound>>
 {
-    public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(GetAnimalRequest request,
-        CancellationToken cancellationToken)
+    public override void Configure()
     {
-        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
+        Get("animals/{animalId:int}", "animals/{animalSlug}");
+        AllowAnonymous();
+    }
 
-        return animal is not null
-            ? TypedResults.Ok(animal.ToResponse())
+    public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(CancellationToken cancellationToken)
+    {
+        var animalId = Route<int?>("animalId", false);
+        var animalSlug = Route<string>("animalSlug", false);
+
+        Expression<Func<Animal, bool>> wherePredicate = animalId.HasValue
+            ? animal => animal.Id == animalId.Value
+            : animal => animal.Slug == animalSlug;
+
+        var response = await dbContext.Animals.Where(wherePredicate)
+            .AsNoTracking()
+            .Include(animal => animal.Breed)
+            .ThenInclude(breed => breed.Species)
+            .Select(animal => animal.ToResponse())
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return response is not null
+            ? TypedResults.Ok(response)
             : TypedResults.NotFound();
     }
 }

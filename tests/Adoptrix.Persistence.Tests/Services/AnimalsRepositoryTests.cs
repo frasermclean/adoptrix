@@ -1,5 +1,4 @@
-﻿using Adoptrix.Initializer;
-using Adoptrix.Persistence.Services;
+﻿using Adoptrix.Persistence.Services;
 using Adoptrix.Persistence.Tests.Fixtures;
 using Adoptrix.Tests.Shared.Factories;
 
@@ -35,7 +34,7 @@ public class AnimalsRepositoryTests
     public async Task GetByIdAsync_WithInvalidId_ShouldFail()
     {
         // arrange
-        var animalId = Guid.Empty;
+        const int animalId = -1;
 
         // act
         var animal = await animalsRepository.GetByIdAsync(animalId);
@@ -48,7 +47,7 @@ public class AnimalsRepositoryTests
     public async Task AddAsync_WithValidAnimal_ShouldPass()
     {
         // arrange
-        var breed = await breedsRepository.GetByIdAsync(SeedData.Breeds["German Shepherd"].Id);
+        var breed = await breedsRepository.GetByIdAsync(1);
         var animalToAdd = AnimalFactory.Create(breed: breed);
 
         // act
@@ -57,7 +56,7 @@ public class AnimalsRepositoryTests
 
         // assert
         animal.Should().NotBeNull();
-        animal!.Id.Should().NotBeEmpty();
+        animal!.Id.Should().BePositive();
         animal.Name.Should().Be(animalToAdd.Name);
         animal.Description.Should().Be(animalToAdd.Description);
         animal.Breed.Should().Be(breed);
@@ -70,7 +69,7 @@ public class AnimalsRepositoryTests
     public async Task DeleteAsync_WithValidAnimal_ShouldPass()
     {
         // arrange
-        var breed = await breedsRepository.GetByIdAsync(SeedData.Breeds["Golden Retriever"].Id);
+        var breed = await breedsRepository.GetByIdAsync(1);
         var animalToAdd = AnimalFactory.Create(breed: breed);
         await animalsRepository.AddAsync(animalToAdd);
 

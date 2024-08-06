@@ -8,16 +8,25 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
 {
     public void Configure(EntityTypeBuilder<Species> builder)
     {
-        builder.HasIndex(species => species.Name)
-            .IsUnique();
-
         builder.Property(species => species.Name)
-            .HasColumnType("nvarchar")
             .HasMaxLength(Species.NameMaxLength);
 
         builder.Property(species => species.CreatedAt)
-            .HasColumnType("datetime2")
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
+
+        builder.Property(animal => animal.CreatedBy)
+            .HasDefaultValue(Guid.Empty);
+
+        builder.HasKey(species => species.Name);
+
+        builder.HasData(InitialData);
     }
+
+    internal static readonly Species[] InitialData =
+    [
+        new Species { Name = "Dog" },
+        new Species { Name = "Cat" },
+        new Species { Name = "Bird" }
+    ];
 }

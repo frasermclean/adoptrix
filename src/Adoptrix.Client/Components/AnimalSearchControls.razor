@@ -7,24 +7,24 @@
 
     @* Species *@
     <MudText Typo="Typo.h6" GutterBottom="true">Species</MudText>
-    <MudChipSet T="Guid?" CheckMark Class="mb-2" SelectedValue="speciesId" SelectedValueChanged="OnSpeciesChanged" SelectionMode="SelectionMode.ToggleSelection">
+    <MudChipSet T="string?" CheckMark Class="mb-2" SelectedValue="speciesName" SelectedValueChanged="OnSpeciesChanged" SelectionMode="SelectionMode.ToggleSelection">
         @foreach (var match in speciesMatches)
         {
             <MudBadge Content="@match.AnimalCount" Overlap="true" Color="Color.Secondary" Class="mr-2">
-                <MudChip T="Guid?" Value="@match.Id" Color="Color.Primary">@match.Name</MudChip>
+                <MudChip T="string?" Value="@match.Name" Color="Color.Primary">@match.Name</MudChip>
             </MudBadge>
         }
     </MudChipSet>
 
     @* Breed *@
-    @if (speciesId is not null)
+    @if (speciesName is not null)
     {
         <MudText Typo="Typo.h6">Breed</MudText>
-        <MudChipSet T="Guid?" CheckMark Class="mb-2" SelectedValue="breedId" SelectedValueChanged="OnBreedChanged" SelectionMode="SelectionMode.ToggleSelection">
+        <MudChipSet T="int?" CheckMark Class="mb-2" SelectedValue="breedId" SelectedValueChanged="OnBreedChanged" SelectionMode="SelectionMode.ToggleSelection">
             @foreach (var match in breedMatches)
             {
                 <MudBadge Content="@match.AnimalCount" Overlap="true" Color="Color.Secondary" Class="mr-2">
-                    <MudChip T="Guid?" Value="@match.Id" Color="Color.Primary">@match.Name</MudChip>
+                    <MudChip T="int?" Value="@match.Id" Color="Color.Primary">@match.Name</MudChip>
                 </MudBadge>
             }
         </MudChipSet>
@@ -47,13 +47,13 @@
 @code {
     private IEnumerable<SpeciesMatch> speciesMatches = [];
     private IEnumerable<BreedMatch> breedMatches = [];
-    private Guid? speciesId;
-    private Guid? breedId;
+    private string? speciesName;
+    private int? breedId;
     private string? sex;
 
     [Parameter] public EventCallback<SearchAnimalsRequest> DataChanged { get; set; }
 
-    private bool HasFilters => speciesId is not null || breedId is not null || sex is not null;
+    private bool HasFilters => speciesName is not null || breedId is not null || sex is not null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,18 +61,18 @@
         speciesMatches = await SpeciesClient.SearchAsync(request);
     }
 
-    private async Task OnSpeciesChanged(Guid? value)
+    private async Task OnSpeciesChanged(string? value)
     {
-        speciesId = value;
+        speciesName = value;
         breedId = null;
 
-        var request = new SearchBreedsRequest { SpeciesId = value, WithAnimals = true };
+        var request = new SearchBreedsRequest { SpeciesName = value, WithAnimals = true };
         breedMatches = await BreedsClient.SearchAsync(request);
 
         RaiseDataChanged();
     }
 
-    private void OnBreedChanged(Guid? value)
+    private void OnBreedChanged(int? value)
     {
         breedId = value;
         RaiseDataChanged();
@@ -86,7 +86,7 @@
 
     private void ClearFilters()
     {
-        speciesId = default;
+        speciesName = default;
         breedId = default;
         sex = default;
         RaiseDataChanged();
@@ -94,7 +94,7 @@
 
     private void RaiseDataChanged() => DataChanged.InvokeAsync(new SearchAnimalsRequest
     {
-        SpeciesId = speciesId,
+        SpeciesName = speciesName,
         BreedId = breedId,
         Sex = sex
     });

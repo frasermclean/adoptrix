@@ -12,7 +12,7 @@ public static class SearchBreedsQueryExtensions
 
     private static Dictionary<string, string?> ToDictionary(this SearchBreedsRequest request) => new()
     {
-        { "speciesId", request.SpeciesId?.ToString() },
+        { "speciesName", request.SpeciesName },
         { "withAnimals", request.WithAnimals?.ToString() }
     };
 
