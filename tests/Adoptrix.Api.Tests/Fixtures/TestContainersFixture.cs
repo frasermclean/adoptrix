@@ -10,9 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.MsSql;
 
-namespace Adoptrix.Api.Tests;
+namespace Adoptrix.Api.Tests.Fixtures;
 
-public class ApiFixture : AppFixture<Program>
+public class TestContainersFixture : AppFixture<Program>
 {
     private readonly MsSqlContainer databaseContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
@@ -21,18 +21,9 @@ public class ApiFixture : AppFixture<Program>
             .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;"))
         .Build();
 
-    public Mock<IEventPublisher> EventPublisherMock { get; } = new();
-    public Mock<IBlobContainerManager> AnimalImagesBlobContainerManagerMock { get; } = new();
-    public Mock<IBlobContainerManager> OriginalImagesBlobContainerManagerMock { get; } = new();
-    public Mock<IUsersService> UsersServiceMock { get; } = new();
-
-    public HttpClient UserClient => CreateClient(httpClient =>
+    public HttpClient CreateClient(string role = RoleNames.Administrator) => CreateClient(httpClient =>
         httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{RoleNames.User}"));
-
-    public HttpClient AdminClient => CreateClient(httpClient =>
-        httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{RoleNames.Administrator}"));
+            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{role}"));
 
     protected override async Task PreSetupAsync()
     {
@@ -51,17 +42,21 @@ public class ApiFixture : AppFixture<Program>
             .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.SchemeName, _ => { });
 
         // remove selected services
-        services.RemoveAll<IEventPublisher>()
+        services.RemoveAll<IAnimalsRepository>()
+            .RemoveAll<IBreedsRepository>()
+            .RemoveAll<IEventPublisher>()
             .RemoveAll<IBlobContainerManager>()
             .RemoveAll<IUsersService>();
 
         // replace with mocked services
-        services.AddScoped<IEventPublisher>(_ => EventPublisherMock.Object)
+        services.AddScoped<IAnimalsRepository>(_ => Mock.Of<IAnimalsRepository>())
+            .AddScoped<IBreedsRepository>(_ => Mock.Of<IBreedsRepository>())
+            .AddScoped<IEventPublisher>(_ => Mock.Of<IEventPublisher>())
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages,
-                (_, _) => AnimalImagesBlobContainerManagerMock.Object)
+                (_, _) => Mock.Of<IBlobContainerManager>())
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.OriginalImages,
-                (_, _) => OriginalImagesBlobContainerManagerMock.Object)
-            .AddScoped<IUsersService>(_ => UsersServiceMock.Object);
+                (_, _) => Mock.Of<IBlobContainerManager>())
+            .AddScoped<IUsersService>(_ => Mock.Of<IUsersService>());
     }
 
     protected override async Task SetupAsync()

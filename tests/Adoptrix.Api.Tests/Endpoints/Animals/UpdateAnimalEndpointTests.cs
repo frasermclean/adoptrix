@@ -1,16 +1,16 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
+using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
-[Collection(nameof(ApiCollection))]
+[Collection(nameof(TestContainersCollection))]
 [Trait("Category", "Integration")]
-public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.AdminClient;
+    private readonly HttpClient httpClient = fixture.CreateClient();
 
     [Fact]
     public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk()

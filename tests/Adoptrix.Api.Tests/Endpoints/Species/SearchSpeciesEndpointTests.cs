@@ -1,13 +1,14 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Species;
+using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Species;
 
-[Collection(nameof(ApiCollection))]
+[Collection(nameof(TestContainersCollection))]
 [Trait("Category", "Integration")]
-public class SearchSpeciesEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+public class SearchSpeciesEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
     private readonly HttpClient httpClient = fixture.Client;
 

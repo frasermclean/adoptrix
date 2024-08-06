@@ -1,13 +1,13 @@
 ﻿using System.Net;
-using Adoptrix.Api.Endpoints.Breeds;
+using Adoptrix.Api.Tests.Fixtures;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
-[Collection(nameof(ApiCollection))]
+[Collection(nameof(TestContainersCollection))]
 [Trait("Category", "Integration")]
-public class DeleteBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+public class DeleteBreedEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.AdminClient;
+    private readonly HttpClient httpClient = fixture.CreateClient();
 
     [Fact]
     public async Task DeleteBreed_WithValidRequest_ShouldReturnNoContent()

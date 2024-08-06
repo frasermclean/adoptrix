@@ -1,16 +1,13 @@
 ﻿using System.Net;
-using Adoptrix.Api.Endpoints.Animals;
-using Adoptrix.Core;
-using Adoptrix.Core.Events;
-using Adoptrix.Tests.Shared;
+using Adoptrix.Api.Tests.Fixtures;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
-[Collection(nameof(ApiCollection))]
+[Collection(nameof(TestContainersCollection))]
 [Trait("Category", "Integration")]
-public class DeleteAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+public class DeleteAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.AdminClient;
+    private readonly HttpClient httpClient = fixture.CreateClient();
 
     [Fact]
     public async Task DeleteAnimal_WithValidRequest_ShouldReturnNoContent()

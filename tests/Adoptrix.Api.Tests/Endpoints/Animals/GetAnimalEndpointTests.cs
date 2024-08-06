@@ -1,15 +1,13 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Adoptrix.Api.Endpoints.Animals;
+using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
-[Collection(nameof(ApiCollection))]
+[Collection(nameof(TestContainersCollection))]
 [Trait("Category", "Integration")]
-public class GetAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+public class GetAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
     [Fact]
     public async Task GetAnimal_WithKnownAnimalSlug_ShouldReturnOk()

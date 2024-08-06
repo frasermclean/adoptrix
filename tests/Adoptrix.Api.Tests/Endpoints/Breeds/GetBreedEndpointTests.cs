@@ -1,13 +1,13 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Adoptrix.Api.Endpoints.Breeds;
+using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
-[Collection(nameof(ApiCollection))]
+[Collection(nameof(TestContainersCollection))]
 [Trait("Category", "Integration")]
-public class GetBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+public class GetBreedEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
     private readonly HttpClient httpClient = fixture.Client;
 

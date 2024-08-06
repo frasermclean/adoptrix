@@ -1,11 +1,10 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.About;
+using Adoptrix.Api.Tests.Fixtures;
 
 namespace Adoptrix.Api.Tests.Endpoints.About;
 
-[Collection(nameof(ApiCollection))]
-[Trait("Category", "Integration")]
-public class AboutEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+public class AboutEndpointTests(MockServicesFixture fixture) : TestBase<MockServicesFixture>
 {
     [Fact]
     public async Task GetAbout_Should_ReturnAboutResponse()

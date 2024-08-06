@@ -1,15 +1,19 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
+using Adoptrix.Api.Security;
+using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
-[Collection(nameof(ApiCollection))]
+[Collection(nameof(TestContainersCollection))]
 [Trait("Category", "Integration")]
-public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
+    private readonly HttpClient adminClient = fixture.CreateClient();
+    private readonly HttpClient userClient = fixture.CreateClient(RoleNames.User);
+
     [Fact]
     public async Task AddAnimal_WithValidRequest_ShouldReturnCreated()
     {
@@ -18,7 +22,7 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 
         // act
         var (message, response) =
-            await fixture.AdminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
+            await adminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
@@ -38,7 +42,7 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 
         // act
         var (message, response) =
-            await fixture.AdminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, ErrorResponse>(request);
+            await adminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -52,8 +56,7 @@ public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         var request = CreateRequest();
 
         // act
-        var testResult =
-            await fixture.UserClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
+        var testResult = await userClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
 
         // assert
         testResult.Response.Should().HaveStatusCode(HttpStatusCode.Forbidden);

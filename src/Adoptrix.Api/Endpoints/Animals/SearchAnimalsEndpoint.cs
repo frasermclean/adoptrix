@@ -2,7 +2,6 @@
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
-using Adoptrix.Persistence.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
