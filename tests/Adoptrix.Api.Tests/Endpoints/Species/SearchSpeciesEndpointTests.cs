@@ -1,30 +1,33 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Contracts.Requests;
+using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Responses;
 using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Species;
 
+[Collection(nameof(ApiCollection))]
+[Trait("Category", "Integration")]
 public class SearchSpeciesEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 {
     private readonly HttpClient httpClient = fixture.Client;
 
-    [Theory, AdoptrixAutoData]
-    public async Task SearchSpecies_WithValidRequest_ShouldReturnOk(SearchSpeciesRequest request,
-        List<SearchSpeciesItem> matchesToReturn)
+    [Fact]
+    public async Task SearchSpecies_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.SearchAsync(It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(matchesToReturn);
+        var request = new SearchSpeciesRequest
+        {
+            WithAnimals = true
+        };
 
         // act
-        var testResult =
-            await httpClient.GETAsync<SearchSpeciesEndpoint, SearchSpeciesRequest, List<SearchSpeciesItem>>(request);
+        var (message, matches) =
+            await httpClient.GETAsync<SearchSpeciesEndpoint, SearchSpeciesRequest, List<SpeciesMatch>>(request);
 
         // assert
-        testResult.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        testResult.Result.Should().BeEquivalentTo(matchesToReturn);
+        message.StatusCode.Should().Be(HttpStatusCode.OK);
+        matches.Should().HaveCountGreaterThan(0);
     }
 }
