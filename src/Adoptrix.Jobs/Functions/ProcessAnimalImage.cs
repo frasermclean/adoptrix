@@ -3,6 +3,7 @@ using Adoptrix.Jobs.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +11,7 @@ namespace Adoptrix.Jobs.Functions;
 
 public class ProcessAnimalImage(
     ILogger<ProcessAnimalImage> logger,
-    IAnimalsRepository animalsRepository,
+    AdoptrixDbContext dbContext,
     IImageProcessor imageProcessor,
     [FromKeyedServices(BlobContainerNames.OriginalImages)]
     IBlobContainerManager originalImagesContainerManager,
@@ -22,7 +23,7 @@ public class ProcessAnimalImage(
         CancellationToken cancellationToken = default)
     {
         // ensure animal exists in database
-        var animal = await animalsRepository.GetByIdAsync(data.AnimalId, cancellationToken);
+        var animal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == data.AnimalId, cancellationToken);
         if (animal is null)
         {
             throw new InvalidOperationException($"Could not find animal with ID {data.AnimalId}");
@@ -39,7 +40,7 @@ public class ProcessAnimalImage(
         // update entity in database
         var image = animal.Images.First(image => image.Id == data.ImageId);
         image.IsProcessed = true;
-        await animalsRepository.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         // remove original image
         await originalImagesContainerManager.DeleteBlobAsync(data.BlobName, cancellationToken);

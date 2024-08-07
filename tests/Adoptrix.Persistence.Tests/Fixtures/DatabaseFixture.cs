@@ -10,7 +10,8 @@ public class DatabaseFixture : IAsyncLifetime
 {
     private readonly MsSqlContainer container = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-        .WithWaitStrategy(Wait.ForUnixContainer() // needed until https://github.com/testcontainers/testcontainers-dotnet/issues/1220 is resolved
+        .WithWaitStrategy(Wait
+            .ForUnixContainer() // needed until https://github.com/testcontainers/testcontainers-dotnet/issues/1220 is resolved
             .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;"))
         .Build();
 
@@ -36,23 +37,6 @@ public class DatabaseFixture : IAsyncLifetime
     public async Task DisposeAsync()
     {
         await container.StopAsync();
-    }
-
-    /// <summary>
-    /// Get a collection of scoped repositories for use in tests.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">Will occur if service provider is accessed before
-    /// class has been properly initialized.</exception>
-    public RepositoryCollection GetRepositoryCollection()
-    {
-        var scope = serviceProvider?.CreateScope() ??
-                    throw new InvalidOperationException("Service provider is not initialized");
-
-        return new RepositoryCollection(
-            scope.ServiceProvider.GetRequiredService<IAnimalsRepository>(),
-            scope.ServiceProvider.GetRequiredService<IBreedsRepository>(),
-            scope.ServiceProvider.GetRequiredService<ISpeciesRepository>()
-        );
     }
 
     private static IConfiguration CreateConfiguration(string connectionString)

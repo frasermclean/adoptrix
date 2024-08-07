@@ -42,16 +42,12 @@ public class TestContainersFixture : AppFixture<Program>
             .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.SchemeName, _ => { });
 
         // remove selected services
-        services.RemoveAll<IAnimalsRepository>()
-            .RemoveAll<IBreedsRepository>()
-            .RemoveAll<IEventPublisher>()
+        services.RemoveAll<IEventPublisher>()
             .RemoveAll<IBlobContainerManager>()
             .RemoveAll<IUsersService>();
 
         // replace with mocked services
-        services.AddScoped<IAnimalsRepository>(_ => Mock.Of<IAnimalsRepository>())
-            .AddScoped<IBreedsRepository>(_ => Mock.Of<IBreedsRepository>())
-            .AddScoped<IEventPublisher>(_ => Mock.Of<IEventPublisher>())
+        services.AddScoped<IEventPublisher>(_ => Mock.Of<IEventPublisher>())
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.AnimalImages,
                 (_, _) => Mock.Of<IBlobContainerManager>())
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.OriginalImages,

@@ -1,7 +1,5 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Contracts.Requests;
+﻿using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Persistence.Responses;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -16,8 +14,8 @@ public class SearchSpeciesEndpoint(AdoptrixDbContext dbContext)
     public override async Task<IEnumerable<SpeciesMatch>> ExecuteAsync(SearchSpeciesRequest request,
         CancellationToken cancellationToken)
     {
-        var items = await dbContext.Species
-            .Select(species => new SearchSpeciesItem
+        var matches = await dbContext.Species
+            .Select(species => new SpeciesMatch
             {
                 Name = species.Name,
                 BreedCount = species.Breeds.Count,
@@ -27,6 +25,6 @@ public class SearchSpeciesEndpoint(AdoptrixDbContext dbContext)
             .OrderByDescending(match => match.AnimalCount)
             .ToListAsync(cancellationToken);
 
-        return items.Select(item => item.ToMatch());
+        return matches;
     }
 }

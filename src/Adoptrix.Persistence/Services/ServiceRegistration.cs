@@ -22,7 +22,6 @@ public static class ServiceRegistration
 
         builder.Services
             .AddSingleton<IEventPublisher, EventPublisher>()
-            .AddRepositories()
             .AddBlobServices()
             .AddQueueServices();
 
@@ -46,8 +45,6 @@ public static class ServiceRegistration
             var connectionString = configuration.GetConnectionString("database");
             optionsBuilder.UseSqlServer(connectionString);
         });
-
-        services.AddRepositories();
 
         return services;
     }
@@ -85,15 +82,6 @@ public static class ServiceRegistration
 
         services.AddBlobServices()
             .AddQueueServices();
-
-        return services;
-    }
-
-    private static IServiceCollection AddRepositories(this IServiceCollection services)
-    {
-        services.AddScoped<IAnimalsRepository, AnimalsRepository>()
-            .AddScoped<IBreedsRepository, BreedsRepository>()
-            .AddScoped<ISpeciesRepository, SpeciesRepository>();
 
         return services;
     }
