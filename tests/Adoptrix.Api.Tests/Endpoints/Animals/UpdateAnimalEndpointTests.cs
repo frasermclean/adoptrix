@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
 
@@ -65,7 +66,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
         Name = name,
         Description = description,
         BreedId = breedId,
-        Sex = sex,
+        Sex = sex.ToString(),
         DateOfBirth = new DateOnly(2022, 1, 3)
     };
 }

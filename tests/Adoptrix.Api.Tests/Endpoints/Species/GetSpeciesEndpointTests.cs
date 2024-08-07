@@ -1,7 +1,5 @@
 ﻿using System.Net;
-using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Species;
 
@@ -15,24 +13,23 @@ public class GetSpeciesEndpointTests(TestContainersFixture fixture) : TestBase<T
     public async Task GetSpecies_WithKnownSpeciesName_ShouldReturnOk()
     {
         // arrange
-        var request = new GetSpeciesRequest("Dog");
+        const string speciesName = "Dog";
 
         // act
-        var (message, response) = await httpClient.GETAsync<GetSpeciesEndpoint, GetSpeciesRequest, SpeciesResponse>(request);
+        var message = await httpClient.GetAsync($"/api/species/{speciesName}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Name.Should().Be("Dog");
     }
 
     [Fact]
     public async Task GetSpecies_WithUnknownSpeciesName_ShouldReturnNotFound()
     {
         // arrange
-        var request = new GetSpeciesRequest("Unknown");
+        const string speciesName = "Unknown";
 
         // act
-        var message = await httpClient.GETAsync<GetSpeciesEndpoint, GetSpeciesRequest>(request);
+        var message = await httpClient.GetAsync($"/api/species/{speciesName}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);

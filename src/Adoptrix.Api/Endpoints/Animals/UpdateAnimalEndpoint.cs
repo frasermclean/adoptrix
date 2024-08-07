@@ -1,6 +1,8 @@
 ﻿using Adoptrix.Api.Mapping;
 using Adoptrix.Api.Security;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
+using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -41,7 +43,7 @@ public class UpdateAnimalEndpoint(AdoptrixDbContext dbContext)
         animal.Name = request.Name;
         animal.Description = request.Description;
         animal.Breed = breed;
-        animal.Sex = request.Sex;
+        animal.Sex = Enum.Parse<Sex>(request.Sex);
         animal.DateOfBirth = request.DateOfBirth;
 
         await dbContext.SaveChangesAsync(cancellationToken);

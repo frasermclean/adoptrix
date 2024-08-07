@@ -2,6 +2,7 @@
 using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Security;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
 
@@ -68,7 +69,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
         Name = name,
         Description = description,
         BreedId = breedId,
-        Sex = sex,
+        Sex = sex.ToString(),
         DateOfBirth = dateOfBirth ?? new DateOnly(2020, 1, 1),
         UserId = userId ?? Guid.NewGuid()
     };

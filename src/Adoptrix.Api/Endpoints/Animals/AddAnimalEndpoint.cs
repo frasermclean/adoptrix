@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Api.Mapping;
 using Adoptrix.Api.Security;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
@@ -47,7 +48,7 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
         Name = request.Name,
         Description = request.Description,
         Breed = breed,
-        Sex = request.Sex,
+        Sex = Enum.Parse<Sex>(request.Sex),
         DateOfBirth = request.DateOfBirth,
         Slug = $"{request.Name.ToLower()}-{request.DateOfBirth:O}",
         CreatedBy = request.UserId

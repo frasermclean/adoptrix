@@ -19,6 +19,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
     <PackageVersion Include="FastEndpoints" Version="5.28.0" />
+    <PackageVersion Include="FastEndpoints.Attributes" Version="5.28.0" />
     <PackageVersion Include="FastEndpoints.Testing" Version="5.28.0" />
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.33.0">

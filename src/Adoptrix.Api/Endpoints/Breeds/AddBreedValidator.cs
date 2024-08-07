@@ -1,4 +1,5 @@
-﻿using Adoptrix.Core;
+﻿using Adoptrix.Contracts.Requests;
+using Adoptrix.Core;
 using FastEndpoints;
 using FluentValidation;
 

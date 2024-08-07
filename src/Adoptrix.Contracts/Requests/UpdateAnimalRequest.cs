@@ -1,6 +1,4 @@
-﻿using Adoptrix.Core;
-
-namespace Adoptrix.Api.Endpoints.Animals;
+﻿namespace Adoptrix.Contracts.Requests;
 
 public class UpdateAnimalRequest
 {
@@ -8,6 +6,6 @@ public class UpdateAnimalRequest
     public required string Name { get; init; }
     public string? Description { get; init; }
     public int BreedId { get; init; }
-    public Sex Sex { get; init; }
+    public required string Sex { get; init; }
     public DateOnly DateOfBirth { get; init; }
 }

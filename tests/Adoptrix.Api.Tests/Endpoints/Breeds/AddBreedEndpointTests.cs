@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
@@ -61,6 +62,7 @@ public class AddBreedEndpointTests(TestContainersFixture fixture) : TestBase<Tes
     private static AddBreedRequest CreateRequest(string? name = null, string? speciesName = null) => new()
     {
         Name = name ?? "Golden Retriever",
-        SpeciesName = speciesName ?? "Dog"
+        SpeciesName = speciesName ?? "Dog",
+        UserId = Guid.NewGuid()
     };
 }
