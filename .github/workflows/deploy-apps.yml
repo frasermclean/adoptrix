@@ -61,6 +61,7 @@ jobs:
           region: AustraliaEast
           template: ${{ github.workspace }}/deploy/infra/main.bicep
           parameters: ${{ github.workspace }}/deploy/infra/main.${{ inputs.environment }}.bicepparam
+          failOnStdErr: false
 
   # Deploy container applications
   deploy_container_apps:

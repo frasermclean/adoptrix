@@ -61,6 +61,9 @@ module sharedResources 'shared/main.bicep' = {
     category: 'shared'
     location: location
     attemptRoleAssignments: attemptRoleAssignments
+    configurationDataOwners: [
+      ghActionsApp.outputs.servicePrincipalId
+    ]
     deploymentSuffix: deploymentSuffix
   }
 }
