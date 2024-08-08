@@ -30,6 +30,6 @@ param sharedResourceGroup = 'adoptrix-shared-rg'
 param appConfigurationName = 'adoptrix-shared-ac'
 
 // container apps
-param containerRegistryName = readEnvironmentVariable('CONTAINER_REGISTRY', 'sbocorecr')
+param containerRegistryName = readEnvironmentVariable('ACR_NAME', 'sbocorecr')
 param apiImageRepository = readEnvironmentVariable('ADOPTRIX_API_IMAGE_REPOSITORY', 'adoptrix-api')
 param apiImageTag = readEnvironmentVariable('ADOPTRIX_API_IMAGE_TAG')

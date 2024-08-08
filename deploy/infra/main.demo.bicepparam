@@ -12,7 +12,7 @@ param authenticationClientId = '05ff30c5-ebb0-49cd-a127-13ace1478c9f' // front e
 param authenticationAudience = '1daf5539-1932-4c47-a9a1-a1f52a2db804' // back end app registration
 
 // container apps
-param containerRegistryName = readEnvironmentVariable('CONTAINER_REGISTRY', 'sbocorecr')
+param containerRegistryName = readEnvironmentVariable('ACR_NAME', 'sbocorecr')
 param containerRegistryResourceGroup = 'sbo-core-rg'
 param apiImageRepository = readEnvironmentVariable('ADOPTRIX_API_IMAGE_REPOSITORY', 'adoptrix-api')
 param apiImageTag = readEnvironmentVariable('ADOPTRIX_API_IMAGE_TAG')
