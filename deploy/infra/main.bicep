@@ -112,23 +112,13 @@ module ghActionsApp 'ghActionsApp.bicep' = if (attemptRoleAssignments) {
 
 var contributorRoleDefinitionId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 
-// assign contributor role to the github actions application in the shared resource group
-module sharedResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = if (attemptRoleAssignments) {
-  name: 'sharedResourceGroupRoleAssignment${deploymentSuffix}'
-  scope: sharedResourceGroup
-  params: {
+// assign contributor role to GitHub Actions app
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().id, contributorRoleDefinitionId, '${workload}-${appEnv}-github-actions')
+  properties: {
     principalId: ghActionsApp.outputs.servicePrincipalId
-    roleDefinitionId: contributorRoleDefinitionId
-  }
-}
-
-// assign contributor role to the github actions application in the app resource group
-module appResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = if (attemptRoleAssignments) {
-  name: 'appResourceGroupRoleAssignment${deploymentSuffix}'
-  scope: appResourceGroup
-  params: {
-    principalId: ghActionsApp.outputs.servicePrincipalId
-    roleDefinitionId: contributorRoleDefinitionId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', contributorRoleDefinitionId)
   }
 }
 
