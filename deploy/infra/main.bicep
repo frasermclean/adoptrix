@@ -103,6 +103,37 @@ module appResources 'apps/main.bicep' = {
   }
 }
 
+// GitHub Actions application
+module ghActionsApp 'ghActionsApp.bicep' = {
+  name: '${workload}-ghActionsApp-${appEnv}${deploymentSuffix}'
+  params: {
+    repositoryName: 'frasermclean/adoptrix'
+    appEnv: appEnv
+  }
+}
+
+var contributorRoleDefinitionId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+
+// assign contributor role to the github actions application in the shared resource group
+module sharedResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = {
+  name: 'sharedResourceGroupRoleAssignment${deploymentSuffix}'
+  scope: sharedResourceGroup
+  params: {
+    principalId: ghActionsApp.outputs.servicePrincipalId
+    roleDefinitionId: contributorRoleDefinitionId
+  }
+}
+
+// assign contributor role to the github actions application in the app resource group
+module appResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = {
+  name: 'appResourceGroupRoleAssignment${deploymentSuffix}'
+  scope: appResourceGroup
+  params: {
+    principalId: ghActionsApp.outputs.servicePrincipalId
+    roleDefinitionId: contributorRoleDefinitionId
+  }
+}
+
 @description('The name of the app resource group')
 output appResourceGroup string = appResourceGroup.name
 
