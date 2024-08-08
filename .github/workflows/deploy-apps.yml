@@ -24,6 +24,9 @@ jobs:
       appResourceGroup: ${{ steps.deploy_template.outputs.appResourceGroup }}
       apiAppName: ${{ steps.deploy_template.outputs.apiAppName }}
       functionAppName: ${{ steps.deploy_template.outputs.functionAppName }}
+    env:
+      ATTEMPT_ROLE_ASSIGNMENTS: false # GitHub Actions service principal does not have permissions to assign roles
+      DEPLOYMENT_SUFFIX: -cicd-${{ github.run_number }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -44,10 +47,22 @@ jobs:
           echo "Latest API image tag: $IMAGE_TAG"
           echo "ADOPTRIX_API_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
+      # Deploy shared resources
+      - name: Deploy shared resources
+        uses: azure/arm-deploy@v2
+        id: deploy_shared
+        with:
+          scope: resourcegroup
+          resourceGroupName: adoptrix-shared-rg
+          template: ${{ github.workspace }}/deploy/infra/shared/main.bicep
+          parameters: ${{ github.workspace }}/deploy/infra/shared/main.bicepparam
+          deploymentName: main${{ env.DEPLOYMENT_SUFFIX }}
+
       # Deploy Bicep template
       - name: Deploy Bicep template
         uses: azure/arm-deploy@v2
         id: deploy_template
+        if: false
         env:
           ATTEMPT_ROLE_ASSIGNMENTS: false
           HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
