@@ -28,7 +28,10 @@ jobs:
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
     permissions:
       checks: write
+      contents: write
       pull-requests: write
+    outputs:
+      versionTag: ${{ steps.generate_version_tag.outputs.new_tag }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -72,6 +75,15 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+      # Generate version tag
+      - name: Generate version tag
+        uses: anothrNick/github-tag-action@v1
+        id: generate_version_tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DRY_RUN: true
+
       # Publish jobs project
       - name: Publish jobs project
         if: github.event_name != 'pull_request'
@@ -109,8 +121,9 @@ jobs:
   deploy_demo_apps:
     name: Deploy demo apps
     uses: ./.github/workflows/deploy-apps.yml
-    #if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request'
     needs: build
     with:
       environment: demo
+      versionTag: ${{ needs.build.outputs.versionTag }}
     secrets: inherit

@@ -4,6 +4,9 @@ on:
       environment:
         type: string
         required: true
+      versionTag:
+        type: string
+        required: true
       jobsArtifactName:
         type: string
         default: jobs
@@ -108,7 +111,7 @@ jobs:
           appSourcePath: ${{ github.workspace }}
           dockerfilePath: Dockerfile.api
           acrName: ${{ vars.ACR_NAME }}
-          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ github.sha }}
+          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ inputs.versionTag }}
           containerAppName: ${{ needs.deploy_infra.outputs.apiAppName }}
           resourceGroup: ${{ env.APP_RESOURCE_GROUP }}
 
