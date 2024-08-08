@@ -18,6 +18,7 @@ param adminGroupName = 'Adoptrix Demo Administrators'
 param adminGroupObjectId = '0356480d-b5dc-440f-a5d3-e7b3f2169c40'
 
 param attemptRoleAssignments = bool(readEnvironmentVariable('ATTEMPT_ROLE_ASSIGNMENTS', 'true'))
+param deploymentSuffix = readEnvironmentVariable('DEPLOYMENT_SUFFIX', '')
 param allowedExternalIpAddresses = [
   {
     name: 'hive'
