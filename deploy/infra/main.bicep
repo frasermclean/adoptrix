@@ -60,8 +60,6 @@ module sharedResources 'shared/main.bicep' = {
     workload: workload
     category: 'shared'
     location: location
-    containerRegistryName: containerRegistryName
-    containerRegistryResourceGroup: containerRegistryResourceGroup
     attemptRoleAssignments: attemptRoleAssignments
     deploymentSuffix: deploymentSuffix
   }
@@ -104,7 +102,7 @@ module appResources 'apps/main.bicep' = {
 }
 
 // GitHub Actions application
-module ghActionsApp 'ghActionsApp.bicep' = {
+module ghActionsApp 'ghActionsApp.bicep' = if (attemptRoleAssignments) {
   name: '${workload}-ghActionsApp-${appEnv}${deploymentSuffix}'
   params: {
     repositoryName: 'frasermclean/adoptrix'
@@ -115,7 +113,7 @@ module ghActionsApp 'ghActionsApp.bicep' = {
 var contributorRoleDefinitionId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 
 // assign contributor role to the github actions application in the shared resource group
-module sharedResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = {
+module sharedResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = if (attemptRoleAssignments) {
   name: 'sharedResourceGroupRoleAssignment${deploymentSuffix}'
   scope: sharedResourceGroup
   params: {
@@ -125,12 +123,27 @@ module sharedResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = {
 }
 
 // assign contributor role to the github actions application in the app resource group
-module appResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = {
+module appResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = if (attemptRoleAssignments) {
   name: 'appResourceGroupRoleAssignment${deploymentSuffix}'
   scope: appResourceGroup
   params: {
     principalId: ghActionsApp.outputs.servicePrincipalId
     roleDefinitionId: contributorRoleDefinitionId
+  }
+}
+
+// azure container registry role assignments
+module acrRoleAssignments 'acrRoleAssignments.bicep' = if (attemptRoleAssignments) {
+  name: '${workload}-acrRoleAssignments${deploymentSuffix}'
+  scope: resourceGroup(containerRegistryResourceGroup)
+  params: {
+    containerRegistryName: containerRegistryName
+    pullPrinicpalIds: [
+      sharedResources.outputs.sharedIdentityPrincipalId
+    ]
+    pushPrinicpalIds: [
+      ghActionsApp.outputs.servicePrincipalId
+    ]
   }
 }
 
