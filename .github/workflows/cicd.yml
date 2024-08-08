@@ -109,7 +109,7 @@ jobs:
   deploy_demo_apps:
     name: Deploy demo apps
     uses: ./.github/workflows/deploy-apps.yml
-    if: github.event_name != 'pull_request'
+    #if: github.event_name != 'pull_request'
     needs: build
     with:
       environment: demo
