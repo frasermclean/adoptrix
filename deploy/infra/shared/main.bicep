@@ -19,12 +19,6 @@ param configurationDataOwners array = []
 @description('Array of prinicpal IDs that have read access to the configuration data')
 param configurationDataReaders array = []
 
-@description('Container registry name')
-param containerRegistryName string
-
-@description('Container registry resource group')
-param containerRegistryResourceGroup string
-
 @description('Whether to attempt role assignments (requires appropriate permissions)')
 param attemptRoleAssignments bool
 
@@ -112,15 +106,9 @@ module roleAssignments 'roleAssignments.bicep' = if (attemptRoleAssignments) {
   }
 }
 
-module containerRegistryRoleAssingmentModule 'containerRegistryRoleAssignment.bicep' = if (attemptRoleAssignments) {
-  name: 'containerRegistryRoleAssingment-${workload}-${category}${deploymentSuffix}'
-  scope: resourceGroup(containerRegistryResourceGroup)
-  params: {
-    containerRegistryName: containerRegistryName
-    principalId: managedIdentity.properties.principalId
-  }
-}
-
 output dnsZoneName string = dnsZone.name
 
 output appConfigurationName string = appConfiguration.name
+
+@description('Shared managed identity principal ID')
+output sharedIdentityPrincipalId string = managedIdentity.properties.principalId

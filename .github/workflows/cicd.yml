@@ -15,6 +15,7 @@ on:
       - .github/workflows/cicd.yml
       - src/**
       - tests/**
+  workflow_dispatch:
 
 jobs:
   # Build, test and publish API job
@@ -28,7 +29,10 @@ jobs:
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
     permissions:
       checks: write
+      contents: write
       pull-requests: write
+    outputs:
+      versionTag: ${{ steps.generate_version_tag.outputs.new_tag }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -72,6 +76,16 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+      # Generate version tag
+      - name: Generate version tag
+        uses: anothrNick/github-tag-action@v1
+        if: github.event_name != 'pull_request'
+        id: generate_version_tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DRY_RUN: true
+
       # Publish jobs project
       - name: Publish jobs project
         if: github.event_name != 'pull_request'
@@ -113,4 +127,5 @@ jobs:
     needs: build
     with:
       environment: demo
+      versionTag: ${{ needs.build.outputs.versionTag }}
     secrets: inherit

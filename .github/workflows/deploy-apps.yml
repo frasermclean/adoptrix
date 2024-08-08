@@ -4,12 +4,18 @@ on:
       environment:
         type: string
         required: true
+      versionTag:
+        type: string
+        required: true
       jobsArtifactName:
         type: string
         default: jobs
       clientArtifactName:
         type: string
         default: client
+
+env:
+  APP_RESOURCE_GROUP: adoptrix-${{ inputs.environment }}-rg
 
 jobs:
   # Deploy infrastructure
@@ -21,9 +27,11 @@ jobs:
       id-token: write
       contents: read
     outputs:
-      appResourceGroup: ${{ steps.deploy_template.outputs.appResourceGroup }}
-      apiAppName: ${{ steps.deploy_template.outputs.apiAppName }}
-      functionAppName: ${{ steps.deploy_template.outputs.functionAppName }}
+      apiAppName: ${{ steps.deploy_app.outputs.apiAppName }}
+      functionAppName: ${{ steps.deploy_app.outputs.functionAppName }}
+    env:
+      ATTEMPT_ROLE_ASSIGNMENTS: false # GitHub Actions service principal does not have permissions to assign roles
+      DEPLOYMENT_SUFFIX: -cicd-${{ github.run_number }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -44,23 +52,35 @@ jobs:
           echo "Latest API image tag: $IMAGE_TAG"
           echo "ADOPTRIX_API_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
-      # Deploy Bicep template
-      - name: Deploy Bicep template
+      # Deploy shared resources
+      - name: Deploy shared resources
         uses: azure/arm-deploy@v2
-        id: deploy_template
+        id: deploy_shared
+        with:
+          scope: resourcegroup
+          resourceGroupName: adoptrix-shared-rg
+          template: ${{ github.workspace }}/deploy/infra/shared/main.bicep
+          parameters: ${{ github.workspace }}/deploy/infra/shared/main.bicepparam
+          deploymentName: main${{ env.DEPLOYMENT_SUFFIX }}
+          failOnStdErr: false
+
+      # Deploy app resources
+      - name: Deploy app resources
+        uses: azure/arm-deploy@v2
+        id: deploy_app
         env:
-          ATTEMPT_ROLE_ASSIGNMENTS: false
           HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
           ACR_NAME: ${{ vars.ACR_NAME }}
           ADOPTRIX_API_IMAGE_REPOSITORY: ${{ vars.API_REPOSITORY_NAME }}
-          ADOPTRIX_API_IMAGE_TAG: ${{ env.ADOPTRIX_API_IMAGE_TAG }}
-          DEPLOYMENT_SUFFIX: -cicd-${{ github.run_number }}
         with:
-          scope: subscription
-          deploymentName: adoptrix-${{ inputs.environment }}${{ env.DEPLOYMENT_SUFFIX }}
-          region: AustraliaEast
-          template: ${{ github.workspace }}/deploy/infra/main.bicep
-          parameters: ${{ github.workspace }}/deploy/infra/main.${{ inputs.environment }}.bicepparam
+          scope: resourcegroup
+          resourceGroupName: ${{ env.APP_RESOURCE_GROUP }}
+          deploymentName: main${{ env.DEPLOYMENT_SUFFIX }}
+          template: ${{ github.workspace }}/deploy/infra/apps/main.bicep
+          parameters: >-
+            ${{ github.workspace }}/deploy/infra/apps/main.${{ inputs.environment }}.bicepparam
+            appConfigurationName=${{ steps.deploy_shared.outputs.appConfigurationName }}
+          failOnStdErr: false
 
   # Deploy container applications
   deploy_container_apps:
@@ -91,9 +111,9 @@ jobs:
           appSourcePath: ${{ github.workspace }}
           dockerfilePath: Dockerfile.api
           acrName: ${{ vars.ACR_NAME }}
-          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ github.sha }}
+          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ inputs.versionTag }}
           containerAppName: ${{ needs.deploy_infra.outputs.apiAppName }}
-          resourceGroup: ${{ needs.deploy_infra.outputs.appResourceGroup }}
+          resourceGroup: ${{ env.APP_RESOURCE_GROUP }}
 
   # Deploy jobs application
   deploy_jobs_app:

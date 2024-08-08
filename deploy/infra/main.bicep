@@ -60,9 +60,10 @@ module sharedResources 'shared/main.bicep' = {
     workload: workload
     category: 'shared'
     location: location
-    containerRegistryName: containerRegistryName
-    containerRegistryResourceGroup: containerRegistryResourceGroup
     attemptRoleAssignments: attemptRoleAssignments
+    configurationDataOwners: [
+      ghActionsApp.outputs.servicePrincipalId
+    ]
     deploymentSuffix: deploymentSuffix
   }
 }
@@ -100,6 +101,52 @@ module appResources 'apps/main.bicep' = {
     attemptRoleAssignments: attemptRoleAssignments
     allowedExternalIpAddresses: allowedExternalIpAddresses
     deploymentSuffix: deploymentSuffix
+  }
+}
+
+// GitHub Actions application
+module ghActionsApp 'ghActionsApp.bicep' = if (attemptRoleAssignments) {
+  name: '${workload}-ghActionsApp-${appEnv}${deploymentSuffix}'
+  params: {
+    repositoryName: 'frasermclean/adoptrix'
+    appEnv: appEnv
+  }
+}
+
+var contributorRoleDefinitionId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+
+// shared resource group role assignment
+module sharedResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = if (attemptRoleAssignments) {
+  name: 'sharedResourcesRoleAssigments${deploymentSuffix}'
+  scope: sharedResourceGroup
+  params: {
+    principalId: ghActionsApp.outputs.servicePrincipalId
+    roleDefinitionId: contributorRoleDefinitionId
+  }
+}
+
+// app resource group role assignment
+module appResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = if (attemptRoleAssignments) {
+  name: 'appResourcesRoleAssigments${deploymentSuffix}'
+  scope: appResourceGroup
+  params: {
+    principalId: ghActionsApp.outputs.servicePrincipalId
+    roleDefinitionId: contributorRoleDefinitionId
+  }
+}
+
+// azure container registry role assignments
+module acrRoleAssignments 'acrRoleAssignments.bicep' = if (attemptRoleAssignments) {
+  name: '${workload}-acrRoleAssignments${deploymentSuffix}'
+  scope: resourceGroup(containerRegistryResourceGroup)
+  params: {
+    containerRegistryName: containerRegistryName
+    pullPrinicpalIds: [
+      sharedResources.outputs.sharedIdentityPrincipalId
+    ]
+    pushPrinicpalIds: [
+      ghActionsApp.outputs.servicePrincipalId
+    ]
   }
 }
 
