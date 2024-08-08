@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
     <UserSecretsId>3f83be98-633a-45e4-b0b5-33157ff93380</UserSecretsId>
+    <ContainerRepository>adoptrix-api</ContainerRepository>
   </PropertyGroup>
 
   <ItemGroup>

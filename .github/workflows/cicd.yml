@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_CONFIGURATION: Release
+      API_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/api
       JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/jobs
       CLIENT_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/client
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
@@ -83,8 +84,27 @@ jobs:
         id: generate_version_tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
           DRY_RUN: true
+
+      # Publish API project
+      - name: Publish API project
+        #if: github.event_name != 'pull_request'
+        run: >-
+          dotnet publish src/Adoptrix.Api
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          -p:Version=${{ steps.generate_version_tag.outputs.new_tag }}
+          -p:PublishProfile=DefaultContainer
+          -p:ContainerArchiveOutputPath=${{ env.API_PUBLISH_DIRECTORY }}/adoptrix-api.tar.gz
+
+      # Upload API artifact
+      - name: Upload API artifact
+        #if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: api
+          path: ${{ env.API_PUBLISH_DIRECTORY }}/adoptrix-api.tar.gz
+          compression-level: 0
 
       # Publish jobs project
       - name: Publish jobs project
