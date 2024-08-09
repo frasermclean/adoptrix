@@ -95,7 +95,14 @@ jobs:
           --configuration ${{ env.BUILD_CONFIGURATION }}
           -p:Version=${{ steps.generate_version_tag.outputs.new_tag }}
           -p:PublishProfile=DefaultContainer
-          -p:ContainerArchiveOutputPath=${{ env.API_PUBLISH_DIRECTORY }}/adoptrix-api.tar.gz
+
+      # Login to GitHub Container Registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # Upload API artifact
       - name: Upload API artifact
