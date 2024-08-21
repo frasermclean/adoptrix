@@ -14,9 +14,6 @@ on:
         type: string
         default: client
 
-env:
-  APP_RESOURCE_GROUP: adoptrix-${{ inputs.environment }}-rg
-
 jobs:
   # Deploy infrastructure
   deploy_infra:
@@ -45,13 +42,6 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # Get latest API image tag
-      - name: Get latest API image tag
-        run: |
-          IMAGE_TAG=$(az acr repository show-tags --name ${{ vars.ACR_NAME }} --repository ${{ vars.API_REPOSITORY_NAME }} --orderby time_desc --top 1 --output tsv)
-          echo "Latest API image tag: $IMAGE_TAG"
-          echo "ADOPTRIX_API_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-
       # Deploy shared resources
       - name: Deploy shared resources
         uses: azure/arm-deploy@v2
@@ -70,50 +60,20 @@ jobs:
         id: deploy_app
         env:
           HIVE_IP_ADDRESS: ${{ secrets.HIVE_IP_ADDRESS }}
-          ACR_NAME: ${{ vars.ACR_NAME }}
+          ADOPTRIX_CONTAINER_REGISTRY: ghcr.io
+          ADOPTRIX_CONTAINER_REGISTRY_USERNAME: frasermclean
           ADOPTRIX_API_IMAGE_REPOSITORY: ${{ vars.API_REPOSITORY_NAME }}
+          ADOPTRIX_API_IMAGE_TAG: ${{ inputs.versionTag }}
         with:
           scope: resourcegroup
-          resourceGroupName: ${{ env.APP_RESOURCE_GROUP }}
+          resourceGroupName: adoptrix-${{ inputs.environment }}-rg
           deploymentName: main${{ env.DEPLOYMENT_SUFFIX }}
           template: ${{ github.workspace }}/deploy/infra/apps/main.bicep
           parameters: >-
             ${{ github.workspace }}/deploy/infra/apps/main.${{ inputs.environment }}.bicepparam
+            keyVaultName=${{ steps.deploy_shared.outputs.keyVaultName }}
             appConfigurationName=${{ steps.deploy_shared.outputs.appConfigurationName }}
           failOnStdErr: false
-
-  # Deploy container applications
-  deploy_container_apps:
-    name: Deploy container applications
-    runs-on: ubuntu-latest
-    needs: deploy_infra
-    permissions:
-      id-token: write
-      contents: read
-    environment: ${{ inputs.environment }}
-    steps:
-      # Check out the repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Login to Azure
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      # Deploy API app
-      - name: Deploy API app
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          appSourcePath: ${{ github.workspace }}
-          dockerfilePath: Dockerfile.api
-          acrName: ${{ vars.ACR_NAME }}
-          imageToBuild: ${{ vars.ACR_NAME }}.azurecr.io/${{ vars.API_REPOSITORY_NAME }}:${{ inputs.versionTag }}
-          containerAppName: ${{ needs.deploy_infra.outputs.apiAppName }}
-          resourceGroup: ${{ env.APP_RESOURCE_GROUP }}
 
   # Deploy jobs application
   deploy_jobs_app:
@@ -173,17 +133,3 @@ jobs:
           app_location: ${{ steps.download-artifact.outputs.download-path }}/wwwroot
           skip_app_build: true
           skip_api_build: true
-
-  # Close pull request
-  close_pr:
-    name: Close pull request
-    runs-on: ubuntu-latest
-    needs: deploy_infra
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    steps:
-      - name: Remove preview environment
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          action: close
-          azure_static_web_apps_api_token: ${{ secrets.CLIENT_DEPLOYMENT_TOKEN }}
-          app_location: null

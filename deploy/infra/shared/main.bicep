@@ -13,17 +13,24 @@ param location string = resourceGroup().location
 @description('Domain name')
 param domainName string = 'adoptrix.com'
 
-@description('Array of prinicpal IDs that have read and write access to the configuration data')
-param configurationDataOwners array = []
+@secure()
+@description('Password for the container registry')
+param containerRegistryPassword string
 
-@description('Array of prinicpal IDs that have read access to the configuration data')
-param configurationDataReaders array = []
+@description('Expiry date for the container registry password in ISO 8601 format')
+#disable-next-line secure-secrets-in-params
+param containerRegistryPasswordExpiry string
+
+@description('Array of prinicpal IDs that have administrative roles')
+param adminPrincipalIds array = []
 
 @description('Whether to attempt role assignments (requires appropriate permissions)')
 param attemptRoleAssignments bool
 
 @description('Suffix for child deployments')
 param deploymentSuffix string = ''
+
+param now string = utcNow()
 
 var tags = {
   workload: workload
@@ -65,6 +72,34 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-
   tags: tags
 }
 
+// key vault
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
+  name: '${workload}-${category}-kv'
+  location: location
+  properties: {
+    enabledForTemplateDeployment: true
+    enableRbacAuthorization: true
+    tenantId: tenant().tenantId
+    sku: {
+      name: 'standard'
+      family: 'A'
+    }
+  }
+
+  resource containerRegistryPasswordSecret 'secrets' = if (!empty(containerRegistryPassword)) {
+    name: 'container-registry-password'
+    properties: {
+      value: containerRegistryPassword
+      contentType: 'text/plain'
+      attributes: {
+        enabled: true
+        nbf: dateTimeToEpoch(now)
+        exp: dateTimeToEpoch(containerRegistryPasswordExpiry)
+      }
+    }
+  }
+}
+
 // app configuration
 resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-09-01-preview' = {
   name: '${workload}-${category}-ac'
@@ -100,14 +135,16 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
 module roleAssignments 'roleAssignments.bicep' = if (attemptRoleAssignments) {
   name: 'roleAssignments${deploymentSuffix}'
   params: {
+    keyVaultName: keyVault.name
+    keyVaultAdministrators: adminPrincipalIds
+    keyVaultSecretsUsers: [managedIdentity.properties.principalId]
     appConfigurationName: appConfiguration.name
-    configurationDataOwners: configurationDataOwners
-    configurationDataReaders: configurationDataReaders
+    configurationDataOwners: adminPrincipalIds
   }
 }
 
 output dnsZoneName string = dnsZone.name
-
+output keyVaultName string = keyVault.name
 output appConfigurationName string = appConfiguration.name
 
 @description('Shared managed identity principal ID')

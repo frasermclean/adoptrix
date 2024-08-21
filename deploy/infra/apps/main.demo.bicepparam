@@ -28,9 +28,11 @@ param allowedExternalIpAddresses = [
 
 // shared resources
 param sharedResourceGroup = 'adoptrix-shared-rg'
+param keyVaultName = 'adoptrix-shared-kv'
 param appConfigurationName = 'adoptrix-shared-ac'
 
 // container apps
-param containerRegistryName = readEnvironmentVariable('ACR_NAME', 'sbocorecr')
-param apiImageRepository = readEnvironmentVariable('ADOPTRIX_API_IMAGE_REPOSITORY', 'adoptrix-api')
+param containerRegistryName = readEnvironmentVariable('ADOPTRIX_CONTAINER_REGISTRY', 'ghcr.io')
+param containerRegistryUsername = readEnvironmentVariable('ADOPTRIX_CONTAINER_REGISTRY_USERNAME', 'frasermclean')
+param apiImageRepository = readEnvironmentVariable('ADOPTRIX_API_IMAGE_REPOSITORY', 'frasermclean/adoptrix-api')
 param apiImageTag = readEnvironmentVariable('ADOPTRIX_API_IMAGE_TAG')

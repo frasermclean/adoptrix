@@ -24,15 +24,18 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_CONFIGURATION: Release
+      API_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/api
       JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/jobs
       CLIENT_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/client
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
+      CONTAINER_REGISTRY: ghcr.io
     permissions:
       checks: write
       contents: write
+      packages: write
       pull-requests: write
     outputs:
-      versionTag: ${{ steps.generate_version_tag.outputs.new_tag }}
+      nextVersion: ${{ steps.calc_tag.outputs.new_tag }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -76,15 +79,35 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-      # Generate version tag
-      - name: Generate version tag
+      # Calculate next tag
+      - name: Calculate next tag
         uses: anothrNick/github-tag-action@v1
         if: github.event_name != 'pull_request'
-        id: generate_version_tag
+        id: calc_tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
           DRY_RUN: true
+
+      # Login to GitHub Container Registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ${{ env.CONTAINER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build and push API image
+      - name: Build and push API image
+        if: github.event_name != 'pull_request'
+        run: >-
+          dotnet publish src/Adoptrix.Api
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          -p:Version=${{ steps.calc_tag.outputs.new_tag }}
+          -p:PublishProfile=DefaultContainer
+          -p:ContainerRepository=${{ vars.API_REPOSITORY_NAME }}
+          -p:ContainerRegistry=${{ env.CONTAINER_REGISTRY }}
 
       # Publish jobs project
       - name: Publish jobs project
@@ -122,10 +145,23 @@ jobs:
   # Deploy demo apps
   deploy_demo_apps:
     name: Deploy demo apps
-    uses: ./.github/workflows/deploy-apps.yml
     if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/deploy-apps.yml
     needs: build
     with:
       environment: demo
-      versionTag: ${{ needs.build.outputs.versionTag }}
+      versionTag: v${{ needs.build.outputs.nextVersion }}
     secrets: inherit
+
+  # Update tag
+  update_tag:
+    name: Update tag
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: deploy_demo_apps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update tag
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
