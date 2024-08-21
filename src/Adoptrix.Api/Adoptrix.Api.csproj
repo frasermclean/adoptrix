@@ -10,7 +10,9 @@
 
   <PropertyGroup>
     <ContainerRepository>adoptrix-api</ContainerRepository>
-    <ContainerImageTags>$(Version);latest</ContainerImageTags>
+    <ContainerImageTags>v$(Version);latest</ContainerImageTags>
+    <ContainerAuthors>Fraser McLean</ContainerAuthors>
+    <ContainerDescription>API for the Adoptrix animal shelter application.</ContainerDescription>
   </PropertyGroup>
 
   <ItemGroup>
