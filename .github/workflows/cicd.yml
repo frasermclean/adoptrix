@@ -36,7 +36,7 @@ jobs:
       packages: write
       pull-requests: write
     outputs:
-      versionTag: ${{ steps.generate_tag.outputs.new_tag }}
+      versionTag: ${{ steps.calc_tag.outputs.new_tag }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -80,11 +80,11 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-      # Generate version tag
-      - name: Generate version tag
+      # Calculate next tag
+      - name: Calculate next tag
         uses: anothrNick/github-tag-action@v1
         if: github.event_name != 'pull_request'
-        id: generate_tag
+        id: calc_tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DRY_RUN: true
@@ -101,13 +101,15 @@ jobs:
       # Build and push API image
       - name: Build and push API image
         if: github.event_name != 'pull_request'
+        env:
+          IMAGE_REPOSITORY: ${{ github.repository_owner }}/adoptrix-api
         run: >-
           dotnet publish src/Adoptrix.Api
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
-          -p:Version=${{ steps.generate_tag.outputs.new_tag }}
+          -p:Version=${{ steps.calc_tag.outputs.new_tag }}
           -p:PublishProfile=DefaultContainer
-          -p:ContainerRepository=${{ github.repository_owner }}/adoptrix-api
+          -p:ContainerRepository=${{ env.IMAGE_REPOSITORY }}
           -p:ContainerRegistry=${{ env.CONTAINER_REGISTRY }}
 
       # Publish jobs project
@@ -142,6 +144,14 @@ jobs:
         with:
           name: client
           path: ${{ env.CLIENT_PUBLISH_DIRECTORY }}/*
+
+      # Update tag
+      - name: Update tag
+        uses: anothrNick/github-tag-action@v1
+        if: github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
 
   # Deploy demo apps
   deploy_demo_apps:
