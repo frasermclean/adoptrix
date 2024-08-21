@@ -35,7 +35,7 @@ jobs:
       packages: write
       pull-requests: write
     outputs:
-      nextVersion: ${{ steps.calc_tag.outputs.new_tag }}
+      versionTag: ${{ steps.tag_commit.outputs.tag }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -79,14 +79,13 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-      # Calculate next tag
-      - name: Calculate next tag
+      # Bump version and push tag
+      - name: Bump version and push tag
         uses: anothrNick/github-tag-action@v1
         if: github.event_name != 'pull_request'
-        id: calc_tag
+        id: tag_commit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DRY_RUN: true
 
       # Login to GitHub Container Registry
       - name: Login to GitHub Container Registry
@@ -104,7 +103,7 @@ jobs:
           dotnet publish src/Adoptrix.Api
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
-          -p:Version=${{ steps.calc_tag.outputs.new_tag }}
+          -p:Version=${{ steps.tag_commit.outputs.tag }}
           -p:PublishProfile=DefaultContainer
           -p:ContainerRepository=${{ vars.API_REPOSITORY_NAME }}
           -p:ContainerRegistry=${{ env.CONTAINER_REGISTRY }}
@@ -150,18 +149,5 @@ jobs:
     needs: build
     with:
       environment: demo
-      versionTag: v${{ needs.build.outputs.nextVersion }}
+      versionTag: v${{ needs.build.outputs.versionTag }}
     secrets: inherit
-
-  # Update tag
-  update_tag:
-    name: Update tag
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: deploy_demo_apps
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update tag
-        uses: anothrNick/github-tag-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
