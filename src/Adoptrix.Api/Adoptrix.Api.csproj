@@ -24,9 +24,8 @@
     <PackageReference Include="Riok.Mapperly" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Contracts\Adoptrix.Contracts.csproj" />
-    <ProjectReference Include="..\Adoptrix.Persistence\Adoptrix.Persistence.csproj" />
+  <ItemGroup>    
+    <ProjectReference Include="..\Adoptrix.Logic\Adoptrix.Logic.csproj" />    
     <ProjectReference Include="..\Adoptrix.ServiceDefaults\Adoptrix.ServiceDefaults.csproj" />
   </ItemGroup>
 

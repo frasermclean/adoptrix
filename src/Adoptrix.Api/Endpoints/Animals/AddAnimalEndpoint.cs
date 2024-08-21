@@ -1,16 +1,15 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
-using Adoptrix.Persistence.Services;
+using Adoptrix.Logic.Errors;
+using Adoptrix.Logic.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
+public class AddAnimalEndpoint(IAnimalsService animalsService)
     : Endpoint<AddAnimalRequest, Results<Created<AnimalResponse>, ErrorResponse>>
 {
     public override void Configure()
@@ -22,25 +21,19 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
     public override async Task<Results<Created<AnimalResponse>, ErrorResponse>> ExecuteAsync(AddAnimalRequest request,
         CancellationToken cancellationToken)
     {
-        var breed = await dbContext.Breeds.Where(breed => breed.Id == request.BreedId)
-            .Include(breed => breed.Animals)
-            .Include(breed => breed.Species)
-            .FirstOrDefaultAsync(cancellationToken);
+        var result = await animalsService.AddAsync(request, cancellationToken);
 
-        if (breed is null)
+        if (result.IsSuccess)
         {
-            Logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
-            AddError(r => r.BreedId, "Breed not found");
-            return new ErrorResponse(ValidationFailures);
+            return TypedResults.Created($"/api/animals/{result.Value.Id}", result.Value);
         }
 
-        var animal = MapToAnimal(request, breed);
-        breed.Animals.Add(animal);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        if (result.HasError<BreedNotFoundError>())
+        {
+            AddError(r => r.BreedId, "Breed not found");
+        }
 
-        Logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
-
-        return TypedResults.Created($"/api/animals/{animal.Id}", animal.ToResponse());
+        return new ErrorResponse(ValidationFailures);
     }
 
     private static Animal MapToAnimal(AddAnimalRequest request, Breed breed) => new()

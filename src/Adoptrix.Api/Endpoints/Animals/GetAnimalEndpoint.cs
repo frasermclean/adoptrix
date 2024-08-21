@@ -1,15 +1,11 @@
-﻿using System.Linq.Expressions;
-using Adoptrix.Api.Mapping;
-using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
-using Adoptrix.Persistence.Services;
+﻿using Adoptrix.Contracts.Responses;
+using Adoptrix.Logic.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-public class GetAnimalEndpoint(AdoptrixDbContext dbContext)
+public class GetAnimalEndpoint(IAnimalsService animalsService)
     : EndpointWithoutRequest<Results<Ok<AnimalResponse>, NotFound>>
 {
     public override void Configure()
@@ -23,19 +19,12 @@ public class GetAnimalEndpoint(AdoptrixDbContext dbContext)
         var animalId = Route<int?>("animalId", false);
         var animalSlug = Route<string>("animalSlug", false);
 
-        Expression<Func<Animal, bool>> wherePredicate = animalId.HasValue
-            ? animal => animal.Id == animalId.Value
-            : animal => animal.Slug == animalSlug;
+        var result = animalId.HasValue
+            ? await animalsService.GetAsync(animalId.Value, cancellationToken)
+            : await animalsService.GetAsync(animalSlug!, cancellationToken);
 
-        var response = await dbContext.Animals.Where(wherePredicate)
-            .AsNoTracking()
-            .Include(animal => animal.Breed)
-            .ThenInclude(breed => breed.Species)
-            .Select(animal => animal.ToResponse())
-            .FirstOrDefaultAsync(cancellationToken);
-
-        return response is not null
-            ? TypedResults.Ok(response)
+        return result.IsSuccess
+            ? TypedResults.Ok(result.Value)
             : TypedResults.NotFound();
     }
 }

@@ -1,8 +1,10 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
+using Adoptrix.Logic.Errors;
+using Adoptrix.Logic.Mapping;
+using Adoptrix.Logic.Services;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-public class UpdateAnimalEndpoint(AdoptrixDbContext dbContext)
+public class UpdateAnimalEndpoint(IAnimalsService animalsService)
     : Endpoint<UpdateAnimalRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>>
 {
     public override void Configure()
@@ -22,34 +24,23 @@ public class UpdateAnimalEndpoint(AdoptrixDbContext dbContext)
     public override async Task<Results<Ok<AnimalResponse>, NotFound, ErrorResponse>> ExecuteAsync(
         UpdateAnimalRequest request, CancellationToken cancellationToken)
     {
-        var breed = await dbContext.Breeds.Where(breed => breed.Id == request.BreedId)
-            .Include(breed => breed.Species)
-            .FirstOrDefaultAsync(cancellationToken);
+        var result = await animalsService.UpdateAsync(request, cancellationToken);
 
-        if (breed is null)
+        if (result.IsSuccess)
         {
-            Logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
-            AddError(r => r.BreedId, "Breed not found");
-            return new ErrorResponse(ValidationFailures);
+            return TypedResults.Ok(result.Value);
         }
 
-        var animal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == request.AnimalId, cancellationToken);
-        if (animal is null)
+        if (result.HasError<AnimalNotFoundError>())
         {
-            Logger.LogError("Animal with ID {AnimalId} was not found", request.AnimalId);
             return TypedResults.NotFound();
         }
 
-        animal.Name = request.Name;
-        animal.Description = request.Description;
-        animal.Breed = breed;
-        animal.Sex = Enum.Parse<Sex>(request.Sex);
-        animal.DateOfBirth = request.DateOfBirth;
+        if (result.HasError<BreedNotFoundError>())
+        {
+            AddError(r => r.BreedId, "Breed not found");
+        }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        Logger.LogInformation("Updated animal with ID: {AnimalId}", animal.Id);
-
-        return TypedResults.Ok(animal.ToResponse());
+        return new ErrorResponse(ValidationFailures);
     }
 }

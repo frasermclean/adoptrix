@@ -2,7 +2,7 @@
 using Adoptrix.Core;
 using Riok.Mapperly.Abstractions;
 
-namespace Adoptrix.Api.Mapping;
+namespace Adoptrix.Logic.Mapping;
 
 [Mapper]
 public static partial class AnimalImageResponseMapper

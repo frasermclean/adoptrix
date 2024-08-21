@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using Adoptrix.Api.Security;
 using Adoptrix.Api.Services;
+using Adoptrix.Logic;
 using Adoptrix.Persistence.Services;
 using Adoptrix.ServiceDefaults;
 using Azure.Identity;
@@ -27,6 +28,7 @@ public static class ServiceRegistration
         builder.Services
             .AddAuthentication(builder.Configuration)
             .AddFastEndpoints()
+            .AddLogicServices()
             .AddUsersService(builder.Configuration);
 
         // json serialization options

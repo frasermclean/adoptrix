@@ -1,7 +1,7 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Contracts.Responses;
+﻿using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
 using Adoptrix.Core.Events;
+using Adoptrix.Logic.Mapping;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using FastEndpoints;
