@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/version-tags
     paths:
       - .github/workflows/cicd.yml
       - src/**
