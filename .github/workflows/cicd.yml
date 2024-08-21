@@ -36,7 +36,7 @@ jobs:
       packages: write
       pull-requests: write
     outputs:
-      versionTag: ${{ steps.calc_tag.outputs.new_tag }}
+      nextVersion: ${{ steps.calc_tag.outputs.new_tag }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -146,23 +146,23 @@ jobs:
   # Deploy demo apps
   deploy_demo_apps:
     name: Deploy demo apps
-    uses: ./.github/workflows/deploy-apps.yml
     if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/deploy-apps.yml
     needs: build
     with:
       environment: demo
-      versionTag: ${{ needs.build.outputs.versionTag }}
+      versionTag: v${{ needs.build.outputs.nextVersion }}
     secrets: inherit
 
   # Update tag
   update_tag:
     name: Update tag
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: deploy_demo_apps
     runs-on: ubuntu-latest
     steps:
       - name: Update tag
         uses: anothrNick/github-tag-action@v1
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true

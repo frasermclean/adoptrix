@@ -63,7 +63,7 @@ jobs:
           ADOPTRIX_CONTAINER_REGISTRY: ghcr.io
           ADOPTRIX_CONTAINER_REGISTRY_USERNAME: frasermclean
           ADOPTRIX_API_IMAGE_REPOSITORY: ${{ vars.API_REPOSITORY_NAME }}
-          ADOPTRIX_API_IMAGE_TAG: v${{ inputs.versionTag }}
+          ADOPTRIX_API_IMAGE_TAG: ${{ inputs.versionTag }}
         with:
           scope: resourcegroup
           resourceGroupName: adoptrix-${{ inputs.environment }}-rg
