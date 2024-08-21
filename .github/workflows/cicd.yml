@@ -28,12 +28,13 @@ jobs:
       JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/jobs
       CLIENT_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/client
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
+      CONTAINER_REGISTRY: ghcr.io
     permissions:
       checks: write
       contents: write
       pull-requests: write
     outputs:
-      versionTag: ${{ steps.generate_version_tag.outputs.new_tag }}
+      versionTag: ${{ steps.generate_tag.outputs.new_tag }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -81,37 +82,30 @@ jobs:
       - name: Generate version tag
         uses: anothrNick/github-tag-action@v1
         if: github.event_name != 'pull_request'
-        id: generate_version_tag
+        id: generate_tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DRY_RUN: true
-
-      # Publish API project
-      - name: Publish API project
-        #if: github.event_name != 'pull_request'
-        run: >-
-          dotnet publish src/Adoptrix.Api
-          --no-build
-          --configuration ${{ env.BUILD_CONFIGURATION }}
-          -p:Version=${{ steps.generate_version_tag.outputs.new_tag }}
-          -p:PublishProfile=DefaultContainer
 
       # Login to GitHub Container Registry
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.CONTAINER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Upload API artifact
-      - name: Upload API artifact
+      # Build and push API image
+      - name: Build and push API image
         #if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: api
-          path: ${{ env.API_PUBLISH_DIRECTORY }}/adoptrix-api.tar.gz
-          compression-level: 0
+        run: >-
+          dotnet publish src/Adoptrix.Api
+          --no-build
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          -p:Version=${{ steps.generate_tag.outputs.new_tag }}
+          -p:PublishProfile=DefaultContainer
+          -p:ContainerRepository=${{ github.repository_owner }}/adoptrix-api
+          -p:ContainerRegistry=${{ env.CONTAINER_REGISTRY }}
 
       # Publish jobs project
       - name: Publish jobs project
