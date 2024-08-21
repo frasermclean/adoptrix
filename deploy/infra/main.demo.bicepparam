@@ -12,8 +12,10 @@ param authenticationClientId = '05ff30c5-ebb0-49cd-a127-13ace1478c9f' // front e
 param authenticationAudience = '1daf5539-1932-4c47-a9a1-a1f52a2db804' // back end app registration
 
 // container apps
-param containerRegistryName = readEnvironmentVariable('CONTAINER_REGISTRY', 'sbocorecr')
-param containerRegistryResourceGroup = 'sbo-core-rg'
+param containerRegistryName = readEnvironmentVariable('ADOPTRIX_CONTAINER_REGISTRY', 'ghcr.io')
+param containerRegistryUsername = readEnvironmentVariable('ADOPTRIX_CONTAINER_REGISTRY_USERNAME', 'frasermclean')
+param containerRegistryPassword = readEnvironmentVariable('ADOPTRIX_CONTAINER_REGISTRY_PASSWORD', '')
+param containerRegistryPasswordExpiry = '2025-01-01T00:00:00Z'
 param apiImageRepository = readEnvironmentVariable('ADOPTRIX_API_IMAGE_REPOSITORY', 'adoptrix-api')
 param apiImageTag = readEnvironmentVariable('ADOPTRIX_API_IMAGE_TAG')
 

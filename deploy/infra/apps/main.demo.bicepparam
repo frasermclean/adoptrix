@@ -18,6 +18,7 @@ param adminGroupName = 'Adoptrix Demo Administrators'
 param adminGroupObjectId = '0356480d-b5dc-440f-a5d3-e7b3f2169c40'
 
 param attemptRoleAssignments = bool(readEnvironmentVariable('ATTEMPT_ROLE_ASSIGNMENTS', 'true'))
+param deploymentSuffix = readEnvironmentVariable('DEPLOYMENT_SUFFIX', '')
 param allowedExternalIpAddresses = [
   {
     name: 'hive'
@@ -27,9 +28,11 @@ param allowedExternalIpAddresses = [
 
 // shared resources
 param sharedResourceGroup = 'adoptrix-shared-rg'
+param keyVaultName = 'adoptrix-shared-kv'
 param appConfigurationName = 'adoptrix-shared-ac'
 
 // container apps
-param containerRegistryName = readEnvironmentVariable('CONTAINER_REGISTRY', 'sbocorecr')
-param apiImageRepository = readEnvironmentVariable('ADOPTRIX_API_IMAGE_REPOSITORY', 'adoptrix-api')
+param containerRegistryName = readEnvironmentVariable('ADOPTRIX_CONTAINER_REGISTRY', 'ghcr.io')
+param containerRegistryUsername = readEnvironmentVariable('ADOPTRIX_CONTAINER_REGISTRY_USERNAME', 'frasermclean')
+param apiImageRepository = readEnvironmentVariable('ADOPTRIX_API_IMAGE_REPOSITORY', 'frasermclean/adoptrix-api')
 param apiImageTag = readEnvironmentVariable('ADOPTRIX_API_IMAGE_TAG')

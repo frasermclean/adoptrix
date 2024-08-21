@@ -24,8 +24,16 @@ param adminGroupObjectId string
 @description('Container registry name')
 param containerRegistryName string
 
-@description('Container registry resource group')
-param containerRegistryResourceGroup string
+@description('Username to access the container registry')
+param containerRegistryUsername string
+
+@secure()
+@description('Password for the container registry')
+param containerRegistryPassword string
+
+@description('Expiry date for the container registry password in ISO 8601 format')
+#disable-next-line secure-secrets-in-params
+param containerRegistryPasswordExpiry string
 
 @description('Repository of the API container image')
 param apiImageRepository string
@@ -60,9 +68,12 @@ module sharedResources 'shared/main.bicep' = {
     workload: workload
     category: 'shared'
     location: location
-    containerRegistryName: containerRegistryName
-    containerRegistryResourceGroup: containerRegistryResourceGroup
+    containerRegistryPassword: containerRegistryPassword
+    containerRegistryPasswordExpiry: containerRegistryPasswordExpiry
     attemptRoleAssignments: attemptRoleAssignments
+    adminPrincipalIds: [
+      ghActionsApp.outputs.servicePrincipalId
+    ]
     deploymentSuffix: deploymentSuffix
   }
 }
@@ -91,15 +102,48 @@ module appResources 'apps/main.bicep' = {
     authenticationAudience: authenticationAudience
     authenticationClientId: authenticationClientId
     sharedResourceGroup: sharedResourceGroup.name
+    keyVaultName: sharedResources.outputs.keyVaultName
     appConfigurationName: sharedResources.outputs.appConfigurationName
     adminGroupName: adminGroupName
     adminGroupObjectId: adminGroupObjectId
     containerRegistryName: containerRegistryName
+    containerRegistryUsername: containerRegistryUsername
     apiImageTag: apiImageTag
     apiImageRepository: apiImageRepository
     attemptRoleAssignments: attemptRoleAssignments
     allowedExternalIpAddresses: allowedExternalIpAddresses
     deploymentSuffix: deploymentSuffix
+  }
+}
+
+// GitHub Actions application
+module ghActionsApp 'ghActionsApp.bicep' = if (attemptRoleAssignments) {
+  name: '${workload}-ghActionsApp-${appEnv}${deploymentSuffix}'
+  params: {
+    repositoryName: 'frasermclean/adoptrix'
+    appEnv: appEnv
+  }
+}
+
+var contributorRoleDefinitionId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+
+// shared resource group role assignment
+module sharedResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = if (attemptRoleAssignments) {
+  name: 'sharedResourcesRoleAssigments${deploymentSuffix}'
+  scope: sharedResourceGroup
+  params: {
+    principalId: ghActionsApp.outputs.servicePrincipalId
+    roleDefinitionId: contributorRoleDefinitionId
+  }
+}
+
+// app resource group role assignment
+module appResourceGroupRoleAssignment 'rgRoleAssignment.bicep' = if (attemptRoleAssignments) {
+  name: 'appResourcesRoleAssigments${deploymentSuffix}'
+  scope: appResourceGroup
+  params: {
+    principalId: ghActionsApp.outputs.servicePrincipalId
+    roleDefinitionId: contributorRoleDefinitionId
   }
 }
 

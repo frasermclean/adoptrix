@@ -15,6 +15,7 @@ on:
       - .github/workflows/cicd.yml
       - src/**
       - tests/**
+  workflow_dispatch:
 
 jobs:
   # Build, test and publish API job
@@ -23,12 +24,18 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_CONFIGURATION: Release
+      API_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/api
       JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/jobs
       CLIENT_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/client
       TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
+      CONTAINER_REGISTRY: ghcr.io
     permissions:
       checks: write
+      contents: write
+      packages: write
       pull-requests: write
+    outputs:
+      versionTag: ${{ steps.tag_commit.outputs.tag }}
     steps:
       # Check out the repository
       - name: Checkout repository
@@ -72,6 +79,34 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+      # Bump version and push tag
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@v1
+        if: github.event_name != 'pull_request'
+        id: tag_commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Login to GitHub Container Registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ${{ env.CONTAINER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build and push API image
+      - name: Build and push API image
+        if: github.event_name != 'pull_request'
+        run: >-
+          dotnet publish src/Adoptrix.Api
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          -p:PublishProfile=DefaultContainer
+          -p:Version=${{ steps.tag_commit.outputs.tag }}
+          -p:ContainerRepository=${{ vars.API_REPOSITORY_NAME }}
+          -p:ContainerRegistry=${{ env.CONTAINER_REGISTRY }}
+
       # Publish jobs project
       - name: Publish jobs project
         if: github.event_name != 'pull_request'
@@ -108,9 +143,10 @@ jobs:
   # Deploy demo apps
   deploy_demo_apps:
     name: Deploy demo apps
-    uses: ./.github/workflows/deploy-apps.yml
     if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/deploy-apps.yml
     needs: build
     with:
       environment: demo
+      versionTag: v${{ needs.build.outputs.versionTag }}
     secrets: inherit

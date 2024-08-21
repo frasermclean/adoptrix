@@ -26,6 +26,9 @@ param authenticationClientId string
 @description('Azure AD B2C audience')
 param authenticationAudience string
 
+@description('Name of the Azure Key Vault instance')
+param keyVaultName string
+
 @description('Name of the Azure App Configuration instance')
 param appConfigurationName string
 
@@ -43,6 +46,9 @@ param allowedExternalIpAddresses array
 
 @description('Container registry login server')
 param containerRegistryName string
+
+@description('Username to access the container registry')
+param containerRegistryUsername string
 
 @description('Repository of the API container image')
 param apiImageRepository string
@@ -120,6 +126,8 @@ module containerAppsModule './containerApps.bicep' = {
     domainName: domainName
     sharedResourceGroup: sharedResourceGroup
     containerRegistryName: containerRegistryName
+    containerRegistryUsername: containerRegistryUsername
+    keyVaultName: keyVaultName
     apiImageRepository: apiImageRepository
     apiImageTag: apiImageTag
     apiAllowedOrigins: map(staticWebAppModule.outputs.hostnames, (hostname) => 'https://${hostname}')
@@ -181,6 +189,10 @@ module sharedRoleAssignmentsModule '../shared/roleAssignments.bicep' =
     name: 'roleAssignments-${appEnv}${deploymentSuffix}'
     scope: resourceGroup(sharedResourceGroup)
     params: {
+      keyVaultName: keyVaultName
+      keyVaultSecretsUsers: [
+        containerAppsModule.outputs.apiAppPrincipalId
+      ]
       appConfigurationName: appConfigurationName
       configurationDataReaders: [
         containerAppsModule.outputs.apiAppPrincipalId
