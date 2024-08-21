@@ -101,15 +101,13 @@ jobs:
       # Build and push API image
       - name: Build and push API image
         if: github.event_name != 'pull_request'
-        env:
-          IMAGE_REPOSITORY: ${{ github.repository_owner }}/adoptrix-api
         run: >-
           dotnet publish src/Adoptrix.Api
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
           -p:Version=${{ steps.calc_tag.outputs.new_tag }}
           -p:PublishProfile=DefaultContainer
-          -p:ContainerRepository=${{ env.IMAGE_REPOSITORY }}
+          -p:ContainerRepository=${{ vars.API_REPOSITORY_NAME }}
           -p:ContainerRegistry=${{ env.CONTAINER_REGISTRY }}
 
       # Publish jobs project
@@ -145,21 +143,26 @@ jobs:
           name: client
           path: ${{ env.CLIENT_PUBLISH_DIRECTORY }}/*
 
-      # Update tag
-      - name: Update tag
-        uses: anothrNick/github-tag-action@v1
-        if: github.event_name != 'pull_request'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
-
   # Deploy demo apps
   deploy_demo_apps:
     name: Deploy demo apps
     uses: ./.github/workflows/deploy-apps.yml
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request'
     needs: build
     with:
       environment: demo
       versionTag: ${{ needs.build.outputs.versionTag }}
     secrets: inherit
+
+  # Update tag
+  update_tag:
+    name: Update tag
+    needs: deploy_demo_apps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update tag
+        uses: anothrNick/github-tag-action@v1
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
