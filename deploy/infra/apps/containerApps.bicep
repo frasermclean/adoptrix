@@ -26,8 +26,14 @@ param applicationInsightsConnectionString string
 @description('Endpoint of the App Configuration instance')
 param appConfigurationEndpoint string
 
-@description('Name of the Azure Container Registry')
+@description('Name of the container registry')
 param containerRegistryName string
+
+@description('Username to access the container registry')
+param containerRegistryUsername string
+
+@description('Name of the Azure Key Vault instance')
+param keyVaultName string
 
 @description('Repository of the API container image')
 param apiImageRepository string
@@ -46,7 +52,6 @@ var tags = {
   appEnv: appEnv
 }
 
-var containerRegistryLoginServer = '${containerRegistryName}${environment().suffixes.acrLoginServer}'
 var apiContainerAppName = '${workload}-${appEnv}-api-ca'
 
 // shared user assigned managed identity
@@ -146,16 +151,24 @@ resource apiContainerApp 'Microsoft.App/containerApps@2024-03-01' = {
       }
       registries: [
         {
-          server: containerRegistryLoginServer
+          server: containerRegistryName
+          username: containerRegistryUsername
+          passwordSecretRef: 'container-registry-password'
+        }
+      ]
+      secrets: [
+        {
+          name: 'container-registry-password'
           identity: sharedIdentity.id
+          keyVaultUrl: 'https://${keyVaultName}${environment().suffixes.keyvaultDns}/secrets/container-registry-password'
         }
       ]
     }
     template: {
       containers: [
         {
-          name: apiImageRepository
-          image: '${containerRegistryLoginServer}/${apiImageRepository}:${apiImageTag}'
+          name: 'api'
+          image: '${containerRegistryName}/${apiImageRepository}:${apiImageTag}'
           resources: {
             cpu: json('0.25')
             memory: '0.5Gi'
