@@ -1,5 +1,9 @@
-﻿using Adoptrix.Core.Events;
+﻿using Adoptrix.Contracts.Responses;
+using Adoptrix.Core;
+using Adoptrix.Core.Events;
 using Adoptrix.Logic.Errors;
+using Adoptrix.Logic.Mapping;
+using Adoptrix.Logic.Models;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using FluentResults;
@@ -11,6 +15,9 @@ namespace Adoptrix.Logic.Services;
 
 public interface IAnimalImagesManager
 {
+    Task<Result<AnimalResponse>> AddOriginalsAsync(int animalId, Guid userId,
+        IAsyncEnumerable<AddOriginalImageData> items, CancellationToken cancellationToken = default);
+
     Task<Result> ProcessOriginalAsync(AnimalImageAddedEvent data, CancellationToken cancellationToken = default);
     Task DeleteImagesAsync(AnimalDeletedEvent data, CancellationToken cancellationToken = default);
 }
@@ -22,8 +29,62 @@ public class AnimalImagesManager(
     [FromKeyedServices(BlobContainerNames.OriginalImages)]
     IBlobContainerManager originalImagesContainerManager,
     [FromKeyedServices(BlobContainerNames.AnimalImages)]
-    IBlobContainerManager animalImagesContainerManager) : IAnimalImagesManager
+    IBlobContainerManager animalImagesContainerManager,
+    IEventPublisher eventPublisher) : IAnimalImagesManager
 {
+    public async Task<Result<AnimalResponse>> AddOriginalsAsync(int animalId, Guid userId,
+        IAsyncEnumerable<AddOriginalImageData> items, CancellationToken cancellationToken = default)
+    {
+        // ensure animal exists in database
+        var animal = await dbContext.Animals.Where(animal => animal.Id == animalId)
+            .Include(animal => animal.Breed)
+            .ThenInclude(breed => breed.Species)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (animal is null)
+        {
+            logger.LogError("Animal with ID {AnimalId} not found", animalId);
+            return new AnimalNotFoundError(animalId);
+        }
+
+        // upload original images to blob storage
+        var images = await items.SelectAwait(async item =>
+            {
+                var blobName = GetOriginalBlobName(animal.Slug, item.FileName);
+                await originalImagesContainerManager.UploadBlobAsync(blobName, item.Stream, item.ContentType,
+                    cancellationToken);
+
+                logger.LogInformation("Uploaded original image {BlobName}", blobName);
+
+                var image = new AnimalImage
+                {
+                    Description = item.Description,
+                    OriginalFileName = item.FileName,
+                    OriginalContentType = item.ContentType,
+                    CreatedBy = userId
+                };
+                animal.Images.Add(image);
+                return image;
+            })
+            .ToListAsync(cancellationToken);
+
+        // update animal entity with new images
+        await dbContext.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Added {Count} original images for animal with ID: {AnimalSlug}", images.Count, animalId);
+
+        // publish events for each image added
+        foreach (var @event in images.Select(image =>
+                     new AnimalImageAddedEvent(animal.Slug, image.Id,
+                         GetOriginalBlobName(animal.Slug, image.OriginalFileName))))
+        {
+            await eventPublisher.PublishAsync(@event, cancellationToken);
+        }
+
+        return animal.ToResponse();
+
+        static string GetOriginalBlobName(string animalSlug, string fileName) => $"{animalSlug}/{fileName}";
+    }
+
     public async Task<Result> ProcessOriginalAsync(AnimalImageAddedEvent data,
         CancellationToken cancellationToken = default)
     {

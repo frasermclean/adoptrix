@@ -1,4 +1,5 @@
-﻿using SixLabors.ImageSharp;
+﻿using Adoptrix.Logic.Models;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
 namespace Adoptrix.Logic.Services;
@@ -49,16 +50,4 @@ public class ImageProcessor : IImageProcessor
     }
 }
 
-public sealed class ImageStreamBundle : IAsyncDisposable
-{
-    public required Stream ThumbnailWriteStream { get; init; }
-    public required Stream PreviewWriteStream { get; init; }
-    public required Stream FullSizeWriteStream { get; init; }
 
-    public async ValueTask DisposeAsync()
-    {
-        await ThumbnailWriteStream.DisposeAsync();
-        await PreviewWriteStream.DisposeAsync();
-        await FullSizeWriteStream.DisposeAsync();
-    }
-}

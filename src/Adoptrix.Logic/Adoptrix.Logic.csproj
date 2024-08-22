@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.Graph" />
     <PackageReference Include="Riok.Mapperly" />
     <PackageReference Include="SixLabors.ImageSharp" />
+    <PackageReference Include="System.Linq.Async" />
   </ItemGroup>
 
 </Project>
