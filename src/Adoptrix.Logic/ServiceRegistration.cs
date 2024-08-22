@@ -11,7 +11,8 @@ public static class ServiceRegistration
     public static IServiceCollection AddLogicServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddUsersService(configuration)
-            .AddScoped<IAnimalsService, AnimalsService>();
+            .AddScoped<IAnimalsService, AnimalsService>()
+            .AddScoped<IBreedsService, BreedsService>();
 
         return services;
     }

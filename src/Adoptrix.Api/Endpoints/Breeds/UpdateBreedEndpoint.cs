@@ -1,14 +1,16 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
+using Adoptrix.Logic.Errors;
+using Adoptrix.Logic.Services;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using BreedResponseMapper = Adoptrix.Logic.Mapping.BreedResponseMapper;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-public class UpdateBreedEndpoint(AdoptrixDbContext dbContext)
+public class UpdateBreedEndpoint(IBreedsService breedsService)
     : Endpoint<UpdateBreedRequest, Results<Ok<BreedResponse>, NotFound, ErrorResponse>>
 {
     public override void Configure()
@@ -20,25 +22,23 @@ public class UpdateBreedEndpoint(AdoptrixDbContext dbContext)
     public override async Task<Results<Ok<BreedResponse>, NotFound, ErrorResponse>> ExecuteAsync(
         UpdateBreedRequest request, CancellationToken cancellationToken)
     {
-        var species = await dbContext.Species.FirstOrDefaultAsync(species => species.Name == request.SpeciesName,
-            cancellationToken);
+        var result = await breedsService.UpdateAsync(request, cancellationToken);
 
-        if (species is null)
+        if (result.IsSuccess)
         {
-            AddError(r => r.SpeciesName, "Invalid species name");
-            return new ErrorResponse(ValidationFailures);
+            return TypedResults.Ok(result.Value);
         }
 
-        var breed = await dbContext.Breeds.FirstOrDefaultAsync(breed => breed.Id == request.BreedId, cancellationToken);
-        if (breed is null)
+        if (result.HasError<BreedNotFoundError>())
         {
             return TypedResults.NotFound();
         }
 
-        breed.Name = request.Name;
-        breed.Species = species;
-        await dbContext.SaveChangesAsync(cancellationToken);
+        if (result.HasError<SpeciesNotFoundError>())
+        {
+            AddError(r => r.SpeciesName, "Invalid species name");
+        }
 
-        return TypedResults.Ok(breed.ToResponse());
+        return new ErrorResponse(ValidationFailures);
     }
 }

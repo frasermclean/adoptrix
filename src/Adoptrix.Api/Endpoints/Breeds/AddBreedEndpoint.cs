@@ -1,15 +1,13 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
-using Adoptrix.Persistence.Services;
+using Adoptrix.Logic.Errors;
+using Adoptrix.Logic.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-public class AddBreedEndpoint(AdoptrixDbContext dbContext)
+public class AddBreedEndpoint(IBreedsService breedsService)
     : Endpoint<AddBreedRequest, Results<Created<BreedResponse>, ErrorResponse>>
 {
     public override void Configure()
@@ -21,36 +19,24 @@ public class AddBreedEndpoint(AdoptrixDbContext dbContext)
     public override async Task<Results<Created<BreedResponse>, ErrorResponse>> ExecuteAsync(AddBreedRequest request,
         CancellationToken cancellationToken)
     {
-        var species = await dbContext.Species.Where(species => species.Name == request.SpeciesName)
-            .Include(species => species.Breeds)
-            .FirstOrDefaultAsync(cancellationToken);
+        var result = await breedsService.AddAsync(request, cancellationToken);
 
-        // ensure species exists
-        if (species is null)
+        if (result.IsSuccess)
         {
-            AddError(r => r.SpeciesName, "Invalid species name");
-            return new ErrorResponse(ValidationFailures);
+            return TypedResults.Created($"/api/breeds/{result.Value.Id}", result.Value);
         }
 
-        // ensure breed does not already exist
-        if (species.Breeds.Any(b => b.Name == request.Name))
+        if (result.HasError<DuplicateBreedError>())
         {
-            AddError(r => r.Name, "Breed already exists");
+            AddError(r => r.Name, "Breed with this name already exists");
             return new ErrorResponse(ValidationFailures, StatusCodes.Status409Conflict);
         }
 
-        // save new breed
-        var breed = MapToBreed(request, species);
-        species.Breeds.Add(breed);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        if (result.HasError<SpeciesNotFoundError>())
+        {
+            AddError(r => r.SpeciesName, "Invalid species name");
+        }
 
-        return TypedResults.Created($"/api/breeds/{breed.Id}", breed.ToResponse());
+        return new ErrorResponse(ValidationFailures);
     }
-
-    private static Breed MapToBreed(AddBreedRequest request, Core.Species species) => new()
-    {
-        Name = request.Name,
-        Species = species,
-        CreatedBy = request.UserId
-    };
 }
