@@ -18,9 +18,8 @@ public class AnimalResponseMapperTests
         response.Id.Should().Be(animal.Id);
         response.Name.Should().Be(animal.Name);
         response.Description.Should().Be(animal.Description);
-        response.SpeciesName.Should().Be(animal.Breed.Species.Name);
-        response.BreedId.Should().Be(animal.Breed.Id);
-        response.BreedName.Should().Be(animal.Breed.Name);
+        response.Species.Should().Be(animal.Breed.Species.Name);
+        response.Breed.Should().Be(animal.Breed.Name);
         response.Sex.Should().Be(animal.Sex.ToString());
         response.DateOfBirth.Should().Be(animal.DateOfBirth);
         response.CreatedAt.Should().Be(animal.CreatedAt.ToUniversalTime());

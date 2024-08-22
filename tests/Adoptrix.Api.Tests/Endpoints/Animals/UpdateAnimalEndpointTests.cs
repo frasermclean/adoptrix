@@ -28,7 +28,6 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
         response.Id.Should().Be(3);
         response.Name.Should().Be("Timmy");
         response.Description.Should().Be("Timmy is awesome");
-        response.BreedId.Should().Be(2);
     }
 
     [Fact]
