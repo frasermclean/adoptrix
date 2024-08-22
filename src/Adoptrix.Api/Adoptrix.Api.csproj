@@ -18,13 +18,16 @@
   <ItemGroup>
     <PackageReference Include="FastEndpoints" />    
     <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" />    
-    <PackageReference Include="Microsoft.Identity.Web" />
-    <PackageReference Include="Riok.Mapperly" />
+    <PackageReference Include="Microsoft.Identity.Web" />    
   </ItemGroup>
 
   <ItemGroup>    
     <ProjectReference Include="..\Adoptrix.Logic\Adoptrix.Logic.csproj" />    
     <ProjectReference Include="..\Adoptrix.ServiceDefaults\Adoptrix.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mapping\" />
   </ItemGroup>
 
 </Project>

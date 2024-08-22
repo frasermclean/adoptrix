@@ -1,12 +1,10 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Contracts.Responses;
-using Adoptrix.Persistence.Services;
+﻿using Adoptrix.Contracts.Responses;
+using Adoptrix.Logic.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Species;
 
-public class GetSpeciesEndpoint(AdoptrixDbContext dbContext)
+public class GetSpeciesEndpoint(ISpeciesService speciesService)
     : EndpointWithoutRequest<Results<Ok<SpeciesResponse>, NotFound>>
 {
     public override void Configure()
@@ -19,12 +17,10 @@ public class GetSpeciesEndpoint(AdoptrixDbContext dbContext)
     {
         var speciesName = Route<string>("speciesName");
 
-        var species = await dbContext.Species.Where(species => species.Name == speciesName)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(cancellationToken);
+        var result = await speciesService.GetAsync(speciesName!, cancellationToken);
 
-        return species is not null
-            ? TypedResults.Ok(species.ToResponse())
+        return result.IsSuccess
+            ? TypedResults.Ok(result.Value)
             : TypedResults.NotFound();
     }
 }

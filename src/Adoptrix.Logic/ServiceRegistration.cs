@@ -12,7 +12,8 @@ public static class ServiceRegistration
     {
         services.AddUsersService(configuration)
             .AddScoped<IAnimalsService, AnimalsService>()
-            .AddScoped<IBreedsService, BreedsService>();
+            .AddScoped<IBreedsService, BreedsService>()
+            .AddScoped<ISpeciesService, SpeciesService>();
 
         return services;
     }
