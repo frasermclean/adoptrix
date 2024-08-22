@@ -1,7 +1,7 @@
-﻿using Adoptrix.Jobs.Services;
+﻿using Adoptrix.Logic.Services;
 using SixLabors.ImageSharp;
 
-namespace Adoptrix.Jobs.Tests.Services;
+namespace Adoptrix.Logic.Tests.Services;
 
 public class ImageProcessorTests
 {
@@ -24,10 +24,10 @@ public class ImageProcessorTests
 
         // assert
         thumbnailImage.Width.Should().Be(ImageProcessor.ThumbnailWidth);
-        thumbnailImage.Metadata.DecodedImageFormat?.DefaultMimeType.Should().Be(ImageProcessor.OutputContentType);
+        thumbnailImage.Metadata.DecodedImageFormat!.DefaultMimeType.Should().Be(ImageProcessor.OutputContentType);
         previewImage.Height.Should().Be(ImageProcessor.PreviewHeight);
-        previewImage.Metadata.DecodedImageFormat?.DefaultMimeType.Should().Be(ImageProcessor.OutputContentType);
+        previewImage.Metadata.DecodedImageFormat!.DefaultMimeType.Should().Be(ImageProcessor.OutputContentType);
         fullSizeImage.Width.Should().Be(ImageProcessor.FullSizeWidth);
-        fullSizeImage.Metadata.DecodedImageFormat?.DefaultMimeType.Should().Be(ImageProcessor.OutputContentType);
+        fullSizeImage.Metadata.DecodedImageFormat!.DefaultMimeType.Should().Be(ImageProcessor.OutputContentType);
     }
 }

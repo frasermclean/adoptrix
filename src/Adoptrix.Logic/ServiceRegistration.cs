@@ -13,7 +13,8 @@ public static class ServiceRegistration
         services.AddUsersService(configuration)
             .AddScoped<IAnimalsService, AnimalsService>()
             .AddScoped<IBreedsService, BreedsService>()
-            .AddScoped<ISpeciesService, SpeciesService>();
+            .AddScoped<ISpeciesService, SpeciesService>()
+            .AddScoped<IAnimalImagesManager, AnimalImagesManager>();
 
         return services;
     }

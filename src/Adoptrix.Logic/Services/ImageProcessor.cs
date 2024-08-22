@@ -1,7 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
-namespace Adoptrix.Jobs.Services;
+namespace Adoptrix.Logic.Services;
 
 public interface IImageProcessor
 {
