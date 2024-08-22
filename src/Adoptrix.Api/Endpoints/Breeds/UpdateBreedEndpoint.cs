@@ -3,10 +3,7 @@ using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Logic.Errors;
 using Adoptrix.Logic.Services;
-using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
-using BreedResponseMapper = Adoptrix.Logic.Mapping.BreedResponseMapper;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 

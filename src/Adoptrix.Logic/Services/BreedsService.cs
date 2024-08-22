@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Adoptrix.Contracts.Requests;
+﻿using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
 using Adoptrix.Logic.Errors;

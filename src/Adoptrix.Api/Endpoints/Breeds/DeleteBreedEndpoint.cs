@@ -1,8 +1,6 @@
 ﻿using Adoptrix.Api.Security;
 using Adoptrix.Logic.Services;
-using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
