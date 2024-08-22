@@ -4,7 +4,7 @@ using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Models.ODataErrors;
 
-namespace Adoptrix.Api.Services;
+namespace Adoptrix.Logic.Services;
 
 public interface IUsersService
 {

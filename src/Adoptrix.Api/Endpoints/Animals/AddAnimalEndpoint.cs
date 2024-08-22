@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
 using Adoptrix.Logic.Errors;
 using Adoptrix.Logic.Services;
 using FastEndpoints;
@@ -35,15 +34,4 @@ public class AddAnimalEndpoint(IAnimalsService animalsService)
 
         return new ErrorResponse(ValidationFailures);
     }
-
-    private static Animal MapToAnimal(AddAnimalRequest request, Breed breed) => new()
-    {
-        Name = request.Name,
-        Description = request.Description,
-        Breed = breed,
-        Sex = Enum.Parse<Sex>(request.Sex),
-        DateOfBirth = request.DateOfBirth,
-        Slug = $"{request.Name.ToLower()}-{request.DateOfBirth:O}",
-        CreatedBy = request.UserId
-    };
 }

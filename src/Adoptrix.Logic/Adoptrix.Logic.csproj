@@ -13,6 +13,8 @@
 
   <ItemGroup>
     <PackageReference Include="FluentResults" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Graph" />
     <PackageReference Include="Riok.Mapperly" />
   </ItemGroup>
 

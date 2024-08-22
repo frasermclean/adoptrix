@@ -1,14 +1,10 @@
 ﻿using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
 using Adoptrix.Logic.Errors;
-using Adoptrix.Logic.Mapping;
 using Adoptrix.Logic.Services;
-using Adoptrix.Persistence.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 

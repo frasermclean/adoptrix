@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Api.Security;
-using Adoptrix.Api.Services;
+using Adoptrix.Logic.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using DotNet.Testcontainers.Builders;
