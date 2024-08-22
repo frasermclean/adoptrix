@@ -33,7 +33,7 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
     {
         // arrange
         var animalSlug = Guid.NewGuid().ToString();
-        var imageId = Random.Shared.Next();
+        var imageId = Guid.NewGuid();
         var blobName = $"{animalSlug}/image.jpg";
         var animalImageAddedEvent = new AnimalImageAddedEvent(animalSlug, imageId, blobName);
 
@@ -61,5 +61,7 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
         await act.Should().ThrowAsync<ArgumentException>();
     }
 
-    private class InvalidEvent : IDomainEvent { }
+    private class InvalidEvent : IDomainEvent
+    {
+    }
 }

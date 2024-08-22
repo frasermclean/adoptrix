@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Client.Extensions;
 using Adoptrix.Contracts.Requests;
 
-namespace Adoptrix.Web.Tests.Extensions;
+namespace Adoptrix.Client.Tests.Extensions;
 
 public class SearchBreedsQueryExtensionsTests
 {

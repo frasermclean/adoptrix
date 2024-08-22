@@ -69,8 +69,6 @@ namespace Adoptrix.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("Slug");
-
                     b.HasIndex("BreedId");
 
                     b.ToTable("Animals");
@@ -244,14 +242,13 @@ namespace Adoptrix.Persistence.Migrations
 
                     b.OwnsMany("Adoptrix.Core.AnimalImage", "Images", b1 =>
                         {
-                            b1.Property<int>("AnimalId")
-                                .HasColumnType("int");
+                            b1.Property<string>("AnimalSlug")
+                                .HasColumnType("nvarchar(60)");
 
-                            b1.Property<int>("Id")
+                            b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+                                .HasColumnType("uniqueidentifier")
+                                .HasDefaultValueSql("newid()");
 
                             b1.Property<DateTime>("CreatedAt")
                                 .ValueGeneratedOnAdd()
@@ -278,12 +275,13 @@ namespace Adoptrix.Persistence.Migrations
                                 .HasMaxLength(512)
                                 .HasColumnType("nvarchar(512)");
 
-                            b1.HasKey("AnimalId", "Id");
+                            b1.HasKey("AnimalSlug", "Id");
 
                             b1.ToTable("AnimalImages", (string)null);
 
                             b1.WithOwner()
-                                .HasForeignKey("AnimalId");
+                                .HasForeignKey("AnimalSlug")
+                                .HasPrincipalKey("Slug");
                         });
 
                     b.Navigation("Breed");

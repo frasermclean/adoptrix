@@ -80,9 +80,8 @@ namespace Adoptrix.Persistence.Migrations
                 name: "AnimalImages",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AnimalId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "newid()"),
+                    AnimalSlug = table.Column<string>(type: "nvarchar(60)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OriginalFileName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
                     OriginalContentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -92,12 +91,12 @@ namespace Adoptrix.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AnimalImages", x => new { x.AnimalId, x.Id });
+                    table.PrimaryKey("PK_AnimalImages", x => new { x.AnimalSlug, x.Id });
                     table.ForeignKey(
-                        name: "FK_AnimalImages_Animals_AnimalId",
-                        column: x => x.AnimalId,
+                        name: "FK_AnimalImages_Animals_AnimalSlug",
+                        column: x => x.AnimalSlug,
                         principalTable: "Animals",
-                        principalColumn: "Id",
+                        principalColumn: "Slug",
                         onDelete: ReferentialAction.Cascade);
                 });
 

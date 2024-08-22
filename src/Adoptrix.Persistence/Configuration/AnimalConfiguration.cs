@@ -34,23 +34,27 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 
         builder.HasData(InitialData);
 
-        var animalImagesBuilder = builder.OwnsMany(animal => animal.Images)
-            .ToTable("AnimalImages");
+        builder.OwnsMany(animal => animal.Images, imagesBuilder =>
+        {
+            imagesBuilder.ToTable("AnimalImages");
 
-        ConfigureAnimalImagesTable(animalImagesBuilder);
-    }
+            imagesBuilder.WithOwner()
+                .HasForeignKey(animalImage => animalImage.AnimalSlug)
+                .HasPrincipalKey(animal => animal.Slug);
 
-    private static void ConfigureAnimalImagesTable(OwnedNavigationBuilder<Animal, AnimalImage> builder)
-    {
-        builder.Property(imageInformation => imageInformation.CreatedAt)
-            .HasPrecision(2)
-            .HasDefaultValueSql("getutcdate()");
+            imagesBuilder.Property(animalImage => animalImage.Id)
+                .HasDefaultValueSql("newid()");
 
-        builder.Property(imageInformation => imageInformation.OriginalFileName)
-            .HasMaxLength(512);
+            imagesBuilder.Property(animalImage => animalImage.CreatedAt)
+                .HasPrecision(2)
+                .HasDefaultValueSql("getutcdate()");
 
-        builder.Property(imageInformation => imageInformation.OriginalContentType)
-            .HasMaxLength(AnimalImage.ContentTypeMaxLength);
+            imagesBuilder.Property(animalImage => animalImage.OriginalFileName)
+                .HasMaxLength(512);
+
+            imagesBuilder.Property(animalImage => animalImage.OriginalContentType)
+                .HasMaxLength(AnimalImage.ContentTypeMaxLength);
+        });
     }
 
     private static readonly object[] InitialData =

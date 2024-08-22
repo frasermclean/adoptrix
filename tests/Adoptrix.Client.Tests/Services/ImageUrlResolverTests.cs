@@ -1,23 +1,24 @@
 ﻿using Adoptrix.Client.Services;
 
-namespace Adoptrix.Web.Tests.Services;
+namespace Adoptrix.Client.Tests.Services;
 
 public class ImageUrlResolverTests
 {
-    private readonly ImageUrlResolver imageUrlResolver = new("https://localhost:8080/images");
+    private const string BaseUrl = "https://localhost:8080/images";
+    private readonly ImageUrlResolver imageUrlResolver = new(BaseUrl);
 
     [Fact]
     public void GetPreviewUrl_WithValidParameters_ShouldReturnCorrectUrl()
     {
         // Arrange
         const string animalSlug = "slug";
-        const int imageId = 2;
+        var imageId = Guid.NewGuid();
 
         // Act
         var url = imageUrlResolver.GetPreviewUrl(animalSlug, imageId);
 
         // Assert
-        url.Should().Be("https://localhost:8080/images/slug/2/preview.webp");
+        url.Should().Be($"{BaseUrl}/{animalSlug}/{imageId}/preview.webp");
     }
 
     [Fact]
@@ -38,13 +39,13 @@ public class ImageUrlResolverTests
     {
         // Arrange
         const string animalSlug = "slug";
-        const int imageId = 2;
+        var imageId = Guid.NewGuid();
 
         // Act
         var url = imageUrlResolver.GetThumbUrl(animalSlug, imageId);
 
         // Assert
-        url.Should().Be("https://localhost:8080/images/slug/2/thumb.webp");
+        url.Should().Be($"{BaseUrl}/{animalSlug}/{imageId}/thumb.webp");
     }
 
     [Fact]
@@ -52,12 +53,12 @@ public class ImageUrlResolverTests
     {
         // Arrange
         const string animalSlug = "slug";
-        const int imageId = 2;
+        var imageId = Guid.NewGuid();
 
         // Act
         var url = imageUrlResolver.GetFullSizeUrl(animalSlug, imageId);
 
         // Assert
-        url.Should().Be("https://localhost:8080/images/slug/2/full.webp");
+        url.Should().Be($"{BaseUrl}/{animalSlug}/{imageId}/full.webp");
     }
 }

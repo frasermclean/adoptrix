@@ -50,19 +50,21 @@ public class AnimalImagesManager(
         // upload original images to blob storage
         var images = await items.SelectAwait(async item =>
             {
-                var blobName = GetOriginalBlobName(animal.Slug, item.FileName);
-                await originalImagesContainerManager.UploadBlobAsync(blobName, item.Stream, item.ContentType,
-                    cancellationToken);
-
-                logger.LogInformation("Uploaded original image {BlobName}", blobName);
-
                 var image = new AnimalImage
                 {
+                    AnimalSlug = animal.Slug,
                     Description = item.Description,
                     OriginalFileName = item.FileName,
                     OriginalContentType = item.ContentType,
                     CreatedBy = userId
                 };
+
+                var blobName = image.GetOriginalBlobName();
+                await originalImagesContainerManager.UploadBlobAsync(blobName, item.Stream, item.ContentType,
+                    cancellationToken);
+
+                logger.LogInformation("Uploaded original image {BlobName}", blobName);
+
                 animal.Images.Add(image);
                 return image;
             })
@@ -74,15 +76,12 @@ public class AnimalImagesManager(
 
         // publish events for each image added
         foreach (var @event in images.Select(image =>
-                     new AnimalImageAddedEvent(animal.Slug, image.Id,
-                         GetOriginalBlobName(animal.Slug, image.OriginalFileName))))
+                     new AnimalImageAddedEvent(animal.Slug, image.Id, image.GetOriginalBlobName())))
         {
             await eventPublisher.PublishAsync(@event, cancellationToken);
         }
 
         return animal.ToResponse();
-
-        static string GetOriginalBlobName(string animalSlug, string fileName) => $"{animalSlug}/{fileName}";
     }
 
     public async Task<Result> ProcessOriginalAsync(AnimalImageAddedEvent data,
@@ -129,7 +128,7 @@ public class AnimalImagesManager(
         }
     }
 
-    private async Task UploadProcessedBundleAsync(string animalSlug, int imageId, ImageStreamBundle bundle,
+    private async Task UploadProcessedBundleAsync(string animalSlug, Guid imageId, ImageStreamBundle bundle,
         CancellationToken cancellationToken)
     {
         await Task.WhenAll(
