@@ -4,7 +4,6 @@ using Adoptrix.Core.Events;
 using Adoptrix.Logic.Mapping;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
-using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 

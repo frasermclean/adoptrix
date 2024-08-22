@@ -3,7 +3,6 @@ using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Logic.Errors;
 using Adoptrix.Logic.Services;
-using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;

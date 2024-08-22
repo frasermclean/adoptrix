@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Api.Security;
 using Adoptrix.Logic.Services;
-using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;

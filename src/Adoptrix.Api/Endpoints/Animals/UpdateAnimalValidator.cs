@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Api.Validators;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Core;
-using FastEndpoints;
 using FluentValidation;
 
 namespace Adoptrix.Api.Endpoints.Animals;

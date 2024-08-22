@@ -4,7 +4,6 @@ using Adoptrix.Api.Security;
 using Adoptrix.Logic;
 using Adoptrix.Persistence.Services;
 using Adoptrix.ServiceDefaults;
-using FastEndpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;

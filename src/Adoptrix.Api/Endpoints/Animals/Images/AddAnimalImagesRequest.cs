@@ -1,5 +1,4 @@
-﻿using FastEndpoints;
-using Microsoft.Identity.Web;
+﻿using Microsoft.Identity.Web;
 
 namespace Adoptrix.Api.Endpoints.Animals.Images;
 

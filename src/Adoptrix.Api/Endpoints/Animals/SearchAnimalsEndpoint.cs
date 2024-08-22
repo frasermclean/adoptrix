@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Logic.Services;
-using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Adoptrix.Api.Endpoints.Animals;

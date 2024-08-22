@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Api.Mapping;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Persistence.Services;
-using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
