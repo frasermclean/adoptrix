@@ -6,7 +6,6 @@ using FluentResults;
 
 namespace Adoptrix.Api.Tests.Endpoints.Users;
 
-[Collection(nameof(TestContainersCollection))]
 [Trait("Category", "Integration")]
 public class GetUserEndpointTests(MockServicesFixture fixture) : TestBase<MockServicesFixture>
 {
