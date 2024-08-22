@@ -1,3 +1,3 @@
 ﻿namespace Adoptrix.Core.Events;
 
-public record AnimalImageAddedEvent(int AnimalId, int ImageId, string BlobName) : IDomainEvent;
+public record AnimalImageAddedEvent(string AnimalSlug, int ImageId, string BlobName) : IDomainEvent;

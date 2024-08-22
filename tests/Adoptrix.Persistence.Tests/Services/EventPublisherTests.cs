@@ -16,8 +16,8 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
     public async Task PublishAsync_WithAnimalDeletedEvent_ShouldReturnSuccess()
     {
         // arrange
-        var animalId = Random.Shared.Next();
-        var animalDeletedEvent = new AnimalDeletedEvent(animalId);
+        const string animalSlug = "bruno-2022-01-01";
+        var animalDeletedEvent = new AnimalDeletedEvent(animalSlug);
 
         // act
         var messageId = await eventPublisher.PublishAsync(animalDeletedEvent);
@@ -25,17 +25,17 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
         // assert
         var response = await fixture.AnimalDeletedQueueClient.PeekMessageAsync();
         response.Value.MessageId.Should().Be(messageId);
-        response.Value.MessageText.Should().Contain(animalId.ToString());
+        response.Value.MessageText.Should().Contain(animalSlug);
     }
 
     [Fact]
     public async Task PublishAsync_WithAnimalImageAddedEvent_ShouldReturnSuccess()
     {
         // arrange
-        var animalId = Random.Shared.Next();
+        var animalSlug = Guid.NewGuid().ToString();
         var imageId = Random.Shared.Next();
-        var blobName = $"{animalId}/image.jpg";
-        var animalImageAddedEvent = new AnimalImageAddedEvent(animalId, imageId, blobName);
+        var blobName = $"{animalSlug}/image.jpg";
+        var animalImageAddedEvent = new AnimalImageAddedEvent(animalSlug, imageId, blobName);
 
         // act
         var messageId = await eventPublisher.PublishAsync(animalImageAddedEvent);
@@ -43,7 +43,7 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
         // assert
         var response = await fixture.AnimalImageAddedQueueClient.PeekMessageAsync();
         response.Value.MessageId.Should().Be(messageId);
-        response.Value.MessageText.Should().Contain(animalId.ToString());
+        response.Value.MessageText.Should().Contain(animalSlug);
         response.Value.MessageText.Should().Contain(imageId.ToString());
         response.Value.MessageText.Should().Contain(blobName);
     }

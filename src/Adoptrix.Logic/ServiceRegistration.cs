@@ -14,7 +14,8 @@ public static class ServiceRegistration
             .AddScoped<IAnimalsService, AnimalsService>()
             .AddScoped<IBreedsService, BreedsService>()
             .AddScoped<ISpeciesService, SpeciesService>()
-            .AddScoped<IAnimalImagesManager, AnimalImagesManager>();
+            .AddScoped<IAnimalImagesManager, AnimalImagesManager>()
+            .AddSingleton<IImageProcessor, ImageProcessor>();
 
         return services;
     }

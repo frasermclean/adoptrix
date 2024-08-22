@@ -158,7 +158,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
 
         logger.LogInformation("Deleted animal with ID: {AnimalId}", animalId);
 
-        await eventPublisher.PublishAsync(new AnimalDeletedEvent(animal.Id), cancellationToken);
+        await eventPublisher.PublishAsync(new AnimalDeletedEvent(animal.Slug), cancellationToken);
 
         return Result.Ok();
     }

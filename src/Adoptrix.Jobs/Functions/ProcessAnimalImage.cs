@@ -11,6 +11,11 @@ public class ProcessAnimalImage(IAnimalImagesManager animalImagesManager)
     public async Task ExecuteAsync([QueueTrigger(QueueNames.AnimalImageAdded)] AnimalImageAddedEvent data,
         CancellationToken cancellationToken = default)
     {
-        await animalImagesManager.ProcessAnimalImageAsync(data, cancellationToken);
+        var result = await animalImagesManager.ProcessOriginalAsync(data, cancellationToken);
+
+        if (result.IsFailed)
+        {
+            throw new InvalidOperationException(result.Errors.First().Message);
+        }
     }
 }

@@ -40,7 +40,7 @@ public class AddAnimalImagesEndpoint(
 
         // publish events for each image added
         foreach (var @event in images.Select(image =>
-                     new AnimalImageAddedEvent(animal.Id, image.Id, GetBlobName(animal.Id, image.OriginalFileName))))
+                     new AnimalImageAddedEvent(animal.Slug, image.Id, GetBlobName(animal.Id, image.OriginalFileName))))
         {
             await eventPublisher.PublishAsync(@event, cancellationToken);
         }

@@ -11,7 +11,7 @@
             <MudText Typo="Typo.subtitle1">@Match.BreedName</MudText>
         </CardHeaderContent>
     </MudCardHeader>
-    <MudCardMedia Height="240" Image="@(ImageUrlResolver.GetPreviewUrl(Match.Id, Match.Image?.Id))"/>
+    <MudCardMedia Height="240" Image="@(ImageUrlResolver.GetPreviewUrl(Match.Slug, Match.Image?.Id))"/>
     <MudCardActions>
         <MudButton Href="@($"/animals/{Match.Slug}")">View Details</MudButton>
         <MudSpacer></MudSpacer>

@@ -1,6 +1,8 @@
 ﻿using Adoptrix.Core.Events;
+using Adoptrix.Logic.Errors;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,7 +11,8 @@ namespace Adoptrix.Logic.Services;
 
 public interface IAnimalImagesManager
 {
-    Task ProcessAnimalImageAsync(AnimalImageAddedEvent data, CancellationToken cancellationToken = default);
+    Task<Result> ProcessOriginalAsync(AnimalImageAddedEvent data, CancellationToken cancellationToken = default);
+    Task DeleteImagesAsync(AnimalDeletedEvent data, CancellationToken cancellationToken = default);
 }
 
 public class AnimalImagesManager(
@@ -21,14 +24,15 @@ public class AnimalImagesManager(
     [FromKeyedServices(BlobContainerNames.AnimalImages)]
     IBlobContainerManager animalImagesContainerManager) : IAnimalImagesManager
 {
-    public async Task ProcessAnimalImageAsync(AnimalImageAddedEvent data,
+    public async Task<Result> ProcessOriginalAsync(AnimalImageAddedEvent data,
         CancellationToken cancellationToken = default)
     {
         // ensure animal exists in database
-        var animal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == data.AnimalId, cancellationToken);
+        var animal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Slug == data.AnimalSlug, cancellationToken);
         if (animal is null)
         {
-            throw new InvalidOperationException($"Could not find animal with ID {data.AnimalId}");
+            logger.LogError("Animal with slug {AnimalSlug} not found", data.AnimalSlug);
+            return new AnimalNotFoundError(data.AnimalSlug);
         }
 
         // process original image
@@ -37,7 +41,7 @@ public class AnimalImagesManager(
         await using var bundle = await imageProcessor.ProcessOriginalAsync(originalStream, cancellationToken);
 
         // upload processed images
-        await UploadProcessedBundleAsync(data.AnimalId, data.ImageId, bundle, cancellationToken);
+        await UploadProcessedBundleAsync(data.AnimalSlug, data.ImageId, bundle, cancellationToken);
 
         // update entity in database
         var image = animal.Images.First(image => image.Id == data.ImageId);
@@ -47,11 +51,24 @@ public class AnimalImagesManager(
         // remove original image
         await originalImagesContainerManager.DeleteBlobAsync(data.BlobName, cancellationToken);
 
-        logger.LogInformation("Processed image with ID: {ImageId} for animal with ID: {AnimalId}",
-            data.ImageId, data.AnimalId);
+        logger.LogInformation("Processed image with ID: {ImageId} for animal with slug: {AnimalId}",
+            data.ImageId, data.AnimalSlug);
+
+        return Result.Ok();
     }
 
-    private async Task UploadProcessedBundleAsync(int animalId, int imageId, ImageStreamBundle bundle,
+    public async Task DeleteImagesAsync(AnimalDeletedEvent data, CancellationToken cancellationToken = default)
+    {
+        var blobNames = await animalImagesContainerManager.GetBlobNamesAsync($"{data.AnimalSlug}/", cancellationToken);
+
+        foreach (var blobName in blobNames)
+        {
+            await animalImagesContainerManager.DeleteBlobAsync(blobName, cancellationToken);
+            logger.LogInformation("Deleted blob {BlobName}", blobName);
+        }
+    }
+
+    private async Task UploadProcessedBundleAsync(string animalSlug, int imageId, ImageStreamBundle bundle,
         CancellationToken cancellationToken)
     {
         await Task.WhenAll(
@@ -60,12 +77,12 @@ public class AnimalImagesManager(
             UploadImageAsync(bundle.FullSizeWriteStream, "full")
         );
 
-        logger.LogInformation("Uploaded processed images for animal with ID: {AnimalId}", animalId);
+        logger.LogInformation("Uploaded processed images for animal with slug: {AnimalId}", animalSlug);
         return;
 
         async Task UploadImageAsync(Stream stream, string size)
         {
-            var blobName = $"{animalId}/{imageId}/{size}.webp";
+            var blobName = $"{animalSlug}/{imageId}/{size}.webp";
             await animalImagesContainerManager.UploadBlobAsync(blobName, stream, ImageProcessor.OutputContentType,
                 cancellationToken);
         }

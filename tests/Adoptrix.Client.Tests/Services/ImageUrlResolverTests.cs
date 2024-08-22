@@ -10,24 +10,24 @@ public class ImageUrlResolverTests
     public void GetPreviewUrl_WithValidParameters_ShouldReturnCorrectUrl()
     {
         // Arrange
-        const int animalId = 1;
+        const string animalSlug = "slug";
         const int imageId = 2;
 
         // Act
-        var url = imageUrlResolver.GetPreviewUrl(animalId, imageId);
+        var url = imageUrlResolver.GetPreviewUrl(animalSlug, imageId);
 
         // Assert
-        url.Should().Be("https://localhost:8080/images/1/2/preview.webp");
+        url.Should().Be("https://localhost:8080/images/slug/2/preview.webp");
     }
 
     [Fact]
     public void GetPreviewUrl_WithNullImageId_ShouldReturnEmptyString()
     {
         // Arrange
-        const int animalId = 1;
+        const string animalSlug = "slug";
 
         // Act
-        var url = imageUrlResolver.GetPreviewUrl(animalId, null);
+        var url = imageUrlResolver.GetPreviewUrl(animalSlug, null);
 
         // Assert
         url.Should().BeEmpty();
@@ -37,27 +37,27 @@ public class ImageUrlResolverTests
     public void GetThumbUrl_WithValidParameters_ShouldReturnCorrectUrl()
     {
         // Arrange
-        const int animalId = 1;
+        const string animalSlug = "slug";
         const int imageId = 2;
 
         // Act
-        var url = imageUrlResolver.GetThumbUrl(animalId, imageId);
+        var url = imageUrlResolver.GetThumbUrl(animalSlug, imageId);
 
         // Assert
-        url.Should().Be("https://localhost:8080/images/1/2/thumb.webp");
+        url.Should().Be("https://localhost:8080/images/slug/2/thumb.webp");
     }
 
     [Fact]
     public void GetFullSizeUrl_WithValidParameters_ShouldReturnCorrectUrl()
     {
         // Arrange
-        const int animalId = 1;
+        const string animalSlug = "slug";
         const int imageId = 2;
 
         // Act
-        var url = imageUrlResolver.GetFullSizeUrl(animalId, imageId);
+        var url = imageUrlResolver.GetFullSizeUrl(animalSlug, imageId);
 
         // Assert
-        url.Should().Be("https://localhost:8080/images/1/2/full.webp");
+        url.Should().Be("https://localhost:8080/images/slug/2/full.webp");
     }
 }
