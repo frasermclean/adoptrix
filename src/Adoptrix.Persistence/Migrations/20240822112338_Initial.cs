@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Adoptrix.Persistence.Migrations
 {
     /// <inheritdoc />
@@ -98,39 +96,6 @@ namespace Adoptrix.Persistence.Migrations
                         principalTable: "Animals",
                         principalColumn: "Slug",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Species",
-                column: "Name",
-                values: new object[]
-                {
-                    "Bird",
-                    "Cat",
-                    "Dog"
-                });
-
-            migrationBuilder.InsertData(
-                table: "Breeds",
-                columns: new[] { "Id", "Name", "SpeciesName" },
-                values: new object[,]
-                {
-                    { 1, "Labrador Retriever", "Dog" },
-                    { 2, "German Shepherd", "Dog" },
-                    { 3, "Golden Retriever", "Dog" },
-                    { 4, "Domestic Shorthair", "Cat" },
-                    { 5, "African Grey Parrot", "Bird" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Animals",
-                columns: new[] { "Id", "BreedId", "DateOfBirth", "Description", "IsDeleted", "Name", "Sex", "Slug" },
-                values: new object[,]
-                {
-                    { 1, 1, new DateOnly(2024, 2, 14), "Meet Alberto, a delightful Labrador puppy searching for his forever home. With a golden coat that's as soft as his heart, Alberto's playful spirit is infectious. From chasing butterflies to fetching balls, his days are filled with joy and curiosity. This lovable pup dreams of a family to call his own, where he can share his boundless love and enthusiasm. Could you be the one to open your heart and home to Alberto, making his dreams come true? Adopt this charming ball of fur, and let the adventure of a lifetime begin! 🐾 #AdoptAlberto", false, "Alberto", "M", "alberto-2024-02-14" },
-                    { 2, 2, new DateOnly(2020, 4, 19), "Meet Barry, a majestic German Shepherd with a heart as loyal as his gaze. At four years old, Barry embodies both strength and gentleness in equal measure. His rich, dark coat gleams in the sunlight as he explores the world with curiosity and confidence. From romping through fields to standing guard with unwavering vigilance, Barry is the epitome of loyalty and companionship. This noble canine seeks a forever home where he can shower his family with unconditional love and protection. Ready to welcome a steadfast friend into your life? Consider adopting Barry, and embark on a journey of trust, devotion, and endless adventure! 🐾 #AdoptBarry", false, "Barry", "M", "barry-2020-04-19" },
-                    { 3, 4, new DateOnly(2022, 9, 30), "Introducing Ginger, a beautiful, captivating feline with a coat as fiery as her playful spirit. This adorable cat enchants everyone with her graceful moves and amber-colored eyes. From chasing sunbeams to batting at toys, Ginger's days are a whimsical blend of elegance and mischief. This charming kitty yearns for a loving home, where she can curl up on a cozy spot and purr her way into your heart. Are you ready to add a touch of warmth and whimsy to your life? Consider adopting Ginger, and let the purr-fect companionship begin! 🐾 #AdoptGinger", false, "Ginger", "F", "ginger-2022-09-30" },
-                    { 4, 5, new DateOnly(2017, 4, 11), "Meet Percy, a charming African Grey Parrot with a personality as colorful as his feathers.", false, "Percy", "M", "percy-2017-04-11" }
                 });
 
             migrationBuilder.CreateIndex(

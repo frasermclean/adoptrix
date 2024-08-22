@@ -20,41 +20,5 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
 
         builder.HasIndex(breed => breed.Name)
             .IsUnique();
-
-        builder.HasData(InitialData);
     }
-
-    private static readonly object[] InitialData =
-    [
-        new
-        {
-            Id = 1,
-            Name = "Labrador Retriever",
-            SpeciesName = "Dog"
-        },
-        new
-        {
-            Id = 2,
-            Name = "German Shepherd",
-            SpeciesName = "Dog"
-        },
-        new
-        {
-            Id = 3,
-            Name = "Golden Retriever",
-            SpeciesName = "Dog"
-        },
-        new
-        {
-            Id = 4,
-            Name = "Domestic Shorthair",
-            SpeciesName = "Cat"
-        },
-        new
-        {
-            Id = 5,
-            Name = "African Grey Parrot",
-            SpeciesName = "Bird"
-        }
-    ];
 }

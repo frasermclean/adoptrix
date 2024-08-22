@@ -12,11 +12,13 @@ namespace Adoptrix.Logic.Services;
 
 public interface IBreedsService
 {
-    Task<IEnumerable<BreedMatch>> SearchAsync(SearchBreedsRequest request, CancellationToken cancellationToken);
-    Task<Result<BreedResponse>> GetAsync(int breedId, CancellationToken cancellationToken);
-    Task<Result<BreedResponse>> AddAsync(AddBreedRequest request, CancellationToken cancellationToken);
-    Task<Result<BreedResponse>> UpdateAsync(UpdateBreedRequest request, CancellationToken cancellationToken);
-    Task<Result> DeleteAsync(int breedId, CancellationToken cancellationToken);
+    Task<IEnumerable<BreedMatch>> SearchAsync(SearchBreedsRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<BreedResponse>> GetAsync(int breedId, CancellationToken cancellationToken = default);
+    Task<Result<BreedResponse>> AddAsync(AddBreedRequest request, CancellationToken cancellationToken = default);
+    Task<Result<BreedResponse>> UpdateAsync(UpdateBreedRequest request, CancellationToken cancellationToken = default);
+    Task<Result> DeleteAsync(int breedId, CancellationToken cancellationToken = default);
 }
 
 public class BreedsService(ILogger<BreedsService> logger, AdoptrixDbContext dbContext) : IBreedsService
