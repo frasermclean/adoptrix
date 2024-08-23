@@ -21,7 +21,7 @@ public static class AnimalFactory
             DateOfBirth = dateOfBirth.Value,
             Slug = Animal.CreateSlug(name, dateOfBirth.Value),
             Images = AnimalImageFactory.CreateMany(imageCount).ToList(),
-            CreatedBy = createdBy ?? Guid.NewGuid()
+            LastModifiedBy = createdBy ?? Guid.NewGuid()
         };
     }
 

@@ -14,8 +14,8 @@ public class Animal : IUserCreatedEntity
     public required DateOnly DateOfBirth { get; set; }
     public required string Slug { get; init; }
     public List<AnimalImage> Images { get; init; } = [];
-    public Guid CreatedBy { get; init; }
-    public DateTime CreatedAt { get; init; }
+    public Guid LastModifiedBy { get; set; }
+    public DateTime LastModifiedUtc { get; set; }
     public bool IsDeleted { get; set; }
 
     public override bool Equals(object? otherObject)

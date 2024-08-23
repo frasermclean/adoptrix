@@ -2,6 +2,6 @@
 
 public interface IUserCreatedEntity
 {
-    Guid CreatedBy { get; }
-    DateTime CreatedAt { get; }
+    Guid LastModifiedBy { get; }
+    DateTime LastModifiedUtc { get; }
 }

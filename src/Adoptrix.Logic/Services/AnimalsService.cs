@@ -102,7 +102,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
             Sex = Enum.Parse<Sex>(request.Sex),
             DateOfBirth = request.DateOfBirth,
             Slug = Animal.CreateSlug(request.Name, request.DateOfBirth),
-            CreatedBy = request.UserId
+            LastModifiedBy = request.UserId
         };
 
         breed.Animals.Add(animal);
@@ -136,6 +136,8 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
         animal.Breed = breed;
         animal.Sex = Enum.Parse<Sex>(request.Sex);
         animal.DateOfBirth = request.DateOfBirth;
+        animal.LastModifiedBy = request.UserId;
+        animal.LastModifiedUtc = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -153,7 +155,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
             return new AnimalNotFoundError(animalId);
         }
 
-        dbContext.Animals.Remove(animal);
+        animal.IsDeleted = true;
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Deleted animal with ID: {AnimalId}", animalId);

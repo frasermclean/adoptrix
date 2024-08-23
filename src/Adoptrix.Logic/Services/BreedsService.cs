@@ -86,7 +86,7 @@ public class BreedsService(ILogger<BreedsService> logger, AdoptrixDbContext dbCo
         {
             Name = request.Name,
             Species = species,
-            CreatedBy = request.UserId
+            LastModifiedBy = request.UserId
         };
         species.Breeds.Add(breed);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -118,6 +118,8 @@ public class BreedsService(ILogger<BreedsService> logger, AdoptrixDbContext dbCo
         // update breed
         breed.Name = request.Name;
         breed.Species = species;
+        breed.LastModifiedBy = request.UserId;
+        breed.LastModifiedUtc = DateTime.UtcNow;
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Updated breed with ID {BreedId}", request.BreedId);

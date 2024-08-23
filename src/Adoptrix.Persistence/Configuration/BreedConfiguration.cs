@@ -11,11 +11,11 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
         builder.Property(breed => breed.Name)
             .HasMaxLength(Breed.NameMaxLength);
 
-        builder.Property(breed => breed.CreatedAt)
+        builder.Property(breed => breed.LastModifiedUtc)
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
 
-        builder.Property(animal => animal.CreatedBy)
+        builder.Property(breed => breed.LastModifiedBy)
             .HasDefaultValue(Guid.Empty);
 
         builder.HasIndex(breed => breed.Name)

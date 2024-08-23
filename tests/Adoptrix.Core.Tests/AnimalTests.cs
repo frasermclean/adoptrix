@@ -26,7 +26,7 @@ public class AnimalTests
         animal.Sex.Should().Be(sex);
         animal.DateOfBirth.Should().Be(dateOfBirth);
         animal.Images.Should().HaveCount(imageCount);
-        animal.CreatedBy.Should().Be(userId);
+        animal.LastModifiedBy.Should().Be(userId);
     }
 
     [Fact]

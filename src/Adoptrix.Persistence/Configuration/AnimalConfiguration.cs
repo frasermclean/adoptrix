@@ -21,11 +21,11 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
         builder.Property(animal => animal.Sex)
             .HasConversion<SexConverter>();
 
-        builder.Property(animal => animal.CreatedAt)
+        builder.Property(animal => animal.LastModifiedUtc)
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
 
-        builder.Property(animal => animal.CreatedBy)
+        builder.Property(animal => animal.LastModifiedBy)
             .HasDefaultValue(Guid.Empty);
 
         builder.Property(animal => animal.Slug)
@@ -46,7 +46,7 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             imagesBuilder.Property(animalImage => animalImage.Id)
                 .HasDefaultValueSql("newid()");
 
-            imagesBuilder.Property(animalImage => animalImage.CreatedAt)
+            imagesBuilder.Property(animalImage => animalImage.LastModifiedUtc)
                 .HasPrecision(2)
                 .HasDefaultValueSql("getutcdate()");
 

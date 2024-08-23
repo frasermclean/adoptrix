@@ -15,13 +15,15 @@ namespace Adoptrix.Persistence.Migrations
                 name: "Species",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    LastModifiedUtc = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Species", x => x.Name);
+                    table.PrimaryKey("PK_Species", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -31,18 +33,18 @@ namespace Adoptrix.Persistence.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    SpeciesName = table.Column<string>(type: "nvarchar(20)", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
+                    SpeciesId = table.Column<int>(type: "int", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    LastModifiedUtc = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Breeds", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Breeds_Species_SpeciesName",
-                        column: x => x.SpeciesName,
+                        name: "FK_Breeds_Species_SpeciesId",
+                        column: x => x.SpeciesId,
                         principalTable: "Species",
-                        principalColumn: "Name",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -57,8 +59,8 @@ namespace Adoptrix.Persistence.Migrations
                     Sex = table.Column<string>(type: "nvarchar(1)", nullable: false),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                     Slug = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()"),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    LastModifiedUtc = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()"),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -83,8 +85,8 @@ namespace Adoptrix.Persistence.Migrations
                     OriginalFileName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
                     OriginalContentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     IsProcessed = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastModifiedUtc = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
                 },
                 constraints: table =>
                 {
@@ -109,9 +111,15 @@ namespace Adoptrix.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Breeds_SpeciesName",
+                name: "IX_Breeds_SpeciesId",
                 table: "Breeds",
-                column: "SpeciesName");
+                column: "SpeciesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Species_Name",
+                table: "Species",
+                column: "Name",
+                unique: true);
         }
 
         /// <inheritdoc />

@@ -14,8 +14,8 @@ public static class AnimalImageFactory
         OriginalFileName = originalFileName,
         OriginalContentType = originalContentType,
         IsProcessed = isProcessed,
-        CreatedBy = uploadedBy ?? Guid.NewGuid(),
-        CreatedAt = uploadedAt ?? DateTime.UtcNow
+        LastModifiedBy = uploadedBy ?? Guid.NewGuid(),
+        LastModifiedUtc = uploadedAt ?? DateTime.UtcNow
     };
 
     public static IEnumerable<AnimalImage> CreateMany(int count) => Enumerable.Range(0, count).Select(_ => Create());

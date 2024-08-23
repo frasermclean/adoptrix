@@ -56,7 +56,7 @@ public class AnimalImagesManager(
                     Description = item.Description,
                     OriginalFileName = item.FileName,
                     OriginalContentType = item.ContentType,
-                    CreatedBy = userId
+                    LastModifiedBy = userId
                 };
 
                 var blobName = image.GetOriginalBlobName();

@@ -10,8 +10,8 @@ public class AnimalImage : IUserCreatedEntity
     public required string OriginalFileName { get; init; }
     public required string OriginalContentType { get; init; }
     public bool IsProcessed { get; set; }
-    public Guid CreatedBy { get; init; }
-    public DateTime CreatedAt { get; init; }
+    public Guid LastModifiedBy { get; init; }
+    public DateTime LastModifiedUtc { get; init; }
 
     public string GetOriginalBlobName() => $"{AnimalSlug}/{OriginalFileName}";
 }

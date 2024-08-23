@@ -11,6 +11,6 @@ public class AnimalResponse
     public required DateOnly DateOfBirth { get; init; }
     public required string Slug { get; init; }
     public required string Age { get; init; }
-    public required DateTime CreatedAt { get; init; }
+    public required DateTime LastModifiedUtc { get; init; }
     public required IEnumerable<AnimalImageResponse> Images { get; init; }
 }

@@ -11,13 +11,14 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
         builder.Property(species => species.Name)
             .HasMaxLength(Species.NameMaxLength);
 
-        builder.Property(species => species.CreatedAt)
+        builder.Property(species => species.LastModifiedUtc)
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
 
-        builder.Property(animal => animal.CreatedBy)
+        builder.Property(species => species.LastModifiedBy)
             .HasDefaultValue(Guid.Empty);
 
-        builder.HasKey(species => species.Name);
+        builder.HasIndex(species => species.Name)
+            .IsUnique();
     }
 }
