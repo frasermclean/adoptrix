@@ -4,7 +4,7 @@ namespace Adoptrix.Logic.Errors;
 
 public class AnimalNotFoundError : Error
 {
-    public AnimalNotFoundError(int animalId) : base($"Animal with ID {animalId} not found.")
+    public AnimalNotFoundError(Guid animalId) : base($"Animal with ID {animalId} not found.")
     {
     }
 

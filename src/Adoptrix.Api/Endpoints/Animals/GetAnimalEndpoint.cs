@@ -9,13 +9,13 @@ public class GetAnimalEndpoint(IAnimalsService animalsService)
 {
     public override void Configure()
     {
-        Get("animals/{animalId:int}", "animals/{animalSlug}");
+        Get("animals/{animalId:guid}", "animals/{animalSlug}");
         AllowAnonymous();
     }
 
     public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(CancellationToken cancellationToken)
     {
-        var animalId = Route<int?>("animalId", false);
+        var animalId = Route<Guid?>("animalId", false);
         var animalSlug = Route<string>("animalSlug", false);
 
         var result = animalId.HasValue

@@ -12,7 +12,7 @@ public class UpdateAnimalEndpoint(IAnimalsService animalsService)
 {
     public override void Configure()
     {
-        Put("animals/{animalId:int}");
+        Put("animals/{animalId:guid}");
         Permissions(PermissionNames.AnimalsWrite);
     }
 

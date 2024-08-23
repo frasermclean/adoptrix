@@ -24,11 +24,10 @@ namespace Adoptrix.Persistence.Migrations
 
             modelBuilder.Entity("Adoptrix.Core.Animal", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("newid()");
 
                     b.Property<int>("BreedId")
                         .HasColumnType("int");
@@ -64,8 +63,8 @@ namespace Adoptrix.Persistence.Migrations
 
                     b.Property<string>("Slug")
                         .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -145,7 +144,7 @@ namespace Adoptrix.Persistence.Migrations
                     b.OwnsMany("Adoptrix.Core.AnimalImage", "Images", b1 =>
                         {
                             b1.Property<string>("AnimalSlug")
-                                .HasColumnType("nvarchar(60)");
+                                .HasColumnType("nvarchar(50)");
 
                             b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()

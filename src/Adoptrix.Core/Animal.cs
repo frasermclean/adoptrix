@@ -6,7 +6,7 @@ public class Animal : IUserCreatedEntity
     public const int DescriptionMaxLength = 2000;
     public const int SlugMaxLength = 50;
 
-    public int Id { get; init; }
+    public Guid Id { get; init; }
     public required string Name { get; set; }
     public string? Description { get; set; }
     public required Breed Breed { get; set; }

@@ -50,14 +50,13 @@ namespace Adoptrix.Persistence.Migrations
                 name: "Animals",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "newid()"),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
                     BreedId = table.Column<int>(type: "int", nullable: false),
                     Sex = table.Column<string>(type: "nvarchar(1)", nullable: false),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
-                    Slug = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
+                    Slug = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
                     CreatedAt = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()"),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -79,7 +78,7 @@ namespace Adoptrix.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "newid()"),
-                    AnimalSlug = table.Column<string>(type: "nvarchar(60)", nullable: false),
+                    AnimalSlug = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OriginalFileName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
                     OriginalContentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),

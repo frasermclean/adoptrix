@@ -8,7 +8,7 @@ public class AnimalTests
     public void CreateAnimal_WithSpecifiedValues_ShouldReturnExpectedResult()
     {
         // arrange
-        var id = Random.Shared.Next();
+        var id = Guid.NewGuid();
         const string name = "Susie";
         var breed = BreedFactory.Create();
         const Sex sex = Sex.Female;
@@ -33,7 +33,7 @@ public class AnimalTests
     public void TwoAnimals_WithSameIds_Should_BeEqual()
     {
         // arrange
-        const int id = 5;
+        var id = Guid.NewGuid();
         var max = AnimalFactory.Create(id, "Max");
         var felix = AnimalFactory.Create(id, "Felix");
         var otherObject = new object();

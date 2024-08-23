@@ -15,7 +15,7 @@ namespace Adoptrix.Logic.Services;
 
 public interface IAnimalImagesManager
 {
-    Task<Result<AnimalResponse>> AddOriginalsAsync(int animalId, Guid userId,
+    Task<Result<AnimalResponse>> AddOriginalsAsync(Guid animalId, Guid userId,
         IAsyncEnumerable<AddOriginalImageData> items, CancellationToken cancellationToken = default);
 
     Task<Result> ProcessOriginalAsync(AnimalImageAddedEvent data, CancellationToken cancellationToken = default);
@@ -32,7 +32,7 @@ public class AnimalImagesManager(
     IBlobContainerManager animalImagesContainerManager,
     IEventPublisher eventPublisher) : IAnimalImagesManager
 {
-    public async Task<Result<AnimalResponse>> AddOriginalsAsync(int animalId, Guid userId,
+    public async Task<Result<AnimalResponse>> AddOriginalsAsync(Guid animalId, Guid userId,
         IAsyncEnumerable<AddOriginalImageData> items, CancellationToken cancellationToken = default)
     {
         // ensure animal exists in database

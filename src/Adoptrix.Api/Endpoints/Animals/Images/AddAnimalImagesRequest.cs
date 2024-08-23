@@ -4,6 +4,6 @@ namespace Adoptrix.Api.Endpoints.Animals.Images;
 
 public class AddAnimalImagesRequest
 {
-    public int AnimalId { get; init; }
+    public Guid AnimalId { get; init; }
     [FromClaim(ClaimConstants.Oid)] public Guid UserId { get; init; }
 }

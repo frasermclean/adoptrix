@@ -1,5 +1,3 @@
-using Adoptrix.Persistence.Services;
-
 namespace Adoptrix.Initializer.Services;
 
 public class WorkerService(

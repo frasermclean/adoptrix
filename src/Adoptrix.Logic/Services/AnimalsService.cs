@@ -14,11 +14,11 @@ namespace Adoptrix.Logic.Services;
 public interface IAnimalsService
 {
     Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request, CancellationToken cancellationToken);
-    Task<Result<AnimalResponse>> GetAsync(int animalId, CancellationToken cancellationToken);
+    Task<Result<AnimalResponse>> GetAsync(Guid animalId, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> GetAsync(string animalSlug, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalRequest request, CancellationToken cancellationToken);
-    Task<Result> DeleteAsync(int animalId, CancellationToken cancellationToken);
+    Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken);
 }
 
 public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext dbContext, IEventPublisher eventPublisher)
@@ -53,7 +53,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
         return matches;
     }
 
-    public async Task<Result<AnimalResponse>> GetAsync(int animalId, CancellationToken cancellationToken)
+    public async Task<Result<AnimalResponse>> GetAsync(Guid animalId, CancellationToken cancellationToken)
     {
         var response = await dbContext.Animals.Where(animal => animal.Id == animalId)
             .AsNoTracking()
@@ -144,7 +144,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
         return animal.ToResponse();
     }
 
-    public async Task<Result> DeleteAsync(int animalId, CancellationToken cancellationToken)
+    public async Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken)
     {
         var animal = await dbContext.Animals.FirstOrDefaultAsync(animal => animal.Id == animalId, cancellationToken);
         if (animal is null)

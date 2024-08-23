@@ -9,6 +9,9 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 {
     public void Configure(EntityTypeBuilder<Animal> builder)
     {
+        builder.Property(animal => animal.Id)
+            .HasDefaultValueSql("newid()");
+
         builder.Property(animal => animal.Name)
             .HasMaxLength(Animal.NameMaxLength);
 

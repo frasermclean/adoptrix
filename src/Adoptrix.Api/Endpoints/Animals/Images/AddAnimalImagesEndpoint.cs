@@ -10,7 +10,7 @@ public class AddAnimalImagesEndpoint(IAnimalImagesManager animalImagesManager)
 {
     public override void Configure()
     {
-        Post("animals/{animalId:int}/images");
+        Post("animals/{animalId:guid}/images");
         AllowFileUploads(true);
     }
 
