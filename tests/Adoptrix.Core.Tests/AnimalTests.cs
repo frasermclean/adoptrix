@@ -45,4 +45,21 @@ public class AnimalTests
         max.Id.Should().Be(id);
         max.Name.Should().Be("Max");
     }
+
+    [Theory]
+    [InlineData("Buddy", 2022, 5, 2, "buddy-2022-05-02")]
+    [InlineData("Mr Muffins ", 2021, 11, 30, "mr-muffins-2021-11-30")]
+    [InlineData("  Fluffy ", 2020, 1, 1, "fluffy-2020-01-01")]
+    public void CreateSlug_WithValidNameAndDateOfBirth_ShouldReturnExpectedResult(string name, int year, int month,
+        int day, string expectedSlug)
+    {
+        // arrange
+        var dateOfBirth = new DateOnly(year, month, day);
+
+        // act
+        var slug = Animal.CreateSlug(name, dateOfBirth);
+
+        // assert
+        slug.Should().Be(expectedSlug);
+    }
 }

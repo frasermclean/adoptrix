@@ -4,7 +4,7 @@ public class Animal : IUserCreatedEntity
 {
     public const int NameMaxLength = 30;
     public const int DescriptionMaxLength = 2000;
-    public const int SlugMaxLength = 60;
+    public const int SlugMaxLength = 50;
 
     public int Id { get; init; }
     public required string Name { get; set; }
@@ -23,4 +23,10 @@ public class Animal : IUserCreatedEntity
 
     public override int GetHashCode()
         => Id.GetHashCode();
+
+    public static string CreateSlug(string name, DateOnly dateOfBirth)
+    {
+        name = string.Join('-', name.Trim().Split(' '));
+        return $"{name.ToLowerInvariant()}-{dateOfBirth:O}";
+    }
 }

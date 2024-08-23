@@ -59,7 +59,7 @@ public static class SeedData
             Breed = Breeds[0],
             Sex = Sex.Male,
             DateOfBirth = new DateOnly(2024, 02, 14),
-            Slug = "alberto-2024-02-14"
+            Slug = Animal.CreateSlug("Alberto", new DateOnly(2024, 02, 14))
         },
         new Animal
         {
@@ -69,7 +69,7 @@ public static class SeedData
             Breed = Breeds[1],
             Sex = Sex.Male,
             DateOfBirth = new DateOnly(2020, 04, 19),
-            Slug = "barry-2020-04-19"
+            Slug = Animal.CreateSlug("Barry", new DateOnly(2020, 04, 19))
         },
         new Animal
         {
@@ -79,7 +79,7 @@ public static class SeedData
             Breed = Breeds[3],
             Sex = Sex.Female,
             DateOfBirth = new DateOnly(2022, 09, 30),
-            Slug = "ginger-2022-09-30"
+            Slug = Animal.CreateSlug("Ginger", new DateOnly(2022, 09, 30))
 
         },
         new Animal
@@ -89,7 +89,7 @@ public static class SeedData
             Breed = Breeds[4],
             Sex = Sex.Male,
             DateOfBirth = new DateOnly(2017, 04, 11),
-            Slug = "percy-2017-04-11"
+            Slug = Animal.CreateSlug("Percy", new DateOnly(2017, 04, 11))
         }
     ];
 }

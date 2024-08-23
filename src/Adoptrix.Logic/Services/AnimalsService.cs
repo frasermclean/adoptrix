@@ -101,7 +101,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
             Breed = breed,
             Sex = Enum.Parse<Sex>(request.Sex),
             DateOfBirth = request.DateOfBirth,
-            Slug = $"{request.Name.ToLower()}-{request.DateOfBirth:O}",
+            Slug = Animal.CreateSlug(request.Name, request.DateOfBirth),
             CreatedBy = request.UserId
         };
 
