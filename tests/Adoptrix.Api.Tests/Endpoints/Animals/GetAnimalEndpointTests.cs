@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Initializer;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
@@ -24,7 +25,7 @@ public class GetAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
     public async Task GetAnimal_WithKnownAnimalId_ShouldReturnOk()
     {
         // arrange
-        const int animalId = 1;
+        var animalId = SeedData.Animals[0].Id;
 
         // act
         var message = await fixture.Client.GetAsync($"api/animals/{animalId}");

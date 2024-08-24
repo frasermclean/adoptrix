@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Initializer;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
@@ -13,7 +14,7 @@ public class DeleteAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task DeleteAnimal_WithValidRequest_ShouldReturnNoContent()
     {
         // arrange
-        const int animalId = 4;
+        var animalId = SeedData.Animals[3].Id;
 
         // act
         var message = await httpClient.DeleteAsync($"api/animals/{animalId}");
@@ -26,7 +27,7 @@ public class DeleteAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task DeleteAnimal_WithInvalidAnimalId_ShouldReturnNotFound()
     {
         // arrange
-        const int animalId = -1;
+        var animalId = Guid.Empty;
 
         // act
         var message = await httpClient.DeleteAsync($"api/animals/{animalId}");

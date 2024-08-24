@@ -4,6 +4,7 @@ using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
+using Adoptrix.Initializer;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
@@ -17,7 +18,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var request = CreateRequest(name: "Timmy", description: "Timmy is awesome", breedId: 2);
+        var request = CreateRequest(SeedData.Animals[0].Id, "Timmy", "Timmy is awesome", 2);
 
         // act
         var (message, response) =
@@ -46,7 +47,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task UpdateAnimal_WithInvalidBreedId_ShouldReturnBadRequest()
     {
         // arrange
-        var request = CreateRequest(breedId: -1);
+        var request = CreateRequest(SeedData.Animals[0].Id, breedId: -1);
 
         // act
         var (message, response) =
