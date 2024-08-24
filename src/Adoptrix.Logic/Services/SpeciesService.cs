@@ -24,6 +24,7 @@ public class SpeciesService(AdoptrixDbContext dbContext) : ISpeciesService
             .AsNoTracking()
             .Select(species => new SpeciesMatch
             {
+                Id = species.Id,
                 Name = species.Name,
                 BreedCount = species.Breeds.Count,
                 AnimalCount = species.Breeds.Count(breed => breed.Animals.Count > 0)
@@ -42,6 +43,7 @@ public class SpeciesService(AdoptrixDbContext dbContext) : ISpeciesService
             .AsNoTracking()
             .Select(species => new SpeciesResponse
             {
+                Id = species.Id,
                 Name = species.Name
             })
             .FirstOrDefaultAsync(cancellationToken);
