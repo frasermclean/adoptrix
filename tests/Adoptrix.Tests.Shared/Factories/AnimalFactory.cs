@@ -7,7 +7,7 @@ public static class AnimalFactory
     private static readonly string[] Names = ["Buddy", "Max", "Bella", "Lucy", "Charlie", "Daisy", "Bailey", "Molly"];
 
     public static Animal Create(Guid? id = null, string? name = null, Breed? breed = null, Sex sex = Sex.Male,
-        DateOnly? dateOfBirth = null, int imageCount = 0, Guid? createdBy = null)
+        DateOnly? dateOfBirth = null, string? slug = null, int imageCount = 0, Guid? createdBy = null)
     {
         name ??= Names[Random.Shared.Next(Names.Length)];
         dateOfBirth ??= DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 2));
@@ -19,7 +19,7 @@ public static class AnimalFactory
             Breed = breed ?? BreedFactory.Create(),
             Sex = sex,
             DateOfBirth = dateOfBirth.Value,
-            Slug = Animal.CreateSlug(name, dateOfBirth.Value),
+            Slug = slug ?? Animal.CreateSlug(name, dateOfBirth.Value),
             Images = AnimalImageFactory.CreateMany(imageCount).ToList(),
             LastModifiedBy = createdBy ?? Guid.NewGuid()
         };

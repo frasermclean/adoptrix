@@ -15,9 +15,10 @@ public class AnimalTests
         var userId = Guid.NewGuid();
         const int imageCount = 3;
         var dateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 1.5));
+        var slug = Animal.CreateSlug(name, dateOfBirth);
 
         // act
-        var animal = AnimalFactory.Create(id, name, breed, sex, dateOfBirth, imageCount, userId);
+        var animal = AnimalFactory.Create(id, name, breed, sex, dateOfBirth, slug, imageCount, userId);
 
         // assert
         animal.Id.Should().Be(id);
@@ -25,6 +26,7 @@ public class AnimalTests
         animal.Breed.Should().Be(breed);
         animal.Sex.Should().Be(sex);
         animal.DateOfBirth.Should().Be(dateOfBirth);
+        animal.Slug.Should().Be(slug);
         animal.Images.Should().HaveCount(imageCount);
         animal.LastModifiedBy.Should().Be(userId);
     }
