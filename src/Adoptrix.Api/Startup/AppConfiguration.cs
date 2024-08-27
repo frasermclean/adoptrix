@@ -19,6 +19,7 @@ public static class AppConfiguration
             options.Connect(new Uri(endpoint), new DefaultAzureCredential())
                 .Select(KeyFilter.Any)
                 .Select(KeyFilter.Any, builder.Environment.EnvironmentName);
+            options.ConfigureKeyVault(keyVaultOptions => keyVaultOptions.SetCredential(new DefaultAzureCredential()));
         });
 
         return builder;
