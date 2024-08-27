@@ -9,38 +9,52 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 {
     public void Configure(EntityTypeBuilder<Animal> builder)
     {
+        builder.Property(animal => animal.Id)
+            .HasDefaultValueSql("newid()");
+
         builder.Property(animal => animal.Name)
-            .HasColumnType("nvarchar")
             .HasMaxLength(Animal.NameMaxLength);
 
+        builder.Property(animal => animal.Description)
+            .HasMaxLength(Animal.DescriptionMaxLength);
+
         builder.Property(animal => animal.Sex)
-            .HasColumnType("char")
-            .HasMaxLength(1)
             .HasConversion<SexConverter>();
 
-        builder.Property(animal => animal.CreatedAt)
-            .HasColumnType("datetime2")
+        builder.Property(animal => animal.LastModifiedUtc)
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
 
-        var animalImagesBuilder = builder.OwnsMany(animal => animal.Images)
-            .ToTable("AnimalImages");
+        builder.Property(animal => animal.LastModifiedBy)
+            .HasDefaultValue(Guid.Empty);
 
-        ConfigureAnimalImagesTable(animalImagesBuilder);
-    }
+        builder.Property(animal => animal.Slug)
+            .HasMaxLength(Animal.SlugMaxLength);
 
-    private static void ConfigureAnimalImagesTable(OwnedNavigationBuilder<Animal, AnimalImage> builder)
-    {
-        builder.Property(imageInformation => imageInformation.UploadedAt)
-            .HasPrecision(2)
-            .HasDefaultValueSql("getutcdate()");
+        builder.HasAlternateKey(animal => animal.Slug);
 
-        builder.Property(imageInformation => imageInformation.OriginalFileName)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(512);
+        builder.HasQueryFilter(animal => !animal.IsDeleted);
 
-        builder.Property(imageInformation => imageInformation.OriginalContentType)
-            .HasColumnType("varchar")
-            .HasMaxLength(AnimalImage.ContentTypeMaxLength);
+        builder.OwnsMany(animal => animal.Images, imagesBuilder =>
+        {
+            imagesBuilder.ToTable("AnimalImages");
+
+            imagesBuilder.WithOwner()
+                .HasForeignKey(animalImage => animalImage.AnimalSlug)
+                .HasPrincipalKey(animal => animal.Slug);
+
+            imagesBuilder.Property(animalImage => animalImage.Id)
+                .HasDefaultValueSql("newid()");
+
+            imagesBuilder.Property(animalImage => animalImage.LastModifiedUtc)
+                .HasPrecision(2)
+                .HasDefaultValueSql("getutcdate()");
+
+            imagesBuilder.Property(animalImage => animalImage.OriginalFileName)
+                .HasMaxLength(512);
+
+            imagesBuilder.Property(animalImage => animalImage.OriginalContentType)
+                .HasMaxLength(AnimalImage.ContentTypeMaxLength);
+        });
     }
 }

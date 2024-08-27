@@ -1,20 +1,22 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Contracts.Requests;
+﻿using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Persistence.Services;
-using FastEndpoints;
-using Microsoft.AspNetCore.Authorization;
+using Adoptrix.Logic.Services;
 
 namespace Adoptrix.Api.Endpoints.Species;
 
-[HttpGet("species"), AllowAnonymous]
-public class SearchSpeciesEndpoint(ISpeciesRepository speciesRepository) : Endpoint<SearchSpeciesRequest, IEnumerable<SpeciesMatch>>
+public class SearchSpeciesEndpoint(ISpeciesService speciesService)
+    : Endpoint<SearchSpeciesRequest, IEnumerable<SpeciesMatch>>
 {
+    public override void Configure()
+    {
+        Get("species");
+        AllowAnonymous();
+    }
+
     public override async Task<IEnumerable<SpeciesMatch>> ExecuteAsync(SearchSpeciesRequest request,
         CancellationToken cancellationToken)
     {
-        var items = await speciesRepository.SearchAsync(request.WithAnimals, cancellationToken);
-
-        return items.Select(item => item.ToMatch());
+        var matches = await speciesService.SearchAsync(request, cancellationToken);
+        return matches;
     }
 }

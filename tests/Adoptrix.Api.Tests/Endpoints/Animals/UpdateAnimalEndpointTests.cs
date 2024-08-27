@@ -1,26 +1,24 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
+using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
-using Adoptrix.Tests.Shared;
+using Adoptrix.Initializer;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
-public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+[Collection(nameof(TestContainersCollection))]
+[Trait("Category", "Integration")]
+public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.AdminClient;
+    private readonly HttpClient httpClient = fixture.CreateClient();
 
-    [Theory, AdoptrixAutoData]
-    public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk(UpdateAnimalRequest request, Animal animal,
-        Breed breed)
+    [Fact]
+    public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(animal);
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(breed);
+        var request = CreateRequest(SeedData.Animals[0].Id, "Timmy", "Timmy is awesome", 2);
 
         // act
         var (message, response) =
@@ -28,16 +26,15 @@ public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(animal.Id);
+        response.Name.Should().Be("Timmy");
+        response.Description.Should().Be("Timmy is awesome");
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task UpdateAnimal_WithInvalidAnimalId_ShouldReturnNotFound(UpdateAnimalRequest request)
+    [Fact]
+    public async Task UpdateAnimal_WithInvalidAnimalId_ShouldReturnNotFound()
     {
         // arrange
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Animal);
+        var request = CreateRequest(Guid.Empty);
 
         // act
         var message = await httpClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest>(request);
@@ -46,16 +43,11 @@ public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task UpdateAnimal_WithInvalidBreedId_ShouldReturnBadRequest(UpdateAnimalRequest request, Animal animal)
+    [Fact]
+    public async Task UpdateAnimal_WithInvalidBreedId_ShouldReturnBadRequest()
     {
         // arrange
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(animal);
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Breed);
+        var request = CreateRequest(SeedData.Animals[0].Id, breedId: -1);
 
         // act
         var (message, response) =
@@ -65,4 +57,15 @@ public class UpdateAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("breedId");
     }
+
+    private static UpdateAnimalRequest CreateRequest(Guid? animalId = null, string name = "Bobby",
+        string? description = null, int breedId = 1, Sex sex = Sex.Male) => new()
+    {
+        AnimalId = animalId ?? Guid.NewGuid(),
+        Name = name,
+        Description = description,
+        BreedId = breedId,
+        Sex = sex.ToString(),
+        DateOfBirth = new DateOnly(2022, 1, 3)
+    };
 }

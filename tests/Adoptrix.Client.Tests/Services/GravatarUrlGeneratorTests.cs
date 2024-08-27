@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Client.Services;
 
-namespace Adoptrix.Web.Tests.Services;
+namespace Adoptrix.Client.Tests.Services;
 
 public class GravatarUrlGeneratorTests
 {

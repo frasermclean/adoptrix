@@ -1,31 +1,29 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
+using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Requests;
-using Adoptrix.Persistence.Responses;
-using Adoptrix.Tests.Shared;
+using Adoptrix.Contracts.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
-public class SearchBreedsEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+[Collection(nameof(TestContainersCollection))]
+[Trait("Category", "Integration")]
+public class SearchBreedsEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
     private readonly HttpClient httpClient = fixture.Client;
 
-    [Theory, AdoptrixAutoData]
-    public async Task SearchBreeds_WithValidRequest_ShouldReturnOk(SearchBreedsRequest request,
-        List<SearchBreedsItem> items)
+    [Fact]
+    public async Task SearchBreeds_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        fixture.BreedsRepositoryMock
-            .Setup(repository =>
-                repository.SearchAsync(It.IsAny<Guid?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(items);
+        var request = new SearchBreedsRequest();
 
         // act
-        var testResult =
-            await httpClient.GETAsync<SearchBreedsEndpoint, SearchBreedsRequest, List<SearchBreedsItem>>(request);
+        var (message, matches) =
+            await httpClient.GETAsync<SearchBreedsEndpoint, SearchBreedsRequest, List<BreedMatch>>(request);
 
         // assert
-        testResult.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        testResult.Result.Should().BeEquivalentTo(items);
+        message.StatusCode.Should().Be(HttpStatusCode.OK);
+        matches.Should().NotBeEmpty();
     }
 }

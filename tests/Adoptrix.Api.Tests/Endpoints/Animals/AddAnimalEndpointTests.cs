@@ -1,62 +1,76 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
+using Adoptrix.Api.Security;
+using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
-public class AddAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+[Collection(nameof(TestContainersCollection))]
+[Trait("Category", "Integration")]
+public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    [Theory, AdoptrixAutoData]
-    public async Task AddAnimal_WithValidRequest_ShouldReturnCreated(AddAnimalRequest request, Breed breed)
+    private readonly HttpClient adminClient = fixture.CreateClient();
+    private readonly HttpClient userClient = fixture.CreateClient(RoleNames.User);
+
+    [Fact]
+    public async Task AddAnimal_WithValidRequest_ShouldReturnCreated()
     {
         // arrange
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(breed);
+        var request = CreateRequest("Sasha", "What a great dog", 2, Sex.Female);
 
         // act
         var (message, response) =
-            await fixture.AdminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
+            await adminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         message.Headers.Location.Should().NotBeNull();
-        response.Id.Should().NotBeEmpty();
-        response.Name.Should().Be(request.Name);
+        response.Name.Should().Be("Sasha");
+        response.Sex.Should().Be("Female");
+        response.DateOfBirth.Should().Be(request.DateOfBirth);
+        response.Slug.Should().Be("sasha-2020-01-01");
+        response.Age.Should().NotBeEmpty();
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task AddAnimal_WithInvalidBreedId_ShouldReturnBadRequest(AddAnimalRequest request)
+    [Fact]
+    public async Task AddAnimal_WithInvalidBreedId_ShouldReturnBadRequest()
     {
         // arrange
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Breed);
+        var request = CreateRequest(breedId: -1);
 
         // act
         var (message, response) =
-            await fixture.AdminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, ErrorResponse>(request);
+            await adminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("breedId");
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task AddAnimal_InvalidRole_ShouldReturnForbidden(AddAnimalRequest request, Breed breed)
+    [Fact]
+    public async Task AddAnimal_WithInvalidRole_ShouldReturnForbidden()
     {
         // arrange
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(breed);
+        var request = CreateRequest();
 
         // act
-        var testResult =
-            await fixture.UserClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
+        var testResult = await userClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
 
         // assert
         testResult.Response.Should().HaveStatusCode(HttpStatusCode.Forbidden);
     }
+
+    private static AddAnimalRequest CreateRequest(string name = "Buddy", string? description = null, int breedId = 1,
+        Sex sex = Sex.Male, DateOnly? dateOfBirth = null, Guid? userId = null) => new()
+    {
+        Name = name,
+        Description = description,
+        BreedId = breedId,
+        Sex = sex.ToString(),
+        DateOfBirth = dateOfBirth ?? new DateOnly(2020, 1, 1),
+        UserId = userId ?? Guid.NewGuid()
+    };
 }

@@ -9,13 +9,13 @@ public static class AnimalImageFactory
         DateTime? uploadedAt = null) => new()
     {
         Id = id ?? Guid.NewGuid(),
+        AnimalSlug = Guid.NewGuid().ToString(),
         Description = description,
         OriginalFileName = originalFileName,
         OriginalContentType = originalContentType,
         IsProcessed = isProcessed,
-        UploadedBy = uploadedBy ?? Guid.NewGuid(),
-        UploadedAt = uploadedAt ?? DateTime.UtcNow,
-        AnimalId = Guid.NewGuid()
+        LastModifiedBy = uploadedBy ?? Guid.NewGuid(),
+        LastModifiedUtc = uploadedAt ?? DateTime.UtcNow
     };
 
     public static IEnumerable<AnimalImage> CreateMany(int count) => Enumerable.Range(0, count).Select(_ => Create());

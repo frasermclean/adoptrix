@@ -2,6 +2,6 @@
 
 public class SearchBreedsRequest
 {
-    public Guid? SpeciesId { get; init; }
+    public string? SpeciesName { get; init; }
     public bool? WithAnimals { get; init; }
 }

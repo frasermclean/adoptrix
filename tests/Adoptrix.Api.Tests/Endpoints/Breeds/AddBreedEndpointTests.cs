@@ -1,22 +1,22 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
+using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
-public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+[Collection(nameof(TestContainersCollection))]
+[Trait("Category", "Integration")]
+public class AddBreedEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.AdminClient;
+    private readonly HttpClient httpClient = fixture.CreateClient();
 
-    [Theory, AdoptrixAutoData]
-    public async Task AddBreed_WithValidRequest_ShouldReturnCreated(Core.Species species)
+    [Fact]
+    public async Task AddBreed_WithValidRequest_ShouldReturnCreated()
     {
         // arrange
-        var request = CreateRequest(species.Id);
-        fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(species);
+        var request = CreateRequest("Bruno", "Dog");
 
         // act
         var (message, response) =
@@ -25,18 +25,15 @@ public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         message.Headers.Location.Should().NotBeNull();
-        response.Id.Should().NotBeEmpty();
-        response.Name.Should().Be(request.Name);
+        response.Name.Should().Be("Bruno");
+        response.SpeciesName.Should().Be("Dog");
     }
 
     [Fact]
-    public async Task AddBreed_WithInvalidSpeciesId_ShouldReturnBadRequest()
+    public async Task AddBreed_WithInvalidSpeciesName_ShouldReturnBadRequest()
     {
         // arrange
-        var request = CreateRequest();
-        fixture.SpeciesRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.SpeciesId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Core.Species);
+        var request = CreateRequest("It", "Spaghetti Monster");
 
         // act
         var (message, response) =
@@ -44,12 +41,28 @@ public class AddBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesId");
+        response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesName");
     }
 
-    private static AddBreedRequest CreateRequest(Guid? speciesId = null) => new()
+    [Fact]
+    public async Task AddBreed_WithExistingBreed_ShouldReturnConflict()
     {
-        Name = "Golden Retriever",
-        SpeciesId = speciesId ?? Guid.NewGuid()
+        // arrange
+        var request = CreateRequest();
+
+        // act
+        var (message, response) =
+            await httpClient.POSTAsync<AddBreedEndpoint, AddBreedRequest, ErrorResponse>(request);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.Conflict);
+        response.Errors.Should().ContainSingle().Which.Key.Should().Be("name");
+    }
+
+    private static AddBreedRequest CreateRequest(string? name = null, string? speciesName = null) => new()
+    {
+        Name = name ?? "Golden Retriever",
+        SpeciesName = speciesName ?? "Dog",
+        UserId = Guid.NewGuid()
     };
 }

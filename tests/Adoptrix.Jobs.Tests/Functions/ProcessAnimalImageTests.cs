@@ -1,74 +1,46 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Core.Events;
+﻿using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Functions;
-using Adoptrix.Jobs.Services;
-using Adoptrix.Persistence.Services;
+using Adoptrix.Logic.Errors;
+using Adoptrix.Logic.Services;
 using Adoptrix.Tests.Shared;
-using Microsoft.Extensions.Logging;
+using FluentResults;
 
 namespace Adoptrix.Jobs.Tests.Functions;
 
 public class ProcessAnimalImageTests
 {
-    private readonly Mock<IAnimalsRepository> animalsRepositoryMock = new();
-    private readonly Mock<IImageProcessor> imageProcessorMock = new();
-    private readonly Mock<IBlobContainerManager> originalImagesContainerManagerMock = new();
-    private readonly Mock<IBlobContainerManager> animalImagesContainerManagerMock = new();
-    private readonly ProcessAnimalImage function;
-
-    public ProcessAnimalImageTests()
-    {
-        function = new ProcessAnimalImage(Mock.Of<ILogger<ProcessAnimalImage>>(), animalsRepositoryMock.Object,
-            imageProcessorMock.Object, originalImagesContainerManagerMock.Object,
-            animalImagesContainerManagerMock.Object);
-    }
-
     [Theory, AdoptrixAutoData]
-    public async Task ExecuteAsync_WithValidEventData_ShouldPass(Animal animal, ImageStreamBundle bundle)
+    public async Task ExecuteAsync_WithValidEventData_ShouldPass(AnimalImageAddedEvent data,
+        [Frozen] Mock<IAnimalImagesManager> animalImagesManagerMock, ProcessAnimalImage function)
     {
         // arrange
-        var imageId = animal.Images.First().Id;
-        var blobName = $"{animal.Id}/image.jpg";
-        var data = new AnimalImageAddedEvent(animal.Id, imageId, blobName);
-        animalsRepositoryMock.Setup(repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(animal);
-        imageProcessorMock.Setup(processor =>
-                processor.ProcessOriginalAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(bundle);
+        animalImagesManagerMock.Setup(manager =>
+                manager.ProcessOriginalAsync(It.IsAny<AnimalImageAddedEvent>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Ok());
 
         // act
         await function.ExecuteAsync(data);
 
         // assert
-        animalsRepositoryMock.Verify(repository => repository.GetByIdAsync(animal.Id, It.IsAny<CancellationToken>()),
-            Times.Once);
-        originalImagesContainerManagerMock.Verify(manager =>
-            manager.OpenReadStreamAsync(blobName, It.IsAny<CancellationToken>()), Times.Once);
-        imageProcessorMock.Verify(processor => processor.ProcessOriginalAsync(It.IsAny<Stream>(),
-            It.IsAny<CancellationToken>()), Times.Once);
-        animalImagesContainerManagerMock.Verify(manager =>
-            manager.UploadBlobAsync(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
-                It.IsAny<CancellationToken>()), Times.Exactly(3));
-        animalsRepositoryMock.Verify(repository => repository.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.Once);
-        originalImagesContainerManagerMock.Verify(manager =>
-            manager.DeleteBlobAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+        animalImagesManagerMock.Verify(
+            manager => manager.ProcessOriginalAsync(It.IsAny<AnimalImageAddedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Theory, AdoptrixAutoData]
-    public async Task ExecuteAsync_WithInvalidAnimalId_ShouldThrowException(AnimalImageAddedEvent data)
+    public async Task ExecuteAsync_WithInvalidAnimalSlug_ShouldThrowException(AnimalImageAddedEvent data,
+        [Frozen] Mock<IAnimalImagesManager> animalImagesManagerMock, ProcessAnimalImage function)
     {
         // arrange
-        animalsRepositoryMock.Setup(repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Animal);
+        animalImagesManagerMock.Setup(manager =>
+                manager.ProcessOriginalAsync(It.IsAny<AnimalImageAddedEvent>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new AnimalNotFoundError(data.AnimalSlug));
 
         // act
         var act = async () => await function.ExecuteAsync(data);
 
         // assert
         await act.Should().ThrowAsync<InvalidOperationException>();
-        animalsRepositoryMock.Verify(
-            repository => repository.GetByIdAsync(data.AnimalId, It.IsAny<CancellationToken>()),
-            Times.Once);
+        animalImagesManagerMock.Verify(
+            manager => manager.ProcessOriginalAsync(It.IsAny<AnimalImageAddedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

@@ -15,9 +15,10 @@ public class AnimalTests
         var userId = Guid.NewGuid();
         const int imageCount = 3;
         var dateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 1.5));
+        var slug = Animal.CreateSlug(name, dateOfBirth);
 
         // act
-        var animal = AnimalFactory.Create(id, name, breed, sex, dateOfBirth, imageCount, userId);
+        var animal = AnimalFactory.Create(id, name, breed, sex, dateOfBirth, slug, imageCount, userId);
 
         // assert
         animal.Id.Should().Be(id);
@@ -25,12 +26,13 @@ public class AnimalTests
         animal.Breed.Should().Be(breed);
         animal.Sex.Should().Be(sex);
         animal.DateOfBirth.Should().Be(dateOfBirth);
+        animal.Slug.Should().Be(slug);
         animal.Images.Should().HaveCount(imageCount);
-        animal.CreatedBy.Should().Be(userId);
+        animal.LastModifiedBy.Should().Be(userId);
     }
 
     [Fact]
-    public void TwoEntities_WithSameIds_Should_BeEqual()
+    public void TwoAnimals_WithSameIds_Should_BeEqual()
     {
         // arrange
         var id = Guid.NewGuid();
@@ -46,26 +48,20 @@ public class AnimalTests
         max.Name.Should().Be("Max");
     }
 
-    [Fact]
-    public void AddImage_Should_AddImage()
+    [Theory]
+    [InlineData("Buddy", 2022, 5, 2, "buddy-2022-05-02")]
+    [InlineData("Mr Muffins ", 2021, 11, 30, "mr-muffins-2021-11-30")]
+    [InlineData("  Fluffy ", 2020, 1, 1, "fluffy-2020-01-01")]
+    public void CreateSlug_WithValidNameAndDateOfBirth_ShouldReturnExpectedResult(string name, int year, int month,
+        int day, string expectedSlug)
     {
         // arrange
-        var animal = AnimalFactory.Create(name: "Fido");
-        const string fileName = "DSC0001.jpg";
-        const string contentType = "image/jpeg";
-        const string description = "Fido in the park";
-        var userId = Guid.NewGuid();
+        var dateOfBirth = new DateOnly(year, month, day);
 
         // act
-        var image = animal.AddImage(fileName, contentType, description, userId);
-        var action = () => animal.AddImage(fileName, contentType);
+        var slug = Animal.CreateSlug(name, dateOfBirth);
 
         // assert
-        image.OriginalFileName.Should().Be(fileName);
-        image.OriginalContentType.Should().Be(contentType);
-        image.Description.Should().Be(description);
-        image.UploadedBy.Should().Be(userId);
-        animal.Images.Should().ContainSingle().Which.OriginalFileName.Should().Be(fileName);
-        action.Should().Throw<ArgumentException>().WithMessage("Image with the same name already exists*");
+        slug.Should().Be(expectedSlug);
     }
 }

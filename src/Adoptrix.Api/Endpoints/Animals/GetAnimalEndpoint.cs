@@ -1,23 +1,29 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Contracts.Responses;
-using Adoptrix.Persistence.Services;
-using FastEndpoints;
-using Microsoft.AspNetCore.Authorization;
+﻿using Adoptrix.Contracts.Responses;
+using Adoptrix.Logic.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-[HttpGet("animals/{animalId:guid}"), AllowAnonymous]
-public class GetAnimalEndpoint(IAnimalsRepository animalsRepository)
-    : Endpoint<GetAnimalRequest, Results<Ok<AnimalResponse>, NotFound>>
+public class GetAnimalEndpoint(IAnimalsService animalsService)
+    : EndpointWithoutRequest<Results<Ok<AnimalResponse>, NotFound>>
 {
-    public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(GetAnimalRequest request,
-        CancellationToken cancellationToken)
+    public override void Configure()
     {
-        var animal = await animalsRepository.GetByIdAsync(request.AnimalId, cancellationToken);
+        Get("animals/{animalId:guid}", "animals/{animalSlug}");
+        AllowAnonymous();
+    }
 
-        return animal is not null
-            ? TypedResults.Ok(animal.ToResponse())
+    public override async Task<Results<Ok<AnimalResponse>, NotFound>> ExecuteAsync(CancellationToken cancellationToken)
+    {
+        var animalId = Route<Guid?>("animalId", false);
+        var animalSlug = Route<string>("animalSlug", false);
+
+        var result = animalId.HasValue
+            ? await animalsService.GetAsync(animalId.Value, cancellationToken)
+            : await animalsService.GetAsync(animalSlug!, cancellationToken);
+
+        return result.IsSuccess
+            ? TypedResults.Ok(result.Value)
             : TypedResults.NotFound();
     }
 }

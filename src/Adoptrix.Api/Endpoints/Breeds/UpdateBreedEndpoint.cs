@@ -1,40 +1,41 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Persistence.Services;
-using FastEndpoints;
+using Adoptrix.Logic.Errors;
+using Adoptrix.Logic.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-public class UpdateBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesRepository speciesRepository)
+public class UpdateBreedEndpoint(IBreedsService breedsService)
     : Endpoint<UpdateBreedRequest, Results<Ok<BreedResponse>, NotFound, ErrorResponse>>
 {
     public override void Configure()
     {
-        Put("breeds/{breedId:guid}");
+        Put("breeds/{breedId:int}");
         Permissions(PermissionNames.BreedsWrite);
     }
 
-    public override async Task<Results<Ok<BreedResponse>, NotFound, ErrorResponse>> ExecuteAsync(UpdateBreedRequest request, CancellationToken cancellationToken)
+    public override async Task<Results<Ok<BreedResponse>, NotFound, ErrorResponse>> ExecuteAsync(
+        UpdateBreedRequest request, CancellationToken cancellationToken)
     {
-        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
-        if (breed is null)
+        var result = await breedsService.UpdateAsync(request, cancellationToken);
+
+        if (result.IsSuccess)
+        {
+            return TypedResults.Ok(result.Value);
+        }
+
+        if (result.HasError<BreedNotFoundError>())
         {
             return TypedResults.NotFound();
         }
 
-        var species = await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken);
-        if (species is null)
+        if (result.HasError<SpeciesNotFoundError>())
         {
-            AddError(r => r.SpeciesId, "Invalid species ID");
-            return new ErrorResponse(ValidationFailures);
+            AddError(r => r.SpeciesName, "Invalid species name");
         }
 
-        breed.Name = request.Name;
-        breed.Species = species;
-        await breedsRepository.SaveChangesAsync(cancellationToken);
-
-        return TypedResults.Ok(breed.ToResponse());
+        return new ErrorResponse(ValidationFailures);
     }
 }

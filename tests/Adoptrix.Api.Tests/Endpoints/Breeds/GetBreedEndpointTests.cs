@@ -1,43 +1,41 @@
 ﻿using System.Net;
-using Adoptrix.Api.Endpoints.Breeds;
+using System.Net.Http.Json;
+using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
-public class GetBreedEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+[Collection(nameof(TestContainersCollection))]
+[Trait("Category", "Integration")]
+public class GetBreedEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
     private readonly HttpClient httpClient = fixture.Client;
 
-    [Theory, AdoptrixAutoData]
-    public async Task GetBreed_WithKnownAnimalId_ShouldReturnOk(GetBreedRequest request, Breed breed)
+    [Fact]
+    public async Task GetBreed_WithKnownId_ShouldReturnOk()
     {
         // arrange
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(breed);
+        const int breedId = 1;
 
         // act
-        var (message, response) = await httpClient.GETAsync<GetBreedEndpoint, GetBreedRequest, BreedResponse>(request);
+        var message = await httpClient.GetAsync($"api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(breed.Id);
+        var response = await message.Content.ReadFromJsonAsync<BreedResponse>();
+        response!.Id.Should().Be(1);
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task GetBreed_WithUnknownAnimalId_ShouldReturnNotFound(GetBreedRequest request)
+    [Fact]
+    public async Task GetBreed_WithUnknownId_ShouldReturnNotFound()
     {
         // arrange
-        fixture.BreedsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.BreedId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Breed);
+        const int breedId = -1;
 
         // act
-        var testResult = await httpClient.GETAsync<GetBreedEndpoint, GetBreedRequest, BreedResponse>(request);
+        var message = await httpClient.GetAsync($"api/breeds/{breedId}");
 
         // assert
-        testResult.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        message.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

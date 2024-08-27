@@ -1,23 +1,26 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Contracts.Responses;
-using Adoptrix.Persistence.Services;
-using FastEndpoints;
-using Microsoft.AspNetCore.Authorization;
+﻿using Adoptrix.Contracts.Responses;
+using Adoptrix.Logic.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Species;
 
-[HttpGet("species/{speciesId:guid}"), AllowAnonymous]
-public class GetSpeciesEndpoint(ISpeciesRepository speciesRepository)
-    : Endpoint<GetSpeciesRequest, Results<Ok<SpeciesResponse>, NotFound>>
+public class GetSpeciesEndpoint(ISpeciesService speciesService)
+    : EndpointWithoutRequest<Results<Ok<SpeciesResponse>, NotFound>>
 {
-    public override async Task<Results<Ok<SpeciesResponse>, NotFound>> ExecuteAsync(GetSpeciesRequest request,
-        CancellationToken cancellationToken)
+    public override void Configure()
     {
-        var species = await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken);
+        Get("species/{speciesName}");
+        AllowAnonymous();
+    }
 
-        return species is not null
-            ? TypedResults.Ok(SpeciesResponseMapper.ToResponse(species))
+    public override async Task<Results<Ok<SpeciesResponse>, NotFound>> ExecuteAsync(CancellationToken cancellationToken)
+    {
+        var speciesName = Route<string>("speciesName");
+
+        var result = await speciesService.GetAsync(speciesName!, cancellationToken);
+
+        return result.IsSuccess
+            ? TypedResults.Ok(result.Value)
             : TypedResults.NotFound();
     }
 }

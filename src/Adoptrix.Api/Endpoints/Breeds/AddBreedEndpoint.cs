@@ -1,14 +1,13 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
-using Adoptrix.Persistence.Services;
-using FastEndpoints;
+using Adoptrix.Logic.Errors;
+using Adoptrix.Logic.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-public class AddBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesRepository speciesRepository)
+public class AddBreedEndpoint(IBreedsService breedsService)
     : Endpoint<AddBreedRequest, Results<Created<BreedResponse>, ErrorResponse>>
 {
     public override void Configure()
@@ -20,23 +19,24 @@ public class AddBreedEndpoint(IBreedsRepository breedsRepository, ISpeciesReposi
     public override async Task<Results<Created<BreedResponse>, ErrorResponse>> ExecuteAsync(AddBreedRequest request,
         CancellationToken cancellationToken)
     {
-        var species = await speciesRepository.GetByIdAsync(request.SpeciesId, cancellationToken);
-        if (species is null)
+        var result = await breedsService.AddAsync(request, cancellationToken);
+
+        if (result.IsSuccess)
         {
-            AddError(r => r.SpeciesId, "Invalid species ID");
-            return new ErrorResponse(ValidationFailures);
+            return TypedResults.Created($"/api/breeds/{result.Value.Id}", result.Value);
         }
 
-        var breed = MapToBreed(request, species);
-        await breedsRepository.AddAsync(breed, cancellationToken);
+        if (result.HasError<DuplicateBreedError>())
+        {
+            AddError(r => r.Name, "Breed with this name already exists");
+            return new ErrorResponse(ValidationFailures, StatusCodes.Status409Conflict);
+        }
 
-        return TypedResults.Created($"/api/breeds/{breed.Id}", breed.ToResponse());
+        if (result.HasError<SpeciesNotFoundError>())
+        {
+            AddError(r => r.SpeciesName, "Invalid species name");
+        }
+
+        return new ErrorResponse(ValidationFailures);
     }
-
-    private static Breed MapToBreed(AddBreedRequest request, Core.Species species) => new()
-    {
-        Name = request.Name,
-        Species = species,
-        CreatedBy = request.UserId
-    };
 }

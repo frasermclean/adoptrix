@@ -1,6 +1,5 @@
-﻿using Adoptrix.Api.Services;
-using Adoptrix.Contracts.Responses;
-using FastEndpoints;
+﻿using Adoptrix.Contracts.Responses;
+using Adoptrix.Logic.Services;
 
 namespace Adoptrix.Api.Endpoints.Users;
 

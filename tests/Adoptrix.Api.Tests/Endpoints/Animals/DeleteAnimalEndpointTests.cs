@@ -1,43 +1,36 @@
 ﻿using System.Net;
-using Adoptrix.Api.Endpoints.Animals;
-using Adoptrix.Core;
-using Adoptrix.Core.Events;
-using Adoptrix.Tests.Shared;
+using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Initializer;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
-public class DeleteAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+[Collection(nameof(TestContainersCollection))]
+[Trait("Category", "Integration")]
+public class DeleteAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.AdminClient;
+    private readonly HttpClient httpClient = fixture.CreateClient();
 
-    [Theory, AdoptrixAutoData]
-    public async Task DeleteAnimal_WithValidRequest_ShouldReturnNoContent(DeleteAnimalRequest request, Animal animal)
+    [Fact]
+    public async Task DeleteAnimal_WithValidRequest_ShouldReturnNoContent()
     {
         // arrange
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(animal);
+        var animalId = SeedData.Animals[3].Id;
 
         // act
-        var message = await httpClient.DELETEAsync<DeleteAnimalEndpoint, DeleteAnimalRequest>(request);
+        var message = await httpClient.DeleteAsync($"api/animals/{animalId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NoContent);
-        fixture.EventPublisherMock.Verify(
-            publisher => publisher.PublishAsync(It.IsAny<AnimalDeletedEvent>(), It.IsAny<CancellationToken>()),
-            Times.Once);
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task DeleteAnimal_WithInvalidAnimalId_ShouldReturnNotFound(DeleteAnimalRequest request)
+    [Fact]
+    public async Task DeleteAnimal_WithInvalidAnimalId_ShouldReturnNotFound()
     {
         // arrange
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Animal);
+        var animalId = Guid.Empty;
 
         // act
-        var message = await httpClient.DELETEAsync<DeleteAnimalEndpoint, DeleteAnimalRequest>(request);
+        var message = await httpClient.DeleteAsync($"api/animals/{animalId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);

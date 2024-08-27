@@ -1,14 +1,13 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
+using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
-using Adoptrix.Persistence.Services;
-using FastEndpoints;
+using Adoptrix.Logic.Errors;
+using Adoptrix.Logic.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepository breedsRepository)
+public class AddAnimalEndpoint(IAnimalsService animalsService)
     : Endpoint<AddAnimalRequest, Results<Created<AnimalResponse>, ErrorResponse>>
 {
     public override void Configure()
@@ -17,31 +16,21 @@ public class AddAnimalEndpoint(IAnimalsRepository animalsRepository, IBreedsRepo
         Permissions(PermissionNames.AnimalsWrite);
     }
 
-    public override async Task<Results<Created<AnimalResponse>, ErrorResponse>> ExecuteAsync(AddAnimalRequest request, CancellationToken cancellationToken)
+    public override async Task<Results<Created<AnimalResponse>, ErrorResponse>> ExecuteAsync(AddAnimalRequest request,
+        CancellationToken cancellationToken)
     {
-        var breed = await breedsRepository.GetByIdAsync(request.BreedId, cancellationToken);
-        if (breed is null)
+        var result = await animalsService.AddAsync(request, cancellationToken);
+
+        if (result.IsSuccess)
         {
-            Logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
-            AddError(r => r.BreedId, "Breed not found");
-            return new ErrorResponse(ValidationFailures);
+            return TypedResults.Created($"/api/animals/{result.Value.Id}", result.Value);
         }
 
-        var animal = MapToAnimal(request, breed);
-        await animalsRepository.AddAsync(animal, cancellationToken);
+        if (result.HasError<BreedNotFoundError>())
+        {
+            AddError(r => r.BreedId, "Breed not found");
+        }
 
-        Logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
-
-        return TypedResults.Created($"/api/animals/{animal.Id}", animal.ToResponse());
+        return new ErrorResponse(ValidationFailures);
     }
-
-    private static Animal MapToAnimal(AddAnimalRequest request, Breed breed) => new()
-    {
-        Name = request.Name,
-        Description = request.Description,
-        Breed = breed,
-        Sex = request.Sex,
-        DateOfBirth = request.DateOfBirth,
-        CreatedBy = request.UserId
-    };
 }

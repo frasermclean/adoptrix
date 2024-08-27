@@ -14,8 +14,8 @@ public class Program
             .AddPersistence();
 
         builder.Services.AddHostedService<WorkerService>()
-            .AddScoped<DatabaseInitializer>()
-            .AddSingleton<StorageInitializer>();
+            .AddSingleton<StorageInitializer>()
+            .AddScoped<DatabaseInitializer>();
 
         var host = builder.Build();
         host.Run();

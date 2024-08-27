@@ -1,4 +1,4 @@
-﻿using Adoptrix.Api.Mapping;
+﻿using Adoptrix.Logic.Mapping;
 using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Api.Tests.Mapping;
@@ -6,7 +6,7 @@ namespace Adoptrix.Api.Tests.Mapping;
 public class AnimalImageResponseMapperTests
 {
     [Fact]
-    public void Mapping_ImageInformation_To_ImageResponse_Should_Return_ExpectedValues()
+    public void ToResponse_WithValidAnimalImage_ShouldReturnExpectedValues()
     {
         // arrange
         var animalImage = AnimalImageFactory.Create();

@@ -2,7 +2,6 @@
 using System.Reflection;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
-using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Adoptrix.Api.Endpoints.About;

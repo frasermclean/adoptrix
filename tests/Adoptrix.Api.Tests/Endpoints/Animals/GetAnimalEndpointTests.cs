@@ -1,51 +1,49 @@
 ﻿using System.Net;
-using Adoptrix.Api.Endpoints.Animals;
-using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
-using Adoptrix.Tests.Shared;
+using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Initializer;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
-public class GetAnimalEndpointTests(ApiFixture fixture) : TestBase<ApiFixture>
+[Collection(nameof(TestContainersCollection))]
+[Trait("Category", "Integration")]
+public class GetAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    [Theory, AdoptrixAutoData]
-    public async Task GetAnimal_WithKnownAnimalId_ShouldReturnOk(GetAnimalRequest request, Animal animal)
+    [Fact]
+    public async Task GetAnimal_WithKnownAnimalSlug_ShouldReturnOk()
     {
         // arrange
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(animal);
+        const string animalSlug = "alberto-2024-02-14";
 
         // act
-        var (message, response) =
-            await fixture.Client.GETAsync<GetAnimalEndpoint, GetAnimalRequest, AnimalResponse>(request);
+        var message = await fixture.Client.GetAsync($"api/animals/{animalSlug}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(animal.Id);
-        response.Name.Should().Be(animal.Name);
-        response.Description.Should().Be(animal.Description);
-        response.SpeciesId.Should().Be(animal.Breed.Species.Id);
-        response.SpeciesName.Should().Be(animal.Breed.Species.Name);
-        response.BreedId.Should().Be(animal.Breed.Id);
-        response.BreedName.Should().Be(animal.Breed.Name);
-        response.Sex.Should().Be(animal.Sex.ToString());
-        response.DateOfBirth.Should().Be(animal.DateOfBirth);
-        response.Age.Should().NotBeEmpty();
     }
 
-    [Theory, AdoptrixAutoData]
-    public async Task GetAnimal_WithUnknownAnimalId_ShouldReturnNotFound(GetAnimalRequest request)
+    [Fact]
+    public async Task GetAnimal_WithKnownAnimalId_ShouldReturnOk()
     {
         // arrange
-        fixture.AnimalsRepositoryMock
-            .Setup(repository => repository.GetByIdAsync(request.AnimalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null as Animal);
+        var animalId = SeedData.Animals[0].Id;
 
         // act
-        var testResult = await fixture.Client.GETAsync<GetAnimalEndpoint, GetAnimalRequest, AnimalResponse>(request);
+        var message = await fixture.Client.GetAsync($"api/animals/{animalId}");
 
         // assert
-        testResult.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        message.Should().HaveStatusCode(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task GetAnimal_WithUnknownAnimalSlug_ShouldReturnNotFound()
+    {
+        // arrange
+        const string animalSlug = "unknown-animal";
+
+        // act
+        var message = await fixture.Client.GetAsync($"api/animals/{animalSlug}");
+
+        // assert
+        message.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

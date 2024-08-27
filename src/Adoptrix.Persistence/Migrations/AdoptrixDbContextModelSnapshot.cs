@@ -26,34 +26,45 @@ namespace Adoptrix.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("newid()");
 
-                    b.Property<Guid>("BreedId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(2)
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getutcdate()");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("BreedId")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+
+                    b.Property<DateTime>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(2)
+                        .HasColumnType("datetime2(2)")
+                        .HasDefaultValueSql("getutcdate()");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<char>("Sex")
-                        .HasMaxLength(1)
-                        .HasColumnType("char");
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -64,26 +75,30 @@ namespace Adoptrix.Persistence.Migrations
 
             modelBuilder.Entity("Adoptrix.Core.Breed", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+
+                    b.Property<DateTime>("LastModifiedUtc")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(2)
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime2(2)")
                         .HasDefaultValueSql("getutcdate()");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(30)");
 
-                    b.Property<Guid>("SpeciesId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("SpeciesId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -97,23 +112,27 @@ namespace Adoptrix.Persistence.Migrations
 
             modelBuilder.Entity("Adoptrix.Core.Species", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+
+                    b.Property<DateTime>("LastModifiedUtc")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(2)
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime2(2)")
                         .HasDefaultValueSql("getutcdate()");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -121,26 +140,6 @@ namespace Adoptrix.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Species");
-                });
-
-            modelBuilder.Entity("Adoptrix.Core.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(2)
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getutcdate()");
-
-                    b.Property<char>("Role")
-                        .HasColumnType("nvarchar(1)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Adoptrix.Core.Animal", b =>
@@ -153,12 +152,13 @@ namespace Adoptrix.Persistence.Migrations
 
                     b.OwnsMany("Adoptrix.Core.AnimalImage", "Images", b1 =>
                         {
-                            b1.Property<Guid>("AnimalId")
-                                .HasColumnType("uniqueidentifier");
+                            b1.Property<string>("AnimalSlug")
+                                .HasColumnType("nvarchar(50)");
 
                             b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uniqueidentifier")
+                                .HasDefaultValueSql("newid()");
 
                             b1.Property<string>("Description")
                                 .HasColumnType("nvarchar(max)");
@@ -166,31 +166,32 @@ namespace Adoptrix.Persistence.Migrations
                             b1.Property<bool>("IsProcessed")
                                 .HasColumnType("bit");
 
-                            b1.Property<string>("OriginalContentType")
-                                .IsRequired()
-                                .HasMaxLength(50)
-                                .HasColumnType("varchar");
+                            b1.Property<Guid>("LastModifiedBy")
+                                .HasColumnType("uniqueidentifier");
 
-                            b1.Property<string>("OriginalFileName")
-                                .IsRequired()
-                                .HasMaxLength(512)
-                                .HasColumnType("nvarchar");
-
-                            b1.Property<DateTime>("UploadedAt")
+                            b1.Property<DateTime>("LastModifiedUtc")
                                 .ValueGeneratedOnAdd()
                                 .HasPrecision(2)
                                 .HasColumnType("datetime2(2)")
                                 .HasDefaultValueSql("getutcdate()");
 
-                            b1.Property<Guid?>("UploadedBy")
-                                .HasColumnType("uniqueidentifier");
+                            b1.Property<string>("OriginalContentType")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)");
 
-                            b1.HasKey("AnimalId", "Id");
+                            b1.Property<string>("OriginalFileName")
+                                .IsRequired()
+                                .HasMaxLength(512)
+                                .HasColumnType("nvarchar(512)");
+
+                            b1.HasKey("AnimalSlug", "Id");
 
                             b1.ToTable("AnimalImages", (string)null);
 
                             b1.WithOwner()
-                                .HasForeignKey("AnimalId");
+                                .HasForeignKey("AnimalSlug")
+                                .HasPrincipalKey("Slug");
                         });
 
                     b.Navigation("Breed");

@@ -165,6 +165,7 @@ resource apiContainerApp 'Microsoft.App/containerApps@2024-03-01' = {
       ]
     }
     template: {
+      revisionSuffix: replace(apiImageTag, '.', '-')
       containers: [
         {
           name: 'api'

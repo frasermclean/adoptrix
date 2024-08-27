@@ -1,5 +1,4 @@
 ﻿using Adoptrix.ServiceDefaults;
-using FastEndpoints;
 using Microsoft.Identity.Web;
 
 namespace Adoptrix.Api.Startup;
