@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Adoptrix.Api.Extensions;
+using Adoptrix.Logic;
 using Microsoft.AspNetCore.Authentication;
 
 namespace Adoptrix.Api.Security;

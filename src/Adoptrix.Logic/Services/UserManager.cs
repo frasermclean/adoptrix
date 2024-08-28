@@ -16,20 +16,21 @@ public interface IUserManager
 
 public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerOptions> options) : IUserManager
 {
-    private readonly string apiObjectId = options.Value.ApiObjectId;
+    private readonly Guid apiObjectId = options.Value.ApiObjectId;
+    private readonly Guid administratorRoleId = options.Value.AdministratorRoleId;
     private static readonly string[] QueryParameters = ["id", "givenName", "surname", "displayName", "mail"];
 
     public async Task<IEnumerable<UserResponse>> GetAllUsersAsync(CancellationToken cancellationToken = default)
     {
-        var appRoleAssignmentsTask = serviceClient.ServicePrincipals[apiObjectId]
-            .AppRoleAssignedTo
-            .GetAsync(cancellationToken: cancellationToken);
-
         var usersTask = serviceClient.Users.GetAsync(configuration =>
         {
             configuration.QueryParameters.Select = QueryParameters;
             configuration.QueryParameters.Orderby = ["displayName"];
         }, cancellationToken);
+
+        var appRoleAssignmentsTask = serviceClient.ServicePrincipals[apiObjectId.ToString()]
+            .AppRoleAssignedTo
+            .GetAsync(cancellationToken: cancellationToken);
 
         await Task.WhenAll(usersTask, appRoleAssignmentsTask);
 
@@ -38,9 +39,12 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
 
         foreach (var user in users)
         {
-            var appRoleAssignment =
-                appRoleAssignments.FirstOrDefault(assignment => assignment.PrincipalId == Guid.Parse(user.Id!));
-            user.AdditionalData["role"] = appRoleAssignment?.AppRoleId.ToString();
+            var userId = Guid.Parse(user.Id!);
+            var roleAssignment = appRoleAssignments.FirstOrDefault(assignment => assignment.PrincipalId == userId);
+            var roleName = GetRoleName(roleAssignment);
+
+
+            user.AdditionalData["Role"] = roleName;
         }
 
         return users.Select(MapToResponse);
@@ -50,14 +54,41 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
     {
         try
         {
-            var user = await serviceClient.Users[userId.ToString()]
+            var userTask = serviceClient.Users[userId.ToString()]
                 .GetAsync(request => request.QueryParameters.Select = QueryParameters, cancellationToken);
-            return MapToResponse(user!);
+
+            var appRoleAssignmentsTask = serviceClient.Users[userId.ToString()].AppRoleAssignments
+                .GetAsync(cancellationToken: cancellationToken);
+
+            await Task.WhenAll(userTask, appRoleAssignmentsTask);
+
+            var user = userTask.Result;
+
+            var apiRoleAssignment =
+                appRoleAssignmentsTask.Result?.Value?.FirstOrDefault(assignment =>
+                    assignment.ResourceId == apiObjectId);
+
+            var roleName = GetRoleName(apiRoleAssignment);
+            user!.AdditionalData["Role"] = roleName;
+
+            return MapToResponse(user);
         }
         catch (ODataError)
         {
             return Result.Fail("Error fetching user from Graph API");
         }
+    }
+
+    private string GetRoleName(AppRoleAssignment? roleAssignment)
+    {
+        if (roleAssignment?.AppRoleId is null)
+        {
+            return RoleNames.User;
+        }
+
+        return roleAssignment.AppRoleId == administratorRoleId
+            ? RoleNames.Administrator
+            : RoleNames.User;
     }
 
     private static UserResponse MapToResponse(User user) => new()
@@ -67,6 +98,6 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
         LastName = user.Surname,
         DisplayName = user.DisplayName,
         EmailAddress = user.Mail,
-        Role = null
+        Role = user.AdditionalData.TryGetValue("Role", out var value) ? value.ToString() : RoleNames.User
     };
 }

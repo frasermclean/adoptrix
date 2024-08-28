@@ -1,10 +1,10 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
-using Adoptrix.Api.Security;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
+using Adoptrix.Logic;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 

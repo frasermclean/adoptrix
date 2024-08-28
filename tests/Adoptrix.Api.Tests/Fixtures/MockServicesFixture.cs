@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Headers;
-using Adoptrix.Api.Security;
+using Adoptrix.Logic;
 using Adoptrix.Logic.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;

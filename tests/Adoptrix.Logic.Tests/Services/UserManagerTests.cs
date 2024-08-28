@@ -1,14 +1,11 @@
 ﻿using Adoptrix.Logic.Options;
 using Adoptrix.Logic.Services;
-using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Models.ODataErrors;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using MicrosoftOptions = Microsoft.Extensions.Options.Options;
-
-
 
 namespace Adoptrix.Logic.Tests.Services;
 
@@ -23,7 +20,7 @@ public class UserManagerTests
         {
             ClientId = string.Empty,
             ClientSecret = string.Empty,
-            ApiObjectId = string.Empty
+            ApiObjectId = Guid.Empty
         };
 
         var graphServiceClient = new GraphServiceClient(requestAdapterMock.Object);

@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Api.Security;
+﻿namespace Adoptrix.Logic;
 
 public static class RoleNames
 {

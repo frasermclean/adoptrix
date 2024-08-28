@@ -10,5 +10,10 @@ public class UserManagerOptions
     /// <summary>
     /// The object ID of the API application service principal.
     /// </summary>
-    public required string ApiObjectId { get; init; }
+    public required Guid ApiObjectId { get; init; }
+
+    /// <summary>
+    /// The role ID of the administrator role.
+    /// </summary>
+    public Guid AdministratorRoleId { get; init; }
 }
