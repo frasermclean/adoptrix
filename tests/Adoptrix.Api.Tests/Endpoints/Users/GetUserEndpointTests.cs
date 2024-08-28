@@ -17,7 +17,7 @@ public class GetUserEndpointTests(MockServicesFixture fixture) : TestBase<MockSe
         // arrange
         var userId = Guid.NewGuid();
         var request = new GetUserRequest(userId);
-        fixture.UsersServiceMock.Setup(service => service.GetUserAsync(userId, It.IsAny<CancellationToken>()))
+        fixture.UserManagerMock.Setup(manager => manager.GetUserAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new UserResponse { Id = userId });
 
         // act
@@ -34,7 +34,7 @@ public class GetUserEndpointTests(MockServicesFixture fixture) : TestBase<MockSe
         // arrange
         var userId = Guid.NewGuid();
         var request = new GetUserRequest(userId);
-        fixture.UsersServiceMock.Setup(service => service.GetUserAsync(userId, It.IsAny<CancellationToken>()))
+        fixture.UserManagerMock.Setup(manager => manager.GetUserAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Fail<UserResponse>("User not found"));
 
         // act

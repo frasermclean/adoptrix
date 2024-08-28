@@ -4,7 +4,6 @@ using Adoptrix.Logic.Services;
 using Adoptrix.Persistence.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Moq.EntityFrameworkCore;
 
 namespace Adoptrix.Logic.Tests.Services;
 

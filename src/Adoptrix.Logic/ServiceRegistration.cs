@@ -1,7 +1,9 @@
-﻿using Adoptrix.Logic.Services;
+﻿using Adoptrix.Logic.Options;
+using Adoptrix.Logic.Services;
 using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 
 namespace Adoptrix.Logic;
@@ -10,7 +12,7 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddLogicServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddUsersService(configuration)
+        services.AddUserManagement(configuration)
             .AddScoped<IAnimalsService, AnimalsService>()
             .AddScoped<IBreedsService, BreedsService>()
             .AddScoped<ISpeciesService, SpeciesService>()
@@ -20,16 +22,19 @@ public static class ServiceRegistration
         return services;
     }
 
-    private static IServiceCollection AddUsersService(this IServiceCollection services,
+    private static IServiceCollection AddUserManagement(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddOptions<UserManagerOptions>().BindConfiguration(UserManagerOptions.SectionName);
+
         services.AddSingleton(serviceProvider =>
         {
-            // read values from configuration
+            var userManagerOptions = serviceProvider.GetRequiredService<IOptions<UserManagerOptions>>();
+
             var instance = configuration["Authentication:Instance"];
             var tenantId = configuration["Authentication:TenantId"];
-            var clientId = configuration["UserManager:ClientId"];
-            var clientSecret = configuration["UserManager:ClientSecret"];
+            var clientId = userManagerOptions.Value.ClientId;
+            var clientSecret = userManagerOptions.Value.ClientSecret;
 
             var credential = new ClientSecretCredential(tenantId, clientId, clientSecret,
                 new ClientSecretCredentialOptions
@@ -43,6 +48,6 @@ public static class ServiceRegistration
             return new GraphServiceClient(httpClient, credential);
         });
 
-        return services.AddScoped<IUsersService, UsersService>();
+        return services.AddScoped<IUserManager, UserManager>();
     }
 }

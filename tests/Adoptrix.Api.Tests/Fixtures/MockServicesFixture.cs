@@ -15,7 +15,7 @@ public class MockServicesFixture : AppFixture<Program>
     public Mock<IEventPublisher> EventPublisherMock { get; } = new();
     public Mock<IBlobContainerManager> AnimalImagesBlobContainerManagerMock { get; } = new();
     public Mock<IBlobContainerManager> OriginalImagesBlobContainerManagerMock { get; } = new();
-    public Mock<IUsersService> UsersServiceMock { get; } = new();
+    public Mock<IUserManager> UserManagerMock { get; } = new();
 
     public HttpClient CreateClient(string role = RoleNames.Administrator) => CreateClient(httpClient =>
         httpClient.DefaultRequestHeaders.Authorization =
@@ -30,7 +30,7 @@ public class MockServicesFixture : AppFixture<Program>
         // remove selected services
         services.RemoveAll<IEventPublisher>()
             .RemoveAll<IBlobContainerManager>()
-            .RemoveAll<IUsersService>();
+            .RemoveAll<IUserManager>();
 
         // replace with mocked services
         services.AddScoped<IEventPublisher>(_ => EventPublisherMock.Object)
@@ -38,6 +38,6 @@ public class MockServicesFixture : AppFixture<Program>
                 (_, _) => AnimalImagesBlobContainerManagerMock.Object)
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.OriginalImages,
                 (_, _) => OriginalImagesBlobContainerManagerMock.Object)
-            .AddScoped<IUsersService>(_ => UsersServiceMock.Object);
+            .AddScoped<IUserManager>(_ => UserManagerMock.Object);
     }
 }

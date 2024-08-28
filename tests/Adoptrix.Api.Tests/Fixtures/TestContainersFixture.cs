@@ -45,7 +45,7 @@ public class TestContainersFixture : AppFixture<Program>
         // remove selected services
         services.RemoveAll<IEventPublisher>()
             .RemoveAll<IBlobContainerManager>()
-            .RemoveAll<IUsersService>();
+            .RemoveAll<IUserManager>();
 
         // replace with mocked services
         services.AddScoped<IEventPublisher>(_ => Mock.Of<IEventPublisher>())
@@ -53,7 +53,7 @@ public class TestContainersFixture : AppFixture<Program>
                 (_, _) => Mock.Of<IBlobContainerManager>())
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.OriginalImages,
                 (_, _) => Mock.Of<IBlobContainerManager>())
-            .AddScoped<IUsersService>(_ => Mock.Of<IUsersService>());
+            .AddScoped<IUserManager>(_ => Mock.Of<IUserManager>());
     }
 
     protected override async Task SetupAsync()

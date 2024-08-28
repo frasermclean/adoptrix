@@ -19,7 +19,7 @@ public class GetUsersEndpointTests(MockServicesFixture fixture) : TestBase<MockS
             new() { Id = Guid.NewGuid() },
             new() { Id = Guid.NewGuid() }
         };
-        fixture.UsersServiceMock.Setup(service => service.GetAllUsersAsync(It.IsAny<CancellationToken>()))
+        fixture.UserManagerMock.Setup(service => service.GetAllUsersAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(users);
 
         // act

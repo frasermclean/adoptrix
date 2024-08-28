@@ -1,21 +1,33 @@
-﻿using Adoptrix.Logic.Services;
+﻿using Adoptrix.Logic.Options;
+using Adoptrix.Logic.Services;
+using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Models.ODataErrors;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
+using MicrosoftOptions = Microsoft.Extensions.Options.Options;
 
-namespace Adoptrix.Api.Tests.Services;
 
-public class UsersServiceTests
+
+namespace Adoptrix.Logic.Tests.Services;
+
+public class UserManagerTests
 {
     private readonly Mock<IRequestAdapter> requestAdapterMock = new();
-    private readonly UsersService usersService;
+    private readonly UserManager userManager;
 
-    public UsersServiceTests()
+    public UserManagerTests()
     {
+        var options = new UserManagerOptions
+        {
+            ClientId = string.Empty,
+            ClientSecret = string.Empty,
+            ApiObjectId = string.Empty
+        };
+
         var graphServiceClient = new GraphServiceClient(requestAdapterMock.Object);
-        usersService = new UsersService(graphServiceClient);
+        userManager = new UserManager(graphServiceClient, MicrosoftOptions.Create(options));
     }
 
     [Fact]
@@ -35,7 +47,7 @@ public class UsersServiceTests
             .ReturnsAsync(response);
 
         // act
-        var users = await usersService.GetAllUsersAsync();
+        var users = await userManager.GetAllUsersAsync();
 
         // assert
         users.Should().HaveCount(3);
@@ -54,7 +66,7 @@ public class UsersServiceTests
             .ReturnsAsync(user);
 
         // act
-        var result = await usersService.GetUserAsync(Guid.Parse(user.Id!));
+        var result = await userManager.GetUserAsync(Guid.Parse(user.Id!));
 
         // assert
         result.Should().BeSuccess();
@@ -72,7 +84,7 @@ public class UsersServiceTests
             .ThrowsAsync(new ODataError());
 
         // act
-        var result = await usersService.GetUserAsync(Guid.NewGuid());
+        var result = await userManager.GetUserAsync(Guid.NewGuid());
 
         // assert
         result.Should().BeFailure();
