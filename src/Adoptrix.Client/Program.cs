@@ -1,5 +1,7 @@
+using Adoptrix.Client.Authentication;
 using Adoptrix.Client.Services;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 
@@ -29,12 +31,14 @@ public static class Program
     {
         var services = builder.Services;
 
-        services.AddMsalAuthentication(options =>
-        {
-            builder.Configuration.Bind("Authentication", options.ProviderOptions.Authentication);
-            options.ProviderOptions.Cache.CacheLocation = "localStorage";
-            options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/user.read");
-        });
+        services.AddMsalAuthentication<RemoteAuthenticationState, AdoptrixAccount>(options =>
+            {
+                builder.Configuration.Bind("Authentication", options.ProviderOptions.Authentication);
+                options.UserOptions.RoleClaim = ClaimTypes.Role;
+                options.ProviderOptions.Cache.CacheLocation = "localStorage";
+                options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/user.read");
+            })
+            .AddAccountClaimsPrincipalFactory<RemoteAuthenticationState, AdoptrixAccount, AdoptrixAccountFactory>();
 
         services.AddMudServices()
             .AddGraphApiClient(builder.Configuration)
