@@ -29,7 +29,7 @@ public class PermissionsClaimsTransformation(ILogger<PermissionsClaimsTransforma
 
     private static string[] GetPermissions(string? role) => role switch
     {
-        RoleNames.Administrator => AdministratorPermissions,
+        UserRoles.Administrator => AdministratorPermissions,
         _ => []
     };
 

@@ -25,7 +25,7 @@ public class TestAuthHandler(
         }
 
         var parts = authorizationHeader.Split('-');
-        var role = parts.Length > 1 ? parts[1] : RoleNames.User;
+        var role = parts.Length > 1 ? parts[1] : UserRoles.User;
 
         var claims = new[]
         {

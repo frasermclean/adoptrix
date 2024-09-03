@@ -17,7 +17,6 @@ public interface IUserManager
 public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerOptions> options) : IUserManager
 {
     private readonly Guid apiObjectId = options.Value.ApiObjectId;
-    private readonly Guid administratorRoleId = options.Value.AdministratorRoleId;
     private static readonly string[] QueryParameters = ["id", "givenName", "surname", "displayName", "mail"];
 
     public async Task<IEnumerable<UserResponse>> GetAllUsersAsync(CancellationToken cancellationToken = default)
@@ -79,16 +78,13 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
         }
     }
 
-    private string GetRoleName(AppRoleAssignment? roleAssignment)
+    private static string GetRoleName(AppRoleAssignment? roleAssignment)
     {
-        if (roleAssignment?.AppRoleId is null)
-        {
-            return RoleNames.User;
-        }
+        var administratorRoleId = UserRoles.GetRoleId(UserRoles.Administrator);
 
-        return roleAssignment.AppRoleId == administratorRoleId
-            ? RoleNames.Administrator
-            : RoleNames.User;
+        return roleAssignment?.AppRoleId == administratorRoleId
+            ? UserRoles.Administrator
+            : UserRoles.User;
     }
 
     private static UserResponse MapToResponse(User user) => new()
@@ -98,6 +94,6 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
         LastName = user.Surname,
         DisplayName = user.DisplayName,
         EmailAddress = user.Mail,
-        Role = user.AdditionalData.TryGetValue("Role", out var value) ? value.ToString() : RoleNames.User
+        Role = user.AdditionalData.TryGetValue("Role", out var value) ? value.ToString() : UserRoles.User
     };
 }

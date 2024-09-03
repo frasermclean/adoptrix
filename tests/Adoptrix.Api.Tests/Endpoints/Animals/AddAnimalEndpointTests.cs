@@ -12,8 +12,8 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals;
 [Trait("Category", "Integration")]
 public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient adminClient = fixture.CreateClient();
-    private readonly HttpClient userClient = fixture.CreateClient(RoleNames.User);
+    private readonly HttpClient adminClient = fixture.CreateClient(UserRoles.Administrator);
+    private readonly HttpClient userClient = fixture.CreateClient();
 
     [Fact]
     public async Task AddAnimal_WithValidRequest_ShouldReturnCreated()
