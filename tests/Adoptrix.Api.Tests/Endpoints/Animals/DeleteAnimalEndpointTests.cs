@@ -8,8 +8,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals;
 [Trait("Category", "Integration")]
 public class DeleteAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
-
     [Fact]
     public async Task DeleteAnimal_WithValidRequest_ShouldReturnNoContent()
     {
@@ -17,7 +15,7 @@ public class DeleteAnimalEndpointTests(TestContainersFixture fixture) : TestBase
         var animalId = SeedData.Animals[3].Id;
 
         // act
-        var message = await httpClient.DeleteAsync($"api/animals/{animalId}");
+        var message = await fixture.AdminClient.DeleteAsync($"api/animals/{animalId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NoContent);
@@ -30,7 +28,7 @@ public class DeleteAnimalEndpointTests(TestContainersFixture fixture) : TestBase
         var animalId = Guid.Empty;
 
         // act
-        var message = await httpClient.DeleteAsync($"api/animals/{animalId}");
+        var message = await fixture.AdminClient.DeleteAsync($"api/animals/{animalId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);

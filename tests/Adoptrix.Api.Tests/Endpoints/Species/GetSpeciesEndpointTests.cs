@@ -7,8 +7,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Species;
 [Trait("Category", "Integration")]
 public class GetSpeciesEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.Client;
-
     [Fact]
     public async Task GetSpecies_WithKnownSpeciesName_ShouldReturnOk()
     {
@@ -16,7 +14,7 @@ public class GetSpeciesEndpointTests(TestContainersFixture fixture) : TestBase<T
         const string speciesName = "Dog";
 
         // act
-        var message = await httpClient.GetAsync($"/api/species/{speciesName}");
+        var message = await fixture.Client.GetAsync($"/api/species/{speciesName}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -29,7 +27,7 @@ public class GetSpeciesEndpointTests(TestContainersFixture fixture) : TestBase<T
         const string speciesName = "Unknown";
 
         // act
-        var message = await httpClient.GetAsync($"/api/species/{speciesName}");
+        var message = await fixture.Client.GetAsync($"/api/species/{speciesName}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);

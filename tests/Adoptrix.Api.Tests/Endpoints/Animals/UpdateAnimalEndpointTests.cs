@@ -12,8 +12,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals;
 [Trait("Category", "Integration")]
 public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
-
     [Fact]
     public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk()
     {
@@ -22,7 +20,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
 
         // act
         var (message, response) =
-            await httpClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest, AnimalResponse>(request);
+            await fixture.AdminClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest, AnimalResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -37,7 +35,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
         var request = CreateRequest(Guid.Empty);
 
         // act
-        var message = await httpClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest>(request);
+        var message = await fixture.AdminClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
@@ -51,7 +49,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
 
         // act
         var (message, response) =
-            await httpClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest, ErrorResponse>(request);
+            await fixture.AdminClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);

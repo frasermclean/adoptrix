@@ -10,8 +10,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals;
 [Trait("Category", "Integration")]
 public class SearchAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.Client;
-
     [Fact]
     public async Task SearchAnimals_WithValidRequest_ShouldReturnOk()
     {
@@ -20,7 +18,7 @@ public class SearchAnimalEndpointTests(TestContainersFixture fixture) : TestBase
 
         // act
         var (message, matches) =
-            await httpClient.GETAsync<SearchAnimalsEndpoint, SearchAnimalsRequest, List<AnimalMatch>>(request);
+            await fixture.Client.GETAsync<SearchAnimalsEndpoint, SearchAnimalsRequest, List<AnimalMatch>>(request);
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.OK);

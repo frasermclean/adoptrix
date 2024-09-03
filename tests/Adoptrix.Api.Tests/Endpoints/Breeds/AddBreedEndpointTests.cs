@@ -10,8 +10,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 [Trait("Category", "Integration")]
 public class AddBreedEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
-
     [Fact]
     public async Task AddBreed_WithValidRequest_ShouldReturnCreated()
     {
@@ -20,7 +18,7 @@ public class AddBreedEndpointTests(TestContainersFixture fixture) : TestBase<Tes
 
         // act
         var (message, response) =
-            await httpClient.POSTAsync<AddBreedEndpoint, AddBreedRequest, BreedResponse>(request);
+            await fixture.AdminClient.POSTAsync<AddBreedEndpoint, AddBreedRequest, BreedResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
@@ -37,7 +35,7 @@ public class AddBreedEndpointTests(TestContainersFixture fixture) : TestBase<Tes
 
         // act
         var (message, response) =
-            await httpClient.POSTAsync<AddBreedEndpoint, AddBreedRequest, ErrorResponse>(request);
+            await fixture.AdminClient.POSTAsync<AddBreedEndpoint, AddBreedRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -52,7 +50,7 @@ public class AddBreedEndpointTests(TestContainersFixture fixture) : TestBase<Tes
 
         // act
         var (message, response) =
-            await httpClient.POSTAsync<AddBreedEndpoint, AddBreedRequest, ErrorResponse>(request);
+            await fixture.AdminClient.POSTAsync<AddBreedEndpoint, AddBreedRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Conflict);

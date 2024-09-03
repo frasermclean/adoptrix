@@ -7,8 +7,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 [Trait("Category", "Integration")]
 public class DeleteBreedEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
-
     [Fact]
     public async Task DeleteBreed_WithValidRequest_ShouldReturnNoContent()
     {
@@ -16,7 +14,7 @@ public class DeleteBreedEndpointTests(TestContainersFixture fixture) : TestBase<
         const int breedId = 3;
 
         // act
-        var message = await httpClient.DeleteAsync($"/api/breeds/{breedId}");
+        var message = await fixture.AdminClient.DeleteAsync($"/api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NoContent);
@@ -29,7 +27,7 @@ public class DeleteBreedEndpointTests(TestContainersFixture fixture) : TestBase<
         const int breedId = -1;
 
         // act
-        var message = await httpClient.DeleteAsync($"/api/breeds/{breedId}");
+        var message = await fixture.AdminClient.DeleteAsync($"/api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);

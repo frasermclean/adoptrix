@@ -4,7 +4,6 @@ using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Requests;
 using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
-using Adoptrix.Logic;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
@@ -12,9 +11,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals;
 [Trait("Category", "Integration")]
 public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient adminClient = fixture.CreateClient(UserRoles.Administrator);
-    private readonly HttpClient userClient = fixture.CreateClient();
-
     [Fact]
     public async Task AddAnimal_WithValidRequest_ShouldReturnCreated()
     {
@@ -23,7 +19,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
 
         // act
         var (message, response) =
-            await adminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
+            await fixture.AdminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
@@ -43,7 +39,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
 
         // act
         var (message, response) =
-            await adminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, ErrorResponse>(request);
+            await fixture.AdminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -57,7 +53,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
         var request = CreateRequest();
 
         // act
-        var testResult = await userClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
+        var testResult = await fixture.UserClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
 
         // assert
         testResult.Response.Should().HaveStatusCode(HttpStatusCode.Forbidden);

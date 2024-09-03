@@ -22,9 +22,13 @@ public class TestContainersFixture : AppFixture<Program>
             .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;"))
         .Build();
 
-    public HttpClient CreateClient(string role = UserRoles.User) => CreateClient(httpClient =>
+    public HttpClient AdminClient => CreateClient(httpClient =>
         httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{role}"));
+            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{UserRoles.Administrator}"));
+
+    public HttpClient UserClient => CreateClient(httpClient =>
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{UserRoles.User}"));
 
     protected override async Task PreSetupAsync()
     {
