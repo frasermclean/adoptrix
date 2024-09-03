@@ -16,10 +16,11 @@ public static class AppConfiguration
 
         builder.Configuration.AddAzureAppConfiguration(options =>
         {
-            options.Connect(new Uri(endpoint), new DefaultAzureCredential())
+            var credential = new DefaultAzureCredential();
+            options.Connect(new Uri(endpoint), credential)
                 .Select(KeyFilter.Any)
                 .Select(KeyFilter.Any, builder.Environment.EnvironmentName);
-            options.ConfigureKeyVault(keyVaultOptions => keyVaultOptions.SetCredential(new DefaultAzureCredential()));
+            options.ConfigureKeyVault(keyVaultOptions => keyVaultOptions.SetCredential(credential));
         });
 
         return builder;
