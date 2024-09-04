@@ -1,13 +1,17 @@
 ﻿using System.Security.Claims;
+using Adoptrix.Core;
 using Microsoft.Identity.Web;
 
 namespace Adoptrix.Api.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {
-    public static string GetRole(this ClaimsPrincipal principal)
+    public static UserRole GetRole(this ClaimsPrincipal principal)
     {
-        return principal.FindFirstValue(ClaimConstants.Roles) ?? string.Empty;
+        var claimValue = principal.FindFirstValue(ClaimConstants.Roles);
+        return Enum.TryParse<UserRole>(claimValue, out var role)
+            ? role
+            : UserRole.User;
     }
 
     public static Guid GetUserId(this ClaimsPrincipal principal)

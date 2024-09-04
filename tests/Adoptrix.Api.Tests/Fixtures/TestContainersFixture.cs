@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
+using Adoptrix.Core;
 using Adoptrix.Initializer;
-using Adoptrix.Logic;
 using Adoptrix.Logic.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
@@ -24,11 +24,11 @@ public class TestContainersFixture : AppFixture<Program>
 
     public HttpClient AdminClient => CreateClient(httpClient =>
         httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{UserRoles.Administrator}"));
+            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{UserRole.Administrator}"));
 
     public HttpClient UserClient => CreateClient(httpClient =>
         httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{UserRoles.User}"));
+            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{UserRole.User}"));
 
     protected override async Task PreSetupAsync()
     {

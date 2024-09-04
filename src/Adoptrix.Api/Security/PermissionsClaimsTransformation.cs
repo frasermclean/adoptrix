@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using Adoptrix.Api.Extensions;
-using Adoptrix.Logic;
+using Adoptrix.Core;
 using Microsoft.AspNetCore.Authentication;
 
 namespace Adoptrix.Api.Security;
@@ -27,9 +27,9 @@ public class PermissionsClaimsTransformation(ILogger<PermissionsClaimsTransforma
         return Task.FromResult(principal);
     }
 
-    private static string[] GetPermissions(string? role) => role switch
+    private static string[] GetPermissions(UserRole role) => role switch
     {
-        UserRoles.Administrator => AdministratorPermissions,
+        UserRole.Administrator => AdministratorPermissions,
         _ => []
     };
 

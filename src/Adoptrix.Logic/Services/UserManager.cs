@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Contracts.Responses;
+using Adoptrix.Core;
 using Adoptrix.Logic.Options;
 using FluentResults;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,11 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
 {
     private readonly Guid apiObjectId = options.Value.ApiObjectId;
     private static readonly string[] QueryParameters = ["id", "givenName", "surname", "displayName", "mail"];
+
+    private static readonly Dictionary<UserRole, Guid> RoleIds = new()
+    {
+        { UserRole.Administrator, Guid.Parse("de833830-21b2-4373-9b22-b73b862d2d1f") }
+    };
 
     public async Task<IEnumerable<UserResponse>> GetAllUsersAsync(CancellationToken cancellationToken = default)
     {
@@ -40,8 +46,7 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
         {
             var userId = Guid.Parse(user.Id!);
             var roleAssignment = appRoleAssignments.FirstOrDefault(assignment => assignment.PrincipalId == userId);
-            var roleName = GetRoleName(roleAssignment);
-
+            var roleName = GetUserRole(roleAssignment);
 
             user.AdditionalData["Role"] = roleName;
         }
@@ -67,8 +72,8 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
                 appRoleAssignmentsTask.Result?.Value?.FirstOrDefault(assignment =>
                     assignment.ResourceId == apiObjectId);
 
-            var roleName = GetRoleName(apiRoleAssignment);
-            user!.AdditionalData["Role"] = roleName;
+            var userRole = GetUserRole(apiRoleAssignment);
+            user!.AdditionalData["Role"] = userRole;
 
             return MapToResponse(user);
         }
@@ -78,14 +83,10 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
         }
     }
 
-    private static string GetRoleName(AppRoleAssignment? roleAssignment)
-    {
-        var administratorRoleId = UserRoles.GetRoleId(UserRoles.Administrator);
-
-        return roleAssignment?.AppRoleId == administratorRoleId
-            ? UserRoles.Administrator
-            : UserRoles.User;
-    }
+    private static UserRole GetUserRole(AppRoleAssignment? roleAssignment) =>
+        roleAssignment?.AppRoleId == RoleIds[UserRole.Administrator]
+            ? UserRole.Administrator
+            : UserRole.User;
 
     private static UserResponse MapToResponse(User user) => new()
     {
@@ -94,6 +95,8 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
         LastName = user.Surname,
         DisplayName = user.DisplayName,
         EmailAddress = user.Mail,
-        Role = user.AdditionalData.TryGetValue("Role", out var value) ? value.ToString() : UserRoles.User
+        Role = user.AdditionalData.TryGetValue("Role", out var value)
+            ? value.ToString()
+            : UserRole.User.ToString()
     };
 }

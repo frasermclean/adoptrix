@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Headers;
-using Adoptrix.Logic;
+using Adoptrix.Core;
 using Adoptrix.Logic.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
@@ -17,7 +17,7 @@ public class MockServicesFixture : AppFixture<Program>
     public Mock<IBlobContainerManager> OriginalImagesBlobContainerManagerMock { get; } = new();
     public Mock<IUserManager> UserManagerMock { get; } = new();
 
-    public HttpClient CreateClient(string role = UserRoles.Administrator) => CreateClient(httpClient =>
+    public HttpClient CreateClient(UserRole role = UserRole.Administrator) => CreateClient(httpClient =>
         httpClient.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{role}"));
 
