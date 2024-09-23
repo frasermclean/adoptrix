@@ -17,9 +17,6 @@ public class TestContainersFixture : AppFixture<Program>
 {
     private readonly MsSqlContainer databaseContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-        .WithWaitStrategy(Wait
-            .ForUnixContainer() // needed until https://github.com/testcontainers/testcontainers-dotnet/issues/1220 is resolved
-            .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;"))
         .Build();
 
     public HttpClient AdminClient => CreateClient(httpClient =>
