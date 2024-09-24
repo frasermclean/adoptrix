@@ -31,6 +31,12 @@ public class UpdateBreedEndpoint(IBreedsService breedsService)
             return TypedResults.NotFound();
         }
 
+        if (result.HasError<DuplicateBreedError>())
+        {
+            AddError(r => r.Name, $"Breed with name '{request.Name}' already exists");
+            return new ErrorResponse(ValidationFailures, StatusCodes.Status409Conflict);
+        }
+
         if (result.HasError<SpeciesNotFoundError>())
         {
             AddError(r => r.SpeciesName, "Invalid species name");
