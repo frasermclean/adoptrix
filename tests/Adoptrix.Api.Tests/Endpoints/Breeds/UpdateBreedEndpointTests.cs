@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Requests;
@@ -55,8 +55,21 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesName");
     }
 
-    private static UpdateBreedRequest CreateRequest(string name = "Budgerigar", int breedId = 5,
-        string speciesName = "Dog") => new()
+    [Fact]
+    public async Task UpdateBreed_WithExistingBreed_ShouldReturnConflict()
+    {
+        // arrange
+        var request = CreateRequest("German Shepherd", 1, "Dog");
+
+        // act
+        var (message, response) = await fixture.AdminClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.Conflict);
+        response.Errors.Should().ContainSingle().Which.Key.Should().Be("name");
+    }
+
+    private static UpdateBreedRequest CreateRequest(string name = "Budgerigar", int breedId = 5, string speciesName = "Dog") => new()
     {
         Name = name,
         BreedId = breedId,

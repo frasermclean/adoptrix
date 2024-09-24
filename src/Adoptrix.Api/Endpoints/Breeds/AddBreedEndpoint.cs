@@ -28,7 +28,7 @@ public class AddBreedEndpoint(IBreedsService breedsService)
 
         if (result.HasError<DuplicateBreedError>())
         {
-            AddError(r => r.Name, "Breed with this name already exists");
+            AddError(r => r.Name, $"Breed with name '{request.Name}' already exists");
             return new ErrorResponse(ValidationFailures, StatusCodes.Status409Conflict);
         }
 

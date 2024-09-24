@@ -1,6 +1,7 @@
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
+using EntityFramework.Exceptions.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +17,11 @@ public static class ServiceRegistration
     /// </summary>
     public static IHostApplicationBuilder AddPersistence(this IHostApplicationBuilder builder)
     {
-        builder.AddSqlServerDbContext<AdoptrixDbContext>("database");
+        builder.AddSqlServerDbContext<AdoptrixDbContext>("database",
+            configureDbContextOptions: optionsBuilder =>
+            {
+                optionsBuilder.UseExceptionProcessor();
+            });
         builder.AddAzureBlobClient("blob-storage");
         builder.AddAzureQueueClient("queue-storage");
 
@@ -43,7 +48,8 @@ public static class ServiceRegistration
         services.AddDbContextFactory<AdoptrixDbContext>(optionsBuilder =>
         {
             var connectionString = configuration.GetConnectionString("database");
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseSqlServer(connectionString)
+                .UseExceptionProcessor();
         });
 
         return services;
