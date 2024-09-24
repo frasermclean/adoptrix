@@ -121,11 +121,18 @@ public class BreedsService(ILogger<BreedsService> logger, AdoptrixDbContext dbCo
         breed.Species = species;
         breed.LastModifiedBy = request.UserId;
         breed.LastModifiedUtc = DateTime.UtcNow;
-        await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Updated breed with ID {BreedId}", request.BreedId);
-
-        return breed.ToResponse();
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Updated breed with ID {BreedId}", request.BreedId);
+            return breed.ToResponse();
+        }
+        catch (UniqueConstraintException exception) when (exception.ConstraintProperties.Contains(nameof(Breed.Name)))
+        {
+            logger.LogError(exception, "Breed with name {BreedName} already exists", request.Name);
+            return new DuplicateBreedError(request.Name);
+        }
     }
 
     public async Task<Result> DeleteAsync(int breedId, CancellationToken cancellationToken)

@@ -56,6 +56,20 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("speciesName");
     }
 
+    [Fact]
+    public async Task UpdateBreed_WithExistingBreed_ShouldReturnConflict()
+    {
+        // arrange
+        var request = CreateRequest("German Shepherd", 1, "Dog");
+
+        // act
+        var (message, response) = await httpClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
+
+        // assert
+        message.Should().HaveStatusCode(HttpStatusCode.Conflict);
+        response.Errors.Should().ContainSingle().Which.Key.Should().Be("name");
+    }
+
     private static UpdateBreedRequest CreateRequest(string name = "Budgerigar", int breedId = 5, string speciesName = "Dog") => new()
     {
         Name = name,
