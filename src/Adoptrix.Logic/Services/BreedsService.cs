@@ -4,6 +4,7 @@ using Adoptrix.Core;
 using Adoptrix.Logic.Errors;
 using Adoptrix.Logic.Mapping;
 using Adoptrix.Persistence.Services;
+using EntityFramework.Exceptions.Common;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -74,14 +75,6 @@ public class BreedsService(ILogger<BreedsService> logger, AdoptrixDbContext dbCo
             return new SpeciesNotFoundError(request.SpeciesName);
         }
 
-        // ensure breed does not already exist
-        if (species.Breeds.Any(b => b.Name == request.Name))
-        {
-            logger.LogError("Breed with name {BreedName} already exists", request.Name);
-            return new DuplicateBreedError(request.Name);
-        }
-
-        // save new breed
         var breed = new Breed
         {
             Name = request.Name,
@@ -89,12 +82,20 @@ public class BreedsService(ILogger<BreedsService> logger, AdoptrixDbContext dbCo
             LastModifiedBy = request.UserId
         };
         species.Breeds.Add(breed);
-        await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Added breed with name {BreedName} and species {SpeciesName}", request.Name,
-            request.SpeciesName);
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Added breed with name {BreedName} and species {SpeciesName}", request.Name,
+                request.SpeciesName);
 
-        return breed.ToResponse();
+            return breed.ToResponse();
+        }
+        catch (UniqueConstraintException exception) when (exception.ConstraintProperties.Contains(nameof(Breed.Name)))
+        {
+            logger.LogError(exception, "Breed with name {BreedName} already exists", request.Name);
+            return new DuplicateBreedError(request.Name);
+        }
     }
 
     public async Task<Result<BreedResponse>> UpdateAsync(UpdateBreedRequest request,
