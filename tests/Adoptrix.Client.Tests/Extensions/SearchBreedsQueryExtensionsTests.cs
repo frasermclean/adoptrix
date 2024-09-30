@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Client.Extensions;
-using Adoptrix.Contracts.Requests;
+using Adoptrix.Core.Requests;
 
 namespace Adoptrix.Client.Tests.Extensions;
 

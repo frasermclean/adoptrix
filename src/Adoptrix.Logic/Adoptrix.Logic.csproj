@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Contracts\Adoptrix.Contracts.csproj" />
     <ProjectReference Include="..\Adoptrix.Persistence\Adoptrix.Persistence.csproj" />
   </ItemGroup>
 

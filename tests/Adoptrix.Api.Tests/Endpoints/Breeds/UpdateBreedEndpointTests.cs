@@ -1,7 +1,7 @@
 using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Requests;
+using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
@@ -59,7 +59,7 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
     public async Task UpdateBreed_WithExistingBreed_ShouldReturnConflict()
     {
         // arrange
-        var request = CreateRequest("German Shepherd", 1, "Dog");
+        var request = CreateRequest("German Shepherd", 1);
 
         // act
         var (message, response) = await fixture.AdminClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);

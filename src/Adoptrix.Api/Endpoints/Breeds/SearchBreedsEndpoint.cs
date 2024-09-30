@@ -1,4 +1,4 @@
-﻿using Adoptrix.Contracts.Requests;
+﻿using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Services;
 

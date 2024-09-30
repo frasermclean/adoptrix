@@ -1,6 +1,6 @@
-﻿using Adoptrix.Contracts.Requests;
-using Adoptrix.Core;
+﻿using Adoptrix.Core;
 using Adoptrix.Core.Events;
+using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Errors;
 using Adoptrix.Logic.Mapping;
@@ -27,16 +27,12 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
     public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
         CancellationToken cancellationToken)
     {
-        Sex? sex = Enum.TryParse<Sex>(request.Sex, true, out var value)
-            ? value
-            : null;
-
         var matches = await dbContext.Animals
             .AsNoTracking()
             .Where(animal => (request.Name == null || animal.Name.Contains(request.Name)) &&
                              (request.BreedId == null || animal.Breed.Id == request.BreedId) &&
                              (request.SpeciesName == null || animal.Breed.Species.Name == request.SpeciesName) &&
-                             (sex == null || animal.Sex == sex))
+                             (request.Sex == null || animal.Sex == request.Sex))
             .OrderBy(animal => animal.Name)
             .Take(request.Limit ?? 10)
             .Select(animal => new AnimalMatch
@@ -85,9 +81,8 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
     public async Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request, CancellationToken cancellationToken)
     {
         var breed = await dbContext.Breeds.Where(breed => breed.Id == request.BreedId)
-            .Include(breed => breed.Animals)
             .Include(breed => breed.Species)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(breed => breed.Id == request.BreedId, cancellationToken);
 
         if (breed is null)
         {
@@ -100,7 +95,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
             Name = request.Name,
             Description = request.Description,
             Breed = breed,
-            Sex = Enum.Parse<Sex>(request.Sex),
+            Sex = request.Sex,
             DateOfBirth = request.DateOfBirth,
             Slug = Animal.CreateSlug(request.Name, request.DateOfBirth),
             LastModifiedBy = request.UserId

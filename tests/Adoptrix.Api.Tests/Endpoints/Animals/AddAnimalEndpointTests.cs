@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Requests;
 using Adoptrix.Core;
+using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
@@ -65,7 +65,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
         Name = name,
         Description = description,
         BreedId = breedId,
-        Sex = sex.ToString(),
+        Sex = sex,
         DateOfBirth = dateOfBirth ?? new DateOnly(2020, 1, 1),
         UserId = userId ?? Guid.NewGuid()
     };

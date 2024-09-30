@@ -1,4 +1,5 @@
-@using Adoptrix.Contracts.Requests
+@using Adoptrix.Core
+@using Adoptrix.Core.Requests
 @using Adoptrix.Core.Responses
 @inject ISpeciesClient SpeciesClient;
 @inject IBreedsClient BreedsClient;
@@ -32,9 +33,9 @@
 
     @* Sex *@
     <MudText Typo="Typo.h6">Sex</MudText>
-    <MudChipSet T="string?" CheckMark="true" Class="mb-2" SelectedValue="sex" SelectedValueChanged="OnSexChanged" SelectionMode="SelectionMode.ToggleSelection">
-        <MudChip T="string?" Text="Male" Value="@("Male")" Color="Color.Primary" Icon="fa-solid fa-mars"/>
-        <MudChip T="string?" Text="Female" Value="@("Female")" Color="Color.Primary" Icon="fa-solid fa-venus"/>
+    <MudChipSet T="Sex?" CheckMark="true" Class="mb-2" SelectedValue="sex" SelectedValueChanged="OnSexChanged" SelectionMode="SelectionMode.ToggleSelection">
+        <MudChip T="Sex?" Text="Male" Value="@(Sex.Male)" Color="Color.Primary" Icon="fa-solid fa-mars"/>
+        <MudChip T="Sex?" Text="Female" Value="@(Sex.Female)" Color="Color.Primary" Icon="fa-solid fa-venus"/>
     </MudChipSet>
 
     @if (HasFilters)
@@ -49,7 +50,7 @@
     private IEnumerable<BreedMatch> breedMatches = [];
     private string? speciesName;
     private int? breedId;
-    private string? sex;
+    private Sex? sex;
 
     [Parameter] public EventCallback<SearchAnimalsRequest> DataChanged { get; set; }
 
@@ -78,7 +79,7 @@
         RaiseDataChanged();
     }
 
-    private void OnSexChanged(string? value)
+    private void OnSexChanged(Sex? value)
     {
         sex = value;
         RaiseDataChanged();

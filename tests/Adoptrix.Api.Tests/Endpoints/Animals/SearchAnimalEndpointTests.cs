@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Requests;
+using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;

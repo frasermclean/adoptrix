@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Requests;
 using Adoptrix.Core;
+using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 using Adoptrix.Initializer;
 
