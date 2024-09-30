@@ -1,5 +1,5 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Core.Events;
+﻿using Adoptrix.Core.Events;
+using Adoptrix.Core.Extensions;
 using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Errors;
@@ -90,17 +90,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
             return new BreedNotFoundError(request.BreedId);
         }
 
-        var animal = new Animal
-        {
-            Name = request.Name,
-            Description = request.Description,
-            Breed = breed,
-            Sex = request.Sex,
-            DateOfBirth = request.DateOfBirth,
-            Slug = Animal.CreateSlug(request.Name, request.DateOfBirth),
-            LastModifiedBy = request.UserId
-        };
-
+        var animal = request.ToAnimal(breed);
         breed.Animals.Add(animal);
         await dbContext.SaveChangesAsync(cancellationToken);
 
