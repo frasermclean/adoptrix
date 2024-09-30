@@ -24,7 +24,8 @@ public interface IAnimalsService
 public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext dbContext, IEventPublisher eventPublisher)
     : IAnimalsService
 {
-    public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
+        CancellationToken cancellationToken)
     {
         Sex? sex = Enum.TryParse<Sex>(request.Sex, true, out var value)
             ? value
@@ -36,6 +37,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
                              (request.BreedId == null || animal.Breed.Id == request.BreedId) &&
                              (request.SpeciesName == null || animal.Breed.Species.Name == request.SpeciesName) &&
                              (sex == null || animal.Sex == sex))
+            .OrderBy(animal => animal.Name)
             .Take(request.Limit ?? 10)
             .Select(animal => new AnimalMatch
             {
@@ -47,7 +49,6 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
                 Image = animal.Images.Select(image => image.ToResponse())
                     .FirstOrDefault()
             })
-            .OrderBy(animal => animal.Name)
             .ToListAsync(cancellationToken);
 
         return matches;
@@ -113,7 +114,8 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
         return animal.ToResponse();
     }
 
-    public async Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalRequest request, CancellationToken cancellationToken)
+    public async Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalRequest request,
+        CancellationToken cancellationToken)
     {
         var animal = await dbContext.Animals.FirstOrDefaultAsync(a => a.Id == request.AnimalId, cancellationToken);
         if (animal is null)
