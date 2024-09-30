@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Contracts.Responses;
+﻿namespace Adoptrix.Core.Responses;
 
 public class UserResponse
 {
@@ -7,5 +7,5 @@ public class UserResponse
     public string? LastName { get; init; }
     public string? DisplayName { get; init; }
     public string? EmailAddress { get; init; }
-    public string? Role { get; init; }
+    public UserRole Role { get; init; }
 }

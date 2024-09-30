@@ -1,4 +1,4 @@
-﻿using Adoptrix.Contracts.Responses;
+﻿using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Services;
 
 namespace Adoptrix.Api.Endpoints.Users;

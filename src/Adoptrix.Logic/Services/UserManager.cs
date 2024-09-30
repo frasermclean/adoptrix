@@ -1,5 +1,5 @@
-﻿using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
+﻿using Adoptrix.Core;
+using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Options;
 using FluentResults;
 using Microsoft.Extensions.Options;
@@ -96,7 +96,7 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
         DisplayName = user.DisplayName,
         EmailAddress = user.Mail,
         Role = user.AdditionalData.TryGetValue("Role", out var value)
-            ? value.ToString()
-            : UserRole.User.ToString()
+            ? (UserRole)value
+            : UserRole.User
     };
 }

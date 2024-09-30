@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Users;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Responses;
+using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Users;
 
