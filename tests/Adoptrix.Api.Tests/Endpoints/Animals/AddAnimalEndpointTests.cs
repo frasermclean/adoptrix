@@ -2,8 +2,8 @@
 using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Contracts.Requests;
-using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
+using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
@@ -25,7 +25,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         message.Headers.Location.Should().NotBeNull();
         response.Name.Should().Be("Sasha");
-        response.Sex.Should().Be("Female");
+        response.Sex.Should().Be(Sex.Female);
         response.DateOfBirth.Should().Be(request.DateOfBirth);
         response.Slug.Should().Be("sasha-2020-01-01");
         response.Age.Should().NotBeEmpty();

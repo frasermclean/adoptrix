@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Contracts.Responses;
+﻿namespace Adoptrix.Core.Responses;
 
 public class SpeciesMatch
 {

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Responses;
+using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 

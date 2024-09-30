@@ -20,7 +20,7 @@ public class AnimalResponseMapperTests
         response.Description.Should().Be(animal.Description);
         response.SpeciesName.Should().Be(animal.Breed.Species.Name);
         response.BreedName.Should().Be(animal.Breed.Name);
-        response.Sex.Should().Be(animal.Sex.ToString());
+        response.Sex.Should().Be(animal.Sex);
         response.DateOfBirth.Should().Be(animal.DateOfBirth);
         response.LastModifiedUtc.Should().Be(animal.LastModifiedUtc.ToUniversalTime());
         response.Images.Should().HaveCount(animal.Images.Count).And.AllSatisfy(imageResponse =>

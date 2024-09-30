@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Contracts.Requests;
-using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
 using Adoptrix.Core.Events;
+using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Errors;
 using Adoptrix.Logic.Mapping;
 using Adoptrix.Persistence.Services;

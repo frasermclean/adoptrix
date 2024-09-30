@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Contracts.Requests;
-using Adoptrix.Contracts.Responses;
+using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Errors;
 using Adoptrix.Persistence.Services;
 using FluentResults;

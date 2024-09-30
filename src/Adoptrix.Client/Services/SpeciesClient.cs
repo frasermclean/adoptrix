@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Client.Extensions;
 using Adoptrix.Contracts.Requests;
-using Adoptrix.Contracts.Responses;
+using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Client.Services;
 

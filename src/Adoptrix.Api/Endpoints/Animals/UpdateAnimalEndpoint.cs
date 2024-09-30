@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Security;
 using Adoptrix.Contracts.Requests;
-using Adoptrix.Contracts.Responses;
+using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Errors;
 using Adoptrix.Logic.Services;
 using Microsoft.AspNetCore.Http.HttpResults;

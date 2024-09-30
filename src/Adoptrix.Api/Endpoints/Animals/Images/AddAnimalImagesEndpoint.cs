@@ -1,4 +1,4 @@
-﻿using Adoptrix.Contracts.Responses;
+﻿using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Models;
 using Adoptrix.Logic.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
