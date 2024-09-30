@@ -18,7 +18,7 @@ public interface IAnimalsService
     Task<Result<AnimalResponse>> GetAsync(string animalSlug, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalRequest request, CancellationToken cancellationToken);
-    Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken);
+    Task<Result> DeleteAsync(DeleteAnimalRequest request, CancellationToken cancellationToken);
 }
 
 public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext dbContext, IEventPublisher eventPublisher)
@@ -126,19 +126,20 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
         return animal.ToResponse();
     }
 
-    public async Task<Result> DeleteAsync(Guid animalId, CancellationToken cancellationToken)
+    public async Task<Result> DeleteAsync(DeleteAnimalRequest request, CancellationToken cancellationToken)
     {
-        var animal = await dbContext.Animals.FirstOrDefaultAsync(animal => animal.Id == animalId, cancellationToken);
+        var animal =
+            await dbContext.Animals.FirstOrDefaultAsync(animal => animal.Id == request.AnimalId, cancellationToken);
         if (animal is null)
         {
-            logger.LogError("Could not find animal with ID: {AnimalId} to delete", animalId);
-            return new AnimalNotFoundError(animalId);
+            logger.LogError("Could not find animal with ID: {AnimalId} to delete", request.AnimalId);
+            return new AnimalNotFoundError(request.AnimalId);
         }
 
-        animal.IsDeleted = true;
+        animal.Delete(request.UserId);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Deleted animal with ID: {AnimalId}", animalId);
+        logger.LogInformation("Deleted animal with ID: {AnimalId}", request.AnimalId);
 
         await eventPublisher.PublishAsync(new AnimalDeletedEvent(animal.Slug), cancellationToken);
 
