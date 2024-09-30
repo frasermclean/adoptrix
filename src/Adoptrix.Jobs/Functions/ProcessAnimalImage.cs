@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Core.Events;
-using Adoptrix.Logic.Services;
+using Adoptrix.Logic.Abstractions;
 using Adoptrix.Persistence;
 using Microsoft.Azure.Functions.Worker;
 

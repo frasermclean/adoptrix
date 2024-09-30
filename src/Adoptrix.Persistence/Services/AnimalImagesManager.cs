@@ -1,26 +1,17 @@
 ﻿using Adoptrix.Core;
 using Adoptrix.Core.Events;
 using Adoptrix.Core.Responses;
+using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Errors;
 using Adoptrix.Logic.Mapping;
 using Adoptrix.Logic.Models;
-using Adoptrix.Persistence;
-using Adoptrix.Persistence.Services;
+using Adoptrix.Logic.Services;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Adoptrix.Logic.Services;
-
-public interface IAnimalImagesManager
-{
-    Task<Result<AnimalResponse>> AddOriginalsAsync(Guid animalId, Guid userId,
-        IAsyncEnumerable<AddOriginalImageData> items, CancellationToken cancellationToken = default);
-
-    Task<Result> ProcessOriginalAsync(AnimalImageAddedEvent data, CancellationToken cancellationToken = default);
-    Task DeleteImagesAsync(AnimalDeletedEvent data, CancellationToken cancellationToken = default);
-}
+namespace Adoptrix.Persistence.Services;
 
 public class AnimalImagesManager(
     ILogger<AnimalImagesManager> logger,

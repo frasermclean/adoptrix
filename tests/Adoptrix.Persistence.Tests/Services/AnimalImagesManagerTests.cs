@@ -1,11 +1,13 @@
 ﻿using Adoptrix.Core;
 using Adoptrix.Core.Events;
+using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Services;
 using Adoptrix.Persistence.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Moq;
 
-namespace Adoptrix.Logic.Tests.Services;
+namespace Adoptrix.Persistence.Tests.Services;
 
 public class AnimalImagesManagerTests
 {

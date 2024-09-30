@@ -22,6 +22,5 @@ public class AboutEndpointTests(MockServicesFixture fixture) : TestBase<MockServ
         response.Version.Should().NotBeEmpty();
         response.BuildDate.Should().BeBefore(DateTime.UtcNow);
         response.Environment.Should().NotBeEmpty();
-        response.AnimalImagesBaseUrl.Should().Be(containerUri);
     }
 }

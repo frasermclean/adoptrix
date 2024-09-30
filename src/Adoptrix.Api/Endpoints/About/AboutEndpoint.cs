@@ -1,7 +1,5 @@
 ﻿using System.Globalization;
 using System.Reflection;
-using Adoptrix.Persistence;
-using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Adoptrix.Api.Endpoints.About;
@@ -11,16 +9,14 @@ public class AboutEndpoint : EndpointWithoutRequest<AboutResponse>
 {
     private readonly AboutResponse response;
 
-    public AboutEndpoint(
-        [FromKeyedServices(BlobContainerNames.AnimalImages)] IBlobContainerManager blobContainerManager)
+    public AboutEndpoint()
     {
         var buildData = GetBuildData();
         response = new AboutResponse
         {
             Version = buildData.Version,
             Environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown",
-            BuildDate = buildData.BuildDate,
-            AnimalImagesBaseUrl = blobContainerManager.ContainerUri
+            BuildDate = buildData.BuildDate
         };
     }
 

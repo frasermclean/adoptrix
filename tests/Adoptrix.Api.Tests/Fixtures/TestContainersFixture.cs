@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Core;
 using Adoptrix.Initializer;
+using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;

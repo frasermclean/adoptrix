@@ -1,3 +1,4 @@
+using Adoptrix.Logic.Abstractions;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
@@ -18,15 +19,11 @@ public static class ServiceRegistration
     public static IHostApplicationBuilder AddPersistence(this IHostApplicationBuilder builder)
     {
         builder.AddSqlServerDbContext<AdoptrixDbContext>("database",
-            configureDbContextOptions: optionsBuilder =>
-            {
-                optionsBuilder.UseExceptionProcessor();
-            });
+            configureDbContextOptions: optionsBuilder => { optionsBuilder.UseExceptionProcessor(); });
         builder.AddAzureBlobClient("blob-storage");
         builder.AddAzureQueueClient("queue-storage");
 
-        builder.Services
-            .AddSingleton<IEventPublisher, EventPublisher>()
+        builder.Services.AddProjectServices()
             .AddBlobServices()
             .AddQueueServices();
 
@@ -35,9 +32,22 @@ public static class ServiceRegistration
 
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<IEventPublisher, EventPublisher>()
+        services.AddProjectServices()
             .AddDatabaseServices(configuration)
             .AddAzureStorageServices(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection AddProjectServices(this IServiceCollection services)
+    {
+        // repositories
+        services.AddScoped<IAnimalsRepository, AnimalsRepository>()
+            .AddScoped<IBreedsRepository, BreedsRepository>()
+            .AddScoped<ISpeciesRepository, SpeciesRepository>();
+
+        services.AddSingleton<IEventPublisher, EventPublisher>()
+            .AddScoped<IAnimalImagesManager, AnimalImagesManager>();
 
         return services;
     }

@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Core\Adoptrix.Core.csproj" />
+    <ProjectReference Include="..\Adoptrix.Logic\Adoptrix.Logic.csproj" />
   </ItemGroup>
 
 </Project>
