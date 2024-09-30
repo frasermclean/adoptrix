@@ -20,8 +20,7 @@ public class UpdateAnimalValidator : Validator<UpdateAnimalRequest>
             .NotEmpty();
 
         RuleFor(request => request.Sex)
-            .Must(value => Enum.TryParse<Sex>(value, out _))
-            .WithMessage("Invalid value");
+            .IsInEnum();
 
         RuleFor(request => request.DateOfBirth)
             .SetValidator(new DateOfBirthValidator());

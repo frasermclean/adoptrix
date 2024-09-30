@@ -131,7 +131,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
         animal.Name = request.Name;
         animal.Description = request.Description;
         animal.Breed = breed;
-        animal.Sex = Enum.Parse<Sex>(request.Sex);
+        animal.Sex = request.Sex;
         animal.DateOfBirth = request.DateOfBirth;
         animal.LastModifiedBy = request.UserId;
         animal.LastModifiedUtc = DateTime.UtcNow;

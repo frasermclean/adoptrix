@@ -63,7 +63,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
         Name = name,
         Description = description,
         BreedId = breedId,
-        Sex = sex.ToString(),
+        Sex = sex,
         DateOfBirth = new DateOnly(2022, 1, 3)
     };
 }
