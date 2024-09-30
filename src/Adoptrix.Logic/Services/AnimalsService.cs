@@ -118,14 +118,7 @@ public class AnimalsService(ILogger<AnimalsService> logger, AdoptrixDbContext db
             return new BreedNotFoundError(request.BreedId);
         }
 
-        animal.Name = request.Name;
-        animal.Description = request.Description;
-        animal.Breed = breed;
-        animal.Sex = request.Sex;
-        animal.DateOfBirth = request.DateOfBirth;
-        animal.LastModifiedBy = request.UserId;
-        animal.LastModifiedUtc = DateTime.UtcNow;
-
+        animal.Update(request, breed);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Updated animal with ID: {AnimalId}", animal.Id);
