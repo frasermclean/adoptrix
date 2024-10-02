@@ -28,9 +28,11 @@ public static class Program
 
                 builder.AddAzureAppConfiguration(options =>
                 {
-                    options.Connect(new Uri(endpoint), new DefaultAzureCredential())
+                    var credential = TokenCredentialFactory.Create();
+                    options.Connect(new Uri(endpoint), credential)
                         .Select(KeyFilter.Any)
-                        .Select(KeyFilter.Any, context.HostingEnvironment.EnvironmentName);
+                        .Select(KeyFilter.Any, context.HostingEnvironment.EnvironmentName)
+                        .ConfigureKeyVault(keyVaultOptions => keyVaultOptions.SetCredential(credential));
                 });
             })
             .ConfigureServices((context, services) =>

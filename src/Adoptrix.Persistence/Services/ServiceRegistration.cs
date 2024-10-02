@@ -1,5 +1,5 @@
+using Adoptrix.Logic;
 using Adoptrix.Logic.Abstractions;
-using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using EntityFramework.Exceptions.SqlServer;
@@ -70,7 +70,8 @@ public static class ServiceRegistration
     {
         services.AddAzureClients(builder =>
         {
-            builder.UseCredential(new DefaultAzureCredential())
+            var credential = TokenCredentialFactory.Create();
+            builder.UseCredential(credential)
                 .ConfigureDefaults(options => { options.Diagnostics.IsLoggingEnabled = false; });
 
             // add blob service client
