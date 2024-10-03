@@ -1,5 +1,6 @@
 ﻿using Adoptrix.Logic.Options;
 using Adoptrix.Logic.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Models.ODataErrors;
@@ -24,7 +25,8 @@ public class UserManagerTests
         };
 
         var graphServiceClient = new GraphServiceClient(requestAdapterMock.Object);
-        userManager = new UserManager(graphServiceClient, MicrosoftOptions.Create(options));
+        userManager = new UserManager(graphServiceClient, MicrosoftOptions.Create(options),
+            Mock.Of<ILogger<UserManager>>());
     }
 
     [Fact]
@@ -78,7 +80,7 @@ public class UserManagerTests
                 It.IsAny<ParsableFactory<User>>(),
                 It.IsAny<Dictionary<string, ParsableFactory<IParsable>>?>(),
                 It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new ODataError());
+            .ThrowsAsync(new ODataError { ResponseStatusCode = 404 });
 
         // act
         var result = await userManager.GetUserAsync(Guid.NewGuid());

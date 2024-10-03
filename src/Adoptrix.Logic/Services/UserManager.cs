@@ -1,7 +1,9 @@
 ﻿using Adoptrix.Core;
 using Adoptrix.Core.Responses;
+using Adoptrix.Logic.Errors;
 using Adoptrix.Logic.Options;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
@@ -13,17 +15,18 @@ public interface IUserManager
 {
     Task<IEnumerable<UserResponse>> GetAllUsersAsync(CancellationToken cancellationToken = default);
     Task<Result<UserResponse>> GetUserAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    Task<Result<UserResponse>> AddUserRoleAssignmentAsync(Guid userId, UserRole role,
+        CancellationToken cancellationToken = default);
 }
 
-public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerOptions> options) : IUserManager
+public class UserManager(
+    GraphServiceClient serviceClient,
+    IOptions<UserManagerOptions> options,
+    ILogger<UserManager> logger) : IUserManager
 {
     private readonly Guid apiObjectId = options.Value.ApiObjectId;
     private static readonly string[] QueryParameters = ["id", "givenName", "surname", "displayName", "mail"];
-
-    private static readonly Dictionary<UserRole, Guid> RoleIds = new()
-    {
-        { UserRole.Administrator, Guid.Parse("de833830-21b2-4373-9b22-b73b862d2d1f") }
-    };
 
     public async Task<IEnumerable<UserResponse>> GetAllUsersAsync(CancellationToken cancellationToken = default)
     {
@@ -42,16 +45,14 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
         var users = usersTask.Result?.Value ?? [];
         var appRoleAssignments = appRoleAssignmentsTask.Result?.Value ?? [];
 
-        foreach (var user in users)
+        return users.Select(user =>
         {
             var userId = Guid.Parse(user.Id!);
-            var roleAssignment = appRoleAssignments.FirstOrDefault(assignment => assignment.PrincipalId == userId);
-            var roleName = GetUserRole(roleAssignment);
+            var userRoles = appRoleAssignments.Where(assignment => assignment.PrincipalId == userId)
+                .Select(GetUserRole);
 
-            user.AdditionalData["Role"] = roleName;
-        }
-
-        return users.Select(MapToResponse);
+            return MapToResponse(user, userRoles);
+        });
     }
 
     public async Task<Result<UserResponse>> GetUserAsync(Guid userId, CancellationToken cancellationToken = default)
@@ -66,37 +67,59 @@ public class UserManager(GraphServiceClient serviceClient, IOptions<UserManagerO
 
             await Task.WhenAll(userTask, appRoleAssignmentsTask);
 
-            var user = userTask.Result;
+            var user = userTask.Result!;
+            var userRoles = appRoleAssignmentsTask.Result?.Value?
+                .Where(assignment => assignment.ResourceId == apiObjectId)
+                .Select(GetUserRole);
 
-            var apiRoleAssignment =
-                appRoleAssignmentsTask.Result?.Value?.FirstOrDefault(assignment =>
-                    assignment.ResourceId == apiObjectId);
-
-            var userRole = GetUserRole(apiRoleAssignment);
-            user!.AdditionalData["Role"] = userRole;
-
-            return MapToResponse(user);
+            return MapToResponse(user, userRoles);
         }
-        catch (ODataError)
+        catch (ODataError error) when (error.ResponseStatusCode == 404)
         {
-            return Result.Fail("Error fetching user from Graph API");
+            return new UserNotFoundError(userId).CausedBy(error);
         }
     }
 
-    private static UserRole GetUserRole(AppRoleAssignment? roleAssignment) =>
-        roleAssignment?.AppRoleId == RoleIds[UserRole.Administrator]
-            ? UserRole.Administrator
-            : UserRole.User;
+    public async Task<Result<UserResponse>> AddUserRoleAssignmentAsync(Guid userId, UserRole role,
+        CancellationToken cancellationToken = default)
+    {
+        var appRoleId = AppRoleIdMapping.GetAppRoleId(role);
 
-    private static UserResponse MapToResponse(User user) => new()
+        try
+        {
+            await serviceClient.ServicePrincipals[apiObjectId.ToString()].AppRoleAssignedTo
+                .PostAsync(new AppRoleAssignment
+                {
+                    PrincipalId = userId,
+                    AppRoleId = appRoleId,
+                    ResourceId = apiObjectId
+                }, cancellationToken: cancellationToken);
+        }
+        catch (ODataError error) when (error.ResponseStatusCode == 400)
+        {
+            logger.LogError(error, "Could not assign role {Role} to user with ID {UserId}", role, userId);
+            return new UserRoleAlreadyAssignedError(role).CausedBy(error);
+        }
+        catch (ODataError error) when (error.ResponseStatusCode == 404)
+        {
+            return new UserNotFoundError(userId).CausedBy(error);
+        }
+
+        return await GetUserAsync(userId, cancellationToken);
+    }
+
+    private static UserRole GetUserRole(AppRoleAssignment? roleAssignment) =>
+        roleAssignment?.AppRoleId == AppRoleIdMapping.GetAppRoleId(UserRole.Administrator)
+            ? UserRole.Administrator
+            : default;
+
+    private static UserResponse MapToResponse(User user, IEnumerable<UserRole>? roles = null) => new()
     {
         Id = Guid.Parse(user.Id!),
         FirstName = user.GivenName,
         LastName = user.Surname,
         DisplayName = user.DisplayName,
         EmailAddress = user.Mail,
-        Role = user.AdditionalData.TryGetValue("Role", out var value)
-            ? (UserRole)value
-            : UserRole.User
+        Roles = roles ?? []
     };
 }

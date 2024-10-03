@@ -37,6 +37,7 @@ public class PermissionsClaimsTransformation(ILogger<PermissionsClaimsTransforma
     [
         PermissionNames.AnimalsWrite,
         PermissionNames.BreedsWrite,
-        PermissionNames.SpeciesWrite
+        PermissionNames.SpeciesWrite,
+        PermissionNames.UsersManage
     ];
 }
