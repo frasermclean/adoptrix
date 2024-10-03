@@ -60,12 +60,14 @@ public class UserManager(
 
     public async Task<Result<UserResponse>> GetUserAsync(Guid userId, CancellationToken cancellationToken = default)
     {
+        var userIdString = userId.ToString();
+
         try
         {
-            var userTask = serviceClient.Users[userId.ToString()]
+            var userTask = serviceClient.Users[userIdString]
                 .GetAsync(request => request.QueryParameters.Select = QueryParameters, cancellationToken);
 
-            var appRoleAssignmentsTask = serviceClient.Users[userId.ToString()].AppRoleAssignments
+            var appRoleAssignmentsTask = serviceClient.Users[userIdString].AppRoleAssignments
                 .GetAsync(cancellationToken: cancellationToken);
 
             await Task.WhenAll(userTask, appRoleAssignmentsTask);
@@ -127,7 +129,7 @@ public class UserManager(
         if (appRoleAssignmentId is null)
         {
             logger.LogError("User with ID {UserId} does not have role {Role}", userId, role);
-            return Result.Fail($"User with ID {userId} does not have role {role}");
+            return new UserRoleNotAssignedError(role);
         }
 
         await serviceClient.ServicePrincipals[apiObjectId.ToString()].AppRoleAssignedTo[appRoleAssignmentId]
