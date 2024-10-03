@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Logic;
-using Azure.Identity;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 
 namespace Adoptrix.Api.Startup;

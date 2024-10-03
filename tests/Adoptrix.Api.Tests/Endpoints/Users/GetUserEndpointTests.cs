@@ -1,9 +1,7 @@
 ﻿using System.Net;
-using Adoptrix.Api.Endpoints.Users;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Errors;
-using FluentResults;
 
 namespace Adoptrix.Api.Tests.Endpoints.Users;
 
