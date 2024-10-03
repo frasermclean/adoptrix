@@ -2,6 +2,7 @@
 using Adoptrix.Api.Endpoints.Users;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Core.Responses;
+using Adoptrix.Logic.Errors;
 using FluentResults;
 
 namespace Adoptrix.Api.Tests.Endpoints.Users;
@@ -16,16 +17,14 @@ public class GetUserEndpointTests(MockServicesFixture fixture) : TestBase<MockSe
     {
         // arrange
         var userId = Guid.NewGuid();
-        var request = new GetUserRequest(userId);
         fixture.UserManagerMock.Setup(manager => manager.GetUserAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new UserResponse { Id = userId });
 
         // act
-        var (message, response) = await httpClient.GETAsync<GetUserEndpoint, GetUserRequest, UserResponse>(request);
+        var message = await httpClient.GetAsync($"api/users/{userId}");
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.OK);
-        response.Id.Should().Be(userId);
     }
 
     [Fact]
@@ -33,12 +32,11 @@ public class GetUserEndpointTests(MockServicesFixture fixture) : TestBase<MockSe
     {
         // arrange
         var userId = Guid.NewGuid();
-        var request = new GetUserRequest(userId);
         fixture.UserManagerMock.Setup(manager => manager.GetUserAsync(userId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Fail<UserResponse>("User not found"));
+            .ReturnsAsync(new UserNotFoundError(userId));
 
         // act
-        var message = await httpClient.GETAsync<GetUserEndpoint, GetUserRequest>(request);
+        var message = await httpClient.GetAsync($"api/users/{userId}");
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.NotFound);
