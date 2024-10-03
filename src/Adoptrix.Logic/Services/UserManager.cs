@@ -18,6 +18,9 @@ public interface IUserManager
 
     Task<Result<UserResponse>> AddUserRoleAssignmentAsync(Guid userId, UserRole role,
         CancellationToken cancellationToken = default);
+
+    Task<Result<UserResponse>> RemoveUserRoleAssignmentAsync(Guid userId, UserRole role,
+        CancellationToken cancellationToken = default);
 }
 
 public class UserManager(
@@ -105,6 +108,32 @@ public class UserManager(
             return new UserNotFoundError(userId).CausedBy(error);
         }
 
+        logger.LogInformation("Assigned role {Role} to user with ID {UserId}", role, userId);
+        return await GetUserAsync(userId, cancellationToken);
+    }
+
+    public async Task<Result<UserResponse>> RemoveUserRoleAssignmentAsync(Guid userId, UserRole role,
+        CancellationToken cancellationToken = default)
+    {
+        var appRoleId = AppRoleIdMapping.GetAppRoleId(role);
+        var appRoleAssignments = await serviceClient.ServicePrincipals[apiObjectId.ToString()].AppRoleAssignedTo
+            .GetAsync(cancellationToken: cancellationToken);
+
+        var appRoleAssignmentId = appRoleAssignments?.Value?
+            .Where(assignment => assignment.PrincipalId == userId && assignment.AppRoleId == appRoleId)
+            .Select(assignment => assignment.Id)
+            .FirstOrDefault();
+
+        if (appRoleAssignmentId is null)
+        {
+            logger.LogError("User with ID {UserId} does not have role {Role}", userId, role);
+            return Result.Fail($"User with ID {userId} does not have role {role}");
+        }
+
+        await serviceClient.ServicePrincipals[apiObjectId.ToString()].AppRoleAssignedTo[appRoleAssignmentId]
+            .DeleteAsync(cancellationToken: cancellationToken);
+
+        logger.LogInformation("Removed role {Role} from user with ID {UserId}", role, userId);
         return await GetUserAsync(userId, cancellationToken);
     }
 

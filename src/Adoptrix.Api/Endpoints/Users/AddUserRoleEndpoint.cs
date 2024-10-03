@@ -12,7 +12,7 @@ public class AddUserRoleEndpoint(IUserManager userManager)
 {
     public override void Configure()
     {
-        Post("users/{userId:guid}/role");
+        Post("users/{userId:guid}/roles");
         Permissions(PermissionNames.UsersManage);
     }
 
