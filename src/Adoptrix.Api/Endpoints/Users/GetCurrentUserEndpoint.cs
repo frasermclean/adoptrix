@@ -16,8 +16,6 @@ public class GetCurrentUserEndpoint(IUserManager userManager) : EndpointWithoutR
         var userId = User.GetUserId();
         var result = await userManager.GetUserAsync(userId, cancellationToken);
 
-        return result.IsSuccess
-            ? result.Value
-            : throw new InvalidOperationException("User not found");
+        return result.Value;
     }
 }
