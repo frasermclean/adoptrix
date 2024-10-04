@@ -1,13 +1,14 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Users;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Core;
 using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Users;
 
 public class GetUsersEndpointTests(MockServicesFixture fixture) : TestBase<MockServicesFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
+    private readonly HttpClient httpClient = fixture.CreateClient(UserRole.Administrator);
 
     [Fact]
     public async Task GetUsers_ShouldReturnOk()

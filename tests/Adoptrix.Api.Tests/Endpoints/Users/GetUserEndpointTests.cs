@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Core;
 using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Errors;
 
@@ -8,7 +9,7 @@ namespace Adoptrix.Api.Tests.Endpoints.Users;
 [Trait("Category", "Integration")]
 public class GetUserEndpointTests(MockServicesFixture fixture) : TestBase<MockServicesFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
+    private readonly HttpClient httpClient = fixture.CreateClient(UserRole.Administrator);
 
     [Fact]
     public async Task GetUser_WithValidId_ShouldReturnOk()

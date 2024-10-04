@@ -18,7 +18,7 @@ public class MockServicesFixture : AppFixture<Program>
     public Mock<IBlobContainerManager> OriginalImagesBlobContainerManagerMock { get; } = new();
     public Mock<IUserManager> UserManagerMock { get; } = new();
 
-    public HttpClient CreateClient(UserRole role = UserRole.Administrator) => CreateClient(httpClient =>
+    public HttpClient CreateClient(UserRole role) => CreateClient(httpClient =>
         httpClient.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{role}"));
 
