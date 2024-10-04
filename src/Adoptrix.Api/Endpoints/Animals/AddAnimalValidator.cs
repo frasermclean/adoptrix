@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Validators;
-using Adoptrix.Contracts.Requests;
 using Adoptrix.Core;
+using Adoptrix.Core.Requests;
 using FluentValidation;
 
 namespace Adoptrix.Api.Endpoints.Animals;
@@ -20,8 +20,7 @@ public class AddAnimalValidator : Validator<AddAnimalRequest>
             .NotEmpty();
 
         RuleFor(request => request.Sex)
-            .Must(value => Enum.TryParse<Sex>(value, out _))
-            .WithMessage("Invalid value");
+            .IsInEnum();
 
         RuleFor(request => request.DateOfBirth)
             .SetValidator(new DateOfBirthValidator());

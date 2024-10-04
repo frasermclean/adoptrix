@@ -1,4 +1,4 @@
-﻿using Adoptrix.Contracts.Requests;
+﻿using Adoptrix.Core.Requests;
 
 namespace Adoptrix.Client.Extensions;
 
@@ -15,7 +15,7 @@ public static class SearchAnimalsRequestExtensions
         { "name", request.Name },
         { "breedId", request.BreedId?.ToString() },
         { "speciesName", request.SpeciesName },
-        { "sex", request.Sex },
+        { "sex", request.Sex?.ToString() },
         { "limit", request.Limit?.ToString()}
     };
 }

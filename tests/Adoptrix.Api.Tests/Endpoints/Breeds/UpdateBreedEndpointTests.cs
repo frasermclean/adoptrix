@@ -1,8 +1,8 @@
-﻿using System.Net;
+using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Requests;
-using Adoptrix.Contracts.Responses;
+using Adoptrix.Core.Requests;
+using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
@@ -10,8 +10,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 [Trait("Category", "Integration")]
 public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
-
     [Fact]
     public async Task UpdateBreed_WithValidRequest_ShouldReturnOk()
     {
@@ -20,7 +18,7 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
 
         // act
         var (message, response) =
-            await httpClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, BreedResponse>(request);
+            await fixture.AdminClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, BreedResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -36,7 +34,7 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
         var request = CreateRequest(breedId: -1);
 
         // act
-        var message = await httpClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest>(request);
+        var message = await fixture.AdminClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);
@@ -49,7 +47,8 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
         var request = CreateRequest(speciesName: "Spaghetti Monster");
 
         // act
-        var (message, response) = await httpClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
+        var (message, response) =
+            await fixture.AdminClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -60,10 +59,10 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
     public async Task UpdateBreed_WithExistingBreed_ShouldReturnConflict()
     {
         // arrange
-        var request = CreateRequest("German Shepherd", 1, "Dog");
+        var request = CreateRequest("German Shepherd", 1);
 
         // act
-        var (message, response) = await httpClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
+        var (message, response) = await fixture.AdminClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Conflict);

@@ -1,10 +1,9 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
-using Adoptrix.Api.Security;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Requests;
-using Adoptrix.Contracts.Responses;
 using Adoptrix.Core;
+using Adoptrix.Core.Requests;
+using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
@@ -12,9 +11,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals;
 [Trait("Category", "Integration")]
 public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient adminClient = fixture.CreateClient();
-    private readonly HttpClient userClient = fixture.CreateClient(RoleNames.User);
-
     [Fact]
     public async Task AddAnimal_WithValidRequest_ShouldReturnCreated()
     {
@@ -23,13 +19,13 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
 
         // act
         var (message, response) =
-            await adminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
+            await fixture.AdminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         message.Headers.Location.Should().NotBeNull();
         response.Name.Should().Be("Sasha");
-        response.Sex.Should().Be("Female");
+        response.Sex.Should().Be(Sex.Female);
         response.DateOfBirth.Should().Be(request.DateOfBirth);
         response.Slug.Should().Be("sasha-2020-01-01");
         response.Age.Should().NotBeEmpty();
@@ -43,7 +39,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
 
         // act
         var (message, response) =
-            await adminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, ErrorResponse>(request);
+            await fixture.AdminClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
@@ -57,7 +53,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
         var request = CreateRequest();
 
         // act
-        var testResult = await userClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
+        var testResult = await fixture.UserClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
 
         // assert
         testResult.Response.Should().HaveStatusCode(HttpStatusCode.Forbidden);
@@ -69,7 +65,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
         Name = name,
         Description = description,
         BreedId = breedId,
-        Sex = sex.ToString(),
+        Sex = sex,
         DateOfBirth = dateOfBirth ?? new DateOnly(2020, 1, 1),
         UserId = userId ?? Guid.NewGuid()
     };

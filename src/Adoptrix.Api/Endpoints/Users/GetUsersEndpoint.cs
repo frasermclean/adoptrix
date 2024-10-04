@@ -1,15 +1,19 @@
-﻿using Adoptrix.Contracts.Responses;
+﻿using Adoptrix.Api.Security;
+using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Services;
 
 namespace Adoptrix.Api.Endpoints.Users;
 
-[HttpGet("users")]
-public class GetUsersEndpoint(IUsersService usersService) : EndpointWithoutRequest<IEnumerable<UserResponse>>
+public class GetUsersEndpoint(IUserManager userManager) : EndpointWithoutRequest<IEnumerable<UserResponse>>
 {
+    public override void Configure()
+    {
+        Get("users");
+        Permissions(PermissionNames.UsersManage);
+    }
+
     public override async Task<IEnumerable<UserResponse>> ExecuteAsync(CancellationToken cancellationToken)
     {
-        var users = await usersService.GetAllUsersAsync(cancellationToken);
-
-        return users;
+        return await userManager.GetAllUsersAsync(cancellationToken);
     }
 }

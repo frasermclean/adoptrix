@@ -33,8 +33,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Initializer", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Client", "src\Adoptrix.Client\Adoptrix.Client.csproj", "{4E71704D-AA38-46DD-9676-D390A48BD773}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Contracts", "src\Adoptrix.Contracts\Adoptrix.Contracts.csproj", "{7E089EAB-90EA-430F-9F47-089F0C32CC10}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Logic", "src\Adoptrix.Logic\Adoptrix.Logic.csproj", "{62629FB2-594C-4CD9-9F68-907F2C4F009C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Logic.Tests", "tests\Adoptrix.Logic.Tests\Adoptrix.Logic.Tests.csproj", "{872E458A-F353-4ECB-91E6-557BF33CFC58}"
@@ -101,10 +99,6 @@ Global
 		{4E71704D-AA38-46DD-9676-D390A48BD773}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E71704D-AA38-46DD-9676-D390A48BD773}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E71704D-AA38-46DD-9676-D390A48BD773}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7E089EAB-90EA-430F-9F47-089F0C32CC10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7E089EAB-90EA-430F-9F47-089F0C32CC10}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7E089EAB-90EA-430F-9F47-089F0C32CC10}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7E089EAB-90EA-430F-9F47-089F0C32CC10}.Release|Any CPU.Build.0 = Release|Any CPU
 		{62629FB2-594C-4CD9-9F68-907F2C4F009C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{62629FB2-594C-4CD9-9F68-907F2C4F009C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62629FB2-594C-4CD9-9F68-907F2C4F009C}.Release|Any CPU.ActiveCfg = Release|Any CPU

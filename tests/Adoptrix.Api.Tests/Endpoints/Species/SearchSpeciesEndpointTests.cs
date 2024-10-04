@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Requests;
-using Adoptrix.Contracts.Responses;
+using Adoptrix.Core.Requests;
+using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Species;
 
@@ -10,7 +10,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Species;
 [Trait("Category", "Integration")]
 public class SearchSpeciesEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.Client;
 
     [Fact]
     public async Task SearchSpecies_WithValidRequest_ShouldReturnOk()
@@ -23,7 +22,7 @@ public class SearchSpeciesEndpointTests(TestContainersFixture fixture) : TestBas
 
         // act
         var (message, matches) =
-            await httpClient.GETAsync<SearchSpeciesEndpoint, SearchSpeciesRequest, List<SpeciesMatch>>(request);
+            await fixture.Client.GETAsync<SearchSpeciesEndpoint, SearchSpeciesRequest, List<SpeciesMatch>>(request);
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.OK);

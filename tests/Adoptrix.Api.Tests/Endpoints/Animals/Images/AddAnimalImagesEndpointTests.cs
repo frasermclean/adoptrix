@@ -9,8 +9,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Animals.Images;
 [Trait("Category", "Integration")]
 public class AddAnimalImagesEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.CreateClient();
-
     [Fact]
     public async Task AddAnimalImages_WithValidRequest_ShouldReturnOk()
     {
@@ -19,7 +17,7 @@ public class AddAnimalImagesEndpointTests(TestContainersFixture fixture) : TestB
         using var content = CreateMultipartFormDataContent();
 
         // act
-        var message = await httpClient.PostAsync($"api/animals/{animalId}/images", content);
+        var message = await fixture.AdminClient.PostAsync($"api/animals/{animalId}/images", content);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -33,7 +31,7 @@ public class AddAnimalImagesEndpointTests(TestContainersFixture fixture) : TestB
         using var content = CreateMultipartFormDataContent();
 
         // act
-        var message = await httpClient.PostAsync($"api/animals/{animalId}/images", content);
+        var message = await fixture.AdminClient.PostAsync($"api/animals/{animalId}/images", content);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.NotFound);

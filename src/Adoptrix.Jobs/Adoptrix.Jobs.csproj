@@ -26,8 +26,8 @@
   <ItemGroup>
     <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext"/>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Logic\Adoptrix.Logic.csproj" />    
+  <ItemGroup>    
+    <ProjectReference Include="..\Adoptrix.Persistence\Adoptrix.Persistence.csproj" />    
   </ItemGroup>
 
 </Project>

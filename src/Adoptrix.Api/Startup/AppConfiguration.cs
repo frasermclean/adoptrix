@@ -1,4 +1,4 @@
-﻿using Azure.Identity;
+﻿using Adoptrix.Logic;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 
 namespace Adoptrix.Api.Startup;
@@ -16,9 +16,11 @@ public static class AppConfiguration
 
         builder.Configuration.AddAzureAppConfiguration(options =>
         {
-            options.Connect(new Uri(endpoint), new DefaultAzureCredential())
+            var credential = TokenCredentialFactory.Create();
+            options.Connect(new Uri(endpoint), credential)
                 .Select(KeyFilter.Any)
-                .Select(KeyFilter.Any, builder.Environment.EnvironmentName);
+                .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
+                .ConfigureKeyVault(keyVaultOptions => keyVaultOptions.SetCredential(credential));
         });
 
         return builder;

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Contracts.Responses;
+using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
@@ -9,8 +9,6 @@ namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 [Trait("Category", "Integration")]
 public class GetBreedEndpointTests(TestContainersFixture fixture) : TestBase<TestContainersFixture>
 {
-    private readonly HttpClient httpClient = fixture.Client;
-
     [Fact]
     public async Task GetBreed_WithKnownId_ShouldReturnOk()
     {
@@ -18,7 +16,7 @@ public class GetBreedEndpointTests(TestContainersFixture fixture) : TestBase<Tes
         const int breedId = 1;
 
         // act
-        var message = await httpClient.GetAsync($"api/breeds/{breedId}");
+        var message = await fixture.Client.GetAsync($"api/breeds/{breedId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -33,7 +31,7 @@ public class GetBreedEndpointTests(TestContainersFixture fixture) : TestBase<Tes
         const int breedId = -1;
 
         // act
-        var message = await httpClient.GetAsync($"api/breeds/{breedId}");
+        var message = await fixture.Client.GetAsync($"api/breeds/{breedId}");
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.NotFound);

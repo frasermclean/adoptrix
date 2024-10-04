@@ -1,5 +1,5 @@
-﻿using Adoptrix.Contracts.Requests;
-using Adoptrix.Contracts.Responses;
+﻿using Adoptrix.Core.Requests;
+using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Services;
 
 namespace Adoptrix.Api.Endpoints.Breeds;

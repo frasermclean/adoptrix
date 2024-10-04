@@ -166,6 +166,7 @@ module appConfigModule 'appConfig.bicep' = {
     storageAccountQueueEndpoint: storageModule.outputs.queueEndpoint
     databaseConnectionString: databaseModule.outputs.connectionString
     apiAppPrincipalId: containerAppsModule.outputs.apiAppPrincipalId
+    keyVaultName: keyVaultName
     attemptRoleAssignments: attemptRoleAssignments
   }
 }

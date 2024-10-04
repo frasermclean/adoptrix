@@ -1,6 +1,6 @@
-﻿using Adoptrix.Contracts.Responses;
+﻿using Adoptrix.Core.Responses;
+using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Models;
-using Adoptrix.Logic.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Animals.Images;

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Encodings.Web;
-using Adoptrix.Api.Security;
+using Adoptrix.Core;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,14 +25,16 @@ public class TestAuthHandler(
         }
 
         var parts = authorizationHeader.Split('-');
-        var role = parts.Length > 1 ? parts[1] : RoleNames.User;
+        var role = parts.Length > 1 && Enum.TryParse<UserRole>(parts[1], out var userRole)
+            ? userRole
+            : UserRole.User;
 
         var claims = new[]
         {
             new Claim(ClaimConstants.Name, "Bob Jones"),
             new Claim(ClaimConstants.Oid, Guid.NewGuid().ToString()),
             new Claim(ClaimConstants.Scope, "access"),
-            new Claim(ClaimConstants.Roles, role)
+            new Claim(ClaimConstants.Roles, role.ToString())
         };
         var identity = new ClaimsIdentity(claims, "Test");
         var principal = new ClaimsPrincipal(identity);

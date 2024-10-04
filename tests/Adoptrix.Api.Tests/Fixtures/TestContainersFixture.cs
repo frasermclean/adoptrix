@@ -1,10 +1,10 @@
 ﻿using System.Net.Http.Headers;
-using Adoptrix.Api.Security;
+using Adoptrix.Core;
 using Adoptrix.Initializer;
+using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
-using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,14 +17,15 @@ public class TestContainersFixture : AppFixture<Program>
 {
     private readonly MsSqlContainer databaseContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-        .WithWaitStrategy(Wait
-            .ForUnixContainer() // needed until https://github.com/testcontainers/testcontainers-dotnet/issues/1220 is resolved
-            .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;"))
         .Build();
 
-    public HttpClient CreateClient(string role = RoleNames.Administrator) => CreateClient(httpClient =>
+    public HttpClient AdminClient => CreateClient(httpClient =>
         httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{role}"));
+            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{UserRole.Administrator}"));
+
+    public HttpClient UserClient => CreateClient(httpClient =>
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue($"{TestAuthHandler.SchemeName}-{UserRole.User}"));
 
     protected override async Task PreSetupAsync()
     {
@@ -45,7 +46,7 @@ public class TestContainersFixture : AppFixture<Program>
         // remove selected services
         services.RemoveAll<IEventPublisher>()
             .RemoveAll<IBlobContainerManager>()
-            .RemoveAll<IUsersService>();
+            .RemoveAll<IUserManager>();
 
         // replace with mocked services
         services.AddScoped<IEventPublisher>(_ => Mock.Of<IEventPublisher>())
@@ -53,7 +54,7 @@ public class TestContainersFixture : AppFixture<Program>
                 (_, _) => Mock.Of<IBlobContainerManager>())
             .AddKeyedSingleton<IBlobContainerManager>(BlobContainerNames.OriginalImages,
                 (_, _) => Mock.Of<IBlobContainerManager>())
-            .AddScoped<IUsersService>(_ => Mock.Of<IUsersService>());
+            .AddScoped<IUserManager>(_ => Mock.Of<IUserManager>());
     }
 
     protected override async Task SetupAsync()

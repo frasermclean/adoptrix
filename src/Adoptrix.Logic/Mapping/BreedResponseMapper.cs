@@ -1,5 +1,5 @@
-﻿using Adoptrix.Contracts.Responses;
-using Adoptrix.Core;
+﻿using Adoptrix.Core;
+using Adoptrix.Core.Responses;
 using Riok.Mapperly.Abstractions;
 
 namespace Adoptrix.Logic.Mapping;

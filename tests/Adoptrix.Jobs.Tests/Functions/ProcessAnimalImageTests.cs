@@ -1,7 +1,7 @@
 ﻿using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Functions;
+using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Errors;
-using Adoptrix.Logic.Services;
 using Adoptrix.Tests.Shared;
 using FluentResults;
 

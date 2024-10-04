@@ -14,8 +14,8 @@
     <PackageReference Include="MudBlazor" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Adoptrix.Contracts\Adoptrix.Contracts.csproj" />
+  <ItemGroup>    
+    <ProjectReference Include="..\Adoptrix.Core\Adoptrix.Core.csproj" />
   </ItemGroup>
   
 </Project>

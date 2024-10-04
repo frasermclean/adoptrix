@@ -23,6 +23,7 @@
 
   <ItemGroup>    
     <ProjectReference Include="..\Adoptrix.Logic\Adoptrix.Logic.csproj" />
+    <ProjectReference Include="..\Adoptrix.Persistence\Adoptrix.Persistence.csproj" />
     <ProjectReference Include="..\Adoptrix.ServiceDefaults\Adoptrix.ServiceDefaults.csproj" />
   </ItemGroup>
 

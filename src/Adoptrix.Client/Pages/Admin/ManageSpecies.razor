@@ -1,5 +1,5 @@
 ﻿@page "/admin/species"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Administrator")]
 
 <MudText Typo="Typo.h3" GutterBottom="true">Manage Species</MudText>
 

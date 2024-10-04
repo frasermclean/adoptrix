@@ -25,6 +25,9 @@ param databaseConnectionString string
 @description('Principal ID of the API application managed identity')
 param apiAppPrincipalId string
 
+@description('Name of the Azure Key Vault instance')
+param keyVaultName string
+
 @description('Whether to attempt role assignments (requires appropriate permissions)')
 param attemptRoleAssignments bool
 
@@ -68,6 +71,14 @@ resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2023-0
     properties: {
       value: storageAccountQueueEndpoint
       contentType: 'text/plain'
+    }
+  }
+
+  resource userManagerClientSecretKeyValue 'keyValues' = {
+    name: 'UserManager:ClientSecret$${appEnv}'
+    properties: {
+      value: '{"uri":"https://${keyVaultName}${environment().suffixes.keyvaultDns}/secrets/user-manager-demo-client-secret"}'
+      contentType: 'application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8'
     }
   }
 }
