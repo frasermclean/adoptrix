@@ -31,6 +31,11 @@ public class RemoveUserRoleEndpoint(IUserManager userManager)
             return TypedResults.NotFound();
         }
 
-        return await base.ExecuteAsync(request, cancellationToken);
+        if (result.HasError<UserRoleNotAssignedError>())
+        {
+            AddError(r => r.Role, "Role is not assigned to the user.");
+        }
+
+        return new ErrorResponse(ValidationFailures);
     }
 }
