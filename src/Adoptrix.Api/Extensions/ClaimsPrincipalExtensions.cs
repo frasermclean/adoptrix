@@ -6,20 +6,16 @@ namespace Adoptrix.Api.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {
-    public static UserRole GetRole(this ClaimsPrincipal principal)
+    public static IEnumerable<UserRole> GetRoles(this ClaimsPrincipal principal)
     {
-        var claimValue = principal.FindFirstValue(ClaimConstants.Roles);
-        return Enum.TryParse<UserRole>(claimValue, out var role)
-            ? role
-            : UserRole.User;
+        return principal.FindAll(ClaimConstants.Roles)
+            .Select(claim => Enum.Parse<UserRole>(claim.Value));
     }
 
     public static Guid GetUserId(this ClaimsPrincipal principal)
     {
-        var claimValue = principal.FindFirstValue(ClaimConstants.Oid);
+        var objectId = principal.GetObjectId() ?? throw new InvalidDataException("Object ID claim is missing");
 
-        return Guid.TryParse(claimValue, out var userId)
-            ? userId
-            : throw new InvalidDataException("Object ID claim is missing or invalid");
+        return Guid.Parse(objectId);
     }
 }
