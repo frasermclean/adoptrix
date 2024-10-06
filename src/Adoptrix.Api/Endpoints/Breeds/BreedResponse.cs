@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Core.Responses;
+﻿namespace Adoptrix.Api.Endpoints.Breeds;
 
 public class BreedResponse
 {

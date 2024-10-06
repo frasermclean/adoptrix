@@ -1,11 +1,11 @@
-﻿using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Api.Security;
 using Adoptrix.Core;
-using Adoptrix.Core.Responses;
-using Adoptrix.Logic.Mapping;
 using Adoptrix.Persistence.Services;
 using EntityFramework.Exceptions.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
