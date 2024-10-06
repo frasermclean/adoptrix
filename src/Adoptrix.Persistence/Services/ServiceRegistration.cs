@@ -3,6 +3,7 @@ using Adoptrix.Logic.Abstractions;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using EntityFramework.Exceptions.SqlServer;
+using Gridify;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,8 @@ public static class ServiceRegistration
             .AddBlobServices()
             .AddQueueServices();
 
+        GridifyGlobalConfiguration.EnableEntityFrameworkCompatibilityLayer();
+
         return builder;
     }
 
@@ -35,6 +38,8 @@ public static class ServiceRegistration
         services.AddProjectServices()
             .AddDatabaseServices(configuration)
             .AddAzureStorageServices(configuration);
+
+        GridifyGlobalConfiguration.EnableEntityFrameworkCompatibilityLayer();
 
         return services;
     }

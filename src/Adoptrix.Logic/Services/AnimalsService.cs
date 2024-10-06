@@ -14,7 +14,6 @@ namespace Adoptrix.Logic.Services;
 
 public interface IAnimalsService
 {
-    Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> GetAsync(Guid animalId, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> GetAsync(string animalSlug, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request, CancellationToken cancellationToken);
@@ -29,9 +28,6 @@ public class AnimalsService(
     IEventPublisher eventPublisher)
     : IAnimalsService
 {
-    public Task<IEnumerable<AnimalMatch>> SearchAsync(SearchAnimalsRequest request,
-        CancellationToken cancellationToken) => animalsRepository.SearchAsync(request, cancellationToken);
-
     public async Task<Result<AnimalResponse>> GetAsync(Guid animalId, CancellationToken cancellationToken)
     {
         var response = await animalsRepository.GetProjectionAsync(
