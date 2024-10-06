@@ -14,7 +14,6 @@ public static class ServiceRegistration
     {
         services.AddUserManagement(configuration)
             .AddScoped<IAnimalsService, AnimalsService>()
-            .AddScoped<ISpeciesService, SpeciesService>()
             .AddSingleton<IImageProcessor, ImageProcessor>();
 
         return services;

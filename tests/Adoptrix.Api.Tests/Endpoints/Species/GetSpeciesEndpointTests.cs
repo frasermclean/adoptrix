@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
+using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Tests.Fixtures;
 
 namespace Adoptrix.Api.Tests.Endpoints.Species;
@@ -18,6 +20,12 @@ public class GetSpeciesEndpointTests(TestContainersFixture fixture) : TestBase<T
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
+        var response = await message.Content.ReadFromJsonAsync<SpeciesResponse>();
+        response.Should().NotBeNull();
+        response!.Id.Should().BePositive();
+        response.Name.Should().Be(speciesName);
+        response.BreedCount.Should().BePositive();
+        response.AnimalCount.Should().BePositive();
     }
 
     [Fact]

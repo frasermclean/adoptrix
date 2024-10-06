@@ -48,8 +48,7 @@ public static class ServiceRegistration
     {
         // repositories
         services.AddScoped<IAnimalsRepository, AnimalsRepository>()
-            .AddScoped<IBreedsRepository, BreedsRepository>()
-            .AddScoped<ISpeciesRepository, SpeciesRepository>();
+            .AddScoped<IBreedsRepository, BreedsRepository>();
 
         services.AddSingleton<IEventPublisher, EventPublisher>()
             .AddScoped<IAnimalImagesManager, AnimalImagesManager>();
