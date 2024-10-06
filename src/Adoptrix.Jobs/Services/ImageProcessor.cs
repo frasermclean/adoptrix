@@ -1,5 +1,4 @@
-﻿using Adoptrix.Logic.Models;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
 namespace Adoptrix.Jobs.Services;

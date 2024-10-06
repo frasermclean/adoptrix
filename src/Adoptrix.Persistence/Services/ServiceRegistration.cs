@@ -1,5 +1,4 @@
-using Adoptrix.Logic;
-using Adoptrix.Logic.Abstractions;
+
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using EntityFramework.Exceptions.SqlServer;

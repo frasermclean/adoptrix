@@ -17,15 +17,21 @@
 
   <ItemGroup>
     <PackageReference Include="FastEndpoints" />
+    <PackageReference Include="FluentResults" />
     <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" />
+    <PackageReference Include="Microsoft.Graph" />
     <PackageReference Include="Microsoft.Identity.Web" />
     <PackageReference Include="Riok.Mapperly" />
+    <PackageReference Include="System.Linq.Async" />
   </ItemGroup>
 
   <ItemGroup>    
-    <ProjectReference Include="..\Adoptrix.Logic\Adoptrix.Logic.csproj" />
     <ProjectReference Include="..\Adoptrix.Persistence\Adoptrix.Persistence.csproj" />
     <ProjectReference Include="..\Adoptrix.ServiceDefaults\Adoptrix.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
   </ItemGroup>
 
 </Project>

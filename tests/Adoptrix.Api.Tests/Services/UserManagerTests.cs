@@ -1,7 +1,8 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Logic.Errors;
-using Adoptrix.Logic.Options;
-using Adoptrix.Logic.Services;
+﻿using Adoptrix.Api.Errors;
+using Adoptrix.Api.Options;
+using Adoptrix.Api.Security;
+using Adoptrix.Api.Services;
+using Adoptrix.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
@@ -11,7 +12,7 @@ using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Serialization.Json;
 
-namespace Adoptrix.Logic.Tests.Services;
+namespace Adoptrix.Api.Tests.Services;
 
 public class UserManagerTests
 {

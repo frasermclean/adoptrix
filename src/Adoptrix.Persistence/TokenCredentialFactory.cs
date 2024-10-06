@@ -1,7 +1,7 @@
 ﻿using Azure.Core;
 using Azure.Identity;
 
-namespace Adoptrix.Logic;
+namespace Adoptrix.Persistence;
 
 public static class TokenCredentialFactory
 {

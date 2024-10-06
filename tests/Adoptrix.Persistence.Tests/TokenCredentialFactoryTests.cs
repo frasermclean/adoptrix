@@ -1,6 +1,6 @@
 ﻿using Azure.Identity;
 
-namespace Adoptrix.Logic.Tests;
+namespace Adoptrix.Persistence.Tests;
 
 public class TokenCredentialFactoryTests
 {

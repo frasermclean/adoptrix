@@ -1,12 +1,16 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using Adoptrix.Api.Options;
 using Adoptrix.Api.Security;
-using Adoptrix.Logic;
+using Adoptrix.Api.Services;
 using Adoptrix.Persistence.Services;
 using Adoptrix.ServiceDefaults;
+using Azure.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Extensions.Options;
+using Microsoft.Graph;
 using Microsoft.Identity.Web;
 
 namespace Adoptrix.Api.Startup;
@@ -23,7 +27,7 @@ public static class ServiceRegistration
 
         builder.Services
             .AddAuthentication(builder.Configuration)
-            .AddLogicServices(builder.Configuration)
+            .AddUserManagement(builder.Configuration)
             .AddFastEndpoints();
 
         // json serialization options
@@ -64,5 +68,35 @@ public static class ServiceRegistration
             .AddDefaultPolicy("DefaultPolicy", builder => { builder.RequireScope("access"); });
 
         return services;
+    }
+
+    private static IServiceCollection AddUserManagement(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddOptions<UserManagerOptions>()
+            .BindConfiguration(UserManagerOptions.SectionName);
+
+        services.AddSingleton(serviceProvider =>
+        {
+            var userManagerOptions = serviceProvider.GetRequiredService<IOptions<UserManagerOptions>>();
+
+            var instance = configuration["Authentication:Instance"];
+            var tenantId = configuration["Authentication:TenantId"];
+            var clientId = userManagerOptions.Value.ClientId;
+            var clientSecret = userManagerOptions.Value.ClientSecret;
+
+            var credential = new ClientSecretCredential(tenantId, clientId, clientSecret,
+                new ClientSecretCredentialOptions
+                {
+                    AuthorityHost = new Uri(instance!)
+                });
+
+            var httpClient = serviceProvider.GetRequiredService<IHttpClientFactory>()
+                .CreateClient(nameof(GraphServiceClient));
+
+            return new GraphServiceClient(httpClient, credential);
+        });
+
+        return services.AddScoped<IUserManager, UserManager>();
     }
 }

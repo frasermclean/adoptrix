@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Api.Security;
+using Adoptrix.Api.Services;
 using Adoptrix.Core.Responses;
-using Adoptrix.Logic.Services;
 
 namespace Adoptrix.Api.Endpoints.Users;
 

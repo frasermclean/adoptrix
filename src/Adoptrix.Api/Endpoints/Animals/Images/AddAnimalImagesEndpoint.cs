@@ -2,7 +2,6 @@
 using Adoptrix.Core;
 using Adoptrix.Core.Events;
 using Adoptrix.Core.Responses;
-using Adoptrix.Logic.Abstractions;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;

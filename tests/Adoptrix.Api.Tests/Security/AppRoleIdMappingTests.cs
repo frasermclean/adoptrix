@@ -1,6 +1,7 @@
-﻿using Adoptrix.Core;
+﻿using Adoptrix.Api.Security;
+using Adoptrix.Core;
 
-namespace Adoptrix.Logic.Tests;
+namespace Adoptrix.Api.Tests.Security;
 
 public class AppRoleIdMappingTests
 {

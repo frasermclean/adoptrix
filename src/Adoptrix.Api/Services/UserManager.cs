@@ -1,15 +1,15 @@
-﻿using Adoptrix.Core;
+﻿using Adoptrix.Api.Errors;
+using Adoptrix.Api.Options;
+using Adoptrix.Api.Security;
+using Adoptrix.Core;
 using Adoptrix.Core.Responses;
-using Adoptrix.Logic.Errors;
-using Adoptrix.Logic.Options;
 using FluentResults;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Models.ODataErrors;
 
-namespace Adoptrix.Logic.Services;
+namespace Adoptrix.Api.Services;
 
 public interface IUserManager
 {

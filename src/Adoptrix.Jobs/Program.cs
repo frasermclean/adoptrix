@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Jobs.Services;
-using Adoptrix.Logic;
+using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;

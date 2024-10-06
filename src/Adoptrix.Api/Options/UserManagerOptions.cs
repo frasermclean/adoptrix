@@ -1,4 +1,4 @@
-﻿namespace Adoptrix.Logic.Options;
+﻿namespace Adoptrix.Api.Options;
 
 public class UserManagerOptions
 {

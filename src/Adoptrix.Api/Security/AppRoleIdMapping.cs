@@ -1,6 +1,6 @@
 ﻿using Adoptrix.Core;
 
-namespace Adoptrix.Logic;
+namespace Adoptrix.Api.Security;
 
 public static class AppRoleIdMapping
 {

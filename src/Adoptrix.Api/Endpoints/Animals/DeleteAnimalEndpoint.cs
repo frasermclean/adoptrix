@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Api.Security;
 using Adoptrix.Core.Events;
-using Adoptrix.Logic.Abstractions;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
