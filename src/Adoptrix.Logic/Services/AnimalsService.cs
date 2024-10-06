@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using Adoptrix.Core;
-using Adoptrix.Core.Events;
-using Adoptrix.Core.Extensions;
+﻿using Adoptrix.Core.Events;
 using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Abstractions;
@@ -14,7 +11,6 @@ namespace Adoptrix.Logic.Services;
 
 public interface IAnimalsService
 {
-    Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalRequest request, CancellationToken cancellationToken);
     Task<Result> DeleteAsync(DeleteAnimalRequest request, CancellationToken cancellationToken);
 }
@@ -26,22 +22,6 @@ public class AnimalsService(
     IEventPublisher eventPublisher)
     : IAnimalsService
 {
-    public async Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request, CancellationToken cancellationToken)
-    {
-        var breed = await breedsRepository.GetAsync(request.BreedId, cancellationToken);
-        if (breed is null)
-        {
-            logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
-            return new BreedNotFoundError(request.BreedId);
-        }
-
-        var animal = request.ToAnimal(breed);
-        await animalsRepository.AddAsync(animal, cancellationToken);
-
-        logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
-        return animal.ToResponse();
-    }
-
     public async Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalRequest request,
         CancellationToken cancellationToken)
     {
@@ -84,25 +64,4 @@ public class AnimalsService(
 
         return Result.Ok();
     }
-
-    private static readonly Expression<Func<Animal, AnimalResponse>> AnimalResponseSelector = animal =>
-        new AnimalResponse
-        {
-            Id = animal.Id,
-            Name = animal.Name,
-            Description = animal.Description,
-            SpeciesName = animal.Breed.Species.Name,
-            BreedName = animal.Breed.Name,
-            Sex = animal.Sex,
-            DateOfBirth = animal.DateOfBirth,
-            Slug = animal.Slug,
-            Age = "",
-            LastModifiedUtc = animal.LastModifiedUtc,
-            Images = animal.Images.Select(image => new AnimalImageResponse
-            {
-                Id = image.Id,
-                Description = image.Description,
-                IsProcessed = image.IsProcessed
-            })
-        };
 }

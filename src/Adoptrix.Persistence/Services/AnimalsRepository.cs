@@ -16,12 +16,6 @@ public class AnimalsRepository(AdoptrixDbContext dbContext) : IAnimalsRepository
         return animal;
     }
 
-    public async Task AddAsync(Animal animal, CancellationToken cancellationToken)
-    {
-        dbContext.Animals.Add(animal);
-        await dbContext.SaveChangesAsync(cancellationToken);
-    }
-
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken) =>
         dbContext.SaveChangesAsync(cancellationToken);
 }
