@@ -46,10 +46,6 @@ public static class ServiceRegistration
 
     private static IServiceCollection AddProjectServices(this IServiceCollection services)
     {
-        // repositories
-        services.AddScoped<IAnimalsRepository, AnimalsRepository>()
-            .AddScoped<IBreedsRepository, BreedsRepository>();
-
         services.AddSingleton<IEventPublisher, EventPublisher>()
             .AddScoped<IAnimalImagesManager, AnimalImagesManager>();
 
