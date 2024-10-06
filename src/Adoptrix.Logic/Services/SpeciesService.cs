@@ -1,5 +1,4 @@
-﻿using Adoptrix.Core.Requests;
-using Adoptrix.Core.Responses;
+﻿using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Errors;
 using FluentResults;
@@ -8,17 +7,11 @@ namespace Adoptrix.Logic.Services;
 
 public interface ISpeciesService
 {
-    Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesRequest request,
-        CancellationToken cancellationToken = default);
-
     Task<Result<SpeciesResponse>> GetAsync(string speciesName, CancellationToken cancellationToken = default);
 }
 
 public class SpeciesService(ISpeciesRepository speciesRepository) : ISpeciesService
 {
-    public Task<IEnumerable<SpeciesMatch>> SearchAsync(SearchSpeciesRequest request,
-        CancellationToken cancellationToken = default) => speciesRepository.SearchAsync(request, cancellationToken);
-
     public async Task<Result<SpeciesResponse>> GetAsync(string speciesName,
         CancellationToken cancellationToken = default)
     {

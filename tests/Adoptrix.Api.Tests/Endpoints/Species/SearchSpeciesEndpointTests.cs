@@ -3,6 +3,7 @@ using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
+using Gridify;
 
 namespace Adoptrix.Api.Tests.Endpoints.Species;
 
@@ -15,17 +16,21 @@ public class SearchSpeciesEndpointTests(TestContainersFixture fixture) : TestBas
     public async Task SearchSpecies_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var request = new SearchSpeciesRequest
+        var query = new GridifyQuery
         {
-            WithAnimals = true
+            Filter = "animalCount>0",
+            OrderBy = "name"
         };
 
         // act
-        var (message, matches) =
-            await fixture.Client.GETAsync<SearchSpeciesEndpoint, SearchSpeciesRequest, List<SpeciesMatch>>(request);
+        var (message, paging) =
+            await fixture.Client.GETAsync<SearchSpeciesEndpoint, GridifyQuery, Paging<SpeciesMatch>>(query);
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.OK);
-        matches.Should().HaveCountGreaterThan(0);
+        paging.Count.Should().BePositive();
+        paging.Data.Should().NotBeEmpty()
+            .And.OnlyContain(match => match.AnimalCount > 0)
+            .And.BeInAscendingOrder(match => match.Name);
     }
 }
