@@ -14,8 +14,6 @@ namespace Adoptrix.Logic.Services;
 
 public interface IAnimalsService
 {
-    Task<Result<AnimalResponse>> GetAsync(Guid animalId, CancellationToken cancellationToken);
-    Task<Result<AnimalResponse>> GetAsync(string animalSlug, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request, CancellationToken cancellationToken);
     Task<Result<AnimalResponse>> UpdateAsync(UpdateAnimalRequest request, CancellationToken cancellationToken);
     Task<Result> DeleteAsync(DeleteAnimalRequest request, CancellationToken cancellationToken);
@@ -28,30 +26,6 @@ public class AnimalsService(
     IEventPublisher eventPublisher)
     : IAnimalsService
 {
-    public async Task<Result<AnimalResponse>> GetAsync(Guid animalId, CancellationToken cancellationToken)
-    {
-        var response = await animalsRepository.GetProjectionAsync(
-            predicate: animal => animal.Id == animalId,
-            selector: AnimalResponseSelector,
-            cancellationToken);
-
-        return response is null
-            ? new AnimalNotFoundError(animalId)
-            : response;
-    }
-
-    public async Task<Result<AnimalResponse>> GetAsync(string animalSlug, CancellationToken cancellationToken)
-    {
-        var response = await animalsRepository.GetProjectionAsync(
-            predicate: animal => animal.Slug == animalSlug,
-            selector: AnimalResponseSelector,
-            cancellationToken);
-
-        return response is null
-            ? new AnimalNotFoundError(animalSlug)
-            : response;
-    }
-
     public async Task<Result<AnimalResponse>> AddAsync(AddAnimalRequest request, CancellationToken cancellationToken)
     {
         var breed = await breedsRepository.GetAsync(request.BreedId, cancellationToken);

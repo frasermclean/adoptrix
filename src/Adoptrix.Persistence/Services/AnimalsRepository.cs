@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Adoptrix.Core;
+﻿using Adoptrix.Core;
 using Adoptrix.Logic.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,17 +6,6 @@ namespace Adoptrix.Persistence.Services;
 
 public class AnimalsRepository(AdoptrixDbContext dbContext) : IAnimalsRepository
 {
-    public async Task<TResponse?> GetProjectionAsync<TResponse>(Expression<Func<Animal, bool>> predicate,
-        Expression<Func<Animal, TResponse>> selector, CancellationToken cancellationToken = default)
-    {
-        var response = await dbContext.Animals.Where(predicate)
-            .AsNoTracking()
-            .Select(selector)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        return response;
-    }
-
     public async Task<Animal?> GetAsync(Guid animalId, CancellationToken cancellationToken)
     {
         var animal = await dbContext.Animals.Where(animal => animal.Id == animalId)
