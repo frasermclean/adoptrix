@@ -78,21 +78,6 @@ public class AnimalTests
         animal.LastModifiedBy.Should().Be(request.UserId);
     }
 
-    [Fact]
-    public void Delete_WithValidUserId_ShouldMarkAnimalAsDeleted()
-    {
-        // arrange
-        var animal = AnimalFactory.Create();
-        var userId = Guid.NewGuid();
-
-        // act
-        animal.Delete(userId);
-
-        // assert
-        animal.IsDeleted.Should().BeTrue();
-        animal.LastModifiedBy.Should().Be(userId);
-    }
-
     [Theory]
     [InlineData("Buddy", 2022, 5, 2, "buddy-2022-05-02")]
     [InlineData("Mr Muffins ", 2021, 11, 30, "mr-muffins-2021-11-30")]

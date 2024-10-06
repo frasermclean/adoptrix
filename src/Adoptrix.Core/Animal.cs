@@ -18,7 +18,7 @@ public class Animal : IUserCreatedEntity
     public List<AnimalImage> Images { get; init; } = [];
     public Guid LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
-    public bool IsDeleted { get; private set; }
+    public bool IsDeleted { get; init; } // TODO: Remove IsDeleted property
 
     public void Update(UpdateAnimalRequest request, Breed breed)
     {
@@ -28,13 +28,6 @@ public class Animal : IUserCreatedEntity
         Sex = request.Sex;
         DateOfBirth = request.DateOfBirth;
         LastModifiedBy = request.UserId;
-        LastModifiedUtc = DateTime.UtcNow;
-    }
-
-    public void Delete(Guid userId)
-    {
-        IsDeleted = true;
-        LastModifiedBy = userId;
         LastModifiedUtc = DateTime.UtcNow;
     }
 
