@@ -2,7 +2,6 @@
 using Adoptrix.Api.Endpoints.Users;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Core;
-using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Errors;
 

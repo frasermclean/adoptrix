@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Api.Security;
-using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Errors;
 using Adoptrix.Logic.Services;

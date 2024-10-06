@@ -1,7 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Adoptrix.Core;
-using Adoptrix.Core.Requests;
-using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Errors;
 using EntityFramework.Exceptions.Common;
@@ -12,26 +10,6 @@ namespace Adoptrix.Persistence.Services;
 
 public class BreedsRepository(AdoptrixDbContext dbContext) : IBreedsRepository
 {
-    public async Task<IEnumerable<BreedMatch>> SearchAsync(SearchBreedsRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        var matches = await dbContext.Breeds
-            .AsNoTracking()
-            .Where(breed => (request.SpeciesName == null || breed.Species.Name == request.SpeciesName) &&
-                            (request.WithAnimals == null || request.WithAnimals.Value && breed.Animals.Count > 0))
-            .OrderBy(breed => breed.Name)
-            .Select(breed => new BreedMatch
-            {
-                Id = breed.Id,
-                Name = breed.Name,
-                SpeciesName = breed.Species.Name,
-                AnimalCount = breed.Animals.Count(animal => animal.Breed.Id == breed.Id)
-            })
-            .ToListAsync(cancellationToken);
-
-        return matches;
-    }
-
     public async Task<Breed?> GetAsync(int breedId, CancellationToken cancellationToken = default)
     {
         var breed = await dbContext.Breeds.Where(breed => breed.Id == breedId)

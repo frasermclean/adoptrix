@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Core.Responses;
-using Adoptrix.Logic.Mapping;
 using Adoptrix.Persistence.Services;
 using Gridify;
 using Gridify.EntityFramework;
