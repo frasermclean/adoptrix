@@ -2,7 +2,7 @@
 using Adoptrix.Core.Responses;
 using Riok.Mapperly.Abstractions;
 
-namespace Adoptrix.Logic.Mapping;
+namespace Adoptrix.Api.Mapping;
 
 [Mapper]
 [UseStaticMapper(typeof(AnimalImageResponseMapper))]

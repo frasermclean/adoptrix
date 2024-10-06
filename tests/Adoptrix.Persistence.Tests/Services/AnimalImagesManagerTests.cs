@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Core;
 using Adoptrix.Core.Events;
-using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Services;
 using Adoptrix.Persistence.Services;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,6 @@ public class AnimalImagesManagerTests
     private readonly Mock<IImageProcessor> imageProcessorMock = new();
     private readonly Mock<IBlobContainerManager> originalImagesContainerManagerMock = new();
     private readonly Mock<IBlobContainerManager> animalImagesContainerManagerMock = new();
-    private readonly Mock<IEventPublisher> eventPublisherMock = new();
     private readonly AnimalImagesManager animalImagesManager;
 
     public AnimalImagesManagerTests()
@@ -26,8 +24,7 @@ public class AnimalImagesManagerTests
             dbContextMock.Object,
             imageProcessorMock.Object,
             originalImagesContainerManagerMock.Object,
-            animalImagesContainerManagerMock.Object,
-            eventPublisherMock.Object);
+            animalImagesContainerManagerMock.Object);
     }
 
     [Fact]

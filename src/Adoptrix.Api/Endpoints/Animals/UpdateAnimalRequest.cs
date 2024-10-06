@@ -1,6 +1,7 @@
-﻿using FastEndpoints;
+﻿using Adoptrix.Core;
+using Microsoft.Identity.Web;
 
-namespace Adoptrix.Core.Requests;
+namespace Adoptrix.Api.Endpoints.Animals;
 
 public class UpdateAnimalRequest
 {
@@ -10,5 +11,5 @@ public class UpdateAnimalRequest
     public int BreedId { get; init; }
     public required Sex Sex { get; init; }
     public DateOnly DateOfBirth { get; init; }
-    [FromClaim(RequestClaims.UserId)] public Guid UserId { get; init; }
+    [FromClaim(ClaimConstants.Oid)] public Guid UserId { get; init; }
 }

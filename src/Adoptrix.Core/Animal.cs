@@ -1,6 +1,4 @@
-﻿using Adoptrix.Core.Requests;
-
-namespace Adoptrix.Core;
+﻿namespace Adoptrix.Core;
 
 public class Animal : IUserCreatedEntity
 {
@@ -19,17 +17,6 @@ public class Animal : IUserCreatedEntity
     public Guid LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
     public bool IsDeleted { get; init; } // TODO: Remove IsDeleted property
-
-    public void Update(UpdateAnimalRequest request, Breed breed)
-    {
-        Name = request.Name;
-        Description = request.Description;
-        Breed = breed;
-        Sex = request.Sex;
-        DateOfBirth = request.DateOfBirth;
-        LastModifiedBy = request.UserId;
-        LastModifiedUtc = DateTime.UtcNow;
-    }
 
     public override bool Equals(object? otherObject)
         => otherObject is Animal otherAnimal && Id == otherAnimal.Id;

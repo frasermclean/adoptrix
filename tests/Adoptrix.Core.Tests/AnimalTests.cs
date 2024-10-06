@@ -1,4 +1,3 @@
-using Adoptrix.Core.Requests;
 using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Core.Tests;
@@ -47,35 +46,6 @@ public class AnimalTests
         max.GetHashCode().Should().Be(felix.GetHashCode());
         max.Id.Should().Be(id);
         max.Name.Should().Be("Max");
-    }
-
-    [Fact]
-    public void Update_WithValidRequest_ShouldUpdateAnimal()
-    {
-        // arrange
-        var animal = AnimalFactory.Create();
-        var request = new UpdateAnimalRequest
-        {
-            AnimalId = animal.Id,
-            Name = "Max",
-            Description = "A very good boy",
-
-            Sex = Sex.Male,
-            DateOfBirth = new DateOnly(2023, 6, 7),
-            UserId = Guid.NewGuid()
-        };
-        var breed = BreedFactory.Create();
-
-        // act
-        animal.Update(request, breed);
-
-        // assert
-        animal.Name.Should().Be(request.Name);
-        animal.Description.Should().Be(request.Description);
-        animal.Breed.Should().Be(breed);
-        animal.Sex.Should().Be(request.Sex);
-        animal.DateOfBirth.Should().Be(request.DateOfBirth);
-        animal.LastModifiedBy.Should().Be(request.UserId);
     }
 
     [Theory]

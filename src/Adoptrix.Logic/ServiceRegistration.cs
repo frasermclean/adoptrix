@@ -13,7 +13,6 @@ public static class ServiceRegistration
     public static IServiceCollection AddLogicServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddUserManagement(configuration)
-            .AddScoped<IAnimalsService, AnimalsService>()
             .AddSingleton<IImageProcessor, ImageProcessor>();
 
         return services;
