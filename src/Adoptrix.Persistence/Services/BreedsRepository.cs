@@ -18,21 +18,6 @@ public class BreedsRepository(AdoptrixDbContext dbContext) : IBreedsRepository
         return breed;
     }
 
-    public async Task<Result> AddAsync(Breed breed, CancellationToken cancellationToken = default)
-    {
-        dbContext.Breeds.Add(breed);
-
-        try
-        {
-            await dbContext.SaveChangesAsync(cancellationToken);
-            return Result.Ok();
-        }
-        catch (UniqueConstraintException exception) when (exception.ConstraintProperties.Contains(nameof(Breed.Name)))
-        {
-            return new DuplicateBreedError(breed.Name);
-        }
-    }
-
     public async Task<Result> UpdateAsync(Breed breed, CancellationToken cancellationToken = default)
     {
         try

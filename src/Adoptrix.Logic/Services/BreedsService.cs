@@ -1,5 +1,4 @@
-﻿using Adoptrix.Core.Extensions;
-using Adoptrix.Core.Requests;
+﻿using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
 using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Errors;
@@ -11,7 +10,6 @@ namespace Adoptrix.Logic.Services;
 
 public interface IBreedsService
 {
-    Task<Result<BreedResponse>> AddAsync(AddBreedRequest request, CancellationToken cancellationToken = default);
     Task<Result<BreedResponse>> UpdateAsync(UpdateBreedRequest request, CancellationToken cancellationToken = default);
 }
 
@@ -20,35 +18,6 @@ public class BreedsService(
     IBreedsRepository breedsRepository,
     ISpeciesRepository speciesRepository) : IBreedsService
 {
-    public async Task<Result<BreedResponse>> AddAsync(AddBreedRequest request, CancellationToken cancellationToken)
-    {
-        // ensure species exists
-        var species = await speciesRepository.GetAsync(request.SpeciesName, cancellationToken);
-        if (species is null)
-        {
-            logger.LogError("Species with name {SpeciesName} not found", request.SpeciesName);
-            return new SpeciesNotFoundError(request.SpeciesName);
-        }
-
-        var breed = request.ToBreed(species);
-        var result = await breedsRepository.AddAsync(breed, cancellationToken);
-
-        if (result.IsSuccess)
-        {
-            logger.LogInformation("Added breed with name {BreedName} and species {SpeciesName}", request.Name,
-                request.SpeciesName);
-
-            return breed.ToResponse();
-        }
-
-        if (result.HasError<DuplicateBreedError>())
-        {
-            logger.LogError("Breed with name {BreedName} already exists", request.Name);
-        }
-
-        return result;
-    }
-
     public async Task<Result<BreedResponse>> UpdateAsync(UpdateBreedRequest request,
         CancellationToken cancellationToken)
     {
