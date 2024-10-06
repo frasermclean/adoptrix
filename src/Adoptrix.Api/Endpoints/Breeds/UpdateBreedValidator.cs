@@ -13,5 +13,8 @@ public class UpdateBreedValidator : Validator<UpdateBreedRequest>
 
         RuleFor(request => request.SpeciesName)
             .NotEmpty();
+
+        RuleFor(request => request.UserId)
+            .NotEmpty();
     }
 }
