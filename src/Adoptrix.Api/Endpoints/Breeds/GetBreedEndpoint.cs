@@ -1,10 +1,11 @@
 ﻿using Adoptrix.Core.Responses;
-using Adoptrix.Logic.Services;
+using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-public class GetBreedEndpoint(IBreedsService breedsService)
+public class GetBreedEndpoint(AdoptrixDbContext dbContext)
     : EndpointWithoutRequest<Results<Ok<BreedResponse>, NotFound>>
 {
     public override void Configure()
@@ -18,10 +19,19 @@ public class GetBreedEndpoint(IBreedsService breedsService)
     {
         var breedId = Route<int>("breedId");
 
-        var result = await breedsService.GetAsync(breedId, cancellationToken);
+        var response = await dbContext.Breeds
+            .AsNoTracking()
+            .Where(breed => breed.Id == breedId)
+            .Select(breed => new BreedResponse
+            {
+                Id = breed.Id,
+                Name = breed.Name,
+                SpeciesName = breed.Species.Name
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        return result.IsSuccess
-            ? TypedResults.Ok(result.Value)
+        return response is not null
+            ? TypedResults.Ok(response)
             : TypedResults.NotFound();
     }
 }

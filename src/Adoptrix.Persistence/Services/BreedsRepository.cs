@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Adoptrix.Core;
+﻿using Adoptrix.Core;
 using Adoptrix.Logic.Abstractions;
 using Adoptrix.Logic.Errors;
 using EntityFramework.Exceptions.Common;
@@ -17,18 +16,6 @@ public class BreedsRepository(AdoptrixDbContext dbContext) : IBreedsRepository
             .FirstOrDefaultAsync(cancellationToken);
 
         return breed;
-    }
-
-    public async Task<TResponse?> GetAsync<TResponse>(int breedId, Expression<Func<Breed, TResponse>> selector,
-        CancellationToken cancellationToken = default)
-    {
-        var response = await dbContext.Breeds
-            .AsNoTracking()
-            .Where(breed => breed.Id == breedId)
-            .Select(selector)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        return response;
     }
 
     public async Task<Result> AddAsync(Breed breed, CancellationToken cancellationToken = default)

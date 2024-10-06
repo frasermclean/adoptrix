@@ -11,7 +11,6 @@ namespace Adoptrix.Logic.Services;
 
 public interface IBreedsService
 {
-    Task<Result<BreedResponse>> GetAsync(int breedId, CancellationToken cancellationToken = default);
     Task<Result<BreedResponse>> AddAsync(AddBreedRequest request, CancellationToken cancellationToken = default);
     Task<Result<BreedResponse>> UpdateAsync(UpdateBreedRequest request, CancellationToken cancellationToken = default);
     Task<Result> DeleteAsync(int breedId, CancellationToken cancellationToken = default);
@@ -22,20 +21,6 @@ public class BreedsService(
     IBreedsRepository breedsRepository,
     ISpeciesRepository speciesRepository) : IBreedsService
 {
-    public async Task<Result<BreedResponse>> GetAsync(int breedId, CancellationToken cancellationToken = default)
-    {
-        var response = await breedsRepository.GetAsync(breedId, breed => new BreedResponse
-        {
-            Id = breed.Id,
-            Name = breed.Name,
-            SpeciesName = breed.Species.Name
-        }, cancellationToken);
-
-        return response is null
-            ? new BreedNotFoundError(breedId)
-            : response;
-    }
-
     public async Task<Result<BreedResponse>> AddAsync(AddBreedRequest request, CancellationToken cancellationToken)
     {
         // ensure species exists
