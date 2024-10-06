@@ -1,7 +1,7 @@
-﻿using Adoptrix.Logic.Services;
+﻿using Adoptrix.Jobs.Services;
 using SixLabors.ImageSharp;
 
-namespace Adoptrix.Logic.Tests.Services;
+namespace Adoptrix.Jobs.Tests.Services;
 
 public class ImageProcessorTests
 {

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Adoptrix.Jobs.Services;
 using Adoptrix.Logic;
 using Adoptrix.Persistence.Services;
 using Microsoft.Azure.Functions.Worker;
@@ -41,7 +42,7 @@ public static class Program
                 services.ConfigureFunctionsApplicationInsights();
 
                 // local project services
-                services.AddLogicServices(context.Configuration);
+                services.AddSingleton<ImageProcessor>();
                 services.AddPersistence(context.Configuration);
 
                 // configure JSON serialization options

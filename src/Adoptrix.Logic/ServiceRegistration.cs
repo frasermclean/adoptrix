@@ -12,8 +12,7 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddLogicServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddUserManagement(configuration)
-            .AddSingleton<IImageProcessor, ImageProcessor>();
+        services.AddUserManagement(configuration);
 
         return services;
     }

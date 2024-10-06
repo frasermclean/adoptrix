@@ -2,15 +2,9 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
-namespace Adoptrix.Logic.Services;
+namespace Adoptrix.Jobs.Services;
 
-public interface IImageProcessor
-{
-    Task<ImageStreamBundle> ProcessOriginalAsync(Stream originalReadStream,
-        CancellationToken cancellationToken = default);
-}
-
-public class ImageProcessor : IImageProcessor
+public class ImageProcessor
 {
     public const int ThumbnailWidth = 160;
     public const int PreviewHeight = 240;
@@ -49,5 +43,3 @@ public class ImageProcessor : IImageProcessor
         return stream;
     }
 }
-
-
