@@ -45,11 +45,4 @@ public class BreedsRepository(AdoptrixDbContext dbContext) : IBreedsRepository
             return new DuplicateBreedError(breed.Name);
         }
     }
-
-    public async Task<Result> DeleteAsync(Breed breed, CancellationToken cancellationToken = default)
-    {
-        dbContext.Breeds.Remove(breed);
-        var changeCount = await dbContext.SaveChangesAsync(cancellationToken);
-        return Result.OkIf(changeCount > 0, "Unexpected error deleting breed");
-    }
 }

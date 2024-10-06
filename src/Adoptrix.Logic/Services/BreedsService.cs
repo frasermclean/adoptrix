@@ -13,7 +13,6 @@ public interface IBreedsService
 {
     Task<Result<BreedResponse>> AddAsync(AddBreedRequest request, CancellationToken cancellationToken = default);
     Task<Result<BreedResponse>> UpdateAsync(UpdateBreedRequest request, CancellationToken cancellationToken = default);
-    Task<Result> DeleteAsync(int breedId, CancellationToken cancellationToken = default);
 }
 
 public class BreedsService(
@@ -81,27 +80,6 @@ public class BreedsService(
             logger.LogError("Breed with name {BreedName} already exists", request.Name);
         }
 
-        return result;
-    }
-
-    public async Task<Result> DeleteAsync(int breedId, CancellationToken cancellationToken)
-    {
-        var breed = await breedsRepository.GetAsync(breedId, cancellationToken);
-        if (breed is null)
-        {
-            logger.LogError("Could not delete breed with ID {BreedId} because it was not found", breedId);
-            return new BreedNotFoundError(breedId);
-        }
-
-        var result = await breedsRepository.DeleteAsync(breed, cancellationToken);
-
-        if (result.IsSuccess)
-        {
-            logger.LogInformation("Breed with ID {BreedId} was deleted", breedId);
-            return Result.Ok();
-        }
-
-        logger.LogError("Failed to delete breed with ID {BreedId}", breedId);
         return result;
     }
 }

@@ -1,11 +1,12 @@
 ﻿using Adoptrix.Api.Security;
 using Adoptrix.Logic.Services;
+using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-public class DeleteBreedEndpoint(IBreedsService breedsService)
-    : EndpointWithoutRequest<Results<NoContent, NotFound>>
+public class DeleteBreedEndpoint(AdoptrixDbContext dbContext) : EndpointWithoutRequest<Results<NoContent, NotFound>>
 {
     public override void Configure()
     {
@@ -17,10 +18,16 @@ public class DeleteBreedEndpoint(IBreedsService breedsService)
     {
         var breedId = Route<int>("breedId");
 
-        var result = await breedsService.DeleteAsync(breedId, cancellationToken);
+        var deletedRowCount = await dbContext.Breeds.Where(breed => breed.Id == breedId)
+            .ExecuteDeleteAsync(cancellationToken);
 
-        return result.IsSuccess
-            ? TypedResults.NoContent()
-            : TypedResults.NotFound();
+        if (deletedRowCount == 0)
+        {
+            Logger.LogError("Failed to delete breed with ID {BreedId}", breedId);
+            return TypedResults.NotFound();
+        }
+
+        Logger.LogInformation("Deleted breed with ID {BreedId}", breedId);
+        return TypedResults.NoContent();
     }
 }
