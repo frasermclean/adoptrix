@@ -43,8 +43,10 @@ public static class ServiceRegistration
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(policyBuilder => policyBuilder
-                    .WithOrigins(["http://localhost:5157", "https://localhost:7157"])
-                    .AllowAnyMethod());
+                    .WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                );
             });
         }
 
