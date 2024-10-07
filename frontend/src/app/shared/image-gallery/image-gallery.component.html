@@ -1,0 +1,7 @@
+<div id="container">
+  @for (item of galleryItems; track $index) {
+  <div class="item" [lightbox]="$index" [gallery]="galleryId">
+    <img [src]="item.data?.thumb" [alt]="item.data?.args.description" />
+  </div>
+  }
+</div>

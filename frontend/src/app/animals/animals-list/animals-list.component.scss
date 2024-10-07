@@ -1,0 +1,22 @@
+#container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 400px;
+  #controls {
+    min-width: 240px;
+  }
+}
+
+#results-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+}
+
+#fab-container {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: row-reverse;
+}

@@ -1,0 +1,14 @@
+#container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  .item {
+    img {
+      border-radius: 4px;
+      width: 160px;
+      height: 120px;
+      object-fit: cover;
+    }
+  }
+}

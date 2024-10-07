@@ -1,0 +1,48 @@
+@use "@angular/material" as mat;
+
+@include mat.core();
+
+// define theme palettes
+$primary: mat.define-palette(mat.$teal-palette, 600);
+$accent: mat.define-palette(mat.$deep-orange-palette, A200, A100, A400);
+$warn: mat.define-palette(mat.$red-palette);
+
+// typograph config
+$typography-config: mat.define-typography-config(
+  $font-family: "Quicksand, sans-serif",
+);
+
+// define light theme
+$light-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $primary,
+      accent: $accent,
+      warn: $warn,
+    ),
+    typography: $typography-config,
+    density: 0,
+  )
+);
+
+// emit theme dependant styles
+@include mat.core-theme($light-theme); // common styles for all components
+@include mat.badge-theme($light-theme);
+@include mat.button-theme($light-theme);
+@include mat.card-theme($light-theme);
+@include mat.chips-theme($light-theme);
+@include mat.datepicker-theme($light-theme);
+@include mat.dialog-theme($light-theme);
+@include mat.divider-theme($light-theme);
+@include mat.fab-theme($light-theme);
+@include mat.form-field-theme($light-theme);
+@include mat.icon-theme($light-theme);
+@include mat.list-theme($light-theme);
+@include mat.menu-theme($light-theme);
+@include mat.progress-spinner-theme($light-theme);
+@include mat.radio-theme($light-theme);
+@include mat.sidenav-theme($light-theme);
+@include mat.select-theme($light-theme);
+@include mat.snack-bar-theme($light-theme);
+@include mat.toolbar-theme($light-theme);
+@include mat.tooltip-theme($light-theme);
