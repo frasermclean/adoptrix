@@ -60,8 +60,7 @@ namespace Adoptrix.Persistence.Migrations
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                     Slug = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
-                    LastModifiedUtc = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()"),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    LastModifiedUtc = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
                 },
                 constraints: table =>
                 {

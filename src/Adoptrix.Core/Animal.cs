@@ -16,7 +16,6 @@ public class Animal : IUserCreatedEntity
     public List<AnimalImage> Images { get; init; } = [];
     public Guid LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
-    public bool IsDeleted { get; init; } // TODO: Remove IsDeleted property
 
     public override bool Equals(object? otherObject)
         => otherObject is Animal otherAnimal && Id == otherAnimal.Id;
