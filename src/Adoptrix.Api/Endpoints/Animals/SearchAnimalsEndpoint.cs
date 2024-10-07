@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Core.Responses;
+using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Gridify;
 using Gridify.EntityFramework;
@@ -8,7 +9,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Adoptrix.Api.Endpoints.Animals;
 
 [HttpGet("animals"), AllowAnonymous]
-public class SearchAnimalsEndpoint(AdoptrixDbContext dbContext)
+public class SearchAnimalsEndpoint(
+    AdoptrixDbContext dbContext,
+    [FromKeyedServices(BlobContainerNames.AnimalImages)]
+    IBlobContainerManager blobContainerManager)
     : Endpoint<GridifyQuery, Paging<AnimalMatch>>
 {
     public override async Task<Paging<AnimalMatch>> ExecuteAsync(GridifyQuery query,
@@ -19,16 +23,14 @@ public class SearchAnimalsEndpoint(AdoptrixDbContext dbContext)
             .Select(animal => new AnimalMatch
             {
                 Id = animal.Id,
+                Slug = animal.Slug,
                 Name = animal.Name,
                 SpeciesName = animal.Breed.Species.Name,
                 BreedName = animal.Breed.Name,
-                Slug = animal.Slug,
-                Image = animal.Images.Select(image => new AnimalImageResponse
-                    {
-                        Id = image.Id,
-                        Description = image.Description,
-                        IsProcessed = image.IsProcessed
-                    })
+                Sex = animal.Sex,
+                DateOfBirth = animal.DateOfBirth,
+                PreviewImageUrl = animal.Images.Where(image => image.IsProcessed)
+                    .Select(image => $"{blobContainerManager.ContainerUri}/{image.PreviewBlobName}")
                     .FirstOrDefault()
             })
             .GridifyAsync(query, cancellationToken);

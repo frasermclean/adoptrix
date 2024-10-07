@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals.Images;
 
-public class AddAnimalImagesEndpoint(AdoptrixDbContext dbContext,
+public class AddAnimalImagesEndpoint(
+    AdoptrixDbContext dbContext,
     [FromKeyedServices(BlobContainerNames.OriginalImages)]
     IBlobContainerManager blobContainerManager,
     IEventPublisher eventPublisher)
@@ -49,11 +50,10 @@ public class AddAnimalImagesEndpoint(AdoptrixDbContext dbContext,
                     LastModifiedBy = request.UserId
                 };
 
-                var blobName = image.GetOriginalBlobName();
-                await blobContainerManager.UploadBlobAsync(blobName, section.FileStream!, image.OriginalContentType,
-                    cancellationToken);
+                await blobContainerManager.UploadBlobAsync(image.OriginalBlobName, section.FileStream!,
+                    image.OriginalContentType, cancellationToken);
 
-                Logger.LogInformation("Uploaded original image {BlobName}", blobName);
+                Logger.LogInformation("Uploaded original image {BlobName}", image.OriginalBlobName);
 
                 animal.Images.Add(image);
                 return image;
@@ -67,7 +67,7 @@ public class AddAnimalImagesEndpoint(AdoptrixDbContext dbContext,
 
         // publish events for each image added
         foreach (var animalImageAddedEvent in images.Select(image =>
-                     new AnimalImageAddedEvent(animal.Slug, image.Id, image.GetOriginalBlobName())))
+                     new AnimalImageAddedEvent(animal.Slug, image.Id, image.OriginalBlobName)))
         {
             await eventPublisher.PublishAsync(animalImageAddedEvent, cancellationToken);
         }

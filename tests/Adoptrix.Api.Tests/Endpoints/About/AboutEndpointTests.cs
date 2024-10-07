@@ -9,11 +9,6 @@ public class AboutEndpointTests(MockServicesFixture fixture) : TestBase<MockServ
     [Fact]
     public async Task GetAbout_Should_ReturnAboutResponse()
     {
-        // arrange
-        var containerUri = new Uri("https://localhost/animal-images");
-        fixture.AnimalImagesBlobContainerManagerMock.Setup(manager => manager.ContainerUri)
-            .Returns(containerUri);
-
         // act
         var (message, response) = await fixture.Client.GETAsync<AboutEndpoint, AboutResponse>();
 
