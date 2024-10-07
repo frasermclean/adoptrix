@@ -18,5 +18,6 @@ public class BreedResponseMapperTests
         response.Id.Should().Be(breed.Id);
         response.Name.Should().Be(breed.Name);
         response.SpeciesName.Should().Be(breed.Species.Name);
+        response.AnimalCount.Should().Be(breed.Animals.Count);
     }
 }

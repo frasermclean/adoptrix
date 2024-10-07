@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Adoptrix.Api.Endpoints.Species;
 
 public class SearchSpeciesEndpoint(AdoptrixDbContext dbContext)
-    : Endpoint<GridifyQuery, Paging<SpeciesMatch>>
+    : Endpoint<GridifyQuery, Paging<SpeciesResponse>>
 {
     public override void Configure()
     {
@@ -15,12 +15,12 @@ public class SearchSpeciesEndpoint(AdoptrixDbContext dbContext)
         AllowAnonymous();
     }
 
-    public override async Task<Paging<SpeciesMatch>> ExecuteAsync(GridifyQuery query,
+    public override async Task<Paging<SpeciesResponse>> ExecuteAsync(GridifyQuery query,
         CancellationToken cancellationToken)
     {
         return await dbContext.Species
             .AsNoTracking()
-            .Select(species => new SpeciesMatch
+            .Select(species => new SpeciesResponse
             {
                 Id = species.Id,
                 Name = species.Name,

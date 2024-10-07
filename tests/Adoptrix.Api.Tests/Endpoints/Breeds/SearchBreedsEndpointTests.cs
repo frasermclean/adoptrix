@@ -22,11 +22,11 @@ public class SearchBreedsEndpointTests(TestContainersFixture fixture) : TestBase
 
         // act
         var (message, paging) =
-            await fixture.Client.GETAsync<SearchBreedsEndpoint, GridifyQuery, Paging<BreedMatch>>(query);
+            await fixture.Client.GETAsync<SearchBreedsEndpoint, GridifyQuery, Paging<BreedResponse>>(query);
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.OK);
         paging.Count.Should().BePositive();
-        paging.Data.Should().NotBeEmpty().And.BeInDescendingOrder(match => match.AnimalCount);
+        paging.Data.Should().NotBeEmpty().And.BeInDescendingOrder(response => response.AnimalCount);
     }
 }

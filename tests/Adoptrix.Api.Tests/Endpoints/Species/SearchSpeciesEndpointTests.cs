@@ -23,13 +23,13 @@ public class SearchSpeciesEndpointTests(TestContainersFixture fixture) : TestBas
 
         // act
         var (message, paging) =
-            await fixture.Client.GETAsync<SearchSpeciesEndpoint, GridifyQuery, Paging<SpeciesMatch>>(query);
+            await fixture.Client.GETAsync<SearchSpeciesEndpoint, GridifyQuery, Paging<SpeciesResponse>>(query);
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.OK);
         paging.Count.Should().BePositive();
         paging.Data.Should().NotBeEmpty()
-            .And.OnlyContain(match => match.AnimalCount > 0)
-            .And.BeInAscendingOrder(match => match.Name);
+            .And.OnlyContain(response => response.AnimalCount > 0)
+            .And.BeInAscendingOrder(response => response.Name);
     }
 }
