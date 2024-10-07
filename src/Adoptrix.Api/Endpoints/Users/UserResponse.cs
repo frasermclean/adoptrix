@@ -1,4 +1,6 @@
-﻿namespace Adoptrix.Core.Responses;
+﻿using Adoptrix.Core;
+
+namespace Adoptrix.Api.Endpoints.Users;
 
 public class UserResponse
 {

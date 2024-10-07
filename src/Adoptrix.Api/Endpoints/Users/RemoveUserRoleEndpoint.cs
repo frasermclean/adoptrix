@@ -1,7 +1,6 @@
 ﻿using Adoptrix.Api.Errors;
 using Adoptrix.Api.Security;
 using Adoptrix.Api.Services;
-using Adoptrix.Core.Responses;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Adoptrix.Api.Endpoints.Users;

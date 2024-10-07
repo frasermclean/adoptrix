@@ -1,8 +1,8 @@
-﻿using Adoptrix.Api.Errors;
+﻿using Adoptrix.Api.Endpoints.Users;
+using Adoptrix.Api.Errors;
 using Adoptrix.Api.Options;
 using Adoptrix.Api.Security;
 using Adoptrix.Core;
-using Adoptrix.Core.Responses;
 using FluentResults;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;

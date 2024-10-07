@@ -3,7 +3,6 @@ using Adoptrix.Api.Endpoints.Users;
 using Adoptrix.Api.Errors;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Core;
-using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Users;
 
