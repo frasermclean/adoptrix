@@ -3,7 +3,12 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Adoptrix.Jobs.Services;
 
-public class ImageProcessor
+public interface IImageProcessor
+{
+    Task<ImageStreamBundle> ProcessOriginalAsync(Stream originalReadStream, CancellationToken cancellationToken);
+}
+
+public class ImageProcessor : IImageProcessor
 {
     public const int ThumbnailWidth = 160;
     public const int PreviewHeight = 240;

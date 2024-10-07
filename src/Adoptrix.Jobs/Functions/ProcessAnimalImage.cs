@@ -12,7 +12,7 @@ namespace Adoptrix.Jobs.Functions;
 public class ProcessAnimalImage(
     ILogger<ProcessAnimalImage> logger,
     AdoptrixDbContext dbContext,
-    ImageProcessor imageProcessor,
+    IImageProcessor imageProcessor,
     [FromKeyedServices(BlobContainerNames.OriginalImages)]
     IBlobContainerManager originalImagesContainerManager,
     [FromKeyedServices(BlobContainerNames.AnimalImages)]

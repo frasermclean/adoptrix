@@ -42,7 +42,7 @@ public static class Program
                 services.ConfigureFunctionsApplicationInsights();
 
                 // local project services
-                services.AddSingleton<ImageProcessor>();
+                services.AddSingleton<IImageProcessor, ImageProcessor>();
                 services.AddPersistence(context.Configuration);
 
                 // configure JSON serialization options
