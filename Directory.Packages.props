@@ -50,11 +50,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.8" />
-    <PackageVersion Include="Microsoft.Extensions.Azure" Version="1.7.5" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.9.1" />
@@ -63,7 +61,7 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.2.1" />
     <PackageVersion Include="Microsoft.Graph" Version="5.59.0" />
-    <PackageVersion Include="Microsoft.Identity.Web" Version="3.2.0" />
+    <PackageVersion Include="Microsoft.Identity.Web" Version="3.2.1" />
     <PackageVersion Include="Microsoft.Identity.Web.DownstreamApi" Version="3.0.1" />
     <PackageVersion Include="Microsoft.Identity.Web.UI" Version="3.0.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
