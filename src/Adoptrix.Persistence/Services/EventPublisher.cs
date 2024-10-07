@@ -1,11 +1,15 @@
 ﻿using System.Text.Json;
 using Adoptrix.Core.Events;
-using Adoptrix.Logic.Abstractions;
 using Azure.Storage.Queues;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Persistence.Services;
+
+public interface IEventPublisher
+{
+    Task<string> PublishAsync<T>(T domainEvent, CancellationToken cancellationToken = default) where T : IDomainEvent;
+}
 
 public class EventPublisher(ILogger<EventPublisher> logger, IServiceProvider serviceProvider) : IEventPublisher
 {

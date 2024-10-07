@@ -33,8 +33,6 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 
         builder.HasAlternateKey(animal => animal.Slug);
 
-        builder.HasQueryFilter(animal => !animal.IsDeleted);
-
         builder.OwnsMany(animal => animal.Images, imagesBuilder =>
         {
             imagesBuilder.ToTable("AnimalImages");

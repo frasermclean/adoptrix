@@ -1,10 +1,12 @@
-﻿using Adoptrix.Core.Requests;
-using Adoptrix.Core.Responses;
-using Adoptrix.Logic.Services;
+﻿using Adoptrix.Core.Responses;
+using Adoptrix.Persistence.Services;
+using Gridify;
+using Gridify.EntityFramework;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
 
-public class SearchBreedsEndpoint(IBreedsService breedsService) : Endpoint<SearchBreedsRequest, IEnumerable<BreedMatch>>
+public class SearchBreedsEndpoint(AdoptrixDbContext dbContext) : Endpoint<GridifyQuery, Paging<BreedMatch>>
 {
     public override void Configure()
     {
@@ -12,10 +14,18 @@ public class SearchBreedsEndpoint(IBreedsService breedsService) : Endpoint<Searc
         AllowAnonymous();
     }
 
-    public override async Task<IEnumerable<BreedMatch>> ExecuteAsync(SearchBreedsRequest request,
+    public override async Task<Paging<BreedMatch>> ExecuteAsync(GridifyQuery query,
         CancellationToken cancellationToken)
     {
-        var matches = await breedsService.SearchAsync(request, cancellationToken);
-        return matches;
+        return await dbContext.Breeds
+            .AsNoTracking()
+            .Select(breed => new BreedMatch
+            {
+                Id = breed.Id,
+                Name = breed.Name,
+                SpeciesName = breed.Species.Name,
+                AnimalCount = breed.Animals.Count
+            })
+            .GridifyAsync(query, cancellationToken);
     }
 }

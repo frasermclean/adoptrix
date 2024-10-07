@@ -1,6 +1,4 @@
-﻿using Adoptrix.Core.Requests;
-
-namespace Adoptrix.Core;
+﻿namespace Adoptrix.Core;
 
 public class Breed : IUserCreatedEntity
 {
@@ -12,12 +10,4 @@ public class Breed : IUserCreatedEntity
     public List<Animal> Animals { get; } = [];
     public Guid LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
-
-    public void Update(UpdateBreedRequest request, Species species)
-    {
-        Name = request.Name;
-        Species = species;
-        LastModifiedBy = request.UserId;
-        LastModifiedUtc = DateTime.UtcNow;
-    }
 }

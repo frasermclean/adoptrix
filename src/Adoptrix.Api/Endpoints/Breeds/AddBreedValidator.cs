@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Requests;
 using FluentValidation;
 
 namespace Adoptrix.Api.Endpoints.Breeds;
@@ -13,6 +12,9 @@ public class AddBreedValidator : Validator<AddBreedRequest>
             .MaximumLength(Breed.NameMaxLength);
 
         RuleFor(request => request.SpeciesName)
+            .NotEmpty();
+
+        RuleFor(request => request.UserId)
             .NotEmpty();
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
+using Gridify;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
@@ -14,14 +14,20 @@ public class SearchAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task SearchAnimals_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var request = new SearchAnimalsRequest();
+        const int pageSize = 3;
+        var query = new GridifyQuery
+        {
+            Page = 1,
+            PageSize = pageSize
+        };
 
         // act
-        var (message, matches) =
-            await fixture.Client.GETAsync<SearchAnimalsEndpoint, SearchAnimalsRequest, List<AnimalMatch>>(request);
+        var (message, paging) =
+            await fixture.Client.GETAsync<SearchAnimalsEndpoint, GridifyQuery, Paging<AnimalMatch>>(query);
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.OK);
-        matches.Should().NotBeEmpty();
+        paging.Count.Should().BePositive();
+        paging.Data.Should().HaveCountLessThanOrEqualTo(pageSize);
     }
 }

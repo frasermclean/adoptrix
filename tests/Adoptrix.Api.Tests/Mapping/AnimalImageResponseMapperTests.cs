@@ -1,4 +1,4 @@
-﻿using Adoptrix.Logic.Mapping;
+﻿using Adoptrix.Api.Mapping;
 using Adoptrix.Tests.Shared.Factories;
 
 namespace Adoptrix.Api.Tests.Mapping;

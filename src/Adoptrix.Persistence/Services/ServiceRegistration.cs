@@ -1,8 +1,8 @@
-using Adoptrix.Logic;
-using Adoptrix.Logic.Abstractions;
+
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using EntityFramework.Exceptions.SqlServer;
+using Gridify;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +27,8 @@ public static class ServiceRegistration
             .AddBlobServices()
             .AddQueueServices();
 
+        GridifyGlobalConfiguration.EnableEntityFrameworkCompatibilityLayer();
+
         return builder;
     }
 
@@ -36,18 +38,14 @@ public static class ServiceRegistration
             .AddDatabaseServices(configuration)
             .AddAzureStorageServices(configuration);
 
+        GridifyGlobalConfiguration.EnableEntityFrameworkCompatibilityLayer();
+
         return services;
     }
 
     private static IServiceCollection AddProjectServices(this IServiceCollection services)
     {
-        // repositories
-        services.AddScoped<IAnimalsRepository, AnimalsRepository>()
-            .AddScoped<IBreedsRepository, BreedsRepository>()
-            .AddScoped<ISpeciesRepository, SpeciesRepository>();
-
-        services.AddSingleton<IEventPublisher, EventPublisher>()
-            .AddScoped<IAnimalImagesManager, AnimalImagesManager>();
+        services.AddSingleton<IEventPublisher, EventPublisher>();
 
         return services;
     }

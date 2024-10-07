@@ -1,8 +1,7 @@
 ﻿using System.Net.Http.Headers;
+using Adoptrix.Api.Services;
 using Adoptrix.Core;
 using Adoptrix.Initializer;
-using Adoptrix.Logic.Abstractions;
-using Adoptrix.Logic.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Authentication;

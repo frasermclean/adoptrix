@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Api.Validators;
 using Adoptrix.Core;
-using Adoptrix.Core.Requests;
 using FluentValidation;
 
 namespace Adoptrix.Api.Endpoints.Animals;
@@ -24,5 +23,8 @@ public class AddAnimalValidator : Validator<AddAnimalRequest>
 
         RuleFor(request => request.DateOfBirth)
             .SetValidator(new DateOfBirthValidator());
+
+        RuleFor(request => request.UserId)
+            .NotEmpty();
     }
 }

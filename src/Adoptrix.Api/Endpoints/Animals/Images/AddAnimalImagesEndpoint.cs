@@ -1,11 +1,19 @@
-﻿using Adoptrix.Core.Responses;
-using Adoptrix.Logic.Abstractions;
-using Adoptrix.Logic.Models;
+﻿using Adoptrix.Api.Mapping;
+using Adoptrix.Core;
+using Adoptrix.Core.Events;
+using Adoptrix.Core.Responses;
+using Adoptrix.Persistence;
+using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals.Images;
 
-public class AddAnimalImagesEndpoint(IAnimalImagesManager animalImagesManager)
+public class AddAnimalImagesEndpoint(
+    AdoptrixDbContext dbContext,
+    [FromKeyedServices(BlobContainerNames.OriginalImages)]
+    IBlobContainerManager blobContainerManager,
+    IEventPublisher eventPublisher)
     : Endpoint<AddAnimalImagesRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>>
 {
     public override void Configure()
@@ -17,23 +25,53 @@ public class AddAnimalImagesEndpoint(IAnimalImagesManager animalImagesManager)
     public override async Task<Results<Ok<AnimalResponse>, NotFound, ErrorResponse>> ExecuteAsync(
         AddAnimalImagesRequest request, CancellationToken cancellationToken)
     {
-        var items = FormFileSectionsAsync(cancellationToken)
-            .Select(section => new AddOriginalImageData
-            {
-                FileName = section!.FileName,
-                Description = section.Name,
-                ContentType = section.Section.ContentType ?? string.Empty,
-                Stream = section.FileStream!
-            });
+        // ensure animal exists in database
+        var animal = await dbContext.Animals.Where(animal => animal.Id == request.AnimalId)
+            .Include(animal => animal.Breed)
+            .ThenInclude(breed => breed.Species)
+            .FirstOrDefaultAsync(cancellationToken);
 
-        var result =
-            await animalImagesManager.AddOriginalsAsync(request.AnimalId, request.UserId, items, cancellationToken);
-
-        if (result.IsSuccess)
+        if (animal is null)
         {
-            return TypedResults.Ok(result.Value);
+            Logger.LogError("Could not add images as animal with ID {AnimalId} not found", request.AnimalId);
+            return TypedResults.NotFound();
         }
 
-        return TypedResults.NotFound();
+        // upload original images to blob storage
+        var images = await FormFileSectionsAsync(cancellationToken)
+            .SelectAwait(async section =>
+            {
+                var image = new AnimalImage
+                {
+                    AnimalSlug = animal.Slug,
+                    Description = section!.Name,
+                    OriginalFileName = section.FileName,
+                    OriginalContentType = section.Section.ContentType ?? string.Empty,
+                    LastModifiedBy = request.UserId
+                };
+
+                await blobContainerManager.UploadBlobAsync(image.OriginalBlobName, section.FileStream!,
+                    image.OriginalContentType, cancellationToken);
+
+                Logger.LogInformation("Uploaded original image {BlobName}", image.OriginalBlobName);
+
+                animal.Images.Add(image);
+                return image;
+            })
+            .ToListAsync(cancellationToken);
+
+        // update animal entity with new images
+        await dbContext.SaveChangesAsync(cancellationToken);
+        Logger.LogInformation("Added {Count} original images for animal with ID: {AnimalId}",
+            images.Count, request.AnimalId);
+
+        // publish events for each image added
+        foreach (var animalImageAddedEvent in images.Select(image =>
+                     new AnimalImageAddedEvent(animal.Slug, image.Id, image.OriginalBlobName)))
+        {
+            await eventPublisher.PublishAsync(animalImageAddedEvent, cancellationToken);
+        }
+
+        return TypedResults.Ok(animal.ToResponse());
     }
 }

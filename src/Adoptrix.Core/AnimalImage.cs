@@ -13,5 +13,8 @@ public class AnimalImage : IUserCreatedEntity
     public Guid LastModifiedBy { get; init; }
     public DateTime LastModifiedUtc { get; init; }
 
-    public string GetOriginalBlobName() => $"{AnimalSlug}/{OriginalFileName}";
+    public string OriginalBlobName => $"{AnimalSlug}/{OriginalFileName}";
+    public string PreviewBlobName => $"{AnimalSlug}/{Id}/preview.webp";
+    public string ThumbnailBlobName => $"{AnimalSlug}/{Id}/thumb.webp";
+    public string FullSizeBlobName => $"{AnimalSlug}/{Id}/full.webp";
 }

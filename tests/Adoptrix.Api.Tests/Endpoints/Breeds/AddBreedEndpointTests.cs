@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Core.Requests;
-using Adoptrix.Core.Responses;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
@@ -46,7 +44,7 @@ public class AddBreedEndpointTests(TestContainersFixture fixture) : TestBase<Tes
     public async Task AddBreed_WithExistingBreed_ShouldReturnConflict()
     {
         // arrange
-        var request = CreateRequest();
+        var request = CreateRequest("Golden Retriever");
 
         // act
         var (message, response) =
@@ -57,9 +55,9 @@ public class AddBreedEndpointTests(TestContainersFixture fixture) : TestBase<Tes
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("name");
     }
 
-    private static AddBreedRequest CreateRequest(string? name = null, string? speciesName = null) => new()
+    private static AddBreedRequest CreateRequest(string name, string? speciesName = null) => new()
     {
-        Name = name ?? "Golden Retriever",
+        Name = name,
         SpeciesName = speciesName ?? "Dog",
         UserId = Guid.NewGuid()
     };

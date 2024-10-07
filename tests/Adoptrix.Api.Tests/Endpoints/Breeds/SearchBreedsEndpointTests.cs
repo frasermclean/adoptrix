@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Core.Requests;
 using Adoptrix.Core.Responses;
+using Gridify;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
@@ -14,14 +14,19 @@ public class SearchBreedsEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task SearchBreeds_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var request = new SearchBreedsRequest();
+        var query = new GridifyQuery
+        {
+            Filter = "speciesName=Dog,animalCount>0",
+            OrderBy = "animalCount desc",
+        };
 
         // act
-        var (message, matches) =
-            await fixture.Client.GETAsync<SearchBreedsEndpoint, SearchBreedsRequest, List<BreedMatch>>(request);
+        var (message, paging) =
+            await fixture.Client.GETAsync<SearchBreedsEndpoint, GridifyQuery, Paging<BreedMatch>>(query);
 
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.OK);
-        matches.Should().NotBeEmpty();
+        paging.Count.Should().BePositive();
+        paging.Data.Should().NotBeEmpty().And.BeInDescendingOrder(match => match.AnimalCount);
     }
 }

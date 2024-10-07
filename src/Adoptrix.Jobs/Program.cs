@@ -1,6 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Adoptrix.Logic;
+using Adoptrix.Jobs.Services;
+using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Jobs;
 
+[ExcludeFromCodeCoverage]
 public static class Program
 {
     public static async Task Main()
@@ -41,7 +44,7 @@ public static class Program
                 services.ConfigureFunctionsApplicationInsights();
 
                 // local project services
-                services.AddLogicServices(context.Configuration);
+                services.AddSingleton<IImageProcessor, ImageProcessor>();
                 services.AddPersistence(context.Configuration);
 
                 // configure JSON serialization options

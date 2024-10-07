@@ -1,4 +1,4 @@
-﻿using Adoptrix.Logic;
+﻿using Adoptrix.Persistence;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 
 namespace Adoptrix.Api.Startup;

@@ -1,6 +1,4 @@
-﻿using Adoptrix.Core.Requests;
-
-namespace Adoptrix.Core;
+﻿namespace Adoptrix.Core;
 
 public class Animal : IUserCreatedEntity
 {
@@ -18,25 +16,6 @@ public class Animal : IUserCreatedEntity
     public List<AnimalImage> Images { get; init; } = [];
     public Guid LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
-    public bool IsDeleted { get; private set; }
-
-    public void Update(UpdateAnimalRequest request, Breed breed)
-    {
-        Name = request.Name;
-        Description = request.Description;
-        Breed = breed;
-        Sex = request.Sex;
-        DateOfBirth = request.DateOfBirth;
-        LastModifiedBy = request.UserId;
-        LastModifiedUtc = DateTime.UtcNow;
-    }
-
-    public void Delete(Guid userId)
-    {
-        IsDeleted = true;
-        LastModifiedBy = userId;
-        LastModifiedUtc = DateTime.UtcNow;
-    }
 
     public override bool Equals(object? otherObject)
         => otherObject is Animal otherAnimal && Id == otherAnimal.Id;

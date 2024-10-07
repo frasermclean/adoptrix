@@ -1,18 +1,38 @@
-﻿using Adoptrix.Core.Requests;
-using Adoptrix.Core.Responses;
-using Adoptrix.Logic.Services;
+﻿using Adoptrix.Core.Responses;
+using Adoptrix.Persistence;
+using Adoptrix.Persistence.Services;
+using Gridify;
+using Gridify.EntityFramework;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
 [HttpGet("animals"), AllowAnonymous]
-public class SearchAnimalsEndpoint(IAnimalsService animalsService)
-    : Endpoint<SearchAnimalsRequest, IEnumerable<AnimalMatch>>
+public class SearchAnimalsEndpoint(
+    AdoptrixDbContext dbContext,
+    [FromKeyedServices(BlobContainerNames.AnimalImages)]
+    IBlobContainerManager blobContainerManager)
+    : Endpoint<GridifyQuery, Paging<AnimalMatch>>
 {
-    public override async Task<IEnumerable<AnimalMatch>> ExecuteAsync(SearchAnimalsRequest request,
+    public override async Task<Paging<AnimalMatch>> ExecuteAsync(GridifyQuery query,
         CancellationToken cancellationToken)
     {
-        var matches = await animalsService.SearchAsync(request, cancellationToken);
-        return matches;
+        return await dbContext.Animals
+            .AsNoTracking()
+            .Select(animal => new AnimalMatch
+            {
+                Id = animal.Id,
+                Slug = animal.Slug,
+                Name = animal.Name,
+                SpeciesName = animal.Breed.Species.Name,
+                BreedName = animal.Breed.Name,
+                Sex = animal.Sex,
+                DateOfBirth = animal.DateOfBirth,
+                PreviewImageUrl = animal.Images.Where(image => image.IsProcessed)
+                    .Select(image => $"{blobContainerManager.ContainerUri}/{image.PreviewBlobName}")
+                    .FirstOrDefault()
+            })
+            .GridifyAsync(query, cancellationToken);
     }
 }

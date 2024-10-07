@@ -27,7 +27,7 @@ public class AddAnimalImagesEndpointTests(TestContainersFixture fixture) : TestB
     public async Task AddAnimalImages_WithInvalidAnimalId_ReturnsNotFound()
     {
         // arrange
-        const int animalId = -1;
+        var animalId = Guid.NewGuid();
         using var content = CreateMultipartFormDataContent();
 
         // act
