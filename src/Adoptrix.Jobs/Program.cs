@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adoptrix.Jobs.Services;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Adoptrix.Jobs;
 
+[ExcludeFromCodeCoverage]
 public static class Program
 {
     public static async Task Main()
