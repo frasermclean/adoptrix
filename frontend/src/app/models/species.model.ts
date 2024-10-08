@@ -1,4 +1,4 @@
-export interface SearchSpeciesQuery {
+export interface SearchSpeciesRequest {
   withAnimals: boolean;
 }
 

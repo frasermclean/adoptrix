@@ -34,7 +34,7 @@ export class AnimalsState {
   @Action(AnimalsActions.Search)
   searchAnimals(context: StateContext<AnimalsStateModel>, action: AnimalsActions.Search) {
     context.patchState({ state: 'busy' });
-    return this.animalsService.searchAnimals(action.query).pipe(
+    return this.animalsService.searchAnimals(action.request).pipe(
       tap((paging) => {
         context.patchState({ state: 'ready', searchResults: paging.data });
       }),

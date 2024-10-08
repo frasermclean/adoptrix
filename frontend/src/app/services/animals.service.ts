@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { GridifyQueryBuilder, ConditionalOperator as op } from 'gridify-client';
 
-import { Animal, SearchAnimalsQuery, SearchAnimalsResult, SetAnimalRequest } from '@models/animal.models';
+import { Animal, SearchAnimalsRequest, SearchAnimalsResult, SetAnimalRequest } from '@models/animal.models';
 import { Paging } from '@models/paging.model';
 
 @Injectable({
@@ -14,19 +15,29 @@ export class AnimalsService {
 
   constructor(private httpClient: HttpClient) {}
 
-  public searchAnimals(query: Partial<SearchAnimalsQuery> = {}): Observable<Paging<SearchAnimalsResult>> {
-    let httpParams = new HttpParams();
-    if (query.speciesId) {
-      httpParams = httpParams.set('speciesId', query.speciesId);
-    }
-    if (query.name) {
-      httpParams = httpParams.set('name', query.name);
-    }
-    if (query.sex) {
-      httpParams = httpParams.set('sex', query.sex);
+  public searchAnimals(request: Partial<SearchAnimalsRequest> = {}): Observable<Paging<SearchAnimalsResult>> {
+    const queryBuilder = new GridifyQueryBuilder().setPage(1).setPageSize(20);
+    let hasCondition = false;
+
+    if (request.speciesName) {
+      queryBuilder.addCondition('speciesName', op.Equal, request.speciesName);
+      hasCondition = true;
     }
 
-    return this.httpClient.get<Paging<SearchAnimalsResult>>(this.baseUrl, { params: httpParams });
+    if (request.breedName) {
+      if (hasCondition) queryBuilder.and();
+      queryBuilder.addCondition('breedName', op.Equal, request.breedName);
+    }
+
+    if (request.sex) {
+      if (hasCondition) queryBuilder.and();
+      queryBuilder.addCondition('sex', op.Equal, request.sex);
+    }
+
+    const query = queryBuilder.addOrderBy('name').build();
+    const params = new HttpParams({ fromObject: { ...query } });
+
+    return this.httpClient.get<Paging<SearchAnimalsResult>>(this.baseUrl, { params });
   }
 
   public getAnimal(animalId: string): Observable<Animal> {

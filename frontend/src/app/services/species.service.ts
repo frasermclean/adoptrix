@@ -1,8 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { SpeciesResponse, SearchSpeciesQuery } from '@models/species.model';
 import { Observable } from 'rxjs';
+import { GridifyQueryBuilder, ConditionalOperator as op } from 'gridify-client';
+
+import { environment } from '../../environments/environment';
+import { SearchSpeciesRequest, SpeciesResponse } from '@models/species.model';
 import { Paging } from '@models/paging.model';
 
 @Injectable({
@@ -13,13 +15,17 @@ export class SpeciesService {
 
   constructor(private httpClient: HttpClient) {}
 
-  searchSpecies(query?: Partial<SearchSpeciesQuery>): Observable<Paging<SpeciesResponse>> {
-    let httpParams = new HttpParams();
-    if (query?.withAnimals) {
-      httpParams = httpParams.set('withAnimals', query.withAnimals);
+  searchSpecies(request?: Partial<SearchSpeciesRequest>): Observable<Paging<SpeciesResponse>> {
+    const queryBuilder = new GridifyQueryBuilder().setPage(1).setPageSize(50);
+
+    if (request?.withAnimals) {
+      queryBuilder.addCondition('animalCount', op.GreaterThan, 0);
     }
 
-    return this.httpClient.get<Paging<SpeciesResponse>>(this.baseUrl, { params: httpParams });
+    const query = queryBuilder.addOrderBy('animalCount', true).addOrderBy('name').build();
+    const params = new HttpParams({ fromObject: { ...query } });
+
+    return this.httpClient.get<Paging<SpeciesResponse>>(this.baseUrl, { params });
   }
 
   getSpecies(speciesId: string): Observable<SpeciesResponse> {

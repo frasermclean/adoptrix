@@ -12,7 +12,7 @@ import { SpeciesActions } from '@state/species.actions';
 import { SpeciesState } from '@state/species.state';
 import { AnimalsActions } from '@state/animals.actions';
 import { Sex } from '@models/sex.enum';
-import { SearchAnimalsQuery } from '@models/animal.models';
+import { SearchAnimalsRequest } from '@models/animal.models';
 
 @Component({
   selector: 'app-search-controls',
@@ -32,7 +32,7 @@ import { SearchAnimalsQuery } from '@models/animal.models';
 })
 export class SearchControlsComponent implements OnInit {
   speciesMatches$ = this.store.select(SpeciesState.matches);
-  data = signal<Partial<SearchAnimalsQuery>>({});
+  data = signal<Partial<SearchAnimalsRequest>>({});
 
   constructor(private store: Store) {}
 
@@ -41,13 +41,13 @@ export class SearchControlsComponent implements OnInit {
     this.updateSearch();
   }
 
-  onSpeciesChanged(speciesId: string): void {
-    this.data.update((value) => ({ ...value, speciesId: speciesId }));
+  onSpeciesChanged(speciesName: string): void {
+    this.data.update((value) => ({ ...value, speciesName }));
     this.updateSearch();
   }
 
   onSexChanged(sex: Sex): void {
-    this.data.update((value) => ({ ...value, sex: sex }));
+    this.data.update((value) => ({ ...value, sex }));
     this.updateSearch();
   }
 

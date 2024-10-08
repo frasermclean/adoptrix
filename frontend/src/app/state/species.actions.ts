@@ -1,9 +1,9 @@
-import { SearchSpeciesQuery } from '@models/species.model';
+import { SearchSpeciesRequest } from '@models/species.model';
 
 export namespace SpeciesActions {
   export class Search {
     static readonly type = 'Search Species';
-    constructor(public query: Partial<SearchSpeciesQuery> = {}) {}
+    constructor(public query: Partial<SearchSpeciesRequest> = {}) {}
   }
 
   export class GetAll {

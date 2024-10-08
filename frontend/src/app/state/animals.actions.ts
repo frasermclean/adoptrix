@@ -1,9 +1,9 @@
-import { SearchAnimalsQuery, SetAnimalRequest } from '@models/animal.models';
+import { SearchAnimalsRequest, SetAnimalRequest } from '@models/animal.models';
 
 export namespace AnimalsActions {
   export class Search {
     static readonly type = '[Animals List Component] Search Animals';
-    constructor(public query: Partial<SearchAnimalsQuery>) {}
+    constructor(public request: Partial<SearchAnimalsRequest>) {}
   }
 
   export class Get {
