@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { BreedResponse, SearchBreedsRequest } from '@models/breed.models';
+import { Breed, SearchBreedsRequest } from '@models/breed.models';
 import { Observable } from 'rxjs';
 import { Paging } from '@models/paging.model';
 
@@ -13,7 +13,7 @@ export class BreedsService {
 
   constructor(private httpClient: HttpClient) {}
 
-  searchBreeds(request: SearchBreedsRequest): Observable<Paging<BreedResponse>> {
+  searchBreeds(request: SearchBreedsRequest): Observable<Paging<Breed>> {
     let httpParams = new HttpParams({
       fromObject: {}
 
@@ -25,6 +25,6 @@ export class BreedsService {
       httpParams = httpParams.set('withAnimals', request.withAnimals);
     }
 
-    return this.httpClient.get<Paging<BreedResponse>>(this.baseUrl, { params: httpParams });
+    return this.httpClient.get<Paging<Breed>>(this.baseUrl, { params: httpParams });
   }
 }

@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { catchError, tap } from 'rxjs';
-import { BreedResponse } from '@models/breed.models';
+import { Breed } from '@models/breed.models';
 import { BreedsService } from '@services/breeds.service';
 import { BreedsActions } from './breeds.actions';
 
 interface BreedStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
-  searchResults: BreedResponse[];
+  searchResults: Breed[];
 }
 
 const BREEDS_STATE_TOKEN = new StateToken<BreedStateModel>('breeds');

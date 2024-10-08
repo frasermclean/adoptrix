@@ -1,4 +1,3 @@
-import { ImageResponse } from './image.response';
 import { Sex } from './sex.enum';
 
 export interface Animal {
@@ -11,7 +10,16 @@ export interface Animal {
   breedName: string;
   sex: Sex;
   dateOfBirth: string;
-  images: ImageResponse[];
+  images: AnimalImage[];
+}
+
+export interface AnimalImage {
+  id: number;
+  description?: string;
+  isProcessed: boolean;
+  previewUrl: string | null;
+  thumbnailUrl: string | null;
+  fullSizeUrl: string | null;
 }
 
 export interface SearchAnimalsRequest {

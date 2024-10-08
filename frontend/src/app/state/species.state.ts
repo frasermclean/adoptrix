@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SpeciesResponse } from '@models/species.model';
+import { Species } from '@models/species.model';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { catchError, tap } from 'rxjs';
 import { SpeciesService } from '@services/species.service';
@@ -8,8 +8,8 @@ import { SpeciesActions } from './species.actions';
 interface SpeciesStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
-  all: SpeciesResponse[];
-  matches: SpeciesResponse[];
+  all: Species[];
+  matches: Species[];
 }
 
 const SPECIES_STATE_TOKEN = new StateToken<SpeciesStateModel>('species');

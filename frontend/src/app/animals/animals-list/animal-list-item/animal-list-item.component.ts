@@ -5,7 +5,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { SearchAnimalsResult } from '@models/animal.models';
-import { ImageUrlService } from '@services/image-url.service';
 
 @Component({
   selector: 'app-animal-list-item',
@@ -16,8 +15,6 @@ import { ImageUrlService } from '@services/image-url.service';
 })
 export class AnimalListItemComponent {
   @Input({ required: true }) result!: SearchAnimalsResult;
-
-  constructor(private imageUrlService: ImageUrlService) {}
 
   get defaultImageUrl() {
     return `images/${this.result.speciesName.toLowerCase()}.png`;

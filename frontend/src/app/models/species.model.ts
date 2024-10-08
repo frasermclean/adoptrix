@@ -2,7 +2,7 @@ export interface SearchSpeciesRequest {
   withAnimals: boolean;
 }
 
-export interface SpeciesResponse {
+export interface Species {
   id: string;
   name: string;
   breedCount: number;
