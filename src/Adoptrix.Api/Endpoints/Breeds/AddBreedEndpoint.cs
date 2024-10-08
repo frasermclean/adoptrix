@@ -1,16 +1,14 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
 using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using EntityFramework.Exceptions.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Adoptrix.Api.Endpoints.Breeds;
 
 public class AddBreedEndpoint(AdoptrixDbContext dbContext)
-    : Endpoint<AddBreedRequest, Results<Created<BreedResponse>, ErrorResponse>>
+    : Endpoint<AddBreedRequest, Results<Created<BreedResponse>, ErrorResponse>, BreedResponseMapper>
 {
     public override void Configure()
     {
@@ -40,7 +38,7 @@ public class AddBreedEndpoint(AdoptrixDbContext dbContext)
             Logger.LogInformation("Added breed with name {BreedName} and species {SpeciesName}",
                 request.Name, request.SpeciesName);
 
-            return TypedResults.Created($"/api/breeds/{breed.Id}", breed.ToResponse());
+            return TypedResults.Created($"/api/breeds/{breed.Id}", Map.FromEntity(breed));
         }
         catch (UniqueConstraintException exception) when (exception.ConstraintProperties.Contains(nameof(Breed.Name)))
         {

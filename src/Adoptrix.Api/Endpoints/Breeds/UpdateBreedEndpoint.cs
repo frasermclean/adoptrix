@@ -1,16 +1,14 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
 using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using EntityFramework.Exceptions.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Adoptrix.Api.Endpoints.Breeds;
 
 public class UpdateBreedEndpoint(AdoptrixDbContext dbContext)
-    : Endpoint<UpdateBreedRequest, Results<Ok<BreedResponse>, NotFound, ErrorResponse>>
+    : Endpoint<UpdateBreedRequest, Results<Ok<BreedResponse>, NotFound, ErrorResponse>, BreedResponseMapper>
 {
     public override void Configure()
     {
@@ -47,7 +45,7 @@ public class UpdateBreedEndpoint(AdoptrixDbContext dbContext)
         {
             await dbContext.SaveChangesAsync(cancellationToken);
             Logger.LogInformation("Updated breed with ID {BreedId}", request.BreedId);
-            return TypedResults.Ok(breed.ToResponse());
+            return TypedResults.Ok(Map.FromEntity(breed));
         }
         catch (UniqueConstraintException exception) when (exception.ConstraintProperties.Contains(nameof(Breed.Name)))
         {

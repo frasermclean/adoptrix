@@ -21,7 +21,6 @@
     <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" />
     <PackageReference Include="Microsoft.Graph" />
     <PackageReference Include="Microsoft.Identity.Web" />
-    <PackageReference Include="Riok.Mapperly" />
     <PackageReference Include="System.Linq.Async" />
   </ItemGroup>
 
