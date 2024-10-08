@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Tests.Shared", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Api.Tests", "tests\Adoptrix.Api.Tests\Adoptrix.Api.Tests.csproj", "{F83B94E6-2927-4C3B-BFC8-F24B8B9EA582}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Client.Tests", "tests\Adoptrix.Client.Tests\Adoptrix.Client.Tests.csproj", "{BA55E988-E61C-4C9B-A96A-BC94188A149A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Api", "src\Adoptrix.Api\Adoptrix.Api.csproj", "{9F3C7809-8A40-4743-A114-196FCFF912F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.AppHost", "src\Adoptrix.AppHost\Adoptrix.AppHost.csproj", "{BC58E288-CA39-48E3-96AA-D6AB11AFB8E5}"
@@ -30,8 +28,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.ServiceDefaults", "src\Adoptrix.ServiceDefaults\Adoptrix.ServiceDefaults.csproj", "{DFBF1EEE-9A42-4AB8-8B33-AD95A7CE368F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adoptrix.Initializer", "src\Adoptrix.Initializer\Adoptrix.Initializer.csproj", "{BFDFF9D4-D109-406D-ACD9-D8531F91A388}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adoptrix.Client", "src\Adoptrix.Client\Adoptrix.Client.csproj", "{4E71704D-AA38-46DD-9676-D390A48BD773}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,10 +67,6 @@ Global
 		{F83B94E6-2927-4C3B-BFC8-F24B8B9EA582}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F83B94E6-2927-4C3B-BFC8-F24B8B9EA582}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F83B94E6-2927-4C3B-BFC8-F24B8B9EA582}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA55E988-E61C-4C9B-A96A-BC94188A149A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA55E988-E61C-4C9B-A96A-BC94188A149A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA55E988-E61C-4C9B-A96A-BC94188A149A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA55E988-E61C-4C9B-A96A-BC94188A149A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9F3C7809-8A40-4743-A114-196FCFF912F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9F3C7809-8A40-4743-A114-196FCFF912F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F3C7809-8A40-4743-A114-196FCFF912F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -91,10 +83,6 @@ Global
 		{BFDFF9D4-D109-406D-ACD9-D8531F91A388}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFDFF9D4-D109-406D-ACD9-D8531F91A388}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFDFF9D4-D109-406D-ACD9-D8531F91A388}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4E71704D-AA38-46DD-9676-D390A48BD773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E71704D-AA38-46DD-9676-D390A48BD773}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E71704D-AA38-46DD-9676-D390A48BD773}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E71704D-AA38-46DD-9676-D390A48BD773}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,7 +93,6 @@ Global
 		{780D9ED8-AF1B-4C78-819F-E2D7130204A7} = {4958F816-17AA-4833-819B-5D666C416361}
 		{11D2C635-9C83-47C2-A72A-AE8B866D75EE} = {4958F816-17AA-4833-819B-5D666C416361}
 		{F83B94E6-2927-4C3B-BFC8-F24B8B9EA582} = {4958F816-17AA-4833-819B-5D666C416361}
-		{BA55E988-E61C-4C9B-A96A-BC94188A149A} = {4958F816-17AA-4833-819B-5D666C416361}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D8F01C5F-978E-46A8-B9BF-2BF2C742FE7C}

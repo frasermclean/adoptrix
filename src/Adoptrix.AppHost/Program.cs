@@ -12,14 +12,11 @@ public static class Program
 
         var appInsights = builder.AddConnectionString("ApplicationInsights", "APPLICATIONINSIGHTS_CONNECTION_STRING");
 
-        var api = builder.AddProject<Projects.Adoptrix_Api>("adoptrix-api")
+        builder.AddProject<Projects.Adoptrix_Api>("adoptrix-api")
             .WithReference(database)
             .WithReference(blobStorage)
             .WithReference(queueStorage)
             .WithReference(appInsights);
-
-        builder.AddProject<Projects.Adoptrix_Client>("adoptrix-client")
-            .WithReference(api);
 
         builder.AddProject<Projects.Adoptrix_Initializer>("initializer")
             .WithReference(database)
