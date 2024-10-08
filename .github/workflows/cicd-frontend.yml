@@ -101,5 +101,5 @@ jobs:
       - name: Execute script
         uses: azure/powershell@v1
         with:
-          inlineScript: ${{ github.workspace }}/deploy/scripts/Update-ContainerAppCors.ps1 -ResourceGroupName ${{ vars.AZURE_RESOURCE_GROUP }}
-          azPSVersion: '11.3.0'
+          inlineScript: ${{ github.workspace }}/deploy/scripts/Update-ContainerAppCors.ps1 -ResourceGroupName adoptrix-demo-rg
+          azPSVersion: latest
