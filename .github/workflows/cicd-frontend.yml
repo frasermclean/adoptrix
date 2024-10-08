@@ -55,7 +55,7 @@ jobs:
         with:
           action: upload
           production_branch: main
-          azure_static_web_apps_api_token: ${{ secrets.FRONTEND_DEPLOYMENT_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.CLIENT_DEPLOYMENT_TOKEN }}
           app_location: ${{ env.BUILD_DIRECTORY }}
           skip_app_build: true
           skip_api_build: true
@@ -71,7 +71,7 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: close
-          azure_static_web_apps_api_token: ${{ secrets.FRONTEND_DEPLOYMENT_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.CLIENT_DEPLOYMENT_TOKEN }}
           app_location: null # Unused in close pr step
 
   # Update CORS settings
@@ -92,9 +92,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
 
       # Execute script
