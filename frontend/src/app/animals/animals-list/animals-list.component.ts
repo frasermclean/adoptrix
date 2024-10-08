@@ -36,7 +36,7 @@ import { SetAnimalRequest } from '@models/animal.models';
 })
 export class AnimalsListComponent implements OnDestroy {
   readonly state$ = this.store.select(AnimalsState.state);
-  readonly animals$ = this.store.select(AnimalsState.searchResults);
+  readonly results$ = this.store.select(AnimalsState.searchResults);
   readonly userRole$ = this.store.select(AuthState.role);
 
   readonly destroy$ = new Subject<void>();

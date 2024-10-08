@@ -12,7 +12,7 @@
       <mat-label>Species</mat-label>
       <mat-select formControlName="speciesId" (selectionChange)="onSpeciesChanged($event.value)">
         @for (match of allSpecies$ | async; track $index) {
-        <mat-option [value]="match.speciesId">{{ match.speciesName }}</mat-option>
+        <mat-option [value]="match.id">{{ match.name }}</mat-option>
         }
       </mat-select>
       <mat-error>Species is required</mat-error>

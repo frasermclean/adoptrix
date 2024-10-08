@@ -8,8 +8,8 @@
     } @case ('ready') {
 
     <div id="results-container">
-      @for (animal of animals$ | async; track $index) {
-      <app-animal-list-item [animal]="animal"></app-animal-list-item>
+      @for (result of results$ | async; track $index) {
+      <app-animal-list-item [result]="result"></app-animal-list-item>
       } @empty {
       <p>Unfortunately, no animals matched the search criteria.</p>
       }
@@ -25,5 +25,3 @@
     }}
   </div>
 </div>
-
-

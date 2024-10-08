@@ -24,12 +24,13 @@ export interface SearchAnimalsQuery {
 
 export interface SearchAnimalsResult {
   id: string;
+  slug: string;
   name: string;
   speciesName: string;
   breedName: string;
   sex: Sex;
   dateOfBirth: string;
-  image?: ImageResponse;
+  previewImageUrl: string | null;
 }
 
 export interface SetAnimalRequest {

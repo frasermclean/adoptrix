@@ -4,6 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { Animal, SearchAnimalsQuery, SearchAnimalsResult, SetAnimalRequest } from '@models/animal.models';
+import { Paging } from '@models/paging.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,7 @@ export class AnimalsService {
 
   constructor(private httpClient: HttpClient) {}
 
-  public searchAnimals(query: Partial<SearchAnimalsQuery> = {}): Observable<SearchAnimalsResult[]> {
+  public searchAnimals(query: Partial<SearchAnimalsQuery> = {}): Observable<Paging<SearchAnimalsResult>> {
     let httpParams = new HttpParams();
     if (query.speciesId) {
       httpParams = httpParams.set('speciesId', query.speciesId);
@@ -25,7 +26,7 @@ export class AnimalsService {
       httpParams = httpParams.set('sex', query.sex);
     }
 
-    return this.httpClient.get<SearchAnimalsResult[]>(this.baseUrl, { params: httpParams });
+    return this.httpClient.get<Paging<SearchAnimalsResult>>(this.baseUrl, { params: httpParams });
   }
 
   public getAnimal(animalId: string): Observable<Animal> {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SearchSpeciesMatch } from '@models/species.model';
+import { SpeciesResponse } from '@models/species.model';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { catchError, tap } from 'rxjs';
 import { SpeciesService } from '@services/species.service';
@@ -8,8 +8,8 @@ import { SpeciesActions } from './species.actions';
 interface SpeciesStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
-  all: SearchSpeciesMatch[];
-  matches: SearchSpeciesMatch[];
+  all: SpeciesResponse[];
+  matches: SpeciesResponse[];
 }
 
 const SPECIES_STATE_TOKEN = new StateToken<SpeciesStateModel>('species');
@@ -31,7 +31,7 @@ export class SpeciesState {
   searchSpecies(context: StateContext<SpeciesStateModel>, action: SpeciesActions.Search) {
     context.patchState({ state: 'busy' });
     return this.speciesService.searchSpecies(action.query).pipe(
-      tap((matches) => context.patchState({ state: 'ready', matches: matches })),
+      tap((paging) => context.patchState({ state: 'ready', matches: paging.data })),
       catchError((error) => {
         context.patchState({ state: 'error', error });
         throw error;
@@ -43,7 +43,7 @@ export class SpeciesState {
   getAllSpecies(context: StateContext<SpeciesStateModel>) {
     context.patchState({ state: 'busy' });
     return this.speciesService.searchSpecies().pipe(
-      tap((all) => context.patchState({ state: 'ready', all })),
+      tap((paging) => context.patchState({ state: 'ready', all: paging.data })),
       catchError((error) => {
         context.patchState({ state: 'error', error });
         throw error;

@@ -4,8 +4,8 @@
     <p class="label">Species</p>
     <mat-chip-listbox (change)="onSpeciesChanged($event.value)" [value]="data().speciesId">
       @for (match of speciesMatches$ | async; track $index) {
-      <mat-chip-option [value]="match.speciesId" [matBadge]="match.animalCount" matBadgeColor="accent">
-        {{ match.speciesName }}
+      <mat-chip-option [value]="match.id" [matBadge]="match.animalCount" matBadgeColor="accent">
+        {{ match.name }}
       </mat-chip-option>
       }
     </mat-chip-listbox>

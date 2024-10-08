@@ -15,17 +15,11 @@ import { ImageUrlService } from '@services/image-url.service';
   styleUrl: './animal-list-item.component.scss',
 })
 export class AnimalListItemComponent {
-  @Input({ required: true }) animal!: SearchAnimalsResult;
+  @Input({ required: true }) result!: SearchAnimalsResult;
 
   constructor(private imageUrlService: ImageUrlService) {}
 
-  get imageUrl() {
-    return this.animal.image
-      ? this.imageUrlService.getPreviewUrl(this.animal.id, this.animal.image)
-      : this.imageUrlService.getSpeciesDefaultImageUrl(this.animal.speciesName);
-  }
-
-  get imageAltText() {
-    return this.animal.image ? this.animal.image.description : 'Placeholder image';
+  get defaultImageUrl() {
+    return `images/${this.result.speciesName.toLowerCase()}.png`;
   }
 }

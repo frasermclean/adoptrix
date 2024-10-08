@@ -1,8 +1,8 @@
-export interface Breed {
+export interface BreedResponse {
   id: string;
   name: string;
-  speciesId: string;
-  animalIds: string[];
+  speciesName: string;
+  animalCount: number;
 }
 
 export interface SearchBreedsRequest {

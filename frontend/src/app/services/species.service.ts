@@ -1,8 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { SearchSpeciesMatch, SearchSpeciesQuery, Species } from '@models/species.model';
+import { SpeciesResponse, SearchSpeciesQuery } from '@models/species.model';
 import { Observable } from 'rxjs';
+import { Paging } from '@models/paging.model';
 
 @Injectable({
   providedIn: 'root',
@@ -12,16 +13,16 @@ export class SpeciesService {
 
   constructor(private httpClient: HttpClient) {}
 
-  searchSpecies(query?: Partial<SearchSpeciesQuery>): Observable<SearchSpeciesMatch[]> {
+  searchSpecies(query?: Partial<SearchSpeciesQuery>): Observable<Paging<SpeciesResponse>> {
     let httpParams = new HttpParams();
     if (query?.withAnimals) {
       httpParams = httpParams.set('withAnimals', query.withAnimals);
     }
 
-    return this.httpClient.get<SearchSpeciesMatch[]>(this.baseUrl, { params: httpParams });
+    return this.httpClient.get<Paging<SpeciesResponse>>(this.baseUrl, { params: httpParams });
   }
 
-  getSpecies(speciesId: string): Observable<Species> {
-    return this.httpClient.get<Species>(`${this.baseUrl}/${speciesId}`);
+  getSpecies(speciesId: string): Observable<SpeciesResponse> {
+    return this.httpClient.get<SpeciesResponse>(`${this.baseUrl}/${speciesId}`);
   }
 }

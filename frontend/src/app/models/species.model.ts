@@ -1,15 +1,10 @@
-export interface Species {
-  id: string;
-  name: string;
-}
-
 export interface SearchSpeciesQuery {
   withAnimals: boolean;
 }
 
-export interface SearchSpeciesMatch {
-  speciesId: string;
-  speciesName: string;
+export interface SpeciesResponse {
+  id: string;
+  name: string;
   breedCount: number;
   animalCount: number;
 }
