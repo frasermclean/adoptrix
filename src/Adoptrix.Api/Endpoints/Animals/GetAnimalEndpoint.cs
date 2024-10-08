@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Adoptrix.Core;
-using Adoptrix.Core.Responses;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;

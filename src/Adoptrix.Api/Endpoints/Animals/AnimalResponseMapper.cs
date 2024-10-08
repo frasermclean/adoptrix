@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Responses;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 

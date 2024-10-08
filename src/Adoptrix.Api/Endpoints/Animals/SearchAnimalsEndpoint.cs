@@ -1,5 +1,4 @@
-﻿using Adoptrix.Core.Responses;
-using Adoptrix.Persistence;
+﻿using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Gridify;
 using Gridify.EntityFramework;
@@ -13,14 +12,14 @@ public class SearchAnimalsEndpoint(
     AdoptrixDbContext dbContext,
     [FromKeyedServices(BlobContainerNames.AnimalImages)]
     IBlobContainerManager blobContainerManager)
-    : Endpoint<GridifyQuery, Paging<AnimalMatch>>
+    : Endpoint<GridifyQuery, Paging<SearchAnimalsItem>>
 {
-    public override async Task<Paging<AnimalMatch>> ExecuteAsync(GridifyQuery query,
+    public override async Task<Paging<SearchAnimalsItem>> ExecuteAsync(GridifyQuery query,
         CancellationToken cancellationToken)
     {
         return await dbContext.Animals
             .AsNoTracking()
-            .Select(animal => new AnimalMatch
+            .Select(animal => new SearchAnimalsItem
             {
                 Id = animal.Id,
                 Slug = animal.Slug,
