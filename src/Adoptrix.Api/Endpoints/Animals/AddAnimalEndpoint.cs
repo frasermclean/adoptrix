@@ -18,14 +18,14 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
     public override async Task<Results<Created<AnimalResponse>, ErrorResponse>> ExecuteAsync(AddAnimalRequest request,
         CancellationToken cancellationToken)
     {
-        var breed = await dbContext.Breeds.Where(b => b.Id == request.BreedId)
+        var breed = await dbContext.Breeds.Where(b => b.Name == request.BreedName)
             .Include(breed => breed.Species)
-            .FirstOrDefaultAsync(b => b.Id == request.BreedId, cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (breed is null)
         {
-            Logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
-            AddError(r => r.BreedId, "Breed not found");
+            Logger.LogError("Breed with name {BreedName} was not found", request.BreedName);
+            AddError(r => r.BreedName, "Breed not found");
             return new ErrorResponse(ValidationFailures);
         }
 

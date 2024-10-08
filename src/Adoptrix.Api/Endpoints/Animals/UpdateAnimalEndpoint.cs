@@ -24,14 +24,14 @@ public class UpdateAnimalEndpoint(AdoptrixDbContext dbContext)
             return TypedResults.NotFound();
         }
 
-        var breed = await dbContext.Breeds.Where(breed => breed.Id == request.BreedId)
+        var breed = await dbContext.Breeds.Where(breed => breed.Name == request.BreedName)
             .Include(breed => breed.Species)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (breed is null)
         {
-            Logger.LogError("Breed with ID {BreedId} was not found", request.BreedId);
-            AddError(r => r.BreedId, "Breed not found");
+            Logger.LogError("Breed with name {BreedId} was not found", request.BreedName);
+            AddError(r => r.BreedName, "Breed not found");
             return new ErrorResponse(ValidationFailures);
         }
 

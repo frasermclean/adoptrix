@@ -15,7 +15,7 @@ public class UpdateAnimalValidator : Validator<UpdateAnimalRequest>
         RuleFor(request => request.Description)
             .MaximumLength(Animal.DescriptionMaxLength);
 
-        RuleFor(request => request.BreedId)
+        RuleFor(request => request.BreedName)
             .NotEmpty();
 
         RuleFor(request => request.Sex)

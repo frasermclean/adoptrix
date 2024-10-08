@@ -14,7 +14,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var request = CreateRequest(SeedData.Animals[0].Id, "Timmy", "Timmy is awesome", 2);
+        var request = CreateRequest(SeedData.Animals[0].Id, "Timmy", "Timmy is awesome", "German Shepherd");
 
         // act
         var (message, response) =
@@ -40,10 +40,10 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     }
 
     [Fact]
-    public async Task UpdateAnimal_WithInvalidBreedId_ShouldReturnBadRequest()
+    public async Task UpdateAnimal_WithInvalidBreedName_ShouldReturnBadRequest()
     {
         // arrange
-        var request = CreateRequest(SeedData.Animals[0].Id, breedId: -1);
+        var request = CreateRequest(SeedData.Animals[0].Id, breedName: "Flower");
 
         // act
         var (message, response) =
@@ -51,16 +51,16 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        response.Errors.Should().ContainSingle().Which.Key.Should().Be("breedId");
+        response.Errors.Should().ContainSingle().Which.Key.Should().Be("breedName");
     }
 
     private static UpdateAnimalRequest CreateRequest(Guid? animalId = null, string name = "Bobby",
-        string? description = null, int breedId = 1, Sex sex = Sex.Male) => new()
+        string? description = null, string? breedName = null, Sex sex = Sex.Male) => new()
     {
         AnimalId = animalId ?? Guid.NewGuid(),
         Name = name,
         Description = description,
-        BreedId = breedId,
+        BreedName = breedName ?? "Golden Retriever",
         Sex = sex,
         DateOfBirth = new DateOnly(2022, 1, 3)
     };

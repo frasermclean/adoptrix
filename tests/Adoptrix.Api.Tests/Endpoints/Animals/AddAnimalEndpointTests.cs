@@ -13,7 +13,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
     public async Task AddAnimal_WithValidRequest_ShouldReturnCreated()
     {
         // arrange
-        var request = CreateRequest("Sasha", "What a great dog", 2, Sex.Female);
+        var request = CreateRequest("Sasha", "What a great dog", "German Shepherd", Sex.Female);
 
         // act
         var (message, response) =
@@ -30,10 +30,10 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
     }
 
     [Fact]
-    public async Task AddAnimal_WithInvalidBreedId_ShouldReturnBadRequest()
+    public async Task AddAnimal_WithInvalidBreedName_ShouldReturnBadRequest()
     {
         // arrange
-        var request = CreateRequest(breedId: -1);
+        var request = CreateRequest(breedName: "Flower");
 
         // act
         var (message, response) =
@@ -41,7 +41,7 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.BadRequest);
-        response.Errors.Should().ContainSingle().Which.Key.Should().Be("breedId");
+        response.Errors.Should().ContainSingle().Which.Key.Should().Be("breedName");
     }
 
     [Fact]
@@ -51,18 +51,19 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
         var request = CreateRequest();
 
         // act
-        var testResult = await fixture.UserClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
+        var testResult =
+            await fixture.UserClient.POSTAsync<AddAnimalEndpoint, AddAnimalRequest, AnimalResponse>(request);
 
         // assert
         testResult.Response.Should().HaveStatusCode(HttpStatusCode.Forbidden);
     }
 
-    private static AddAnimalRequest CreateRequest(string name = "Buddy", string? description = null, int breedId = 1,
-        Sex sex = Sex.Male, DateOnly? dateOfBirth = null, Guid? userId = null) => new()
+    private static AddAnimalRequest CreateRequest(string name = "Buddy", string? description = null,
+        string? breedName = null, Sex sex = Sex.Male, DateOnly? dateOfBirth = null, Guid? userId = null) => new()
     {
         Name = name,
         Description = description,
-        BreedId = breedId,
+        BreedName = breedName ?? "Golden Retriever",
         Sex = sex,
         DateOfBirth = dateOfBirth ?? new DateOnly(2020, 1, 1),
         UserId = userId ?? Guid.NewGuid()
