@@ -25,7 +25,7 @@ public class SearchSpeciesEndpoint(AdoptrixDbContext dbContext)
                 Id = species.Id,
                 Name = species.Name,
                 BreedCount = species.Breeds.Count,
-                AnimalCount = species.Breeds.Count(breed => breed.Animals.Count > 0)
+                AnimalCount = species.Breeds.SelectMany(breed => breed.Animals).Count()
             })
             .GridifyAsync(query, cancellationToken);
     }
