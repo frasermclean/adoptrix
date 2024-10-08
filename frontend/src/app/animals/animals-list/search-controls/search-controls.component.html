@@ -6,18 +6,32 @@
   <mat-card-content>
     <div class="control-group">
       <p class="label">Species</p>
-      <mat-chip-listbox (change)="onSpeciesChanged($event.value)" [value]="data().speciesName">
-        @for (match of speciesMatches$ | async; track $index) {
-        <mat-chip-option [value]="match.name" [matBadge]="match.animalCount" matBadgeColor="accent">
-          {{ match.name }}
+      <mat-chip-listbox (change)="speciesName.set($event.value)" [value]="speciesName()">
+        @for (species of species$ | async; track $index) {
+        <mat-chip-option [value]="species.name" [matBadge]="species.animalCount" matBadgeColor="accent">
+          {{ species.name }}
         </mat-chip-option>
         }
       </mat-chip-listbox>
     </div>
 
+    @if (speciesName()) {
+      <div class="control-group">
+        <p class="label">Breed</p>
+        <mat-chip-listbox (change)="breedName.set($event.value)" [value]="breedName()" >
+          @for (breed of breeds$ | async; track $index) {
+          <mat-chip-option [value]="breed.name" [matBadge]="breed.animalCount" matBadgeColor="accent">
+            {{ breed.name }}
+          </mat-chip-option>
+          }
+        </mat-chip-listbox>
+      </div>
+    }
+
+
     <div class="control-group">
       <p class="label">Sex</p>
-      <mat-chip-listbox (change)="onSexChanged($event.value)" [value]="data().sex">
+      <mat-chip-listbox (change)="sex.set($event.value)" [value]="sex()">
         <mat-chip-option value="Male">Male</mat-chip-option>
         <mat-chip-option value="Female">Female</mat-chip-option>
       </mat-chip-listbox>

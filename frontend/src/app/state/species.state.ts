@@ -8,8 +8,7 @@ import { SpeciesActions } from './species.actions';
 interface SpeciesStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
-  all: Species[];
-  matches: Species[];
+  species: Species[];
 }
 
 const SPECIES_STATE_TOKEN = new StateToken<SpeciesStateModel>('species');
@@ -19,8 +18,7 @@ const SPECIES_STATE_TOKEN = new StateToken<SpeciesStateModel>('species');
   defaults: {
     state: 'initial',
     error: null,
-    all: [],
-    matches: [],
+    species: [],
   },
 })
 @Injectable()
@@ -31,19 +29,7 @@ export class SpeciesState {
   searchSpecies(context: StateContext<SpeciesStateModel>, action: SpeciesActions.Search) {
     context.patchState({ state: 'busy' });
     return this.speciesService.searchSpecies(action.query).pipe(
-      tap((paging) => context.patchState({ state: 'ready', matches: paging.data })),
-      catchError((error) => {
-        context.patchState({ state: 'error', error });
-        throw error;
-      })
-    );
-  }
-
-  @Action(SpeciesActions.GetAll)
-  getAllSpecies(context: StateContext<SpeciesStateModel>) {
-    context.patchState({ state: 'busy' });
-    return this.speciesService.searchSpecies().pipe(
-      tap((paging) => context.patchState({ state: 'ready', all: paging.data })),
+      tap((paging) => context.patchState({ state: 'ready', species: paging.data })),
       catchError((error) => {
         context.patchState({ state: 'error', error });
         throw error;
@@ -52,12 +38,7 @@ export class SpeciesState {
   }
 
   @Selector()
-  static allSpecies(state: SpeciesStateModel) {
-    return state.all;
-  }
-
-  @Selector()
-  static matches(state: SpeciesStateModel) {
-    return state.matches;
+  static species(state: SpeciesStateModel) {
+    return state.species;
   }
 }

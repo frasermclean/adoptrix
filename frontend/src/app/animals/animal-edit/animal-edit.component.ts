@@ -49,8 +49,8 @@ interface AnimalEditForm {
 export class AnimalEditComponent implements OnInit {
   readonly formGroup: FormGroup<AnimalEditForm>;
   private readonly animal: Animal | undefined;
-  readonly allSpecies$ = this.store.select(SpeciesState.allSpecies);
-  readonly breedsSearchResults$ = this.store.select(BreedsState.searchResults);
+  readonly species$ = this.store.select(SpeciesState.species);
+  readonly breeds$ = this.store.select(BreedsState.breeds);
 
   get isEditing() {
     return this.animal !== undefined;
@@ -91,6 +91,6 @@ export class AnimalEditComponent implements OnInit {
   }
 
   private searchBreeds(speciesId: string) {
-    this.store.dispatch(new BreedsActions.Search({ speciesId }));
+    this.store.dispatch(new BreedsActions.Search({ speciesName: 'change-this' }));
   }
 }

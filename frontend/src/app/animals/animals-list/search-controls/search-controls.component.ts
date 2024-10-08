@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, OnInit, Signal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -14,7 +14,8 @@ import { SpeciesState } from '@state/species.state';
 import { AnimalsActions } from '@state/animals.actions';
 import { Sex } from '@models/sex.enum';
 import { SearchAnimalsRequest } from '@models/animal.models';
-
+import { BreedsState } from '@state/breeds.state';
+import { BreedsActions } from '@state/breeds.actions';
 
 @Component({
   selector: 'app-search-controls',
@@ -34,27 +35,33 @@ import { SearchAnimalsRequest } from '@models/animal.models';
   styleUrl: './search-controls.component.scss',
 })
 export class SearchControlsComponent implements OnInit {
-  speciesMatches$ = this.store.select(SpeciesState.matches);
-  data = signal<Partial<SearchAnimalsRequest>>({});
+  readonly species$ = this.store.select(SpeciesState.species);
+  readonly breeds$ = this.store.select(BreedsState.breeds);
 
-  constructor(private store: Store) {}
+  readonly speciesName = signal<string | undefined>(undefined);
+  readonly breedName = signal<string | undefined>(undefined);
+  readonly sex = signal<Sex | undefined>(undefined);
+
+  constructor(private store: Store) {
+    // dispatch search breeds action when speciesName changes
+    effect(() => {
+      const speciesName = this.speciesName();
+      this.store.dispatch(new BreedsActions.Search({ speciesName, withAnimals: true }));
+    });
+
+    // dispatch search animals action when any of the search criteria changes
+    effect(() => {
+      const request = {
+        speciesName: this.speciesName(),
+        breedName: this.breedName(),
+        sex: this.sex(),
+      };
+
+      this.store.dispatch(new AnimalsActions.Search(request));
+    });
+  }
 
   ngOnInit(): void {
     this.store.dispatch(new SpeciesActions.Search({ withAnimals: true }));
-    this.updateSearch();
-  }
-
-  onSpeciesChanged(speciesName: string): void {
-    this.data.update((value) => ({ ...value, speciesName }));
-    this.updateSearch();
-  }
-
-  onSexChanged(sex: Sex): void {
-    this.data.update((value) => ({ ...value, sex }));
-    this.updateSearch();
-  }
-
-  private updateSearch() {
-    this.store.dispatch(new AnimalsActions.Search(this.data()));
   }
 }

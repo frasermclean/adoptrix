@@ -8,7 +8,7 @@ import { BreedsActions } from './breeds.actions';
 interface BreedStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
-  searchResults: Breed[];
+  breeds: Breed[];
 }
 
 const BREEDS_STATE_TOKEN = new StateToken<BreedStateModel>('breeds');
@@ -18,7 +18,7 @@ const BREEDS_STATE_TOKEN = new StateToken<BreedStateModel>('breeds');
   defaults: {
     state: 'initial',
     error: null,
-    searchResults: [],
+    breeds: [],
   },
 })
 @Injectable()
@@ -27,9 +27,9 @@ export class BreedsState {
 
   @Action(BreedsActions.Search)
   searchBreeds(context: StateContext<BreedStateModel>, action: BreedsActions.Search) {
-    context.patchState({ state: 'busy', searchResults: [] });
+    context.patchState({ state: 'busy', breeds: [] });
     return this.breedsService.searchBreeds(action.request).pipe(
-      tap((paging) => context.patchState({ state: 'ready', searchResults: paging.data })),
+      tap((paging) => context.patchState({ state: 'ready', breeds: paging.data })),
       catchError((error) => {
         context.patchState({ state: 'error', error });
         throw error;
@@ -38,7 +38,7 @@ export class BreedsState {
   }
 
   @Selector()
-  static searchResults(state: BreedStateModel) {
-    return state.searchResults;
+  static breeds(state: BreedStateModel) {
+    return state.breeds;
   }
 }

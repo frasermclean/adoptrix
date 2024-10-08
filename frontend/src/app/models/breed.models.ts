@@ -6,6 +6,6 @@ export interface Breed {
 }
 
 export interface SearchBreedsRequest {
-  speciesId?: string;
-  withAnimals?: boolean;
+  speciesName: string;
+  withAnimals: boolean;
 }

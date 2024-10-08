@@ -1,8 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { GridifyQueryBuilder, ConditionalOperator as op } from 'gridify-client';
+
 import { environment } from '../../environments/environment';
 import { Breed, SearchBreedsRequest } from '@models/breed.models';
-import { Observable } from 'rxjs';
 import { Paging } from '@models/paging.model';
 
 @Injectable({
@@ -13,17 +15,21 @@ export class BreedsService {
 
   constructor(private httpClient: HttpClient) {}
 
-  searchBreeds(request: SearchBreedsRequest): Observable<Paging<Breed>> {
-    let httpParams = new HttpParams({
-      fromObject: {}
+  searchBreeds(request: Partial<SearchBreedsRequest>): Observable<Paging<Breed>> {
+    const queryBuilder = new GridifyQueryBuilder();
+    let hasCondition = false;
 
-    });
-    if (request.speciesId) {
-      httpParams = httpParams.set('speciesId', request.speciesId);
+    if (request.speciesName) {
+      queryBuilder.addCondition('speciesName', op.Equal, request.speciesName);
+      hasCondition = true;
     }
+
     if (request.withAnimals) {
-      httpParams = httpParams.set('withAnimals', request.withAnimals);
+      if (hasCondition) queryBuilder.and();
+      queryBuilder.addCondition('animalCount', op.GreaterThan, 0);
     }
+
+    const httpParams = new HttpParams({ fromObject: { ...queryBuilder.build() } });
 
     return this.httpClient.get<Paging<Breed>>(this.baseUrl, { params: httpParams });
   }

@@ -11,8 +11,8 @@
     <mat-form-field class="full-width">
       <mat-label>Species</mat-label>
       <mat-select formControlName="speciesId" (selectionChange)="onSpeciesChanged($event.value)">
-        @for (match of allSpecies$ | async; track $index) {
-        <mat-option [value]="match.id">{{ match.name }}</mat-option>
+        @for (species of species$ | async; track $index) {
+        <mat-option [value]="species.id">{{ species.name }}</mat-option>
         }
       </mat-select>
       <mat-error>Species is required</mat-error>
@@ -21,7 +21,7 @@
     <mat-form-field class="full-width">
       <mat-label>Breed</mat-label>
       <mat-select formControlName="breedId">
-        @for (breed of breedsSearchResults$ | async; track $index) {
+        @for (breed of breeds$ | async; track $index) {
         <mat-option [value]="breed.id">{{ breed.name }}</mat-option>
         }
       </mat-select>
