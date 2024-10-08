@@ -1,5 +1,4 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
 using Adoptrix.Core;
 using Adoptrix.Core.Responses;
 using Adoptrix.Persistence.Services;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Adoptrix.Api.Endpoints.Animals;
 
 public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
-    : Endpoint<AddAnimalRequest, Results<Created<AnimalResponse>, ErrorResponse>>
+    : Endpoint<AddAnimalRequest, Results<Created<AnimalResponse>, ErrorResponse>, AnimalResponseMapper>
 {
     public override void Configure()
     {
@@ -37,7 +36,8 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
         await dbContext.SaveChangesAsync(cancellationToken);
 
         Logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
-        return  TypedResults.Created($"/api/animals/{animal.Id}", animal.ToResponse());
+
+        return TypedResults.Created($"/api/animals/{animal.Id}", Map.FromEntity(animal));
     }
 
     private static Animal MapToAnimal(AddAnimalRequest request, Breed breed) => new()

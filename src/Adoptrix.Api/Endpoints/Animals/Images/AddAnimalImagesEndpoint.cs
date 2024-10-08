@@ -1,5 +1,4 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Core;
+﻿using Adoptrix.Core;
 using Adoptrix.Core.Events;
 using Adoptrix.Core.Responses;
 using Adoptrix.Persistence;
@@ -14,7 +13,7 @@ public class AddAnimalImagesEndpoint(
     [FromKeyedServices(BlobContainerNames.OriginalImages)]
     IBlobContainerManager blobContainerManager,
     IEventPublisher eventPublisher)
-    : Endpoint<AddAnimalImagesRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>>
+    : Endpoint<AddAnimalImagesRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>, AnimalResponseMapper>
 {
     public override void Configure()
     {
@@ -72,6 +71,6 @@ public class AddAnimalImagesEndpoint(
             await eventPublisher.PublishAsync(animalImageAddedEvent, cancellationToken);
         }
 
-        return TypedResults.Ok(animal.ToResponse());
+        return TypedResults.Ok(Map.FromEntity(animal));
     }
 }

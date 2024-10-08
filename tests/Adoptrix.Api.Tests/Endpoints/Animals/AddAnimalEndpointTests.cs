@@ -23,11 +23,11 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Created);
         message.Headers.Location.Should().NotBeNull();
+        response.Id.Should().NotBeEmpty();
+        response.Slug.Should().Be("sasha-2020-01-01");
         response.Name.Should().Be("Sasha");
         response.Sex.Should().Be(Sex.Female);
         response.DateOfBirth.Should().Be(request.DateOfBirth);
-        response.Slug.Should().Be("sasha-2020-01-01");
-        response.Age.Should().NotBeEmpty();
     }
 
     [Fact]

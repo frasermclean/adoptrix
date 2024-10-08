@@ -17,6 +17,5 @@ public class AnimalImageResponseMapperTests
         // assert
         response.Id.Should().Be(animalImage.Id);
         response.Description.Should().Be(animalImage.Description);
-        response.IsProcessed.Should().Be(animalImage.IsProcessed);
     }
 }

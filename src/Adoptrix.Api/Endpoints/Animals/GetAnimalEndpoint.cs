@@ -1,13 +1,17 @@
 ﻿using System.Linq.Expressions;
 using Adoptrix.Core;
 using Adoptrix.Core.Responses;
+using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-public class GetAnimalEndpoint(AdoptrixDbContext dbContext)
+public class GetAnimalEndpoint(
+    AdoptrixDbContext dbContext,
+    [FromKeyedServices(BlobContainerNames.AnimalImages)]
+    IBlobContainerManager blobContainerManager)
     : EndpointWithoutRequest<Results<Ok<AnimalResponse>, NotFound>>
 {
     public override void Configure()
@@ -29,20 +33,27 @@ public class GetAnimalEndpoint(AdoptrixDbContext dbContext)
             .Select(animal => new AnimalResponse
             {
                 Id = animal.Id,
+                Slug = animal.Slug,
                 Name = animal.Name,
                 Description = animal.Description,
                 SpeciesName = animal.Breed.Species.Name,
                 BreedName = animal.Breed.Name,
                 Sex = animal.Sex,
                 DateOfBirth = animal.DateOfBirth,
-                Slug = animal.Slug,
-                Age = "",
                 LastModifiedUtc = animal.LastModifiedUtc,
                 Images = animal.Images.Select(image => new AnimalImageResponse
                 {
                     Id = image.Id,
                     Description = image.Description,
-                    IsProcessed = image.IsProcessed
+                    PreviewUrl = image.IsProcessed
+                        ? $"{blobContainerManager.ContainerUri}/{image.PreviewBlobName}"
+                        : null,
+                    ThumbnailUrl = image.IsProcessed
+                        ? $"{blobContainerManager.ContainerUri}/{image.ThumbnailBlobName}"
+                        : null,
+                    FullSizeUrl = image.IsProcessed
+                        ? $"{blobContainerManager.ContainerUri}/{image.FullSizeBlobName}"
+                        : null
                 })
             })
             .AsNoTracking()

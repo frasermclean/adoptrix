@@ -1,5 +1,4 @@
-﻿using Adoptrix.Api.Mapping;
-using Adoptrix.Api.Security;
+﻿using Adoptrix.Api.Security;
 using Adoptrix.Core.Responses;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Adoptrix.Api.Endpoints.Animals;
 
 public class UpdateAnimalEndpoint(AdoptrixDbContext dbContext)
-    : Endpoint<UpdateAnimalRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>>
+    : Endpoint<UpdateAnimalRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>, AnimalResponseMapper>
 {
     public override void Configure()
     {
@@ -48,6 +47,6 @@ public class UpdateAnimalEndpoint(AdoptrixDbContext dbContext)
         await dbContext.SaveChangesAsync(cancellationToken);
         Logger.LogInformation("Updated animal with ID: {AnimalId}", animal.Id);
 
-        return TypedResults.Ok(animal.ToResponse());
+        return TypedResults.Ok(Map.FromEntity(animal));
     }
 }

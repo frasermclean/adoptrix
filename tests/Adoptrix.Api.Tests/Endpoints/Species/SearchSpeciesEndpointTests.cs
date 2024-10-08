@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using Adoptrix.Api.Endpoints.Species;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Core.Responses;
 using Gridify;
 
 namespace Adoptrix.Api.Tests.Endpoints.Species;

@@ -1,5 +1,4 @@
-﻿using Adoptrix.Core.Responses;
-using Adoptrix.Persistence.Services;
+﻿using Adoptrix.Persistence.Services;
 using Gridify;
 using Gridify.EntityFramework;
 using Microsoft.EntityFrameworkCore;
