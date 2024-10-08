@@ -1,18 +1,7 @@
-#container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.control-group {
+  margin-bottom: 12px;
 
-  .control-group {
-    margin-bottom: 12px;
-
-    .label {
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-  }
-
-  #search-form-field {
-    width: 240px;
+  .label {
+    margin-bottom: 8px;
   }
 }

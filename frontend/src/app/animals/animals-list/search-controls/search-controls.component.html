@@ -1,21 +1,26 @@
-<div id="container">
-  <h1>Animal Search</h1>
-  <div class="control-group">
-    <p class="label">Species</p>
-    <mat-chip-listbox (change)="onSpeciesChanged($event.value)" [value]="data().speciesName">
-      @for (match of speciesMatches$ | async; track $index) {
-      <mat-chip-option [value]="match.name" [matBadge]="match.animalCount" matBadgeColor="accent">
-        {{ match.name }}
-      </mat-chip-option>
-      }
-    </mat-chip-listbox>
-  </div>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="title">Animal Search</mat-card-title>
+    <mat-card-subtitle>Narrow your search criteria</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="control-group">
+      <p class="label">Species</p>
+      <mat-chip-listbox (change)="onSpeciesChanged($event.value)" [value]="data().speciesName">
+        @for (match of speciesMatches$ | async; track $index) {
+        <mat-chip-option [value]="match.name" [matBadge]="match.animalCount" matBadgeColor="accent">
+          {{ match.name }}
+        </mat-chip-option>
+        }
+      </mat-chip-listbox>
+    </div>
 
-  <div class="control-group">
-    <p class="label">Sex</p>
-    <mat-chip-listbox (change)="onSexChanged($event.value)" [value]="data().sex">
-      <mat-chip-option value="Male">Male</mat-chip-option>
-      <mat-chip-option value="Female">Female</mat-chip-option>
-    </mat-chip-listbox>
-  </div>
-</div>
+    <div class="control-group">
+      <p class="label">Sex</p>
+      <mat-chip-listbox (change)="onSexChanged($event.value)" [value]="data().sex">
+        <mat-chip-option value="Male">Male</mat-chip-option>
+        <mat-chip-option value="Female">Female</mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+  </mat-card-content>
+</mat-card>
