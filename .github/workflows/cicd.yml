@@ -19,10 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_CONFIGURATION: Release
-      API_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/api
-      JOBS_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/jobs
-      CLIENT_PUBLISH_DIRECTORY: ${{ github.workspace }}/artifacts/client
-      TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/artifacts/test-results
+      BACKEND_DIRECTORY: ${{ github.workspace }}/backend
+      ARTIFACTS_DIRECTORY: ${{ github.workspace }}/artifacts
       CONTAINER_REGISTRY: ghcr.io
     permissions:
       checks: write
@@ -43,10 +41,12 @@ jobs:
       # Restore NuGet packages
       - name: Restore packages
         run: dotnet restore
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Build solution
       - name: Build solution
         run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIGURATION }}
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Run tests
       - name: Run tests
@@ -57,14 +57,15 @@ jobs:
           --logger trx
           --collect "XPlat Code Coverage"
           --settings coverlet.runsettings
-          --results-directory ${{ env.TEST_RESULTS_DIRECTORY }}
+          --results-directory ${{ env.ARTIFACTS_DIRECTORY }}/test-results
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Publish test results
       - name: Publish test results
         if: always()
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          files: ${{ env.TEST_RESULTS_DIRECTORY }}/*.trx
+          files: ${{ env.ARTIFACTS_DIRECTORY }}/test-results/*.trx
           check_name: Solution test results
           action_fail: true
 
@@ -101,6 +102,7 @@ jobs:
           -p:Version=${{ steps.tag_commit.outputs.tag }}
           -p:ContainerRepository=${{ vars.API_REPOSITORY_NAME }}
           -p:ContainerRegistry=${{ env.CONTAINER_REGISTRY }}
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Publish jobs project
       - name: Publish jobs project
@@ -109,7 +111,8 @@ jobs:
           dotnet publish src/Adoptrix.Jobs
           --no-build
           --configuration ${{ env.BUILD_CONFIGURATION }}
-          --output ${{ env.JOBS_PUBLISH_DIRECTORY }}
+          --output ${{ env.ARTIFACTS_DIRECTORY }}/jobs
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
 
       # Upload jobs artifact
       - name: Upload jobs artifact
@@ -117,7 +120,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jobs
-          path: ${{ env.JOBS_PUBLISH_DIRECTORY }}/*
+          path: ${{ env.ARTIFACTS_DIRECTORY }}/jobs
 
   build_frontend:
     name: Build and test frontend
