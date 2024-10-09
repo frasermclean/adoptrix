@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=41d73ec0-49ed-47ff-a7da-16d6446c1b90;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/;ApplicationId=3062368b-d58a-4e7b-9716-b68eeb73faba",
+        "APP_CONFIG_ENDPOINT": "https://adoptrix-shared-ac.azconfig.io"
+      }
+    }
+  }
+}

@@ -19,7 +19,6 @@ module appInsightsModule 'appInsights.bicep' = {
     workload: workload
     appEnv: appEnv
     location: location
-    disableLocalAuth: true
     monitoringMetricsPublishers: principalIds
     actionGroupShortName: actionGroupShortName
   }

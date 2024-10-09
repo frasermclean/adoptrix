@@ -1,0 +1,27 @@
+<div id="container">
+  <div id="controls">
+    <app-search-controls></app-search-controls>
+  </div>
+  <div id="content">
+    @switch (state$ | async) { @case ('busy') {
+    <app-loading-spinner title="Loading animals"></app-loading-spinner>
+    } @case ('ready') {
+
+    <div id="results-container">
+      @for (result of results$ | async; track $index) {
+      <app-animal-list-item [result]="result"></app-animal-list-item>
+      } @empty {
+      <p>Unfortunately, no animals matched the search criteria.</p>
+      }
+    </div>
+    @if ((userRole$ | async) === 'admin') {
+    <div id="fab-container">
+      <button mat-fab aria-label="Add a new animal" matTooltip="Add a new animal" (click)="onAddAnimal()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    } } @case ('error') {
+    <h2>An error occurred while trying to search for animals.</h2>
+    }}
+  </div>
+</div>

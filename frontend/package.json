@@ -1,0 +1,50 @@
+{
+  "name": "adoptrix-frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^18.2.7",
+    "@angular/cdk": "^18.2.7",
+    "@angular/common": "^18.2.7",
+    "@angular/compiler": "^18.2.7",
+    "@angular/core": "^18.2.7",
+    "@angular/forms": "^18.2.7",
+    "@angular/material": "^18.2.7",
+    "@angular/platform-browser": "^18.2.7",
+    "@angular/platform-browser-dynamic": "^18.2.7",
+    "@angular/router": "^18.2.7",
+    "@azure/msal-angular": "^3.0.25",
+    "@azure/msal-browser": "^3.26.1",
+    "@microsoft/applicationinsights-angularplugin-js": "^15.3.3",
+    "@microsoft/applicationinsights-web": "^3.3.3",
+    "@ngxs/logger-plugin": "^18.1.1",
+    "@ngxs/router-plugin": "^18.1.1",
+    "@ngxs/store": "^18.1.1",
+    "gridify-client": "^2.0.2",
+    "js-sha256": "^0.11.0",
+    "ng-gallery": "^11.0.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.7.0",
+    "zone.js": "~0.14.10"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^18.2.7",
+    "@angular/cli": "^18.2.7",
+    "@angular/compiler-cli": "^18.2.7",
+    "@types/jasmine": "~5.1.0",
+    "jasmine-core": "~5.1.2",
+    "karma": "~6.4.4",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.5.4"
+  }
+}
