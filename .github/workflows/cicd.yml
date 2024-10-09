@@ -2,13 +2,20 @@ name: Continuous Integration / Deployment
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - feature/angular-frontend
   pull_request:
-    branches: [main]
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   # Build, test and publish API job
-  build:
+  build_backend:
     name: Build and test
     runs-on: ubuntu-latest
     env:
@@ -32,7 +39,7 @@ jobs:
 
       # Install .NET workloads
       - name: Install .NET workloads
-        run: dotnet workload install aspire wasm-tools
+        run: dotnet workload install aspire
 
       # Restore NuGet packages
       - name: Restore packages
@@ -113,13 +120,32 @@ jobs:
           name: jobs
           path: ${{ env.JOBS_PUBLISH_DIRECTORY }}/*
 
-      # Publish client project
-      - name: Publish client project
-        if: github.event_name != 'pull_request'
-        run: >-
-          dotnet publish src/Adoptrix.Client
-          --configuration ${{ env.BUILD_CONFIGURATION }}
-          --output ${{ env.CLIENT_PUBLISH_DIRECTORY }}
+  build_frontend:
+    name: Build and test frontend
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_DIRECTORY: ${{ github.workspace }}/frontend
+      BUILD_CONFIGURATION: demo
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      # Install dependencies
+      - name: Install project dependencies
+        run: npm ci
+        working-directory: ${{ env.PROJECT_DIRECTORY }}
+
+      # Build the client
+      - name: Build client application
+        working-directory: ${{ env.PROJECT_DIRECTORY }}
+        run: npx ng build --configuration ${{ env.BUILD_CONFIGURATION }}
 
       # Upload client artifact
       - name: Upload client artifact
@@ -127,15 +153,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: client
-          path: ${{ env.CLIENT_PUBLISH_DIRECTORY }}/*
+          path: ${{ env.PROJECT_DIRECTORY }}/dist/browser
 
   # Deploy demo apps
   deploy_demo_apps:
     name: Deploy demo apps
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref_name == 'refs/heads/main'
     uses: ./.github/workflows/deploy-apps.yml
-    needs: build
+    needs:
+      - build_backend
+      - build_frontend
     with:
       environment: demo
-      versionTag: v${{ needs.build.outputs.versionTag }}
+      versionTag: v${{ needs.build_backend.outputs.versionTag }}
     secrets: inherit
