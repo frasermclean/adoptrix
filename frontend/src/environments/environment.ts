@@ -3,7 +3,6 @@ import { Environment } from './environment.interface';
 export const environment: Environment = {
   isDevelopment: true,
   apiBaseUrl: 'https://localhost:5001/api',
-  blobStorageBaseUrl: 'http://localhost:10000/devstoreaccount1/animal-images',
   auth: {
     clientId: '00aa68b2-64bf-40ad-a761-1e979d5987f5',
     redirectUri: 'http://localhost:4200',
