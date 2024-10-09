@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { AuthService } from '@services/auth.service';
-import { Processing, Completed, Login, Logout } from './auth.actions';
+import { AuthActions } from './auth.actions';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -25,31 +25,42 @@ export interface AuthStateModel {
 export class AuthState {
   constructor(private authService: AuthService) {}
 
-  @Action(Login)
+  @Action(AuthActions.Login)
   onLogin(context: StateContext<AuthStateModel>) {
     context.patchState({ status: 'busy' });
     this.authService.login();
   }
 
-  @Action(Logout)
+  @Action(AuthActions.Logout)
   onLogout(context: StateContext<AuthStateModel>) {
     context.patchState({ status: 'busy' });
     this.authService.logout();
   }
 
-  @Action(Processing)
+  @Action(AuthActions.Processing)
   onProcessing(context: StateContext<AuthStateModel>) {
     context.patchState({ status: 'busy' });
   }
 
-  @Action(Completed)
-  onCompleted(context: StateContext<AuthStateModel>, action: Completed) {
+  @Action(AuthActions.Completed)
+  onCompleted(context: StateContext<AuthStateModel>, action: AuthActions.Completed) {
     context.patchState({
       status: action.data.isLoggedIn ? 'logged-in' : 'logged-out',
       name: action.data.name || '',
       email: action.data.email || '',
-      role: action.data.isLoggedIn ? (adminUserIds.includes(action.data.userId || '') ? 'admin' : 'user') : 'guest',
     });
+    context.dispatch(new AuthActions.GetTokenClaims());
+  }
+
+  @Action(AuthActions.GetTokenClaims)
+  async onGetTokenClaims(context: StateContext<AuthStateModel>) {
+    await this.authService.getTokenClaims();
+  }
+
+  @Action(AuthActions.TokenClaimsRetrieved)
+  onTokenClaimsRetrieved(context: StateContext<AuthStateModel>, action: AuthActions.TokenClaimsRetrieved) {
+    const role = action.groups.includes(adminGroupId) ? 'admin' : 'user';
+    context.patchState({ role });
   }
 
   @Selector()
@@ -68,7 +79,4 @@ export class AuthState {
   }
 }
 
-const adminUserIds = [
-  // TODO: Replace with proper authentication logic
-  '6a63381f-4477-4899-8a37-bfb2c109c62d',
-];
+const adminGroupId = '0def1fe4-2aec-47d8-9653-5cdc09501c31';

@@ -52,7 +52,7 @@ const instance = 'adoptrix.ciamlogin.com';
 const tenantId = 'adoptrix.com';
 
 // scopes
-const accessScope = `${environment.auth.appIdUri}/access`;
+export const apiAccessScope = `${environment.auth.appIdUri}/access`;
 
 /**
  * MSAL Instance Factory
@@ -93,7 +93,7 @@ function guardConfigurationFactory(): MsalGuardConfiguration {
   return {
     interactionType: InteractionType.Redirect,
     authRequest: {
-      scopes: [accessScope],
+      scopes: [apiAccessScope],
     },
     loginFailedRoute: 'login-failed', // TODO: Implement login failed route
   };
@@ -112,15 +112,15 @@ function interceptorConfigurationFactory(): MsalInterceptorConfiguration {
         [
           {
             httpMethod: 'POST',
-            scopes: [accessScope],
+            scopes: [apiAccessScope],
           },
           {
             httpMethod: 'PUT',
-            scopes: [accessScope],
+            scopes: [apiAccessScope],
           },
           {
             httpMethod: 'DELETE',
-            scopes: [accessScope],
+            scopes: [apiAccessScope],
           },
         ],
       ],

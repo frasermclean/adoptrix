@@ -7,7 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Store } from '@ngxs/store';
 import { AuthState } from '@state/auth.state';
-import { Login, Logout } from '@state/auth.actions';
+import { AuthActions } from '@state/auth.actions';
 import { AvatarComponent } from './avatar/avatar.component';
 
 @Component({
@@ -32,10 +32,10 @@ export class UserComponent {
   constructor(private store: Store) {}
 
   login(): void {
-    this.store.dispatch(new Login());
+    this.store.dispatch(new AuthActions.Login());
   }
 
   logout(): void {
-    this.store.dispatch(new Logout());
+    this.store.dispatch(new AuthActions.Logout());
   }
 }

@@ -2,7 +2,8 @@ import { Inject, Injectable } from '@angular/core';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AccountInfo, InteractionStatus, RedirectRequest } from '@azure/msal-browser';
 import { Store } from '@ngxs/store';
-import { Processing, Completed } from '@state/auth.actions';
+import { AuthActions } from '@state/auth.actions';
+import { apiAccessScope } from '@config/msal.config';
 
 @Injectable({
   providedIn: 'root',
@@ -19,12 +20,12 @@ export class AuthService {
     this.msalBroadcastService.inProgress$.subscribe((status) => {
       switch (status) {
         case InteractionStatus.HandleRedirect:
-          this.store.dispatch(new Processing());
+          this.store.dispatch(new AuthActions.Processing());
           break;
         case InteractionStatus.None:
           const activeAccount = this.getActiveAccount();
           this.store.dispatch(
-            new Completed({
+            new AuthActions.Completed({
               isLoggedIn: activeAccount !== null,
               userId: activeAccount?.localAccountId,
               name: activeAccount?.name,
@@ -46,6 +47,20 @@ export class AuthService {
 
   public logout(): void {
     this.msalService.logoutRedirect();
+  }
+
+  public async getTokenClaims() {
+    const activeAccount = this.getActiveAccount();
+    if (!activeAccount) {
+      throw new Error('No active account found');
+    }
+
+    const tokenResult = await this.msalService.instance.acquireTokenSilent({
+      scopes: [apiAccessScope],
+    });
+    const groups = tokenResult.account.idTokenClaims?.['groups'] as string[];
+
+    this.store.dispatch(new AuthActions.TokenClaimsRetrieved(groups));
   }
 
   private getActiveAccount(): AccountInfo | null {
