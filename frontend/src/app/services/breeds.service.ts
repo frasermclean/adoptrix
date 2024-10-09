@@ -1,11 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { GridifyQueryBuilder, ConditionalOperator as op } from 'gridify-client';
+import { GridifyQueryBuilder, ConditionalOperator as op, Paging } from 'gridify-client';
 
 import { environment } from '../../environments/environment';
 import { Breed, SearchBreedsRequest } from '@models/breed.models';
-import { Paging } from '@models/paging.model';
 
 @Injectable({
   providedIn: 'root',

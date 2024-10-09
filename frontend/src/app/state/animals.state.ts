@@ -6,13 +6,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AnimalsService } from '@services/animals.service';
 import { AnimalsActions } from './animals.actions';
-import { Animal, SearchAnimalsResult } from '@models/animal.models';
+import { Animal, SearchAnimalsItem } from '@models/animal.models';
 
 
 interface AnimalsStateModel {
   state: 'initial' | 'busy' | 'ready' | 'error';
   error: any;
-  searchResults: SearchAnimalsResult[];
+  searchResults: SearchAnimalsItem[];
   currentAnimal: Animal | null;
 }
 

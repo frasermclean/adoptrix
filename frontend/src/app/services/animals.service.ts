@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GridifyQueryBuilder, ConditionalOperator as op } from 'gridify-client';
+import { GridifyQueryBuilder, ConditionalOperator as op, Paging } from 'gridify-client';
 
-import { Animal, SearchAnimalsRequest, SearchAnimalsResult, SetAnimalRequest } from '@models/animal.models';
-import { Paging } from '@models/paging.model';
+import { Animal, SearchAnimalsRequest, SearchAnimalsItem, SetAnimalRequest } from '@models/animal.models';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +14,7 @@ export class AnimalsService {
 
   constructor(private httpClient: HttpClient) {}
 
-  public searchAnimals(request: Partial<SearchAnimalsRequest> = {}): Observable<Paging<SearchAnimalsResult>> {
+  public searchAnimals(request: Partial<SearchAnimalsRequest> = {}): Observable<Paging<SearchAnimalsItem>> {
     const queryBuilder = new GridifyQueryBuilder().setPage(1).setPageSize(20);
     let hasCondition = false;
 
@@ -37,7 +36,7 @@ export class AnimalsService {
     const query = queryBuilder.addOrderBy('name').build();
     const params = new HttpParams({ fromObject: { ...query } });
 
-    return this.httpClient.get<Paging<SearchAnimalsResult>>(this.baseUrl, { params });
+    return this.httpClient.get<Paging<SearchAnimalsItem>>(this.baseUrl, { params });
   }
 
   public getAnimal(animalId: string): Observable<Animal> {

@@ -1,4 +1,4 @@
-import { Component, computed, effect, OnInit, Signal, signal } from '@angular/core';
+import { Component, effect, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -13,7 +13,6 @@ import { SpeciesActions } from '@state/species.actions';
 import { SpeciesState } from '@state/species.state';
 import { AnimalsActions } from '@state/animals.actions';
 import { Sex } from '@models/sex.enum';
-import { SearchAnimalsRequest } from '@models/animal.models';
 import { BreedsState } from '@state/breeds.state';
 import { BreedsActions } from '@state/breeds.actions';
 

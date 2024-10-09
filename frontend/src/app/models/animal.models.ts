@@ -27,7 +27,7 @@ export interface SearchAnimalsRequest {
   sex: Sex;
 }
 
-export interface SearchAnimalsResult {
+export interface SearchAnimalsItem {
   id: string;
   slug: string;
   name: string;
