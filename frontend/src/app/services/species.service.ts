@@ -12,11 +12,12 @@ import { Paging } from '@models/paging.model';
 })
 export class SpeciesService {
   private readonly baseUrl = `${environment.apiBaseUrl}/species`;
+  private readonly maxPageSize = 50;
 
   constructor(private httpClient: HttpClient) {}
 
   searchSpecies(request?: Partial<SearchSpeciesRequest>): Observable<Paging<Species>> {
-    const queryBuilder = new GridifyQueryBuilder().setPage(1).setPageSize(50);
+    const queryBuilder = new GridifyQueryBuilder().setPage(1).setPageSize(this.maxPageSize);
 
     if (request?.withAnimals) {
       queryBuilder.addCondition('animalCount', op.GreaterThan, 0);
@@ -28,7 +29,17 @@ export class SpeciesService {
     return this.httpClient.get<Paging<Species>>(this.baseUrl, { params });
   }
 
-  getSpecies(speciesId: string): Observable<Species> {
-    return this.httpClient.get<Species>(`${this.baseUrl}/${speciesId}`);
+  /**
+   * Get all species in alphabetical order.
+   */
+  getAllSpecies(): Observable<Paging<Species>> {
+    const query = new GridifyQueryBuilder().setPage(1).setPageSize(this.maxPageSize).addOrderBy('name').build();
+    const params = new HttpParams({ fromObject: { ...query } });
+
+    return this.httpClient.get<Paging<Species>>(this.baseUrl, { params });
+  }
+
+  getSpecies(speciesName: string): Observable<Species> {
+    return this.httpClient.get<Species>(`${this.baseUrl}/${speciesName}`);
   }
 }

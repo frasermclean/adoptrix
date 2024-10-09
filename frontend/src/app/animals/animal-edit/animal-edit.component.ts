@@ -22,8 +22,8 @@ export interface AnimalEditData {
 
 interface AnimalEditForm {
   name: FormControl<string>;
-  speciesId: FormControl<string>;
-  breedId: FormControl<string>;
+  speciesName: FormControl<string>;
+  breedName: FormControl<string>;
   sex: FormControl<Sex>;
   dateOfBirth: FormControl<Date>;
   description: FormControl<string | null>;
@@ -62,35 +62,39 @@ export class AnimalEditComponent implements OnInit {
     formBuilder: NonNullableFormBuilder,
     @Inject(MAT_DIALOG_DATA) data?: AnimalEditData
   ) {
+    console.log(data);
     this.animal = data?.animal;
     this.formGroup = formBuilder.group({
-      name: [data?.animal.name || '', Validators.required],
-      speciesId: [data?.animal ? data.animal.speciesId : '', Validators.required],
-      breedId: [data?.animal ? data.animal.breedId : '', Validators.required],
-      sex: [data?.animal ? data.animal.sex : Sex.Male, Validators.required],
+      name: [data?.animal.name ?? '', Validators.required],
+      speciesName: [data?.animal.speciesName ?? '', Validators.required],
+      breedName: [data?.animal.breedName ?? '', Validators.required],
+      sex: [data?.animal.sex ?? Sex.Male, Validators.required],
       dateOfBirth: [data?.animal ? new Date(data.animal.dateOfBirth) : new Date(), Validators.required],
-      description: [data?.animal ? data.animal.description : null],
+      description: [data?.animal.description ?? null],
     });
   }
 
   ngOnInit(): void {
     this.store.dispatch(new SpeciesActions.GetAll());
     if (this.animal) {
-      this.searchBreeds(this.animal.speciesId);
+      this.searchBreeds(this.animal.speciesName);
     }
   }
 
-  onSpeciesChanged(speciesId: string) {
-    this.searchBreeds(speciesId);
-    this.formGroup.controls.breedId.setValue('');
+  onSpeciesChanged(speciesName: string) {
+    this.searchBreeds(speciesName);
+    this.formGroup.controls.breedName.setValue('');
   }
 
   onSubmit() {
     const value = this.formGroup.getRawValue();
-    this.dialogRef.close({ ...value, dateOfBirth: value.dateOfBirth.toISOString().split('T')[0] });
+    this.dialogRef.close({
+      ...value,
+      dateOfBirth: value.dateOfBirth.toISOString().split('T')[0],
+    });
   }
 
-  private searchBreeds(speciesId: string) {
-    this.store.dispatch(new BreedsActions.Search({ speciesName: 'change-this' }));
+  private searchBreeds(speciesName: string) {
+    this.store.dispatch(new BreedsActions.Search({ speciesName }));
   }
 }

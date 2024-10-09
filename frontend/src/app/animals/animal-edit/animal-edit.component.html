@@ -10,9 +10,9 @@
     <!-- Species -->
     <mat-form-field class="full-width">
       <mat-label>Species</mat-label>
-      <mat-select formControlName="speciesId" (selectionChange)="onSpeciesChanged($event.value)">
+      <mat-select formControlName="speciesName" (selectionChange)="onSpeciesChanged($event.value)">
         @for (species of species$ | async; track $index) {
-        <mat-option [value]="species.id">{{ species.name }}</mat-option>
+        <mat-option [value]="species.name">{{ species.name }}</mat-option>
         }
       </mat-select>
       <mat-error>Species is required</mat-error>
@@ -20,18 +20,18 @@
     <!-- Breed -->
     <mat-form-field class="full-width">
       <mat-label>Breed</mat-label>
-      <mat-select formControlName="breedId">
+      <mat-select formControlName="breedName">
         @for (breed of breeds$ | async; track $index) {
-        <mat-option [value]="breed.id">{{ breed.name }}</mat-option>
+        <mat-option [value]="breed.name">{{ breed.name }}</mat-option>
         }
       </mat-select>
       <mat-error>Breed is required</mat-error>
     </mat-form-field>
     <!-- Sex -->
     <mat-radio-group aria-label="Select animal sex" formControlName="sex">
-      <mat-radio-button value="male">Male</mat-radio-button>
-      <mat-radio-button value="female">Female</mat-radio-button>
-      <mat-radio-button value="unknown">Unknown</mat-radio-button>
+      <mat-radio-button value="Male">Male</mat-radio-button>
+      <mat-radio-button value="Female">Female</mat-radio-button>
+      <mat-radio-button value="Unknown">Unknown</mat-radio-button>
     </mat-radio-group>
     <!-- Date of birth -->
     <mat-form-field class="full-width">

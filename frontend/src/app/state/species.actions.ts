@@ -11,7 +11,7 @@ export namespace SpeciesActions {
   }
 
   export class Get {
-    static readonly type = 'Get Species by Id';
-    constructor(public speciesId: string) {}
+    static readonly type = 'Get Species by Name';
+    constructor(public speciesName: string) {}
   }
 }

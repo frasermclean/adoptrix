@@ -37,6 +37,18 @@ export class SpeciesState {
     );
   }
 
+  @Action(SpeciesActions.GetAll)
+  getAllSpecies(context: StateContext<SpeciesStateModel>) {
+    context.patchState({ state: 'busy' });
+    return this.speciesService.getAllSpecies().pipe(
+      tap((paging) => context.patchState({ state: 'ready', species: paging.data })),
+      catchError((error) => {
+        context.patchState({ state: 'error', error });
+        throw error;
+      })
+    );
+  }
+
   @Selector()
   static species(state: SpeciesStateModel) {
     return state.species;

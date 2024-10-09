@@ -4,12 +4,11 @@ export interface Animal {
   id: string;
   name: string;
   description: string | null;
-  speciesId: string;
   speciesName: string;
-  breedId: string;
   breedName: string;
   sex: Sex;
   dateOfBirth: string;
+  lastModifiedUtc: string;
   images: AnimalImage[];
 }
 
@@ -42,8 +41,7 @@ export interface SearchAnimalsResult {
 export interface SetAnimalRequest {
   name: string;
   description: string | null;
-  speciesId: string;
-  breedId: string;
+  breedName: string;
   sex: Sex;
   dateOfBirth: string;
 }
