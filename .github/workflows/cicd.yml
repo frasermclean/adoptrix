@@ -160,7 +160,7 @@ jobs:
   # Deploy demo apps
   deploy_demo_apps:
     name: Deploy demo apps
-    if: github.event_name != 'pull_request' && github.ref_name == 'refs/heads/main'
+    if: github.event_name != 'pull_request'
     uses: ./.github/workflows/deploy-apps.yml
     needs:
       - build_backend
