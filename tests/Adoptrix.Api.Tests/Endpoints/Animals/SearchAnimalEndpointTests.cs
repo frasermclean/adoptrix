@@ -27,6 +27,17 @@ public class SearchAnimalEndpointTests(TestContainersFixture fixture) : TestBase
         // assert
         message.StatusCode.Should().Be(HttpStatusCode.OK);
         paging.Count.Should().BePositive();
-        paging.Data.Should().HaveCountLessThanOrEqualTo(pageSize);
+        paging.Data.Should().HaveCountLessThanOrEqualTo(pageSize).And.AllSatisfy(item =>
+        {
+            item.Id.Should().NotBeEmpty();
+            item.Slug.Should().NotBeNullOrWhiteSpace();
+            item.Name.Should().NotBeNullOrWhiteSpace();
+            item.SpeciesName.Should().NotBeNullOrWhiteSpace();
+            item.BreedName.Should().NotBeNullOrWhiteSpace();
+            item.Sex.Should().BeDefined();
+            item.DateOfBirth.Should().NotBe(default);
+            item.LastModifiedUtc.Should().NotBe(default);
+            item.PreviewImageUrl.Should().BeNull();
+        });
     }
 }

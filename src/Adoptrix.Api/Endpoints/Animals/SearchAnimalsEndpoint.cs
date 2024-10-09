@@ -28,6 +28,7 @@ public class SearchAnimalsEndpoint(
                 BreedName = animal.Breed.Name,
                 Sex = animal.Sex,
                 DateOfBirth = animal.DateOfBirth,
+                LastModifiedUtc = animal.LastModifiedUtc,
                 PreviewImageUrl = animal.Images.Where(image => image.IsProcessed)
                     .Select(image => $"{blobContainerManager.ContainerUri}/{image.PreviewBlobName}")
                     .FirstOrDefault()
