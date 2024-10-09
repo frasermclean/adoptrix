@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
-import { importProvidersFrom } from '@angular/core';
-import { NgxsModule } from '@ngxs/store';
+import { provideStore } from '@ngxs/store';
 import { AnimalsListComponent } from './animals-list/animals-list.component';
 import { AnimalViewComponent } from './animal-view/animal-view.component';
 import { AnimalsState } from '@state/animals.state';
@@ -15,6 +14,6 @@ export default [
       { path: '', component: AnimalsListComponent },
       { path: ':animalId', component: AnimalViewComponent },
     ],
-    providers: [importProvidersFrom([NgxsModule.forFeature([AnimalsState, BreedsState, SpeciesState])])],
+    providers: [provideStore([AnimalsState, BreedsState, SpeciesState])],
   },
 ] satisfies Route[];

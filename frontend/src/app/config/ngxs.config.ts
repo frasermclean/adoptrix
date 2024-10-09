@@ -1,22 +1,23 @@
-import { NgxsModule, NgxsModuleOptions } from '@ngxs/store';
+import { provideStore, withNgxsDevelopmentOptions } from '@ngxs/store';
+import { withNgxsLoggerPlugin } from '@ngxs/logger-plugin';
 import { environment } from '../../environments/environment';
-import { EnvironmentProviders, importProvidersFrom } from '@angular/core';
-import { NgxsLoggerPluginModule, NgxsLoggerPluginOptions } from '@ngxs/logger-plugin';
-import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { AuthState } from '@state/auth.state';
+import { withNgxsRouterPlugin } from '@ngxs/router-plugin';
 
-export function provideNgxsModules(): EnvironmentProviders {
-  return importProvidersFrom([
-    NgxsModule.forRoot([AuthState], rootConfig),
-    NgxsLoggerPluginModule.forRoot(loggerPluginConfig),
-    NgxsRouterPluginModule.forRoot(),
-  ]);
+export function provideNgxs() {
+  return [
+    provideStore(
+      [AuthState],
+      {
+        developmentMode: !environment.isDevelopment,
+      },
+      withNgxsDevelopmentOptions({
+        warnOnUnhandledActions: true,
+      }),
+      withNgxsRouterPlugin(),
+      withNgxsLoggerPlugin({
+        disabled: !environment.isDevelopment,
+      }),
+    ),
+  ];
 }
-
-const rootConfig: NgxsModuleOptions = {
-  developmentMode: !environment.isDevelopment,
-};
-
-const loggerPluginConfig: NgxsLoggerPluginOptions = {
-  disabled: !environment.isDevelopment,
-};

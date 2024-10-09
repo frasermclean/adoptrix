@@ -10,7 +10,7 @@ import {
 // app configuration providers
 import { provideMaterialConfig } from '@config/material.config';
 import { provideMsal } from '@config/msal.config';
-import { provideNgxsModules } from '@config/ngxs.config';
+import { provideNgxs, } from '@config/ngxs.config';
 import { provideGallery } from '@config/gallery.config';
 
 import { routes } from './app.routes';
@@ -22,7 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     provideMaterialConfig(),
     provideMsal(),
-    provideNgxsModules(),
+    provideNgxs(),
     provideGallery(),
     importProvidersFrom(ApplicationinsightsAngularpluginJsModule),
     {
