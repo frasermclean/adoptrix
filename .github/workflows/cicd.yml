@@ -15,7 +15,7 @@ on:
 jobs:
   # Build, test and publish API job
   build_backend:
-    name: Build and test
+    name: Build and test backend
     runs-on: ubuntu-latest
     env:
       BUILD_CONFIGURATION: Release
