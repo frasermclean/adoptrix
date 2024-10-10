@@ -1,6 +1,6 @@
 ﻿namespace Adoptrix.Core;
 
-public class AnimalImage : IUserCreatedEntity
+public class AnimalImage : ILastModifiedEntity
 {
     public const int ContentTypeMaxLength = 50;
 
@@ -10,8 +10,8 @@ public class AnimalImage : IUserCreatedEntity
     public required string OriginalFileName { get; init; }
     public required string OriginalContentType { get; init; }
     public bool IsProcessed { get; set; }
-    public Guid LastModifiedBy { get; init; }
-    public DateTime LastModifiedUtc { get; init; }
+    public Guid LastModifiedBy { get; set; }
+    public DateTime LastModifiedUtc { get; set; }
 
     public string OriginalBlobName => $"{AnimalSlug}/{OriginalFileName}";
     public string PreviewBlobName => $"{AnimalSlug}/{Id}/preview.webp";

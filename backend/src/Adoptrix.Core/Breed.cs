@@ -1,6 +1,6 @@
 ﻿namespace Adoptrix.Core;
 
-public class Breed : IUserCreatedEntity
+public class Breed : ILastModifiedEntity
 {
     public const int NameMaxLength = 30;
 

@@ -1,6 +1,6 @@
 ﻿namespace Adoptrix.Core;
 
-public class Animal : IUserCreatedEntity
+public class Animal : ILastModifiedEntity
 {
     public const int NameMaxLength = 30;
     public const int DescriptionMaxLength = 2000;

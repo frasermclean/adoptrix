@@ -1,4 +1,4 @@
-
+using Adoptrix.Persistence.Interceptors;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using EntityFramework.Exceptions.SqlServer;
@@ -19,7 +19,11 @@ public static class ServiceRegistration
     public static IHostApplicationBuilder AddPersistence(this IHostApplicationBuilder builder)
     {
         builder.AddSqlServerDbContext<AdoptrixDbContext>("database",
-            configureDbContextOptions: optionsBuilder => { optionsBuilder.UseExceptionProcessor(); });
+            configureDbContextOptions: optionsBuilder =>
+            {
+                optionsBuilder.AddInterceptors(new LastModifiedInterceptor());
+                optionsBuilder.UseExceptionProcessor();
+            });
         builder.AddAzureBlobClient("blob-storage");
         builder.AddAzureQueueClient("queue-storage");
 
@@ -27,7 +31,7 @@ public static class ServiceRegistration
             .AddBlobServices()
             .AddQueueServices();
 
-        GridifyGlobalConfiguration.EnableEntityFrameworkCompatibilityLayer();
+        ConfigureGridify();
 
         return builder;
     }
@@ -38,7 +42,7 @@ public static class ServiceRegistration
             .AddDatabaseServices(configuration)
             .AddAzureStorageServices(configuration);
 
-        GridifyGlobalConfiguration.EnableEntityFrameworkCompatibilityLayer();
+        ConfigureGridify();
 
         return services;
     }
@@ -57,6 +61,7 @@ public static class ServiceRegistration
         {
             var connectionString = configuration.GetConnectionString("database");
             optionsBuilder.UseSqlServer(connectionString)
+                .AddInterceptors(new LastModifiedInterceptor())
                 .UseExceptionProcessor();
         });
 
@@ -99,6 +104,11 @@ public static class ServiceRegistration
             .AddQueueServices();
 
         return services;
+    }
+
+    private static void ConfigureGridify()
+    {
+        GridifyGlobalConfiguration.EnableEntityFrameworkCompatibilityLayer();
     }
 
     private static IServiceCollection AddBlobServices(this IServiceCollection services)
