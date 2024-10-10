@@ -15,6 +15,7 @@ import { AnimalsActions } from '@state/animals.actions';
 import { Sex } from '@models/sex.enum';
 import { BreedsState } from '@state/breeds.state';
 import { BreedsActions } from '@state/breeds.actions';
+import { SpeciesIconComponent } from '@shared/species-icon/species-icon.component';
 
 @Component({
   selector: 'app-search-controls',
@@ -29,7 +30,8 @@ import { BreedsActions } from '@state/breeds.actions';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-  ],
+    SpeciesIconComponent
+],
   templateUrl: './search-controls.component.html',
   styleUrl: './search-controls.component.scss',
 })
