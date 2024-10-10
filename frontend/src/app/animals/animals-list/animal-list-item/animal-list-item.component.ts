@@ -5,11 +5,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { SearchAnimalsItem } from '@models/animal.models';
+import { SpeciesIconComponent } from '@shared/species-icon/species-icon.component';
 
 @Component({
   selector: 'app-animal-list-item',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatCardModule, MatButtonModule, MatDividerModule],
+  imports: [CommonModule, RouterModule, MatCardModule, MatButtonModule, MatDividerModule, SpeciesIconComponent],
   templateUrl: './animal-list-item.component.html',
   styleUrl: './animal-list-item.component.scss',
 })

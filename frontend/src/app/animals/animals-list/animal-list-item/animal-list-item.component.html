@@ -1,6 +1,7 @@
 <div id="container">
   <mat-card [routerLink]="result.slug">
     <mat-card-header>
+      <app-species-icon mat-card-avatar [speciesName]="result.speciesName" size="2x"></app-species-icon>
       <mat-card-title>{{ result.name }}</mat-card-title>
       <mat-card-subtitle class="subtitle">
         <span class="species">{{ result.speciesName | titlecase }}</span>
