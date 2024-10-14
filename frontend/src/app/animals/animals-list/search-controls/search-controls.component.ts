@@ -15,6 +15,9 @@ import { AnimalsActions } from '@state/animals.actions';
 import { Sex } from '@models/sex.enum';
 import { BreedsState } from '@state/breeds.state';
 import { BreedsActions } from '@state/breeds.actions';
+import { SpeciesIconComponent } from '@shared/species-icon/species-icon.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faMars, faVenus } from '@fortawesome/free-solid-svg-icons'
 
 @Component({
   selector: 'app-search-controls',
@@ -29,7 +32,9 @@ import { BreedsActions } from '@state/breeds.actions';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-  ],
+    FontAwesomeModule,
+    SpeciesIconComponent
+],
   templateUrl: './search-controls.component.html',
   styleUrl: './search-controls.component.scss',
 })
@@ -40,6 +45,9 @@ export class SearchControlsComponent implements OnInit {
   readonly speciesName = signal<string | undefined>(undefined);
   readonly breedName = signal<string | undefined>(undefined);
   readonly sex = signal<Sex | undefined>(undefined);
+
+  readonly maleIcon = faMars;
+  readonly femaleIcon = faVenus;
 
   constructor(private store: Store) {
     // dispatch search breeds action when speciesName changes

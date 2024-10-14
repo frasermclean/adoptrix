@@ -9,7 +9,10 @@
       <mat-chip-listbox (change)="speciesName.set($event.value)" [value]="speciesName()">
         @for (species of species$ | async; track $index) {
         <mat-chip-option [value]="species.name" [matBadge]="species.animalCount" matBadgeColor="accent">
-          {{ species.name }}
+          <div class="chip-content">
+            <span class="chip-label">{{ species.name }}</span>
+            <app-species-icon [speciesName]="species.name"></app-species-icon>
+          </div>
         </mat-chip-option>
         }
       </mat-chip-listbox>
@@ -28,12 +31,21 @@
       </div>
     }
 
-
     <div class="control-group">
       <p class="label">Sex</p>
       <mat-chip-listbox (change)="sex.set($event.value)" [value]="sex()">
-        <mat-chip-option value="Male">Male</mat-chip-option>
-        <mat-chip-option value="Female">Female</mat-chip-option>
+        <mat-chip-option value="Male">
+          <div class="chip-content">
+            <span class="chip-label">Male</span>
+            <fa-icon [icon]="maleIcon" />
+          </div>
+          </mat-chip-option>
+        <mat-chip-option value="Female">
+          <div class="chip-content">
+            <span class="chip-label">Female</span>
+            <fa-icon [icon]="femaleIcon" />
+          </div>
+        </mat-chip-option>
       </mat-chip-listbox>
     </div>
   </mat-card-content>
