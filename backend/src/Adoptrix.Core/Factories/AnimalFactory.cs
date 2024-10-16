@@ -1,6 +1,4 @@
-﻿using Adoptrix.Core;
-
-namespace Adoptrix.Tests.Shared.Factories;
+﻿namespace Adoptrix.Core.Factories;
 
 public static class AnimalFactory
 {
@@ -20,11 +18,8 @@ public static class AnimalFactory
             Sex = sex,
             DateOfBirth = dateOfBirth.Value,
             Slug = slug ?? Animal.CreateSlug(name, dateOfBirth.Value),
-            Images = AnimalImageFactory.CreateMany(imageCount).ToList(),
+            Images = Enumerable.Range(0, imageCount).Select(_ => AnimalImageFactory.Create()).ToList(),
             LastModifiedBy = createdBy ?? Guid.NewGuid()
         };
     }
-
-    public static IEnumerable<Animal> CreateMany(int count)
-        => Enumerable.Range(0, count).Select(_ => Create());
 }

@@ -1,6 +1,4 @@
-﻿using Adoptrix.Core;
-
-namespace Adoptrix.Tests.Shared.Factories;
+﻿namespace Adoptrix.Core.Factories;
 
 public static class AnimalImageFactory
 {
@@ -17,6 +15,4 @@ public static class AnimalImageFactory
         LastModifiedBy = uploadedBy ?? Guid.NewGuid(),
         LastModifiedUtc = uploadedAt ?? DateTime.UtcNow
     };
-
-    public static IEnumerable<AnimalImage> CreateMany(int count) => Enumerable.Range(0, count).Select(_ => Create());
 }

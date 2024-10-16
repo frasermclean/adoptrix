@@ -1,4 +1,4 @@
-using Adoptrix.Tests.Shared.Factories;
+using Adoptrix.Core.Factories;
 
 namespace Adoptrix.Core.Tests;
 
