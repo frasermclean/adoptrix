@@ -12,7 +12,7 @@ public class GetAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
     public async Task GetAnimal_WithKnownAnimalSlug_ShouldReturnOk()
     {
         // arrange
-        const string animalSlug = "alberto-2024-02-14";
+        var animalSlug = SeedData.Alberto.Slug;
 
         // act
         var message = await fixture.Client.GetAsync($"api/animals/{animalSlug}");
@@ -25,13 +25,26 @@ public class GetAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
     public async Task GetAnimal_WithKnownAnimalId_ShouldReturnOk()
     {
         // arrange
-        var animalId = SeedData.Animals[0].Id;
+        var animalId = SeedData.Alberto.Id;
 
         // act
         var message = await fixture.Client.GetAsync($"api/animals/{animalId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task GetAnimal_WithUnknownAnimalId_ShouldReturnNotFound()
+    {
+        // arrange
+        var animalId = Guid.Empty;
+
+        // act
+        var message = await fixture.Client.GetAsync($"api/animals/{animalId}");
+
+        // assert
+        message.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]

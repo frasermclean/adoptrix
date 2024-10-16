@@ -13,7 +13,7 @@ public class AddAnimalImagesEndpointTests(TestContainersFixture fixture) : TestB
     public async Task AddAnimalImages_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var animalId = SeedData.Animals[0].Id;
+        var animalId = SeedData.Alberto.Id;
         using var content = CreateMultipartFormDataContent();
 
         // act
