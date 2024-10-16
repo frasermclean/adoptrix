@@ -44,8 +44,7 @@ public class AddAnimalImagesEndpoint(
                     AnimalSlug = animal.Slug,
                     Description = section!.Name,
                     OriginalFileName = section.FileName,
-                    OriginalContentType = section.Section.ContentType ?? string.Empty,
-                    LastModifiedBy = request.UserId
+                    OriginalContentType = section.Section.ContentType ?? string.Empty
                 };
 
                 await blobContainerManager.UploadBlobAsync(image.OriginalBlobName, section.FileStream!,

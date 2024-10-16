@@ -46,7 +46,6 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
         Breed = breed,
         Sex = request.Sex,
         DateOfBirth = request.DateOfBirth,
-        Slug = Animal.CreateSlug(request.Name, request.DateOfBirth),
-        LastModifiedBy = request.UserId
+        Slug = Animal.CreateSlug(request.Name, request.DateOfBirth)
     };
 }
