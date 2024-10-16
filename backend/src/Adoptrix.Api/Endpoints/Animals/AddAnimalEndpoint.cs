@@ -31,7 +31,7 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
 
         var animal = AnimalFactory.Create(request.Name, request.Description, breed, request.Sex, request.DateOfBirth);
 
-        dbContext.Animals.Add(animal);
+        breed.Animals.Add(animal);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         Logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);

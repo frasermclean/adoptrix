@@ -2,10 +2,8 @@
 
 public static class SpeciesFactory
 {
-    private static readonly string[] Names = ["Dog", "Cat", "Bird"];
-
-    public static Species Create(string? name = null) => new()
+    public static Species Create(string name) => new()
     {
-        Name = name ?? Names[Random.Shared.Next(Names.Length)]
+        Name = name
     };
 }

@@ -2,14 +2,9 @@
 
 public static class BreedFactory
 {
-    private static readonly string[] Names = ["Golden Retriever", "German Shepherd", "Border Collie"];
-
-    public static Breed Create(int? id = null, string? name = null, Species? species = null,
-        Guid? lastModifiedBy = null) => new()
+    public static Breed Create(string name, Species? species = null) => new()
     {
-        Id = id ?? default,
-        Name = name ?? Names[Random.Shared.Next(Names.Length)],
-        Species = species ?? SpeciesFactory.Create(),
-        LastModifiedBy = lastModifiedBy ?? Guid.Empty
+        Name = name,
+        Species = species ?? SpeciesFactory.Create(Guid.NewGuid().ToString())
     };
 }

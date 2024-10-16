@@ -7,7 +7,7 @@ public static class AnimalFactory
     {
         Name = name,
         Description = description,
-        Breed = breed ?? BreedFactory.Create(),
+        Breed = breed ?? BreedFactory.Create(Guid.NewGuid().ToString()),
         Sex = sex,
         DateOfBirth = dateOfBirth,
         Slug = Animal.CreateSlug(name, dateOfBirth)

@@ -10,7 +10,7 @@ public class AnimalTests
         // arrange
         const string name = "Susie";
         const string description = "A lovely dog";
-        var breed = BreedFactory.Create();
+        var breed = BreedFactory.Create("Golden Retriever");
         const Sex sex = Sex.Female;
         var dateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 1.5));
 
