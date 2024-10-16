@@ -1,3 +1,4 @@
+using Adoptrix.Core;
 using Adoptrix.Persistence.Interceptors;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
@@ -21,7 +22,6 @@ public static class ServiceRegistration
         builder.AddSqlServerDbContext<AdoptrixDbContext>("database",
             configureDbContextOptions: optionsBuilder =>
             {
-                optionsBuilder.AddInterceptors(new LastModifiedInterceptor());
                 optionsBuilder.UseExceptionProcessor();
             });
         builder.AddAzureBlobClient("blob-storage");
@@ -57,11 +57,11 @@ public static class ServiceRegistration
     internal static IServiceCollection AddDatabaseServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContextFactory<AdoptrixDbContext>(optionsBuilder =>
+        services.AddDbContext<AdoptrixDbContext>((serviceProvider, optionsBuilder) =>
         {
             var connectionString = configuration.GetConnectionString("database");
             optionsBuilder.UseSqlServer(connectionString)
-                .AddInterceptors(new LastModifiedInterceptor())
+                .AddInterceptors(new LastModifiedInterceptor(serviceProvider.GetRequiredService<IRequestContext>()))
                 .UseExceptionProcessor();
         });
 

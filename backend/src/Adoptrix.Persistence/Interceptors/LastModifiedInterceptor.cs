@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Adoptrix.Persistence.Interceptors;
 
-public class LastModifiedInterceptor : SaveChangesInterceptor
+public class LastModifiedInterceptor(IRequestContext requestContext) : SaveChangesInterceptor
 {
-    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+        DbContextEventData eventData,
         InterceptionResult<int> result,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = default)
     {
         if (eventData.Context is null)
         {
@@ -25,6 +26,7 @@ public class LastModifiedInterceptor : SaveChangesInterceptor
                      .Cast<ILastModifiedEntity>())
         {
             entity.LastModifiedUtc = DateTime.UtcNow;
+            entity.LastModifiedBy = requestContext.UserId;
         }
 
         return base.SavingChangesAsync(eventData, result, cancellationToken);
