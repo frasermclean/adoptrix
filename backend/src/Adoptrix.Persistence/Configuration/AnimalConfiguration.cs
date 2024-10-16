@@ -23,7 +23,8 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 
         builder.Property(animal => animal.LastModifiedUtc)
             .HasPrecision(2)
-            .HasDefaultValueSql("getutcdate()");
+            .HasDefaultValueSql("getutcdate()")
+            .HasConversion<UtcDateTimeConverter>();
 
         builder.Property(animal => animal.Slug)
             .HasMaxLength(Animal.SlugMaxLength);
@@ -43,7 +44,8 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
 
             imagesBuilder.Property(animalImage => animalImage.LastModifiedUtc)
                 .HasPrecision(2)
-                .HasDefaultValueSql("getutcdate()");
+                .HasDefaultValueSql("getutcdate()")
+                .HasConversion<UtcDateTimeConverter>();
 
             imagesBuilder.Property(animalImage => animalImage.OriginalFileName)
                 .HasMaxLength(512);

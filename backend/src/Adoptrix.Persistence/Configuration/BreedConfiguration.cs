@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Core;
+using Adoptrix.Persistence.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,7 +14,8 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
 
         builder.Property(breed => breed.LastModifiedUtc)
             .HasPrecision(2)
-            .HasDefaultValueSql("getutcdate()");
+            .HasDefaultValueSql("getutcdate()")
+            .HasConversion<UtcDateTimeConverter>();
 
         builder.HasIndex(breed => breed.Name)
             .IsUnique();

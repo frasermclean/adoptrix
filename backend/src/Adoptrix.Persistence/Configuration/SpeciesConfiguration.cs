@@ -1,4 +1,5 @@
 ﻿using Adoptrix.Core;
+using Adoptrix.Persistence.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,7 +14,8 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
 
         builder.Property(species => species.LastModifiedUtc)
             .HasPrecision(2)
-            .HasDefaultValueSql("getutcdate()");
+            .HasDefaultValueSql("getutcdate()")
+            .HasConversion<UtcDateTimeConverter>();
 
         builder.HasIndex(species => species.Name)
             .IsUnique();
