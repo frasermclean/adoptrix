@@ -34,7 +34,7 @@ public class Animal : ILastModifiedEntity
         Slug = CreateSlug(name, dateOfBirth)
     };
 
-    public static string CreateSlug(string name, DateOnly dateOfBirth)
+    internal static string CreateSlug(string name, DateOnly dateOfBirth)
     {
         name = string.Join('-', name.Trim().Split(' '));
         return $"{name.ToLowerInvariant()}-{dateOfBirth:O}";
