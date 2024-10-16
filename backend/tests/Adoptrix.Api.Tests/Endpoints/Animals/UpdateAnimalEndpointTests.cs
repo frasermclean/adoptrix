@@ -22,8 +22,11 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
+        response.Id.Should().Be(SeedData.Barry.Id);
+        response.Slug.Should().NotBeEmpty();
         response.Name.Should().Be("Timmy");
         response.Description.Should().Be("Timmy is awesome");
+        response.LastModifiedUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]

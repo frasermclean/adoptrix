@@ -38,8 +38,6 @@ public class UpdateBreedEndpoint(AdoptrixDbContext dbContext)
         // update breed
         breed.Name = request.Name;
         breed.Species = species;
-        breed.LastModifiedBy = request.UserId;
-        breed.LastModifiedUtc = DateTime.UtcNow;
 
         try
         {

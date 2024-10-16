@@ -23,6 +23,7 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
         response.Id.Should().Be(5);
         response.Name.Should().Be("Budgerigar");
         response.SpeciesName.Should().Be("Bird");
+        response.LastModifiedUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]
@@ -60,18 +61,19 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
         var request = CreateRequest("German Shepherd", 1);
 
         // act
-        var (message, response) = await fixture.AdminClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
+        var (message, response) =
+            await fixture.AdminClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Conflict);
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("name");
     }
 
-    private static UpdateBreedRequest CreateRequest(string name = "Budgerigar", int breedId = 5, string speciesName = "Dog") => new()
+    private static UpdateBreedRequest CreateRequest(string name = "Budgerigar", int breedId = 5,
+        string speciesName = "Dog") => new()
     {
         Name = name,
         BreedId = breedId,
-        SpeciesName = speciesName,
-        UserId = Guid.NewGuid()
+        SpeciesName = speciesName
     };
 }
