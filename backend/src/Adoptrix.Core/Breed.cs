@@ -14,6 +14,6 @@ public class Breed : ILastModifiedEntity
     public static Breed Create(string name, Species? species = null) => new()
     {
         Name = name,
-        Species = species ?? Species.Create(Guid.NewGuid().ToString())
+        Species = species ?? new Species(Guid.NewGuid().ToString())
     };
 }

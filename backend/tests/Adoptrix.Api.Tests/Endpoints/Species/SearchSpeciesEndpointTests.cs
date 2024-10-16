@@ -28,7 +28,13 @@ public class SearchSpeciesEndpointTests(TestContainersFixture fixture) : TestBas
         message.StatusCode.Should().Be(HttpStatusCode.OK);
         paging.Count.Should().BePositive();
         paging.Data.Should().NotBeEmpty()
-            .And.OnlyContain(response => response.AnimalCount > 0)
+            .And.AllSatisfy(response =>
+            {
+                response.Id.Should().BePositive();
+                response.Name.Should().NotBeNullOrWhiteSpace();
+                response.AnimalCount.Should().BePositive();
+                response.BreedCount.Should().BePositive();
+            })
             .And.BeInAscendingOrder(response => response.Name);
     }
 }

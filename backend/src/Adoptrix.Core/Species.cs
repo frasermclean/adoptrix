@@ -4,14 +4,20 @@ public class Species : ILastModifiedEntity
 {
     public const int NameMaxLength = 20;
 
-    public int Id { get; init; }
-    public required string Name { get; init; }
+    public Species(string name)
+    {
+        if (name.Length > NameMaxLength)
+        {
+            throw new ArgumentException($"Name cannot exceed {NameMaxLength} characters.", nameof(name));
+        }
+
+        Id = default;
+        Name = name;
+    }
+
+    public int Id { get; private set; }
+    public string Name { get; private set; }
     public List<Breed> Breeds { get; } = [];
     public Guid? LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
-
-    public static Species Create(string name) => new()
-    {
-        Name = name
-    };
 }

@@ -4,9 +4,9 @@ namespace Adoptrix.Initializer;
 
 public static class SeedData
 {
-    private static readonly Species Dog = Species.Create("Dog");
-    private static readonly Species Cat = Species.Create("Cat");
-    private static readonly Species Bird = Species.Create("Bird");
+    private static readonly Species Dog = new("Dog");
+    private static readonly Species Cat = new("Cat");
+    private static readonly Species Bird = new("Bird");
 
     public static readonly Species[] AllSpecies = [Dog, Cat, Bird];
 
