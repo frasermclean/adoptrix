@@ -1,5 +1,3 @@
-using Adoptrix.Core.Factories;
-
 namespace Adoptrix.Core.Tests;
 
 public class AnimalTests
@@ -10,27 +8,27 @@ public class AnimalTests
         // arrange
         const string name = "Susie";
         const string description = "A lovely dog";
-        var breed = BreedFactory.Create("Golden Retriever");
+        var breed = Breed.Create("Golden Retriever", Species.Create("Dog"));
         const Sex sex = Sex.Female;
-        var dateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 1.5));
+        var dateOfBirth = new DateOnly(2021, 2, 3);
 
         // act
-        var animal = AnimalFactory.Create(name, description, breed, sex, dateOfBirth);
+        var animal = Animal.Create(name, description, breed, sex, dateOfBirth);
 
         // assert
         animal.Name.Should().Be(name);
         animal.Breed.Should().Be(breed);
         animal.Sex.Should().Be(sex);
         animal.DateOfBirth.Should().Be(dateOfBirth);
-        animal.Slug.Should().NotBeEmpty();
+        animal.Slug.Should().Be("susie-2021-02-03");
     }
 
     [Fact]
     public void TwoAnimals_WithSameIds_Should_BeEqual()
     {
         // arrange
-        var max = AnimalFactory.Create("Max");
-        var felix = AnimalFactory.Create("Felix");
+        var max = Animal.Create("Max");
+        var felix = Animal.Create("Felix");
         var otherObject = new object();
 
         // assert

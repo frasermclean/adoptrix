@@ -17,4 +17,13 @@ public class AnimalImage : ILastModifiedEntity
     public string PreviewBlobName => $"{AnimalSlug}/{Id}/preview.webp";
     public string ThumbnailBlobName => $"{AnimalSlug}/{Id}/thumb.webp";
     public string FullSizeBlobName => $"{AnimalSlug}/{Id}/full.webp";
+
+    public static AnimalImage Create(string animalSlug, string? description, string originalFileName,
+        string originalContentType) => new()
+    {
+        AnimalSlug = animalSlug,
+        Description = description,
+        OriginalFileName = originalFileName,
+        OriginalContentType = originalContentType
+    };
 }

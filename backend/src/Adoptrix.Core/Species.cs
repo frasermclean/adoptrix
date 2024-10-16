@@ -9,4 +9,9 @@ public class Species : ILastModifiedEntity
     public List<Breed> Breeds { get; } = [];
     public Guid LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
+
+    public static Species Create(string name) => new()
+    {
+        Name = name
+    };
 }

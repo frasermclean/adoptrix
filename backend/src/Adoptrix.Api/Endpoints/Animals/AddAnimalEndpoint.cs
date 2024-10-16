@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Api.Security;
-using Adoptrix.Core.Factories;
+using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +29,7 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
             return new ErrorResponse(ValidationFailures);
         }
 
-        var animal = AnimalFactory.Create(request.Name, request.Description, breed, request.Sex, request.DateOfBirth);
+        var animal = Animal.Create(request.Name, request.Description, breed, request.Sex, request.DateOfBirth);
 
         breed.Animals.Add(animal);
         await dbContext.SaveChangesAsync(cancellationToken);

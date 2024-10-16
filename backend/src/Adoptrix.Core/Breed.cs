@@ -10,4 +10,10 @@ public class Breed : ILastModifiedEntity
     public List<Animal> Animals { get; } = [];
     public Guid LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
+
+    public static Breed Create(string name, Species? species = null) => new()
+    {
+        Name = name,
+        Species = species ?? Species.Create(Guid.NewGuid().ToString())
+    };
 }

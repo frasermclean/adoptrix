@@ -13,7 +13,7 @@ public class Animal : ILastModifiedEntity
     public required Sex Sex { get; set; }
     public required DateOnly DateOfBirth { get; set; }
     public required string Slug { get; init; }
-    public List<AnimalImage> Images { get; init; } = [];
+    public List<AnimalImage> Images { get; } = [];
     public Guid LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
 
@@ -22,6 +22,17 @@ public class Animal : ILastModifiedEntity
 
     public override int GetHashCode()
         => Id.GetHashCode();
+
+    public static Animal Create(string name, string? description = null, Breed? breed = null,
+        Sex sex = Sex.Male, DateOnly dateOfBirth = default) => new()
+    {
+        Name = name,
+        Description = description,
+        Breed = breed ?? Breed.Create(Guid.NewGuid().ToString()),
+        Sex = sex,
+        DateOfBirth = dateOfBirth,
+        Slug = CreateSlug(name, dateOfBirth)
+    };
 
     public static string CreateSlug(string name, DateOnly dateOfBirth)
     {

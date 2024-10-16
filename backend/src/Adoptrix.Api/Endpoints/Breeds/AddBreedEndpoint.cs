@@ -1,6 +1,5 @@
 ﻿using Adoptrix.Api.Security;
 using Adoptrix.Core;
-using Adoptrix.Core.Factories;
 using Adoptrix.Persistence.Services;
 using EntityFramework.Exceptions.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -29,7 +28,7 @@ public class AddBreedEndpoint(AdoptrixDbContext dbContext)
             return new ErrorResponse(ValidationFailures);
         }
 
-        var breed = BreedFactory.Create(request.Name, species);
+        var breed = Breed.Create(request.Name, species);
         species.Breeds.Add(breed);
 
         try

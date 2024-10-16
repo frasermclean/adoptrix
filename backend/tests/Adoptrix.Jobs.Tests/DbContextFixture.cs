@@ -8,8 +8,8 @@ public class DbContextFixture : IAsyncLifetime
 {
     public AdoptrixDbContext DbContext { get; }
 
-    public string AnimalSlug { get; } = "rex-the-dog";
-    public Guid ImageId { get; } = Guid.NewGuid();
+    public string AnimalSlug { get; private set; } = string.Empty;
+    public Guid ImageId { get; private set; }
 
     public DbContextFixture()
     {
@@ -24,38 +24,16 @@ public class DbContextFixture : IAsyncLifetime
     {
         await DbContext.Database.EnsureCreatedAsync();
 
-        DbContext.Animals.Add(new Animal
-        {
-            Id = Guid.NewGuid(),
-            Name = "Rex",
-            Breed = new Breed
-            {
-                Id = 1,
-                Name = "Jack Russell Terrier",
-                Species = new Species
-                {
-                    Id = 1,
-                    Name = "Dog"
-                },
+        var animal = Animal.Create("Rex", dateOfBirth: new DateOnly(2020, 1, 1));
+        var image = AnimalImage.Create(animal.Slug, "Rex in the park", "rex1.jpg", "image/jpeg");
+        animal.Images.Add(image);
 
-            },
-            Sex = Sex.Male,
-            DateOfBirth = new DateOnly(2020, 1, 1),
-            Slug = AnimalSlug,
-            Images =
-            [
-                new AnimalImage
-                {
-                    Id = ImageId,
-                    IsProcessed = false,
-                    AnimalSlug = AnimalSlug,
-                    OriginalFileName = "rex1.jpg",
-                    OriginalContentType = "image/jpeg"
-                }
-            ]
-        });
-
+        DbContext.Animals.Add(animal);
         await DbContext.SaveChangesAsync();
+
+        AnimalSlug = animal.Slug;
+        ImageId = image.Id;
+
     }
 
     public Task DisposeAsync() => DbContext.DisposeAsync().AsTask();
