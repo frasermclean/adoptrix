@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Adoptrix.Jobs\Adoptrix.Jobs.csproj" />
-    <ProjectReference Include="..\Adoptrix.Tests.Shared\Adoptrix.Tests.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,10 +47,6 @@
       <Link>Data\lab_puppy_3.jpeg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Fixtures\" />
   </ItemGroup>
 
 </Project>

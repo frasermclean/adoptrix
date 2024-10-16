@@ -3,8 +3,9 @@
 public class Species : ILastModifiedEntity
 {
     public const int NameMaxLength = 20;
+    private const string DefaultName = "Unknown";
 
-    public Species(string name)
+    public Species(string name = DefaultName)
     {
         if (name.Length > NameMaxLength)
         {

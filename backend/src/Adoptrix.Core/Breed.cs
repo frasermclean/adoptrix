@@ -3,6 +3,7 @@
 public class Breed : ILastModifiedEntity
 {
     public const int NameMaxLength = 30;
+    private const string DefaultName = "Unknown";
 
     public int Id { get; init; }
     public required string Name { get; set; }
@@ -11,9 +12,9 @@ public class Breed : ILastModifiedEntity
     public Guid? LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
 
-    public static Breed Create(string name, Species? species = null) => new()
+    public static Breed Create(string name = DefaultName, Species? species = null) => new()
     {
         Name = name,
-        Species = species ?? new Species(Guid.NewGuid().ToString())
+        Species = species ?? new Species()
     };
 }
