@@ -1,5 +1,5 @@
 ﻿using Adoptrix.Api.Security;
-using Adoptrix.Core;
+using Adoptrix.Core.Factories;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +29,7 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
             return new ErrorResponse(ValidationFailures);
         }
 
-        var animal = MapToAnimal(request, breed);
+        var animal = AnimalFactory.Create(request.Name, request.Description, breed, request.Sex, request.DateOfBirth);
 
         dbContext.Animals.Add(animal);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -38,14 +38,4 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
 
         return TypedResults.Created($"/api/animals/{animal.Id}", Map.FromEntity(animal));
     }
-
-    private static Animal MapToAnimal(AddAnimalRequest request, Breed breed) => new()
-    {
-        Name = request.Name,
-        Description = request.Description,
-        Breed = breed,
-        Sex = request.Sex,
-        DateOfBirth = request.DateOfBirth,
-        Slug = Animal.CreateSlug(request.Name, request.DateOfBirth)
-    };
 }
