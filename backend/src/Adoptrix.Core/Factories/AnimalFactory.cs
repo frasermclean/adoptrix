@@ -2,22 +2,14 @@
 
 public static class AnimalFactory
 {
-    private static readonly string[] Names = ["Buddy", "Max", "Bella", "Lucy", "Charlie", "Daisy", "Bailey", "Molly"];
-
-    public static Animal Create(string? name = null, string? description = null, Breed? breed = null,
-        Sex sex = Sex.Male, DateOnly? dateOfBirth = null)
+    public static Animal Create(string name, string? description = null, Breed? breed = null,
+        Sex sex = Sex.Male, DateOnly dateOfBirth = default) => new()
     {
-        name ??= Names[Random.Shared.Next(Names.Length)];
-        dateOfBirth ??= DateOnly.FromDateTime(DateTime.UtcNow - TimeSpan.FromDays(365 * 2));
-
-        return new Animal
-        {
-            Name = name,
-            Description = description,
-            Breed = breed ?? BreedFactory.Create(),
-            Sex = sex,
-            DateOfBirth = dateOfBirth.Value,
-            Slug = Animal.CreateSlug(name, dateOfBirth.Value)
-        };
-    }
+        Name = name,
+        Description = description,
+        Breed = breed ?? BreedFactory.Create(),
+        Sex = sex,
+        DateOfBirth = dateOfBirth,
+        Slug = Animal.CreateSlug(name, dateOfBirth)
+    };
 }
