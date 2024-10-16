@@ -15,9 +15,6 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
 
-        builder.Property(species => species.LastModifiedBy)
-            .HasDefaultValue(Guid.Empty);
-
         builder.HasIndex(species => species.Name)
             .IsUnique();
     }

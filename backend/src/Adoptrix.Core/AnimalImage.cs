@@ -10,7 +10,7 @@ public class AnimalImage : ILastModifiedEntity
     public required string OriginalFileName { get; init; }
     public required string OriginalContentType { get; init; }
     public bool IsProcessed { get; set; }
-    public Guid LastModifiedBy { get; set; }
+    public Guid? LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
 
     public string OriginalBlobName => $"{AnimalSlug}/{OriginalFileName}";

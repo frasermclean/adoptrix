@@ -25,9 +25,6 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             .HasPrecision(2)
             .HasDefaultValueSql("getutcdate()");
 
-        builder.Property(animal => animal.LastModifiedBy)
-            .HasDefaultValue(Guid.Empty);
-
         builder.Property(animal => animal.Slug)
             .HasMaxLength(Animal.SlugMaxLength);
 

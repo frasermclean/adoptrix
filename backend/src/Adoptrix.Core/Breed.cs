@@ -8,7 +8,7 @@ public class Breed : ILastModifiedEntity
     public required string Name { get; set; }
     public required Species Species { get; set; }
     public List<Animal> Animals { get; } = [];
-    public Guid LastModifiedBy { get; set; }
+    public Guid? LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
 
     public static Breed Create(string name, Species? species = null) => new()

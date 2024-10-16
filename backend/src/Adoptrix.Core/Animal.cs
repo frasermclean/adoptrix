@@ -14,7 +14,7 @@ public class Animal : ILastModifiedEntity
     public required DateOnly DateOfBirth { get; set; }
     public required string Slug { get; init; }
     public List<AnimalImage> Images { get; } = [];
-    public Guid LastModifiedBy { get; set; }
+    public Guid? LastModifiedBy { get; set; }
     public DateTime LastModifiedUtc { get; set; }
 
     public override bool Equals(object? otherObject)

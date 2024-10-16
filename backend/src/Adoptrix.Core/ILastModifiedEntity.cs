@@ -2,6 +2,6 @@
 
 public interface ILastModifiedEntity
 {
-    Guid LastModifiedBy { get; set;  }
+    Guid? LastModifiedBy { get; set;  }
     DateTime LastModifiedUtc { get; set; }
 }
