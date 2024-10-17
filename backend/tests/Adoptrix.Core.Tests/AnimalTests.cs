@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Adoptrix.Core.Tests;
 
 public class AnimalTests
@@ -10,8 +12,7 @@ public class AnimalTests
         string dateOfBirthString, string expectedName, string expectedSlug)
     {
         // arrange
-        var species = new Species("Dog");
-        var breed = new Breed("Golden Retriever") { Species = species };
+        var breed = Breed.Create("Golden Retriever");
         var sex = Random.Shared.Next(2) == 1 ? Sex.Male : Sex.Female;
         var dateOfBirth = DateOnly.Parse(dateOfBirthString);
 
@@ -29,6 +30,41 @@ public class AnimalTests
         animal.Images.Should().BeEmpty();
         animal.LastModifiedBy.Should().BeNull();
         animal.LastModifiedUtc.Should().Be(default);
+    }
+
+    [Fact]
+    public void CreateAnimal_WithLongName_ShouldThrowArgumentException()
+    {
+        // arrange
+        var name = Enumerable.Range(0, Animal.NameMaxLength + 1)
+            .Select(_ => 'x')
+            .Aggregate(new StringBuilder(), (sb, c) => sb.Append(c))
+            .ToString();
+
+        // act
+        Action action = () => _ = Animal.Create(name);
+
+        // assert
+        action.Should().Throw<ArgumentException>()
+            .WithMessage($"Name cannot exceed {Animal.NameMaxLength} characters.*");
+    }
+
+    [Fact]
+    public void CreateAnimal_WithLongDescription_ShouldThrowArgumentException()
+    {
+        // arrange
+
+        var description = Enumerable.Range(0, Animal.DescriptionMaxLength + 1)
+            .Select(_ => 'x')
+            .Aggregate(new StringBuilder(), (sb, c) => sb.Append(c))
+            .ToString();
+
+        // act
+        Action action = () => _ = Animal.Create("Fluffy", description);
+
+        // assert
+        action.Should().Throw<ArgumentException>()
+            .WithMessage($"Description cannot exceed {Animal.DescriptionMaxLength} characters.*");
     }
 
     [Fact]

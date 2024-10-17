@@ -8,7 +8,11 @@ public class Animal : ILastModifiedEntity
     public const int DescriptionMaxLength = 2000;
     public const int SlugMaxLength = 50;
 
-    public Guid Id { get; init; }
+    private Animal()
+    {
+    }
+
+    public Guid Id { get; private init; }
     public required string Name { get; set; }
     public string? Description { get; set; }
     public required Breed Breed { get; set; }
@@ -42,20 +46,15 @@ public class Animal : ILastModifiedEntity
                 nameof(description));
         }
 
-        var slug = $"{name.Trim().Kebaberize()}-{dateOfBirth:O}";
-        if (slug.Length > SlugMaxLength)
-        {
-            throw new InvalidOperationException($"Generated slug exceeds {SlugMaxLength} characters.");
-        }
-
         return new Animal
         {
+            Id = default,
             Name = name,
             Description = description,
-            Breed = breed ?? new Breed { Species = new Species() },
+            Breed = breed ?? Breed.Create(),
             Sex = sex,
             DateOfBirth = dateOfBirth,
-            Slug = slug
+            Slug = $"{name.Kebaberize()}-{dateOfBirth:O}"
         };
     }
 }

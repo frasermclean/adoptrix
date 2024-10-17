@@ -3,14 +3,14 @@
 public class BreedTests
 {
     [Fact]
-    public void NewBreed_WithValidName_ShouldReturnExpectedBreed()
+    public void CreateBreed_WithValidName_ShouldReturnExpectedBreed()
     {
         // arrange
         const string name = "Labrador Retriever";
-        var species = new Species("Dog");
+        var species = Species.Create("Dog");
 
         // act
-        var breed = new Breed(name) { Species = species };
+        var breed = Breed.Create(name, species);
 
         // assert
         breed.Id.Should().Be(default);
@@ -22,14 +22,13 @@ public class BreedTests
     }
 
     [Fact]
-    public void NewBreed_WithLongName_ShouldThrowArgumentException()
+    public void CreateBreed_WithLongName_ShouldThrowArgumentException()
     {
         // arrange
         const string name = "An extraordinarily long name for a breed";
-        var species = new Species("Dog");
 
         // act
-        Action act = () => _ = new Breed(name) { Species = species };
+        Action act = () => Breed.Create(name);
 
         // assert
         act.Should().Throw<ArgumentException>()

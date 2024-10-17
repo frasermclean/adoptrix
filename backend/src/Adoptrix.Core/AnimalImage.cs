@@ -4,9 +4,13 @@ public class AnimalImage : ILastModifiedEntity
 {
     public const int ContentTypeMaxLength = 50;
 
-    public Guid Id { get; init; }
+    private AnimalImage()
+    {
+    }
+
+    public Guid Id { get; private init; }
     public required string AnimalSlug { get; init; }
-    public string? Description { get; init; }
+    public string? Description { get; private init; }
     public required string OriginalFileName { get; init; }
     public required string OriginalContentType { get; init; }
     public bool IsProcessed { get; set; }
@@ -21,6 +25,7 @@ public class AnimalImage : ILastModifiedEntity
     public static AnimalImage Create(string animalSlug, string? description, string originalFileName,
         string originalContentType) => new()
     {
+        Id = default,
         AnimalSlug = animalSlug,
         Description = description,
         OriginalFileName = originalFileName,
