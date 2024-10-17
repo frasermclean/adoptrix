@@ -1,4 +1,6 @@
-﻿namespace Adoptrix.Core;
+﻿using Humanizer;
+
+namespace Adoptrix.Core;
 
 public class Animal : ILastModifiedEntity
 {
@@ -24,19 +26,36 @@ public class Animal : ILastModifiedEntity
         => Id.GetHashCode();
 
     public static Animal Create(string name, string? description = null, Breed? breed = null,
-        Sex sex = Sex.Male, DateOnly dateOfBirth = default) => new()
+        Sex sex = Sex.Male, DateOnly dateOfBirth = default)
     {
-        Name = name,
-        Description = description,
-        Breed = breed ?? new Breed { Species = new Species() },
-        Sex = sex,
-        DateOfBirth = dateOfBirth,
-        Slug = CreateSlug(name, dateOfBirth)
-    };
+        name = name.Trim();
+        description = description?.Trim();
 
-    internal static string CreateSlug(string name, DateOnly dateOfBirth)
-    {
-        name = string.Join('-', name.Trim().Split(' '));
-        return $"{name.ToLowerInvariant()}-{dateOfBirth:O}";
+        if (name.Length > NameMaxLength)
+        {
+            throw new ArgumentException($"Name cannot exceed {NameMaxLength} characters.", nameof(name));
+        }
+
+        if (description?.Length > DescriptionMaxLength)
+        {
+            throw new ArgumentException($"Description cannot exceed {DescriptionMaxLength} characters.",
+                nameof(description));
+        }
+
+        var slug = $"{name.Trim().Kebaberize()}-{dateOfBirth:O}";
+        if (slug.Length > SlugMaxLength)
+        {
+            throw new InvalidOperationException($"Generated slug exceeds {SlugMaxLength} characters.");
+        }
+
+        return new Animal
+        {
+            Name = name,
+            Description = description,
+            Breed = breed ?? new Breed { Species = new Species() },
+            Sex = sex,
+            DateOfBirth = dateOfBirth,
+            Slug = slug
+        };
     }
 }
