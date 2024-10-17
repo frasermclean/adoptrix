@@ -28,7 +28,7 @@ public class Animal : ILastModifiedEntity
     {
         Name = name,
         Description = description,
-        Breed = breed ?? Breed.Create(),
+        Breed = breed ?? new Breed { Species = new Species() },
         Sex = sex,
         DateOfBirth = dateOfBirth,
         Slug = CreateSlug(name, dateOfBirth)

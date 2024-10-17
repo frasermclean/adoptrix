@@ -10,11 +10,11 @@ public static class SeedData
 
     public static readonly Species[] AllSpecies = [Dog, Cat, Bird];
 
-    private static readonly Breed LabradorRetriever = Breed.Create("Labrador Retriever", Dog);
-    private static readonly Breed GermanShepherd = Breed.Create("German Shepherd", Dog);
-    private static readonly Breed GoldenRetriever = Breed.Create("Golden Retriever", Dog);
-    private static readonly Breed DomesticShortHair = Breed.Create("Domestic Short-hair", Cat);
-    private static readonly Breed AfricanGreyParrot = Breed.Create("African Grey Parrot", Bird);
+    private static readonly Breed LabradorRetriever = new("Labrador Retriever") { Species = Dog };
+    private static readonly Breed GermanShepherd = new("German Shepherd") { Species = Dog };
+    private static readonly Breed GoldenRetriever = new("Golden Retriever") { Species = Dog };
+    private static readonly Breed DomesticShortHair = new("Domestic Short-hair") { Species = Cat };
+    private static readonly Breed AfricanGreyParrot = new("African Grey Parrot") { Species = Bird };
 
     public static readonly Breed[] AllBreeds =
         [LabradorRetriever, GermanShepherd, GoldenRetriever, DomesticShortHair, AfricanGreyParrot];

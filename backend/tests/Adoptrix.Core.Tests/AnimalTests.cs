@@ -8,7 +8,8 @@ public class AnimalTests
         // arrange
         const string name = "Susie";
         const string description = "A lovely dog";
-        var breed = Breed.Create("Golden Retriever", new Species("Dog"));
+        var species = new Species("Dog");
+        var breed = new Breed("Golden Retriever") { Species = species };
         const Sex sex = Sex.Female;
         var dateOfBirth = new DateOnly(2021, 2, 3);
 
