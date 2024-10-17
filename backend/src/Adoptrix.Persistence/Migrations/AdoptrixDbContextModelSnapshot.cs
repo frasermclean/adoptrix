@@ -39,10 +39,8 @@ namespace Adoptrix.Persistence.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<Guid>("LastModifiedBy")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("LastModifiedUtc")
                         .ValueGeneratedOnAdd()
@@ -78,10 +76,8 @@ namespace Adoptrix.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("LastModifiedBy")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("LastModifiedUtc")
                         .ValueGeneratedOnAdd()
@@ -115,10 +111,8 @@ namespace Adoptrix.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("LastModifiedBy")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("LastModifiedUtc")
                         .ValueGeneratedOnAdd()
@@ -163,7 +157,7 @@ namespace Adoptrix.Persistence.Migrations
                             b1.Property<bool>("IsProcessed")
                                 .HasColumnType("bit");
 
-                            b1.Property<Guid>("LastModifiedBy")
+                            b1.Property<Guid?>("LastModifiedBy")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<DateTime>("LastModifiedUtc")

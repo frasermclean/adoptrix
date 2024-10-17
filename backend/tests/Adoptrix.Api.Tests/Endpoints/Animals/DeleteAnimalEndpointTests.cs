@@ -12,7 +12,7 @@ public class DeleteAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task DeleteAnimal_WithValidRequest_ShouldReturnNoContent()
     {
         // arrange
-        var animalId = SeedData.Animals[3].Id;
+        var animalId = SeedData.Percy.Id;
 
         // act
         var message = await fixture.AdminClient.DeleteAsync($"/api/animals/{animalId}");

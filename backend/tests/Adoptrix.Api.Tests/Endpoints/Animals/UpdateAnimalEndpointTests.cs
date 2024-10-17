@@ -14,7 +14,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var request = CreateRequest(SeedData.Animals[0].Id, "Timmy", "Timmy is awesome", "German Shepherd");
+        var request = CreateRequest(SeedData.Barry.Id, "Timmy", "Timmy is awesome", "German Shepherd");
 
         // act
         var (message, response) =
@@ -22,15 +22,18 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
+        response.Id.Should().Be(SeedData.Barry.Id);
+        response.Slug.Should().NotBeEmpty();
         response.Name.Should().Be("Timmy");
         response.Description.Should().Be("Timmy is awesome");
+        response.LastModifiedUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]
     public async Task UpdateAnimal_WithInvalidAnimalId_ShouldReturnNotFound()
     {
         // arrange
-        var request = CreateRequest(Guid.Empty);
+        var request = CreateRequest();
 
         // act
         var message = await fixture.AdminClient.PUTAsync<UpdateAnimalEndpoint, UpdateAnimalRequest>(request);
@@ -43,7 +46,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task UpdateAnimal_WithInvalidBreedName_ShouldReturnBadRequest()
     {
         // arrange
-        var request = CreateRequest(SeedData.Animals[0].Id, breedName: "Flower");
+        var request = CreateRequest(SeedData.Barry.Id, breedName: "Flower");
 
         // act
         var (message, response) =

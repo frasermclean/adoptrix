@@ -63,9 +63,9 @@ public class TestContainersFixture : AppFixture<Program>
         var wasCreated = await dbContext.Database.EnsureCreatedAsync();
         if (wasCreated)
         {
-            dbContext.Species.AddRange(SeedData.Species);
-            dbContext.Breeds.AddRange(SeedData.Breeds);
-            dbContext.Animals.AddRange(SeedData.Animals);
+            dbContext.Species.AddRange(SeedData.AllSpecies);
+            dbContext.Breeds.AddRange(SeedData.AllBreeds);
+            dbContext.Animals.AddRange(SeedData.AllAnimals);
             await dbContext.SaveChangesAsync();
         }
     }

@@ -23,7 +23,8 @@ public class SearchBreedsEndpoint(AdoptrixDbContext dbContext) : Endpoint<Gridif
                 Id = breed.Id,
                 Name = breed.Name,
                 SpeciesName = breed.Species.Name,
-                AnimalCount = breed.Animals.Count
+                AnimalCount = breed.Animals.Count,
+                LastModifiedUtc = breed.LastModifiedUtc,
             })
             .GridifyAsync(query, cancellationToken);
     }

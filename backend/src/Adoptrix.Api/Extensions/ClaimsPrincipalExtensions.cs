@@ -12,10 +12,10 @@ public static class ClaimsPrincipalExtensions
             .Select(claim => Enum.Parse<UserRole>(claim.Value));
     }
 
-    public static Guid GetUserId(this ClaimsPrincipal principal)
+    public static Guid? GetUserId(this ClaimsPrincipal principal)
     {
-        var objectId = principal.GetObjectId() ?? throw new InvalidDataException("Object ID claim is missing");
+        var objectId = principal.GetObjectId();
 
-        return Guid.Parse(objectId);
+        return objectId is null ? null : Guid.Parse(objectId);
     }
 }

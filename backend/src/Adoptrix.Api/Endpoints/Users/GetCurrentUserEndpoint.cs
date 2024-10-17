@@ -1,9 +1,10 @@
-﻿using Adoptrix.Api.Extensions;
-using Adoptrix.Api.Services;
+﻿using Adoptrix.Api.Services;
+using Adoptrix.Core;
 
 namespace Adoptrix.Api.Endpoints.Users;
 
-public class GetCurrentUserEndpoint(IUserManager userManager) : EndpointWithoutRequest<UserResponse>
+public class GetCurrentUserEndpoint(IUserManager userManager, IRequestContext requestContext)
+    : EndpointWithoutRequest<UserResponse>
 {
     public override void Configure()
     {
@@ -12,8 +13,7 @@ public class GetCurrentUserEndpoint(IUserManager userManager) : EndpointWithoutR
 
     public override async Task<UserResponse> ExecuteAsync(CancellationToken cancellationToken)
     {
-        var userId = User.GetUserId();
-        var result = await userManager.GetUserAsync(userId, cancellationToken);
+        var result = await userManager.GetUserAsync(requestContext.UserId, cancellationToken);
 
         return result.Value;
     }

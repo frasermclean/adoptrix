@@ -23,8 +23,5 @@ public class AddAnimalValidator : Validator<AddAnimalRequest>
 
         RuleFor(request => request.DateOfBirth)
             .SetValidator(new DateOfBirthValidator());
-
-        RuleFor(request => request.UserId)
-            .NotEmpty();
     }
 }

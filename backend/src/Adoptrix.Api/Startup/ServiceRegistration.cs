@@ -1,8 +1,10 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using Adoptrix.Api.Extensions;
 using Adoptrix.Api.Options;
 using Adoptrix.Api.Security;
 using Adoptrix.Api.Services;
+using Adoptrix.Core;
 using Adoptrix.Persistence.Services;
 using Adoptrix.ServiceDefaults;
 using Azure.Identity;
@@ -22,12 +24,14 @@ public static class ServiceRegistration
     /// </summary>
     public static WebApplicationBuilder RegisterServices(this WebApplicationBuilder builder)
     {
-        builder.AddServiceDefaults()
-            .AddPersistence();
+        builder.AddServiceDefaults();
+        //.AddPersistence();
 
         builder.Services
+            .AddPersistence(builder.Configuration)
             .AddAuthentication(builder.Configuration)
             .AddUserManagement(builder.Configuration)
+            .AddRequestContext()
             .AddFastEndpoints();
 
         // json serialization options
@@ -100,5 +104,21 @@ public static class ServiceRegistration
         });
 
         return services.AddScoped<IUserManager, UserManager>();
+    }
+
+    private static IServiceCollection AddRequestContext(this IServiceCollection services)
+    {
+        services.AddHttpContextAccessor()
+            .AddScoped<IRequestContext>(serviceProvider =>
+            {
+                var httpContext = serviceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext;
+
+                return new RequestContext
+                {
+                    UserId = httpContext?.User.GetUserId() ?? Guid.Empty
+                };
+            });
+
+        return services;
     }
 }

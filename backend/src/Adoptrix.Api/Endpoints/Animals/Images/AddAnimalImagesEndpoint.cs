@@ -39,26 +39,20 @@ public class AddAnimalImagesEndpoint(
         var images = await FormFileSectionsAsync(cancellationToken)
             .SelectAwait(async section =>
             {
-                var image = new AnimalImage
-                {
-                    AnimalSlug = animal.Slug,
-                    Description = section!.Name,
-                    OriginalFileName = section.FileName,
-                    OriginalContentType = section.Section.ContentType ?? string.Empty,
-                    LastModifiedBy = request.UserId
-                };
+                var image = AnimalImage.Create(animal.Slug, section!.Name, section.FileName,
+                    section.Section.ContentType!);
 
                 await blobContainerManager.UploadBlobAsync(image.OriginalBlobName, section.FileStream!,
                     image.OriginalContentType, cancellationToken);
 
                 Logger.LogInformation("Uploaded original image {BlobName}", image.OriginalBlobName);
 
-                animal.Images.Add(image);
                 return image;
             })
             .ToListAsync(cancellationToken);
 
         // update animal entity with new images
+        animal.Images.AddRange(images);
         await dbContext.SaveChangesAsync(cancellationToken);
         Logger.LogInformation("Added {Count} original images for animal with ID: {AnimalId}",
             images.Count, request.AnimalId);

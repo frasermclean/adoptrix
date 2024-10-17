@@ -29,24 +29,13 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
             return new ErrorResponse(ValidationFailures);
         }
 
-        var animal = MapToAnimal(request, breed);
+        var animal = Animal.Create(request.Name, request.Description, breed, request.Sex, request.DateOfBirth);
 
-        dbContext.Animals.Add(animal);
+        breed.Animals.Add(animal);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         Logger.LogInformation("Animal with ID {AnimalId} was added successfully", animal.Id);
 
         return TypedResults.Created($"/api/animals/{animal.Id}", Map.FromEntity(animal));
     }
-
-    private static Animal MapToAnimal(AddAnimalRequest request, Breed breed) => new()
-    {
-        Name = request.Name,
-        Description = request.Description,
-        Breed = breed,
-        Sex = request.Sex,
-        DateOfBirth = request.DateOfBirth,
-        Slug = Animal.CreateSlug(request.Name, request.DateOfBirth),
-        LastModifiedBy = request.UserId
-    };
 }
