@@ -20,10 +20,7 @@ public static class ServiceRegistration
     public static IHostApplicationBuilder AddPersistence(this IHostApplicationBuilder builder)
     {
         builder.AddSqlServerDbContext<AdoptrixDbContext>("database",
-            configureDbContextOptions: optionsBuilder =>
-            {
-                optionsBuilder.UseExceptionProcessor();
-            });
+            configureDbContextOptions: optionsBuilder => { optionsBuilder.UseExceptionProcessor(); });
         builder.AddAzureBlobClient("blob-storage");
         builder.AddAzureQueueClient("queue-storage");
 
@@ -57,11 +54,17 @@ public static class ServiceRegistration
     internal static IServiceCollection AddDatabaseServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        // register interceptors
+        services.AddScoped<AuditingInterceptor>();
+        services.AddScoped<LastModifiedInterceptor>();
+
         services.AddDbContext<AdoptrixDbContext>((serviceProvider, optionsBuilder) =>
         {
             var connectionString = configuration.GetConnectionString("database");
             optionsBuilder.UseSqlServer(connectionString)
-                .AddInterceptors(new LastModifiedInterceptor(serviceProvider.GetRequiredService<IRequestContext>()))
+                .AddInterceptors(
+                    serviceProvider.GetRequiredService<AuditingInterceptor>(),
+                    serviceProvider.GetRequiredService<LastModifiedInterceptor>())
                 .UseExceptionProcessor();
         });
 
