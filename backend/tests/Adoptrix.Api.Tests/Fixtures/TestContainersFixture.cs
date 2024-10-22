@@ -58,7 +58,8 @@ public class TestContainersFixture : AppFixture<Program>
 
     protected override async Task SetupAsync()
     {
-        var dbContext = Services.GetRequiredService<AdoptrixDbContext>();
+        await using var scope = Services.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AdoptrixDbContext>();
 
         var wasCreated = await dbContext.Database.EnsureCreatedAsync();
         if (wasCreated)
