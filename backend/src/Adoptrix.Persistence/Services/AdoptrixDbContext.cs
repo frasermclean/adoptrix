@@ -1,5 +1,5 @@
-﻿using Adoptrix.Core;
-using Adoptrix.Persistence.Configuration;
+﻿using System.Reflection;
+using Adoptrix.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Persistence.Services;
@@ -9,11 +9,10 @@ public class AdoptrixDbContext(DbContextOptions<AdoptrixDbContext> options) : Db
     public DbSet<Species> Species => Set<Species>();
     public DbSet<Breed> Breeds => Set<Breed>();
     public DbSet<Animal> Animals => Set<Animal>();
+    public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.ApplyConfiguration(new AnimalConfiguration());
-        builder.ApplyConfiguration(new BreedConfiguration());
-        builder.ApplyConfiguration(new SpeciesConfiguration());
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }
