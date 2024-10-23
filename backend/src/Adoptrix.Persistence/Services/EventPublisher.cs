@@ -8,7 +8,7 @@ namespace Adoptrix.Persistence.Services;
 
 public interface IEventPublisher
 {
-    Task<string> PublishAsync<T>(T domainEvent, CancellationToken cancellationToken = default) where T : IDomainEvent;
+    Task<string> PublishAsync<T>(T domainEvent, CancellationToken cancellationToken = default) where T : DomainEvent;
 }
 
 public class EventPublisher(ILogger<EventPublisher> logger, IServiceProvider serviceProvider) : IEventPublisher
@@ -19,7 +19,7 @@ public class EventPublisher(ILogger<EventPublisher> logger, IServiceProvider ser
     };
 
     public async Task<string> PublishAsync<T>(T domainEvent, CancellationToken cancellationToken = default)
-        where T : IDomainEvent
+        where T : DomainEvent
     {
         // serialize domain event
         var data = new BinaryData(domainEvent, SerializerOptions);
@@ -34,7 +34,7 @@ public class EventPublisher(ILogger<EventPublisher> logger, IServiceProvider ser
         return response.Value.MessageId;
     }
 
-    private QueueClient GetQueueClient<T>(T domainEvent) where T : IDomainEvent =>
+    private QueueClient GetQueueClient<T>(T domainEvent) where T : DomainEvent =>
         domainEvent switch
         {
             AnimalDeletedEvent => serviceProvider.GetRequiredKeyedService<QueueClient>(QueueNames.AnimalDeleted),

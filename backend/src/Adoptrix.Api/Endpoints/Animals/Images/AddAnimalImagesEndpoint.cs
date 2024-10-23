@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Events;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,8 +9,7 @@ namespace Adoptrix.Api.Endpoints.Animals.Images;
 public class AddAnimalImagesEndpoint(
     AdoptrixDbContext dbContext,
     [FromKeyedServices(BlobContainerNames.OriginalImages)]
-    IBlobContainerManager blobContainerManager,
-    IEventPublisher eventPublisher)
+    IBlobContainerManager blobContainerManager)
     : Endpoint<AddAnimalImagesRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>, AnimalResponseMapper>
 {
     public override void Configure()
@@ -56,13 +54,6 @@ public class AddAnimalImagesEndpoint(
         await dbContext.SaveChangesAsync(cancellationToken);
         Logger.LogInformation("Added {Count} original images for animal with ID: {AnimalId}",
             images.Count, request.AnimalId);
-
-        // publish events for each image added
-        foreach (var animalImageAddedEvent in images.Select(image =>
-                     new AnimalImageAddedEvent(animal.Slug, image.Id, image.OriginalBlobName)))
-        {
-            await eventPublisher.PublishAsync(animalImageAddedEvent, cancellationToken);
-        }
 
         return TypedResults.Ok(Map.FromEntity(animal));
     }

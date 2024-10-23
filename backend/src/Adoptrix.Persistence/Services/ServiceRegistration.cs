@@ -54,7 +54,7 @@ public static class ServiceRegistration
         IConfiguration configuration)
     {
         // register interceptors
-        services.AddScoped<AuditingInterceptor>();
+        services.AddScoped<DomainEventInterceptor>();
         services.AddScoped<LastModifiedInterceptor>();
 
         services.AddDbContext<AdoptrixDbContext>((serviceProvider, optionsBuilder) =>
@@ -62,7 +62,7 @@ public static class ServiceRegistration
             var connectionString = configuration.GetConnectionString("database");
             optionsBuilder.UseSqlServer(connectionString)
                 .AddInterceptors(
-                    serviceProvider.GetRequiredService<AuditingInterceptor>(),
+                    serviceProvider.GetRequiredService<DomainEventInterceptor>(),
                     serviceProvider.GetRequiredService<LastModifiedInterceptor>())
                 .UseExceptionProcessor();
         });
