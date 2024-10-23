@@ -3,23 +3,24 @@
 public class AnimalImageTests
 {
     [Fact]
-    public void CreateAnimalImage_ShouldHaveExpectedProperties()
+    public void NewAnimalImage_ShouldHaveExpectedProperties()
     {
         // arrange
-        const string animalSlug = "rex-the-dog";
-        const string description = "Rex in the park";
-        const string originalFileName = "rex1.jpg";
-        const string originalContentType = "image/jpeg";
-
-        // act
-        var image = AnimalImage.Create(animalSlug, description, originalFileName, originalContentType);
+        var image = new AnimalImage
+        {
+            Id = Guid.NewGuid(),
+            AnimalSlug = "rex-the-dog",
+            Description = "Rex in the park",
+            OriginalFileName = "rex1.jpg",
+            OriginalContentType = "image/jpeg"
+        };
 
         // assert
-        image.Id.Should().BeEmpty();
-        image.AnimalSlug.Should().Be(animalSlug);
-        image.Description.Should().Be(description);
-        image.OriginalFileName.Should().Be(originalFileName);
-        image.OriginalContentType.Should().Be(originalContentType);
+        image.Id.Should().NotBeEmpty();
+        image.AnimalSlug.Should().Be("rex-the-dog");
+        image.Description.Should().Be("Rex in the park");
+        image.OriginalFileName.Should().Be("rex1.jpg");
+        image.OriginalContentType.Should().Be("image/jpeg");
         image.IsProcessed.Should().BeFalse();
         image.LastModifiedBy.Should().BeNull();
         image.LastModifiedUtc.Should().Be(default);

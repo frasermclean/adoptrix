@@ -31,7 +31,14 @@ public class DbContextFixture : IAsyncLifetime
             Sex = Sex.Male
         };
 
-        var image = AnimalImage.Create(animal.Slug, "Rex in the park", "rex1.jpg", "image/jpeg");
+        var image = new AnimalImage
+        {
+            Id = Guid.NewGuid(),
+            AnimalSlug = animal.Slug,
+            Description = "Rex in the park",
+            OriginalFileName = "rex1.jpg",
+            OriginalContentType = "image/jpeg"
+        };
         animal.Images.Add(image);
 
         DbContext.Animals.Add(animal);
