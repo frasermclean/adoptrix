@@ -24,7 +24,13 @@ public class DbContextFixture : IAsyncLifetime
     {
         await DbContext.Database.EnsureCreatedAsync();
 
-        var animal = Animal.Create("Rex", dateOfBirth: new DateOnly(2020, 1, 1));
+        var breed = await DbContext.Breeds.FirstAsync(b => b.Id == 1);
+        var animal = new Animal("Rex", new DateOnly(2020, 1, 1))
+        {
+            Breed = breed,
+            Sex = Sex.Male
+        };
+
         var image = AnimalImage.Create(animal.Slug, "Rex in the park", "rex1.jpg", "image/jpeg");
         animal.Images.Add(image);
 
@@ -33,7 +39,6 @@ public class DbContextFixture : IAsyncLifetime
 
         AnimalSlug = animal.Slug;
         ImageId = image.Id;
-
     }
 
     public Task DisposeAsync() => DbContext.DisposeAsync().AsTask();

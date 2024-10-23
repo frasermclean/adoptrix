@@ -12,15 +12,17 @@ public class AnimalTests
         string dateOfBirthString, string expectedName, string expectedSlug)
     {
         // arrange
-        var breed = Breed.Create("Golden Retriever");
+        var species = new Species("Dog");
+        var breed = new Breed("Golden Retriever") { Species = species };
         var sex = Random.Shared.Next(2) == 1 ? Sex.Male : Sex.Female;
         var dateOfBirth = DateOnly.Parse(dateOfBirthString);
+        var id = Guid.NewGuid();
 
         // act
-        var animal = Animal.Create(name, description, breed, sex, dateOfBirth);
+        var animal = CreateAnimal(name.Trim(), id, dateOfBirth, description, breed, sex);
 
         // assert
-        animal.Id.Should().BeEmpty();
+        animal.Id.Should().Be(id);
         animal.Name.Should().Be(expectedName);
         animal.Description.Should().Be(description);
         animal.Breed.Should().Be(breed);
@@ -42,7 +44,7 @@ public class AnimalTests
             .ToString();
 
         // act
-        Action action = () => _ = Animal.Create(name);
+        Action action = () => _ = CreateAnimal(name);
 
         // assert
         action.Should().Throw<ArgumentException>()
@@ -53,14 +55,13 @@ public class AnimalTests
     public void CreateAnimal_WithLongDescription_ShouldThrowArgumentException()
     {
         // arrange
-
         var description = Enumerable.Range(0, Animal.DescriptionMaxLength + 1)
             .Select(_ => 'x')
             .Aggregate(new StringBuilder(), (sb, c) => sb.Append(c))
             .ToString();
 
         // act
-        Action action = () => _ = Animal.Create("Fluffy", description);
+        Action action = () => _ = CreateAnimal("Fluffy", description: description);
 
         // assert
         action.Should().Throw<ArgumentException>()
@@ -71,15 +72,24 @@ public class AnimalTests
     public void TwoAnimals_WithSameIds_Should_BeEqual()
     {
         // arrange
-        var max = Animal.Create("Max");
-        var felix = Animal.Create("Felix");
+        var id = Guid.NewGuid();
+        var max = CreateAnimal("Max", id);
+        var felix = CreateAnimal("Felix", id);
         var otherObject = new object();
 
         // assert
-        max.Id.Should().BeEmpty();
+        max.Id.Should().Be(id);
         max.Should().Be(felix);
         max.Equals(otherObject).Should().BeFalse();
         max.GetHashCode().Should().Be(felix.GetHashCode());
         max.Name.Should().Be("Max");
     }
+
+    private static Animal CreateAnimal(string name, Guid? id = null, DateOnly dateOfBirth = default,
+        string? description = null, Breed? breed = null, Sex sex = Sex.Male) => new(name, dateOfBirth, description)
+    {
+        Id = id ?? Guid.NewGuid(),
+        Breed = breed ?? new Breed("Labrador") { Species = new Species("Dog") },
+        Sex = sex,
+    };
 }

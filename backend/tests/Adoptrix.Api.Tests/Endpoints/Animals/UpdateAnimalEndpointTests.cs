@@ -2,7 +2,7 @@
 using Adoptrix.Api.Endpoints.Animals;
 using Adoptrix.Api.Tests.Fixtures;
 using Adoptrix.Core;
-using Adoptrix.Initializer;
+using Adoptrix.Persistence;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
@@ -14,7 +14,8 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task UpdateAnimal_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var request = CreateRequest(SeedData.Barry.Id, "Timmy", "Timmy is awesome", "German Shepherd");
+        var animalId = SeedData.Animals.Barry;
+        var request = CreateRequest(animalId, "Timmy", "Timmy is awesome", "German Shepherd");
 
         // act
         var (message, response) =
@@ -22,7 +23,7 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(SeedData.Barry.Id);
+        response.Id.Should().Be(animalId);
         response.Slug.Should().NotBeEmpty();
         response.Name.Should().Be("Timmy");
         response.Description.Should().Be("Timmy is awesome");
@@ -46,7 +47,8 @@ public class UpdateAnimalEndpointTests(TestContainersFixture fixture) : TestBase
     public async Task UpdateAnimal_WithInvalidBreedName_ShouldReturnBadRequest()
     {
         // arrange
-        var request = CreateRequest(SeedData.Barry.Id, breedName: "Flower");
+        var animalId = SeedData.Animals.Ginger;
+        var request = CreateRequest(animalId, breedName: "Flower");
 
         // act
         var (message, response) =

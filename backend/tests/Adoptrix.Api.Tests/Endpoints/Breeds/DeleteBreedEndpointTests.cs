@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Persistence;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
@@ -11,7 +12,7 @@ public class DeleteBreedEndpointTests(TestContainersFixture fixture) : TestBase<
     public async Task DeleteBreed_WithValidRequest_ShouldReturnNoContent()
     {
         // arrange
-        const int breedId = 3;
+        const int breedId = SeedData.Breeds.GoldenRetriever;
 
         // act
         var message = await fixture.AdminClient.DeleteAsync($"/api/breeds/{breedId}");

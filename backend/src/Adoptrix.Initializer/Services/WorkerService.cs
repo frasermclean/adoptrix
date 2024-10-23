@@ -16,9 +16,6 @@ public class WorkerService(
         // initialize database
         var databaseInitializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
         await databaseInitializer.EnsureCreatedAsync(cancellationToken);
-        await databaseInitializer.AddSpeciesAsync(SeedData.AllSpecies, cancellationToken);
-        await databaseInitializer.AddBreedsAsync(SeedData.AllBreeds, cancellationToken);
-        await databaseInitializer.AddAnimalsAsync(SeedData.AllAnimals, cancellationToken);
 
         // initialize storage
         await storageInitializer.InitializeAsync(cancellationToken);

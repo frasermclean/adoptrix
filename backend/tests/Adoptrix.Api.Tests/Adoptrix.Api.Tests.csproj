@@ -33,7 +33,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Adoptrix.Api\Adoptrix.Api.csproj" />
-    <ProjectReference Include="..\..\src\Adoptrix.Initializer\Adoptrix.Initializer.csproj" />
   </ItemGroup>
 
 </Project>

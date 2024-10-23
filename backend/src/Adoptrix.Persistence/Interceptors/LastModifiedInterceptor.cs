@@ -14,11 +14,11 @@ public class LastModifiedInterceptor(IRequestContext requestContext) : SaveChang
         foreach (var entity in eventData.Context!.ChangeTracker.Entries()
                      .Where(entry => entry is
                      {
-                         Entity: ILastModifiedEntity,
+                         Entity: ILastModified,
                          State: EntityState.Added or EntityState.Modified
                      })
                      .Select(entry => entry.Entity)
-                     .Cast<ILastModifiedEntity>())
+                     .Cast<ILastModified>())
         {
             if (!requestContext.IsAuthenticated)
             {

@@ -34,8 +34,6 @@ public class AuditingInterceptor(IRequestContext requestContext)
             })
             .ToList();
 
-        dbContext.AuditEntries.AddRange(auditEntries);
-
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
@@ -50,14 +48,14 @@ public class AuditingInterceptor(IRequestContext requestContext)
         var utcNow = DateTime.UtcNow;
         foreach (var auditEntry in auditEntries)
         {
-            dbContext.Attach(auditEntry);
-
             auditEntry.WasSuccessful = true;
             auditEntry.EndTimeUtc = utcNow;
+
+            dbContext.AuditEntries.Add(auditEntry);
         }
 
         auditEntries.Clear();
-        await dbContext.SaveChangesAsync(cancellationToken);
+        //await dbContext.SaveChangesAsync(cancellationToken);
 
         return result;
     }
@@ -73,15 +71,15 @@ public class AuditingInterceptor(IRequestContext requestContext)
         var utcNow = DateTime.UtcNow;
         foreach (var auditEntry in auditEntries)
         {
-            dbContext.Attach(auditEntry);
-
             auditEntry.WasSuccessful = false;
             auditEntry.EndTimeUtc = utcNow;
             auditEntry.ErrorMessage = eventData.Exception.Message;
+
+            dbContext.AuditEntries.Add(auditEntry);
         }
 
         auditEntries.Clear();
-        await dbContext.SaveChangesAsync(cancellationToken);
+        //await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private static string GetOperationName(EntityEntry entry) => entry switch

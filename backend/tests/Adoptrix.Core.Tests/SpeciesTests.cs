@@ -3,13 +3,13 @@
 public class SpeciesTests
 {
     [Fact]
-    public void CreateSpecies_WithValidName_ShouldReturnExpectedSpecies()
+    public void NewSpecies_WithValidName_ShouldReturnExpectedSpecies()
     {
         // arrange
         const string name = "Dog";
 
         // act
-        var species = Species.Create(name);
+        var species = new Species(name);
 
         // assert
         species.Id.Should().Be(default);
@@ -26,7 +26,7 @@ public class SpeciesTests
         const string name = "A very long name for a species";
 
         // act
-        Action act = () => _ = Species.Create(name);
+        Action act = () => _ = new Species(name);
 
         // assert
         act.Should().Throw<ArgumentException>()
@@ -37,14 +37,18 @@ public class SpeciesTests
     public void SettingLastModifiedProperties_WithValidValues_ShouldUpdateSpecies()
     {
         // arrange
-        var species = Species.Create("Bird");
+        var userId = Guid.NewGuid();
+        var lastModifiedUtc = DateTime.UtcNow;
 
         // act
-        species.LastModifiedBy = Guid.NewGuid();
-        species.LastModifiedUtc = DateTime.UtcNow;
+        var species = new Species("Bird")
+        {
+            LastModifiedBy = userId,
+            LastModifiedUtc = lastModifiedUtc
+        };
 
         // assert
-        species.LastModifiedBy.Should().NotBeNull();
-        species.LastModifiedUtc.Should().NotBe(default);
+        species.LastModifiedBy.Should().Be(userId);
+        species.LastModifiedUtc.Should().Be(lastModifiedUtc);
     }
 }

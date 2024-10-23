@@ -23,9 +23,6 @@ public class AuditEntryConfiguration : IEntityTypeConfiguration<AuditEntry>
         builder.Property(entry => entry.ErrorMessage)
             .HasMaxLength(AuditEntry.ErrorMessageMaxLength);
 
-        builder.Property(entry => entry.Metadata)
-            .HasMaxLength(AuditEntry.MetadataMaxLength);
-
         builder.HasIndex(entry => entry.UserId);
         builder.HasIndex(entry => entry.OperationName);
     }

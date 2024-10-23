@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Api.Services;
 using Adoptrix.Core;
-using Adoptrix.Initializer;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -60,14 +59,6 @@ public class TestContainersFixture : AppFixture<Program>
     {
         await using var scope = Services.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AdoptrixDbContext>();
-
-        var wasCreated = await dbContext.Database.EnsureCreatedAsync();
-        if (wasCreated)
-        {
-            dbContext.Species.AddRange(SeedData.AllSpecies);
-            dbContext.Breeds.AddRange(SeedData.AllBreeds);
-            dbContext.Animals.AddRange(SeedData.AllAnimals);
-            await dbContext.SaveChangesAsync();
-        }
+        await dbContext.Database.EnsureCreatedAsync();
     }
 }

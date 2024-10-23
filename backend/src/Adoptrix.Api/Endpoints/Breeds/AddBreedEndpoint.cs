@@ -28,7 +28,7 @@ public class AddBreedEndpoint(AdoptrixDbContext dbContext)
             return new ErrorResponse(ValidationFailures);
         }
 
-        var breed = Breed.Create(request.Name, species);
+        var breed = new Breed(request.Name) { Species = species };
         species.Breeds.Add(breed);
 
         try

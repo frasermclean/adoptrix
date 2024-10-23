@@ -19,5 +19,26 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
 
         builder.HasIndex(species => species.Name)
             .IsUnique();
+
+        builder.HasData(
+            new
+            {
+                Id = SeedData.Species.Dog,
+                Name = "Dog",
+                LastModifiedUtc = DateTime.MinValue
+            },
+            new
+            {
+                Id = SeedData.Species.Cat,
+                Name = "Cat",
+                LastModifiedUtc = DateTime.MinValue
+            },
+            new
+            {
+                Id = SeedData.Species.Bird,
+                Name = "Bird",
+                LastModifiedUtc = DateTime.MinValue
+            }
+        );
     }
 }

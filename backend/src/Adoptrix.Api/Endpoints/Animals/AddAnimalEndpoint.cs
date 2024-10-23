@@ -29,7 +29,11 @@ public class AddAnimalEndpoint(AdoptrixDbContext dbContext)
             return new ErrorResponse(ValidationFailures);
         }
 
-        var animal = Animal.Create(request.Name, request.Description, breed, request.Sex, request.DateOfBirth);
+        var animal = new Animal(request.Name, request.DateOfBirth, request.Description)
+        {
+            Breed = breed,
+            Sex = request.Sex
+        };
 
         breed.Animals.Add(animal);
         await dbContext.SaveChangesAsync(cancellationToken);

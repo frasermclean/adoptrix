@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Initializer;
+using Adoptrix.Persistence;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
@@ -12,7 +12,7 @@ public class GetAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
     public async Task GetAnimal_WithKnownAnimalSlug_ShouldReturnOk()
     {
         // arrange
-        var animalSlug = SeedData.Alberto.Slug;
+        const string animalSlug = "alberto-2024-02-14";
 
         // act
         var message = await fixture.Client.GetAsync($"api/animals/{animalSlug}");
@@ -25,7 +25,7 @@ public class GetAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
     public async Task GetAnimal_WithKnownAnimalId_ShouldReturnOk()
     {
         // arrange
-        var animalId = SeedData.Alberto.Id;
+        var animalId = SeedData.Animals.Alberto;
 
         // act
         var message = await fixture.Client.GetAsync($"api/animals/{animalId}");
