@@ -1,6 +1,6 @@
 ﻿namespace Adoptrix.Core;
 
-public class AnimalImage : ILastModified
+public class AnimalImage : IModifiable
 {
     public const int ContentTypeMaxLength = 50;
 

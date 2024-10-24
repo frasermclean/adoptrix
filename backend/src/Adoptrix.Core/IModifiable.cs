@@ -1,6 +1,6 @@
 ﻿namespace Adoptrix.Core;
 
-public interface ILastModified
+public interface IModifiable
 {
     Guid? LastModifiedBy { get; set; }
     DateTime LastModifiedUtc { get; set; }

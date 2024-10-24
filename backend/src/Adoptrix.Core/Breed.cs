@@ -1,6 +1,6 @@
 ﻿namespace Adoptrix.Core;
 
-public class Breed : ILastModified
+public class Breed : IModifiable
 {
     public const int NameMaxLength = 30;
 

@@ -2,7 +2,7 @@
 
 namespace Adoptrix.Core;
 
-public class Animal : ILastModified
+public class Animal : IModifiable
 {
     public const int NameMaxLength = 30;
     public const int DescriptionMaxLength = 2000;

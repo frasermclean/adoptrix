@@ -11,23 +11,17 @@ public class LastModifiedInterceptor(IRequestContext requestContext) : SaveChang
         InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
-        foreach (var entity in eventData.Context!.ChangeTracker.Entries()
-                     .Where(entry => entry is
-                     {
-                         Entity: ILastModified,
-                         State: EntityState.Added or EntityState.Modified
-                     })
-                     .Select(entry => entry.Entity)
-                     .Cast<ILastModified>())
+        foreach (var entry in eventData.Context?.ChangeTracker.Entries<IModifiable>()
+                     .Where(entry => entry is { State: EntityState.Added or EntityState.Modified }) ?? [])
         {
             if (!requestContext.IsAuthenticated)
             {
                 continue;
             }
 
-            // update the last modified fields
-            entity.LastModifiedUtc = DateTime.UtcNow;
-            entity.LastModifiedBy = requestContext.UserId;
+            // update the last modified properties
+            entry.Property(modifiable => modifiable.LastModifiedBy).CurrentValue = requestContext.UserId;
+            entry.Property(modifiable => modifiable.LastModifiedUtc).CurrentValue = DateTime.UtcNow;
         }
 
         return base.SavingChangesAsync(eventData, result, cancellationToken);
