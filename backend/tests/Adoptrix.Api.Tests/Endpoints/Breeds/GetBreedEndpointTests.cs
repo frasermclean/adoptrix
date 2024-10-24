@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Persistence;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
@@ -13,7 +14,7 @@ public class GetBreedEndpointTests(TestContainersFixture fixture) : TestBase<Tes
     public async Task GetBreed_WithKnownId_ShouldReturnOk()
     {
         // arrange
-        const int breedId = 1;
+        const int breedId = SeedData.Breeds.FrenchBulldog;
 
         // act
         var message = await fixture.Client.GetAsync($"api/breeds/{breedId}");
@@ -21,7 +22,8 @@ public class GetBreedEndpointTests(TestContainersFixture fixture) : TestBase<Tes
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
         var response = await message.Content.ReadFromJsonAsync<BreedResponse>();
-        response!.Id.Should().Be(1);
+        response!.Id.Should().Be(breedId);
+        response.Name.Should().Be("French Bulldog");
     }
 
     [Fact]

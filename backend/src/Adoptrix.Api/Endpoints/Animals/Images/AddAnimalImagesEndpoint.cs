@@ -1,5 +1,4 @@
 ﻿using Adoptrix.Core;
-using Adoptrix.Core.Events;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,8 +9,7 @@ namespace Adoptrix.Api.Endpoints.Animals.Images;
 public class AddAnimalImagesEndpoint(
     AdoptrixDbContext dbContext,
     [FromKeyedServices(BlobContainerNames.OriginalImages)]
-    IBlobContainerManager blobContainerManager,
-    IEventPublisher eventPublisher)
+    IBlobContainerManager blobContainerManager)
     : Endpoint<AddAnimalImagesRequest, Results<Ok<AnimalResponse>, NotFound, ErrorResponse>, AnimalResponseMapper>
 {
     public override void Configure()
@@ -44,8 +42,7 @@ public class AddAnimalImagesEndpoint(
                     AnimalSlug = animal.Slug,
                     Description = section!.Name,
                     OriginalFileName = section.FileName,
-                    OriginalContentType = section.Section.ContentType ?? string.Empty,
-                    LastModifiedBy = request.UserId
+                    OriginalContentType = section.Section.ContentType!
                 };
 
                 await blobContainerManager.UploadBlobAsync(image.OriginalBlobName, section.FileStream!,
@@ -53,22 +50,15 @@ public class AddAnimalImagesEndpoint(
 
                 Logger.LogInformation("Uploaded original image {BlobName}", image.OriginalBlobName);
 
-                animal.Images.Add(image);
                 return image;
             })
             .ToListAsync(cancellationToken);
 
         // update animal entity with new images
+        animal.Images.AddRange(images);
         await dbContext.SaveChangesAsync(cancellationToken);
         Logger.LogInformation("Added {Count} original images for animal with ID: {AnimalId}",
             images.Count, request.AnimalId);
-
-        // publish events for each image added
-        foreach (var animalImageAddedEvent in images.Select(image =>
-                     new AnimalImageAddedEvent(animal.Slug, image.Id, image.OriginalBlobName)))
-        {
-            await eventPublisher.PublishAsync(animalImageAddedEvent, cancellationToken);
-        }
 
         return TypedResults.Ok(Map.FromEntity(animal));
     }

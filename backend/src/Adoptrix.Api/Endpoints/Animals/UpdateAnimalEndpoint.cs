@@ -40,8 +40,6 @@ public class UpdateAnimalEndpoint(AdoptrixDbContext dbContext)
         animal.Breed = breed;
         animal.Sex = request.Sex;
         animal.DateOfBirth = request.DateOfBirth;
-        animal.LastModifiedBy = request.UserId;
-        animal.LastModifiedUtc = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);
         Logger.LogInformation("Updated animal with ID: {AnimalId}", animal.Id);

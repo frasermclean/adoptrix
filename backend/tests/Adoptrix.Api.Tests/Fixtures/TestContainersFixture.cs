@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Adoptrix.Api.Services;
 using Adoptrix.Core;
-using Adoptrix.Initializer;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -58,15 +57,8 @@ public class TestContainersFixture : AppFixture<Program>
 
     protected override async Task SetupAsync()
     {
-        var dbContext = Services.GetRequiredService<AdoptrixDbContext>();
-
-        var wasCreated = await dbContext.Database.EnsureCreatedAsync();
-        if (wasCreated)
-        {
-            dbContext.Species.AddRange(SeedData.Species);
-            dbContext.Breeds.AddRange(SeedData.Breeds);
-            dbContext.Animals.AddRange(SeedData.Animals);
-            await dbContext.SaveChangesAsync();
-        }
+        await using var scope = Services.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AdoptrixDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
     }
 }

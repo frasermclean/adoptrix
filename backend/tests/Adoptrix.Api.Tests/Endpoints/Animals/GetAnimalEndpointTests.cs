@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Initializer;
+using Adoptrix.Persistence;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals;
 
@@ -25,13 +25,26 @@ public class GetAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
     public async Task GetAnimal_WithKnownAnimalId_ShouldReturnOk()
     {
         // arrange
-        var animalId = SeedData.Animals[0].Id;
+        var animalId = SeedData.Animals.Alberto;
 
         // act
         var message = await fixture.Client.GetAsync($"api/animals/{animalId}");
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task GetAnimal_WithUnknownAnimalId_ShouldReturnNotFound()
+    {
+        // arrange
+        var animalId = Guid.Empty;
+
+        // act
+        var message = await fixture.Client.GetAsync($"api/animals/{animalId}");
+
+        // assert
+        message.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]

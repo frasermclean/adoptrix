@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using Adoptrix.Api.Tests.Fixtures;
-using Adoptrix.Initializer;
+using Adoptrix.Persistence;
 
 namespace Adoptrix.Api.Tests.Endpoints.Animals.Images;
 
@@ -13,7 +13,7 @@ public class AddAnimalImagesEndpointTests(TestContainersFixture fixture) : TestB
     public async Task AddAnimalImages_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var animalId = SeedData.Animals[0].Id;
+        var animalId = SeedData.Animals.Alberto;
         using var content = CreateMultipartFormDataContent();
 
         // act

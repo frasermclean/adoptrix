@@ -6,4 +6,5 @@ public class BreedResponse
     public required string Name { get; init; }
     public required string SpeciesName { get; init; }
     public required int AnimalCount { get; init; }
+    public required DateTime LastModifiedUtc { get; init; }
 }

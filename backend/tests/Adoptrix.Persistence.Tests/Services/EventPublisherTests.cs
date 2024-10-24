@@ -17,7 +17,8 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
     {
         // arrange
         const string animalSlug = "bruno-2022-01-01";
-        var animalDeletedEvent = new AnimalDeletedEvent(animalSlug);
+        var userId = Guid.NewGuid();
+        var animalDeletedEvent = new AnimalDeletedEvent(animalSlug, userId);
 
         // act
         var messageId = await eventPublisher.PublishAsync(animalDeletedEvent);
@@ -61,7 +62,5 @@ public class EventPublisherTests(StorageEmulatorFixture fixture)
         await act.Should().ThrowAsync<ArgumentException>();
     }
 
-    private class InvalidEvent : IDomainEvent
-    {
-    }
+    private record InvalidEvent : DomainEvent;
 }

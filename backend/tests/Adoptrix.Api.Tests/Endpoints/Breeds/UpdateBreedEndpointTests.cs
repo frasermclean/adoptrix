@@ -1,6 +1,7 @@
 using System.Net;
 using Adoptrix.Api.Endpoints.Breeds;
 using Adoptrix.Api.Tests.Fixtures;
+using Adoptrix.Persistence;
 
 namespace Adoptrix.Api.Tests.Endpoints.Breeds;
 
@@ -12,7 +13,7 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
     public async Task UpdateBreed_WithValidRequest_ShouldReturnOk()
     {
         // arrange
-        var request = CreateRequest(speciesName: "Bird");
+        var request = CreateRequest("African-Grey Parrot");
 
         // act
         var (message, response) =
@@ -20,9 +21,10 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.OK);
-        response.Id.Should().Be(5);
-        response.Name.Should().Be("Budgerigar");
-        response.SpeciesName.Should().Be("Bird");
+        response.Id.Should().Be(request.BreedId);
+        response.Name.Should().Be(request.Name);
+        response.SpeciesName.Should().Be(request.SpeciesName);
+        response.LastModifiedUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]
@@ -60,18 +62,19 @@ public class UpdateBreedEndpointTests(TestContainersFixture fixture) : TestBase<
         var request = CreateRequest("German Shepherd", 1);
 
         // act
-        var (message, response) = await fixture.AdminClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
+        var (message, response) =
+            await fixture.AdminClient.PUTAsync<UpdateBreedEndpoint, UpdateBreedRequest, ErrorResponse>(request);
 
         // assert
         message.Should().HaveStatusCode(HttpStatusCode.Conflict);
         response.Errors.Should().ContainSingle().Which.Key.Should().Be("name");
     }
 
-    private static UpdateBreedRequest CreateRequest(string name = "Budgerigar", int breedId = 5, string speciesName = "Dog") => new()
+    private static UpdateBreedRequest CreateRequest(string name = "African Grey Parrot",
+        int breedId = SeedData.Breeds.AfricanGreyParrot, string speciesName = "Bird") => new()
     {
         Name = name,
         BreedId = breedId,
-        SpeciesName = speciesName,
-        UserId = Guid.NewGuid()
+        SpeciesName = speciesName
     };
 }

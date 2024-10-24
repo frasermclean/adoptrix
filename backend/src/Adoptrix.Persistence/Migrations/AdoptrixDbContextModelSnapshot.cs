@@ -39,10 +39,8 @@ namespace Adoptrix.Persistence.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<Guid>("LastModifiedBy")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("LastModifiedUtc")
                         .ValueGeneratedOnAdd()
@@ -68,6 +66,92 @@ namespace Adoptrix.Persistence.Migrations
                     b.HasIndex("BreedId");
 
                     b.ToTable("Animals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5edcfb8c-296a-434f-913f-967c58073ca2"),
+                            BreedId = 2,
+                            DateOfBirth = new DateOnly(2024, 2, 14),
+                            Description = "Meet Alberto, a delightful Labrador puppy searching for his forever home. With a golden coat that's as soft as his heart, Alberto's playful spirit is infectious. From chasing butterflies to fetching balls, his days are filled with joy and curiosity. This lovable pup dreams of a family to call his own, where he can share his boundless love and enthusiasm. Could you be the one to open your heart and home to Alberto, making his dreams come true? Adopt this charming ball of fur, and let the adventure of a lifetime begin! 🐾 #AdoptAlberto",
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Alberto",
+                            Sex = "M",
+                            Slug = "alberto-2024-02-14"
+                        },
+                        new
+                        {
+                            Id = new Guid("c387d7dc-18f0-4ecb-bc8e-10c6c9ba9e1f"),
+                            BreedId = 4,
+                            DateOfBirth = new DateOnly(2020, 4, 19),
+                            Description = "Meet Barry, a majestic German Shepherd with a heart as loyal as his gaze. At four years old, Barry embodies both strength and gentleness in equal measure. His rich, dark coat gleams in the sunlight as he explores the world with curiosity and confidence. From romping through fields to standing guard with unwavering vigilance, Barry is the epitome of loyalty and companionship. This noble canine seeks a forever home where he can shower his family with unconditional love and protection. Ready to welcome a steadfast friend into your life? Consider adopting Barry, and embark on a journey of trust, devotion, and endless adventure! 🐾 #AdoptBarry",
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Barry",
+                            Sex = "M",
+                            Slug = "barry-2020-04-19"
+                        },
+                        new
+                        {
+                            Id = new Guid("a8a4897a-6594-4796-9b25-f54ca71bbbc7"),
+                            BreedId = 14,
+                            DateOfBirth = new DateOnly(2022, 9, 30),
+                            Description = "Introducing Ginger, a beautiful, captivating feline with a coat as fiery as her playful spirit. This adorable cat enchants everyone with her graceful moves and amber-colored eyes. From chasing sunbeams to batting at toys, Ginger's days are a whimsical blend of elegance and mischief. This charming kitty yearns for a loving home, where she can curl up on a cozy spot and purr her way into your heart. Are you ready to add a touch of warmth and whimsy to your life? Consider adopting Ginger, and let the purr-fect companionship begin! 🐾 #AdoptGinger",
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Ginger",
+                            Sex = "F",
+                            Slug = "ginger-2022-09-30"
+                        },
+                        new
+                        {
+                            Id = new Guid("7e92871b-7219-495f-945d-fc8b5ba78829"),
+                            BreedId = 18,
+                            DateOfBirth = new DateOnly(2017, 4, 11),
+                            Description = "Meet Percy, a charming African Grey Parrot with a personality as colorful as his feathers.",
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Percy",
+                            Sex = "F",
+                            Slug = "percy-2017-04-11"
+                        });
+                });
+
+            modelBuilder.Entity("Adoptrix.Core.AuditEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EndTimeUtc")
+                        .HasPrecision(2)
+                        .HasColumnType("datetime2(2)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("OperationName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("StartTimeUtc")
+                        .HasPrecision(2)
+                        .HasColumnType("datetime2(2)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("WasSuccessful")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OperationName");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AuditEntries");
                 });
 
             modelBuilder.Entity("Adoptrix.Core.Breed", b =>
@@ -78,10 +162,8 @@ namespace Adoptrix.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("LastModifiedBy")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("LastModifiedUtc")
                         .ValueGeneratedOnAdd()
@@ -105,6 +187,50 @@ namespace Adoptrix.Persistence.Migrations
                     b.HasIndex("SpeciesId");
 
                     b.ToTable("Breeds");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "French Bulldog",
+                            SpeciesId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Labrador retriever",
+                            SpeciesId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "German shepherd",
+                            SpeciesId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Golden Retriever",
+                            SpeciesId = 1
+                        },
+                        new
+                        {
+                            Id = 14,
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Domestic Shorthair",
+                            SpeciesId = 2
+                        },
+                        new
+                        {
+                            Id = 18,
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "African Grey Parrot",
+                            SpeciesId = 3
+                        });
                 });
 
             modelBuilder.Entity("Adoptrix.Core.Species", b =>
@@ -115,10 +241,8 @@ namespace Adoptrix.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("LastModifiedBy")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("LastModifiedUtc")
                         .ValueGeneratedOnAdd()
@@ -137,6 +261,26 @@ namespace Adoptrix.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Species");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Dog"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Cat"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LastModifiedUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Bird"
+                        });
                 });
 
             modelBuilder.Entity("Adoptrix.Core.Animal", b =>
@@ -163,7 +307,7 @@ namespace Adoptrix.Persistence.Migrations
                             b1.Property<bool>("IsProcessed")
                                 .HasColumnType("bit");
 
-                            b1.Property<Guid>("LastModifiedBy")
+                            b1.Property<Guid?>("LastModifiedBy")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<DateTime>("LastModifiedUtc")

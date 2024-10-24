@@ -28,8 +28,8 @@ public class AddBreedEndpoint(AdoptrixDbContext dbContext)
             return new ErrorResponse(ValidationFailures);
         }
 
-        var breed = MapToBreed(request, species);
-        dbContext.Breeds.Add(breed);
+        var breed = new Breed(request.Name) { Species = species };
+        species.Breeds.Add(breed);
 
         try
         {
@@ -47,11 +47,4 @@ public class AddBreedEndpoint(AdoptrixDbContext dbContext)
             return new ErrorResponse(ValidationFailures, StatusCodes.Status409Conflict);
         }
     }
-
-    private static Breed MapToBreed(AddBreedRequest request, Core.Species species) => new()
-    {
-        Name = request.Name,
-        Species = species,
-        LastModifiedBy = request.UserId
-    };
 }

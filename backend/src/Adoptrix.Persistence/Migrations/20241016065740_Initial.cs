@@ -18,7 +18,7 @@ namespace Adoptrix.Persistence.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LastModifiedUtc = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
                 },
                 constraints: table =>
@@ -34,7 +34,7 @@ namespace Adoptrix.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     SpeciesId = table.Column<int>(type: "int", nullable: false),
-                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LastModifiedUtc = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
                 },
                 constraints: table =>
@@ -59,7 +59,7 @@ namespace Adoptrix.Persistence.Migrations
                     Sex = table.Column<string>(type: "nvarchar(1)", nullable: false),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                     Slug = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LastModifiedUtc = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
                 },
                 constraints: table =>
@@ -84,7 +84,7 @@ namespace Adoptrix.Persistence.Migrations
                     OriginalFileName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
                     OriginalContentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     IsProcessed = table.Column<bool>(type: "bit", nullable: false),
-                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LastModifiedUtc = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "getutcdate()")
                 },
                 constraints: table =>

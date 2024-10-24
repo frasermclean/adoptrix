@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Adoptrix.Core\Adoptrix.Core.csproj" />
-    <ProjectReference Include="..\Adoptrix.Tests.Shared\Adoptrix.Tests.Shared.csproj" />
   </ItemGroup>
 
 </Project>

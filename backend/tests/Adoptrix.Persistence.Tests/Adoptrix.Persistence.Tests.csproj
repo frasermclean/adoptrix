@@ -16,6 +16,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="Moq" />
     <PackageReference Include="Testcontainers.Azurite"/>
     <PackageReference Include="Testcontainers.MsSql" />
     <PackageReference Include="xunit"/>
@@ -32,7 +33,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Adoptrix.Initializer\Adoptrix.Initializer.csproj" />
     <ProjectReference Include="..\..\src\Adoptrix.Persistence\Adoptrix.Persistence.csproj" />
-    <ProjectReference Include="..\Adoptrix.Tests.Shared\Adoptrix.Tests.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,13 +1,12 @@
 ﻿using Adoptrix.Core.Events;
 using Adoptrix.Jobs.Functions;
 using Adoptrix.Persistence.Services;
-using Adoptrix.Tests.Shared;
 
 namespace Adoptrix.Jobs.Tests.Functions;
 
 public class CleanupDeletedAnimalTests
 {
-    [Theory, AdoptrixAutoData]
+    [Theory, AutoMoqData]
     public async Task ExecuteAsync_WithValidEventData_ShouldPass(AnimalDeletedEvent eventData,
         [Frozen] Mock<IBlobContainerManager> animalImagesManagerMock,
         CleanupDeletedAnimal function)

@@ -9,6 +9,7 @@ public class BreedResponseMapper : ResponseMapper<BreedResponse, Breed>
         Id = breed.Id,
         Name = breed.Name,
         SpeciesName = breed.Species.Name,
-        AnimalCount = breed.Animals.Count
+        AnimalCount = breed.Animals.Count,
+        LastModifiedUtc = breed.LastModifiedUtc
     };
 }

@@ -1,4 +1,4 @@
-
+using Adoptrix.Persistence.Interceptors;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using EntityFramework.Exceptions.SqlServer;
@@ -27,7 +27,7 @@ public static class ServiceRegistration
             .AddBlobServices()
             .AddQueueServices();
 
-        GridifyGlobalConfiguration.EnableEntityFrameworkCompatibilityLayer();
+        ConfigureGridify();
 
         return builder;
     }
@@ -38,7 +38,7 @@ public static class ServiceRegistration
             .AddDatabaseServices(configuration)
             .AddAzureStorageServices(configuration);
 
-        GridifyGlobalConfiguration.EnableEntityFrameworkCompatibilityLayer();
+        ConfigureGridify();
 
         return services;
     }
@@ -53,10 +53,17 @@ public static class ServiceRegistration
     internal static IServiceCollection AddDatabaseServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContextFactory<AdoptrixDbContext>(optionsBuilder =>
+        // register interceptors
+        services.AddScoped<DomainEventInterceptor>();
+        services.AddScoped<LastModifiedInterceptor>();
+
+        services.AddDbContext<AdoptrixDbContext>((serviceProvider, optionsBuilder) =>
         {
             var connectionString = configuration.GetConnectionString("database");
             optionsBuilder.UseSqlServer(connectionString)
+                .AddInterceptors(
+                    serviceProvider.GetRequiredService<DomainEventInterceptor>(),
+                    serviceProvider.GetRequiredService<LastModifiedInterceptor>())
                 .UseExceptionProcessor();
         });
 
@@ -99,6 +106,11 @@ public static class ServiceRegistration
             .AddQueueServices();
 
         return services;
+    }
+
+    private static void ConfigureGridify()
+    {
+        GridifyGlobalConfiguration.EnableEntityFrameworkCompatibilityLayer();
     }
 
     private static IServiceCollection AddBlobServices(this IServiceCollection services)

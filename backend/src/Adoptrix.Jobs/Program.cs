@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Adoptrix.Core;
 using Adoptrix.Jobs.Services;
 using Adoptrix.Persistence;
 using Adoptrix.Persistence.Services;
@@ -45,6 +46,7 @@ public static class Program
 
                 // local project services
                 services.AddSingleton<IImageProcessor, ImageProcessor>();
+                services.AddScoped<IRequestContext, JobsRequestContext>();
                 services.AddPersistence(context.Configuration);
 
                 // configure JSON serialization options

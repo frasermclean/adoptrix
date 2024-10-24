@@ -59,13 +59,12 @@ public class AddAnimalEndpointTests(TestContainersFixture fixture) : TestBase<Te
     }
 
     private static AddAnimalRequest CreateRequest(string name = "Buddy", string? description = null,
-        string? breedName = null, Sex sex = Sex.Male, DateOnly? dateOfBirth = null, Guid? userId = null) => new()
+        string? breedName = null, Sex sex = Sex.Male, DateOnly? dateOfBirth = null) => new()
     {
         Name = name,
         Description = description,
         BreedName = breedName ?? "Golden Retriever",
         Sex = sex,
-        DateOfBirth = dateOfBirth ?? new DateOnly(2020, 1, 1),
-        UserId = userId ?? Guid.NewGuid()
+        DateOfBirth = dateOfBirth ?? new DateOnly(2020, 1, 1)
     };
 }

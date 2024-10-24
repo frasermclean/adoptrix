@@ -1,4 +1,6 @@
 ﻿namespace Adoptrix.Core.Events;
 
-public interface IDomainEvent;
-
+public interface IDomainEvent
+{
+    DateTime StartTimeUtc { get; }
+}

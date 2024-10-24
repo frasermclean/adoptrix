@@ -1,13 +1,11 @@
 ﻿using Adoptrix.Api.Security;
-using Adoptrix.Core.Events;
 using Adoptrix.Persistence.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adoptrix.Api.Endpoints.Animals;
 
-public class DeleteAnimalEndpoint(AdoptrixDbContext dbContext, IEventPublisher eventPublisher)
-    : EndpointWithoutRequest<Results<NoContent, NotFound>>
+public class DeleteAnimalEndpoint(AdoptrixDbContext dbContext) : EndpointWithoutRequest<Results<NoContent, NotFound>>
 {
     public override void Configure()
     {
@@ -28,9 +26,6 @@ public class DeleteAnimalEndpoint(AdoptrixDbContext dbContext, IEventPublisher e
         dbContext.Remove(animal);
         await dbContext.SaveChangesAsync(cancellationToken);
         Logger.LogInformation("Deleted animal with ID {BreedId}", animalId);
-
-        // TODO: Move event publishing to EF Core interceptor
-        await eventPublisher.PublishAsync(new AnimalDeletedEvent(animal.Slug), cancellationToken);
 
         return TypedResults.NoContent();
     }
